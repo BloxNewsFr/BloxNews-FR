@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Le Bulletin Blox #004 – Blox Fruits</title>
+
+    <link rel="shortcut icon" href="https://gamerrobot.com/cdn/shop/files/bf-logo-l_32x32.png?v=1695322686" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
+
+    <style>
+        @font-face {
+            font-family: 'LuckiestGuy Regular';
+            src: url('../fonts/LuckiestGuy-Regular.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        :root {
+            --color-text: #333132;
+            --color-border: #ebebeb;
+            --font-stack-body: 'Inter', sans-serif;
+            --color-primary: #ffda00;
+        }
+
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: var(--font-stack-body);
+            color: var(--color-text);
+            background-color: #ffffff;
+            line-height: 1.6;
+        }
+
+        /* ── NAVBAR ── */
+        .site-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 55px;
+            background-color: #ffffff;
+            border-bottom: 1px solid var(--color-border);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .site-header__logo img { height: 45px; width: auto; display: block; }
+        .site-nav { display: flex; gap: 25px; padding: 0; margin: 0; list-style: none; }
+        .site-nav a {
+            color: var(--color-text);
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 25px;
+            text-transform: uppercase;
+            font-family: 'LuckiestGuy Regular', 'Luckiest Guy', cursive;
+        }
+        .site-header__icons { display: flex; gap: 20px; color: var(--color-text); cursor: pointer; }
+
+        /* ── CONTENEUR PRINCIPAL ── */
+        .bulletin-container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        /* ── BANDEAU BLEU ── */
+        .blue-banner {
+            background-color: #175ec2;
+            color: #ffffff;
+            text-align: center;
+            padding: 14px;
+            font-size: 33px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-radius: 4px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin-bottom: 25px;
+            font-family: 'LuckiestGuy Regular', 'Luckiest Guy', cursive;
+        }
+
+        /* ── IMAGE HERO ── */
+        .hero-image-wrapper { width: 100%; margin-bottom: 15px; }
+        .hero-image { width: 100%; height: auto; display: block; border-radius: 20px; border: 3px solid #000000; }
+        .publish-date { font-size: 15px; font-weight: bold; color: #222222; margin-bottom: 25px; }
+
+        /* ── EN-TÊTE JOURNAL ── */
+        .journal-header { text-align: center; margin-top: 30px; }
+        .journal-title { font-family: 'Georgia', serif; font-size: 52px; font-weight: bold; color: #111111; margin: 0 0 10px 0; letter-spacing: -1px; }
+        .journal-subtitle { font-family: 'Georgia', serif; font-style: italic; font-size: 18px; color: #555555; margin: 0 0 25px 0; }
+        .journal-meta { font-weight: bold; font-size: 14px; color: #111111; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .dashed-line { border-top: 2px dashed #111111; margin: 15px 0 0 0; }
+
+        /* ── BANDEAU "C'EST ENFIN LÀ" ── */
+        .finally-banner {
+            background-color: #fce8e6;
+            border-bottom: 3px solid #c53929;
+            text-align: center;
+            padding: 16px;
+            margin-bottom: 0;
+        }
+        .finally-banner span {
+            color: #c53929;
+            font-size: 22px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* ── ARTICLE ROSE PRINCIPAL ── */
+        .trailer-box {
+            background-color: #fce8e6;
+            border: 2px solid #000000;
+            border-left: 6px solid #c53929;
+            border-top: none;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        .trailer-box h2 {
+            font-size: 22px;
+            font-weight: 900;
+            color: #111;
+            margin: 0 0 4px 0;
+            border: none;
+            padding: 0;
+        }
+        .trailer-box .byline {
+            font-style: italic;
+            font-size: 13px;
+            color: #555;
+            display: block;
+            margin-bottom: 16px;
+        }
+        .trailer-box img {
+            width: 100%;
+            height: auto;
+            border: 3px solid #000;
+            border-radius: 10px;
+            margin-bottom: 18px;
+        }
+        .trailer-box p { font-size: 14.5px; margin: 0 0 14px 0; }
+
+        /* ── ARTICLE GRIS (BOSS) ── */
+        .lore-box {
+            background-color: #f2f2f2;
+            border: 1px solid #cccccc;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        .lore-box h2 {
+            font-size: 22px;
+            font-weight: 900;
+            color: #111;
+            margin: 0 0 4px 0;
+            border-bottom: 2px solid #111;
+            padding-bottom: 6px;
+        }
+        .lore-box .byline {
+            font-style: italic;
+            font-size: 13px;
+            color: #555;
+            display: block;
+            margin-bottom: 16px;
+        }
+        .lore-box img {
+            width: 100%;
+            height: auto;
+            border: 3px solid #000;
+            border-radius: 10px;
+            margin-bottom: 18px;
+        }
+        .lore-box p { font-size: 14.5px; margin: 0 0 14px 0; }
+        .lore-separator { border: none; border-top: 2px solid #333; margin: 20px 0; }
+
+        /* ── SECTION FRUITS ── */
+        .fruits-section { margin-bottom: 30px; }
+        .fruits-section h2 {
+            font-size: 22px;
+            font-weight: 900;
+            color: #111;
+            border-bottom: 2px solid #111;
+            padding-bottom: 6px;
+            margin: 0 0 4px 0;
+        }
+        .fruits-section .byline {
+            font-style: italic;
+            font-size: 13px;
+            color: #555;
+            display: block;
+            margin-bottom: 20px;
+        }
+        .fruits-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0;
+            border: 2px solid #000;
+        }
+        .fruit-card {
+            background-color: #f5f5f5;
+            border-right: 2px solid #000;
+            padding: 20px;
+            text-align: center;
+        }
+        .fruit-card:last-child { border-right: none; }
+        .fruit-card h3 {
+            font-size: 17px;
+            font-weight: 900;
+            color: #111;
+            margin: 0 0 16px 0;
+        }
+        .fruit-card img {
+            width: 140px;
+            height: 140px;
+            object-fit: contain;
+            margin-bottom: 18px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .fruit-card p {
+            font-size: 13.5px;
+            color: #333;
+            line-height: 1.55;
+            margin: 0;
+            text-align: center;
+        }
+
+        /* ── NOTE JAUNE ── */
+        .note-box {
+            background-color: #ffda00;
+            border: 2px solid #000;
+            border-radius: 4px;
+            padding: 16px 20px;
+            margin-top: 25px;
+            font-size: 14px;
+            font-style: italic;
+        }
+        .note-box b { font-style: normal; }
+        .note-box .red { color: #c53929; font-weight: 900; font-style: italic; }
+        .note-box .bold-dark { font-weight: 900; font-style: italic; color: #111; }
+
+        /* ── RÉSUMÉ ── */
+        .summary {
+            background: rgba(88, 101, 242, 0.09);
+            border-left: 4px solid #5865f2;
+            padding: 12px 16px;
+            margin-top: 15px;
+            font-size: 13.5px;
+            font-style: italic;
+            color: #2c3e50;
+            border-radius: 0 6px 6px 0;
+        }
+        .summary b {
+            color: #5865f2;
+            text-transform: uppercase;
+            font-size: 11px;
+            font-style: normal;
+            display: block;
+            margin-bottom: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        /* ── BOUTONS PARTAGE ── */
+        .social-share {
+            display: flex;
+            gap: 10px;
+            margin: 30px 0 10px 0;
+        }
+        .social-share a {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 8px 14px;
+            border: 2px solid #000;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 700;
+            text-decoration: none;
+            color: #000;
+            text-transform: uppercase;
+        }
+        .social-share a.fb { background-color: #3b5998; color: #fff; border-color: #3b5998; }
+        .social-share a.tw { background-color: #1da1f2; color: #fff; border-color: #1da1f2; }
+        .social-share a.pi { background-color: #e60023; color: #fff; border-color: #e60023; }
+
+        /* ── BOUTON RETOUR ── */
+        .back-button-container { text-align: center; margin: 30px 0 50px 0; }
+        .back-button {
+            background-color: var(--color-primary);
+            color: #000000;
+            font-weight: 900;
+            text-transform: uppercase;
+            padding: 12px 30px;
+            border: 2px solid #000000;
+            text-decoration: none;
+            font-size: 14px;
+            border-radius: 4px;
+            display: inline-block;
+            transition: transform 0.1s;
+        }
+        .back-button:hover { transform: scale(1.03); }
+
+        /* ── FOOTER ── */
+        .site-footer {
+            background-color: #f0f0f0;
+            border-top: 1px solid #cccccc;
+            padding: 40px 55px;
+            display: flex;
+            gap: 60px;
+        }
+        .footer-col h3 { font-size: 15px; font-weight: 900; text-transform: uppercase; margin: 0 0 14px 0; }
+        .footer-col ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+        .footer-col ul li a { color: #333; text-decoration: none; font-size: 14px; }
+        .footer-col ul li a:hover { text-decoration: underline; }
+        .footer-col p { font-size: 13px; color: #555; margin: 0 0 10px 0; }
+        .footer-community-links { display: flex; flex-direction: column; gap: 8px; }
+        .footer-community-links a { color: #175ec2; text-decoration: none; font-weight: 700; font-size: 14px; }
+
+        @media (max-width: 768px) {
+            .site-header { padding: 12px 20px; }
+            .site-nav { display: none; }
+            .fruits-grid { grid-template-columns: 1fr; }
+            .fruit-card { border-right: none; border-bottom: 2px solid #000; }
+            .fruit-card:last-child { border-bottom: none; }
+            .site-footer { flex-direction: column; gap: 30px; padding: 30px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <header class="site-header">
+        <div class="site-header__logo">
+            <img src="../shared/img/logo.png" alt="Blox Fruits">
+        </div>
+        <nav>
+            <ul class="site-nav">
+                <li><a href="https://www.roblox.com/fr/games/2753915549/Blox-Fruits">Game</a></li>
+                <li><a href="#">DLC</a></li>
+                <li><a href="../index.html" style="color: black;">News</a></li>
+            </ul>
+        </nav>
+        <div class="site-header__icons">
+            <span class="material-symbols-outlined">search</span>
+            <span class="material-symbols-outlined">person</span>
+            <span class="material-symbols-outlined">shopping_bag</span>
+        </div>
+    </header>
+
+    <!-- CORPS DU BULLETIN -->
+    <main class="bulletin-container">
+
+        <!-- BANDEAU BLEU -->
+        <div class="blue-banner">The Blox Bulletin #004</div>
+
+        <!-- IMAGE HERO -->
+        <div class="hero-image-wrapper">
+            <img src="../004/img/1th_img.png" class="hero-image" alt="The Blox Bulletin 004 – Trailer Release">
+        </div>
+
+        <!-- DATE -->
+        <div class="publish-date">15 Mai 2025</div>
+
+        <!-- EN-TÊTE JOURNAL -->
+        <div class="journal-header">
+            <h1 class="journal-title">The Blox Bulletin</h1>
+            <p class="journal-subtitle">Les Légendes s'Élèvent, les Pouvoirs Reviennent : Le Futur est Arrivé !</p>
+            <div class="journal-meta">Numéro : 004 | 10 Avril 2025</div>
+        </div>
+
+        <div class="dashed-line"></div>
+
+        <!-- BANDEAU "C'EST ENFIN LÀ" -->
+        <div class="finally-banner">
+            <span>C'EST ENFIN LÀ</span>
+        </div>
+
+        <!-- ── ARTICLE PRINCIPAL : TRAILER GRAVITY ── -->
+        <div class="trailer-box">
+            <h2>UN NOUVEL ÂGE : RÉVÉLATION DU TRAILER DE LA MISE À JOUR GRAVITY</h2>
+            <span class="byline">Par Red Head & Indra</span>
+
+            <img src="../004/img/TrailerandUpdateRelease.png" alt="Trailer Release – Blox Fruits">
+
+            <p>La prochaine mise à jour de Blox Fruits est presque là, et le trailer a déjà enflammé la communauté d'excitation. Remplie de <strong>reworks majeurs, de nouveau contenu et d'améliorations très attendues</strong>, cette mise à jour s'annonce comme un tournant monumental dans l'histoire du jeu.</p>
+            <p>Ouvrez grand les yeux — car <strong>demain, le trailer est lâché</strong>, et avec lui arrive le futur de Blox Fruits.</p>
+
+            <div class="summary"><b>📌 Résumé :</b>Annonce officielle du trailer de la mise à jour Gravity — déjà sortie actuellement</div>
+        </div>
+
+        <!-- ── ARTICLE LORE : BOSS RAID ── -->
+        <div class="lore-box">
+            <h2>Yeux Rouges, Reliques Brisées, le Silence Prend Fin !</h2>
+            <span class="byline">Par les Gardiens du Lore de Blox</span>
+
+            <img src="../004/img/NewBoss.png" alt="Nouveau Raid Boss – Tiki Outpost">
+
+            <p><strong>Un NOUVEAU Boss de Raid a émergé</strong> — l'un de ceux qui traquent désormais les cieux au-dessus de l'Avant-Poste Tiki.</p>
+            <p>Il faut la lente souillure de la mort — une énergie sombre dérivant à travers l'île depuis les <strong>âmes tombées</strong> — pour awak ne serait-ce qu'une lueur de conscience en lui. Quand suffisamment s'est accumulé, <strong>les yeux de ses gardiens de pierre commencent à briller</strong> — non pas comme un avertissement, mais comme un signe : il a remarqué votre présence.</p>
+            <p>C'est seulement alors que vous devez <strong>détruire ce qu'il chérit...</strong> et vous préparer à voir la tempête prendre son envol.</p>
+            <p>Préparez-vous — vous êtes peut-être le dernier espoir de rendre la paix à l'Avant-Poste Tiki !</p>
+
+            <div class="summary"><b>📌 Résumé :</b>Nouveau boss de raid lié au Tiki Outpost</div>
+        </div>
+
+        <!-- ── SECTION FRUITS ── -->
+        <div class="fruits-section">
+            <h2>Des Fruits du Passé, Forgés pour l'Avenir</h2>
+            <span class="byline">Par les Devs</span>
+
+            <div class="fruits-grid">
+
+                <!-- Fruit Création -->
+                <div class="fruit-card">
+                    <h3>Fruit Création</h3>
+                    <img src="../004/img/Hidden_CR.png" alt="Fruit Création">
+                    <p>Déformez l'arène avec des éclats de <strong>magie prismatique</strong> et des <strong>structures chaotiques</strong>. Invoquez des murs, des accessoires et des illusions colorées pour contrôler l'espace et désorienter vos adversaires. Un terrain de jeu pour les combattants <strong>créatifs et imprévisibles.</strong></p>
+                </div>
+
+                <!-- Fruit Aigle -->
+                <div class="fruit-card">
+                    <h3>Fruit Eagle</h3>
+                    <img src="../004/img/Hidden_EM2.png" alt="Fruit Aigle">
+                    <p>Dominez les cieux avec une <strong>vitesse et un style inégalés</strong>. Planez, plongez et frappez en succession rapide tout en bombardant vos ennemis de <strong>plumes explosives</strong>. Plus rapide, plus spectaculaire, et conçu pour un <strong>combat aérien sans répit.</strong></p>
+                </div>
+
+                <!-- Fruit Gravity -->
+                <div class="fruit-card">
+                    <h3>Fruit Gravity</h3>
+                    <img src="../004/img/Hidden_GM.png" alt="Fruit Gravity">
+                    <p>Écrasez vos ennemis sous une <strong>pression immense</strong> grâce à un contrôle gravitationnel amplifié. Effondrez des trous noirs, renversez l'équilibre du champ de bataille et déchaînez une <strong>force à l'échelle planétaire</strong> à chaque mouvement. Plus lourd, plus puissant et <strong>plus destructeur que jamais.</strong> Avec le Fruit Gravity refondu, nulle créature n'osera se dresser sur votre chemin.</p>
+                </div>
+
+            </div>
+
+            <!-- NOTE JAUNE -->
+            <div class="note-box">
+                <b>Note :</b> Suite à un impact de météore au QG, l'Équipe du Bulletin prend une courte pause. <span class="red">Aucune nouvelle histoire jusqu'à notre retour !</span> Nous reviendrons avant la prochaine mise à jour — <span class="bold-dark">le mois prochain.</span>
+            </div>
+        </div>
+
+
+        <!-- ── BOUTON RETOUR ── -->
+        <div class="back-button-container">
+            <a href="../index.html" class="back-button">← Retour aux Actualités</a>
+        </div>
+
+    </main>
+
+    <!-- ── FOOTER ── -->
+        </div>
+    </footer>
+
+</body>
+</html>

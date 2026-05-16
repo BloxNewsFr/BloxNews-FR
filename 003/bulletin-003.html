@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Le Bulletin Blox #003 – Blox Fruits</title>
+    
+    <link rel="shortcut icon" href="https://gamerrobot.com/cdn/shop/files/bf-logo-l_32x32.png?v=1695322686" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
+
+    <style>
+        @font-face {
+            font-family: 'LuckiestGuy Regular';
+            src: url('../fonts/LuckiestGuy-Regular.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        :root {
+            --color-text: #333132;
+            --color-border: #ebebeb;
+            --font-stack-body: 'Inter', sans-serif;
+            --color-primary: #ffda00;
+        }
+
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: var(--font-stack-body);
+            color: var(--color-text);
+            background-color: #ffffff;
+            line-height: 1.6;
+        }
+
+        /* ── NAVBAR ── */
+        .site-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 55px;
+            background-color: #ffffff;
+            border-bottom: 1px solid var(--color-border);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .site-header__logo img { height: 45px; width: auto; display: block; }
+        .site-nav { display: flex; gap: 25px; padding: 0; margin: 0; list-style: none; }
+        .site-nav a {
+            color: var(--color-text);
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 25px;
+            text-transform: uppercase;
+            font-family: 'LuckiestGuy Regular', 'Luckiest Guy', cursive;
+        }
+        .site-header__icons { display: flex; gap: 20px; color: var(--color-text); cursor: pointer; }
+
+        /* ── CONTENEUR PRINCIPAL ── */
+        .bulletin-container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        /* ── BANDEAU BLEU ── */
+        .blue-banner {
+            background-color: #175ec2;
+            color: #ffffff;
+            text-align: center;
+            padding: 14px;
+            font-size: 33px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-radius: 4px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin-bottom: 25px;
+            font-family: 'LuckiestGuy Regular', 'Luckiest Guy', cursive;
+        }
+
+        /* ── IMAGE HERO ── */
+        .hero-image-wrapper { width: 100%; margin-bottom: 15px; }
+        .hero-image { width: 100%; height: auto; display: block; border-radius: 20px; border: 3px solid #000000; }
+        .publish-date { font-size: 15px; font-weight: bold; color: #222222; margin-bottom: 25px; }
+
+        /* ── EN-TÊTE JOURNAL ── */
+        .journal-header { text-align: center; margin-top: 30px; }
+        .journal-title { font-family: 'Georgia', serif; font-size: 52px; font-weight: bold; color: #111111; margin: 0 0 10px 0; letter-spacing: -1px; }
+        .journal-subtitle { font-family: 'Georgia', serif; font-style: italic; font-size: 18px; color: #555555; margin: 0 0 25px 0; }
+        .journal-meta { font-weight: bold; font-size: 14px; color: #111111; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .dashed-line { border-top: 2px dashed #111111; margin: 15px 0 35px 0; }
+
+        /* ── ALERTE UNE (ROSE / ROUGE) ── */
+        .alert-box {
+            background-color: #fce8e6;
+            border: 2px solid #000000;
+            border-left: 6px solid #c53929;
+            padding: 25px;
+            margin-bottom: 40px;
+        }
+        .alert-title {
+            color: #c53929;
+            font-size: 22px;
+            font-weight: 900;
+            margin: 0 0 4px 0;
+        }
+        .alert-subtitle {
+            font-style: italic;
+            font-size: 13px;
+            color: #555555;
+            margin-bottom: 20px;
+            display: block;
+        }
+        .alert-img {
+            width: 100%;
+            height: auto;
+            border: 3px solid #000000;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+        .alert-text p { margin: 0 0 15px 0; font-size: 14.5px; }
+
+        /* ── LAYOUT DEUX COLONNES ── */
+        .content-columns { display: flex; gap: 30px; margin-bottom: 40px; }
+        .left-col { flex: 1.7; }
+        .right-col { flex: 1.3; background-color: #ececec; padding: 20px; border-radius: 8px; height: fit-content; border: 2px solid #000000; }
+
+        /* ── ARTICLES INLINE ── */
+        .article-title {
+            font-size: 22px;
+            font-weight: 900;
+            color: #111111;
+            margin: 0 0 4px 0;
+            border-bottom: 2px solid #111111;
+            padding-bottom: 6px;
+        }
+        .article-byline {
+            font-style: italic;
+            font-size: 13px;
+            color: #555555;
+            display: block;
+            margin-bottom: 16px;
+        }
+        .article-img {
+            width: 100%;
+            height: auto;
+            border: 3px solid #000000;
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+        .article-img-inline {
+            float: right;
+            width: 220px;
+            height: auto;
+            border: 3px solid #000000;
+            border-radius: 8px;
+            margin: 0 0 12px 18px;
+        }
+        .article-text p { font-size: 14.5px; margin: 0 0 12px 0; }
+        .article-separator { border: none; border-top: 1px solid #cccccc; margin: 30px 0; }
+
+        /* ── SECTION RANGERS ── */
+        .rangers-section { margin-bottom: 30px; }
+        .rangers-inner {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+        .rangers-text { flex: 1; }
+        .rangers-img {
+            width: 230px;
+            flex-shrink: 0;
+            height: auto;
+            border: 3px solid #000000;
+            border-radius: 8px;
+        }
+
+        /* ── STAY TUNED ── */
+        .stay-tuned-italic {
+            font-style: italic;
+            font-size: 14px;
+            color: #444;
+            border-top: 1px solid #111;
+            padding-top: 14px;
+            margin-top: 10px;
+        }
+
+        /* ── RÉSUMÉ ── */
+        .summary {
+            background: rgba(88, 101, 242, 0.09);
+            border-left: 4px solid #5865f2;
+            padding: 12px 16px;
+            margin-top: 15px;
+            font-size: 13.5px;
+            font-style: italic;
+            color: #2c3e50;
+            border-radius: 0 6px 6px 0;
+        }
+        .summary b {
+            color: #5865f2;
+            text-transform: uppercase;
+            font-size: 11px;
+            font-style: normal;
+            display: block;
+            margin-bottom: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        /* ── PARTAGE SOCIAL ── */
+        .social-share {
+            display: flex;
+            gap: 10px;
+            margin: 30px 0 10px 0;
+        }
+        .social-share a {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 8px 14px;
+            border: 2px solid #000;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 700;
+            text-decoration: none;
+            color: #000;
+            text-transform: uppercase;
+        }
+        .social-share a.fb { background-color: #3b5998; color: #fff; border-color: #3b5998; }
+        .social-share a.tw { background-color: #1da1f2; color: #fff; border-color: #1da1f2; }
+        .social-share a.pi { background-color: #e60023; color: #fff; border-color: #e60023; }
+
+        /* ── BOUTON RETOUR ── */
+        .back-button-container { text-align: center; margin: 30px 0 50px 0; }
+        .back-button {
+            background-color: var(--color-primary);
+            color: #000000;
+            font-weight: 900;
+            text-transform: uppercase;
+            padding: 12px 30px;
+            border: 2px solid #000000;
+            text-decoration: none;
+            font-size: 14px;
+            border-radius: 4px;
+            display: inline-block;
+            transition: transform 0.1s;
+        }
+        .back-button:hover { transform: scale(1.03); }
+
+        /* ── FOOTER ── */
+        .site-footer {
+            background-color: #f0f0f0;
+            border-top: 1px solid #cccccc;
+            padding: 40px 55px;
+            display: flex;
+            gap: 60px;
+        }
+        .footer-col h3 { font-size: 15px; font-weight: 900; text-transform: uppercase; margin: 0 0 14px 0; }
+        .footer-col ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+        .footer-col ul li a { color: #333; text-decoration: none; font-size: 14px; }
+        .footer-col ul li a:hover { text-decoration: underline; }
+        .footer-col p { font-size: 13px; color: #555; margin: 0 0 10px 0; }
+        .footer-community-links { display: flex; flex-direction: column; gap: 8px; }
+        .footer-community-links a {
+            color: #175ec2;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        h2 { border-bottom: 2px solid #111111; padding-bottom: 5px; font-size: 22px; font-weight: 900; margin: 0 0 20px 0; color: #111111; }
+
+        @media (max-width: 768px) {
+            .site-header { padding: 12px 20px; }
+            .site-nav { display: none; }
+            .content-columns { flex-direction: column; }
+            .rangers-inner { flex-direction: column; }
+            .rangers-img { width: 100%; }
+            .article-img-inline { float: none; width: 100%; margin: 0 0 12px 0; }
+            .site-footer { flex-direction: column; gap: 30px; padding: 30px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <header class="site-header">
+        <div class="site-header__logo">
+            <img src="../shared/img/logo.png" alt="Blox Fruits">
+        </div>
+        <nav>
+            <ul class="site-nav">
+                <li><a href="https://www.roblox.com/fr/games/2753915549/Blox-Fruits">Game</a></li>
+                <li><a href="#">DLC</a></li>
+                <li><a href="../index.html" style="color: black;">News</a></li>
+            </ul>
+        </nav>
+        <div class="site-header__icons">
+            <span class="material-symbols-outlined">search</span>
+            <span class="material-symbols-outlined">person</span>
+            <span class="material-symbols-outlined">shopping_bag</span>
+        </div>
+    </header>
+
+    <!-- CORPS DU BULLETIN -->
+    <main class="bulletin-container">
+
+        <!-- BANDEAU BLEU -->
+        <div class="blue-banner">The Blox Bulletin #003</div>
+
+        <!-- IMAGE HERO -->
+        <div class="hero-image-wrapper">
+            <img src="../003/img/1th_img.png" class="hero-image" alt="The Blox Bulletin 003">
+        </div>
+
+        <!-- DATE -->
+        <div class="publish-date">15 Mai 2025</div>
+
+        <!-- EN-TÊTE JOURNAL -->
+        <div class="journal-header">
+            <h1 class="journal-title">The Blox Bulletin</h1>
+            <p class="journal-subtitle">Repousser de Nouvelles Frontières</p>
+            <div class="journal-meta">Numéro : 003 | 3 Avril 2025</div>
+        </div>
+
+        <div class="dashed-line"></div>
+
+        <!-- ── À LA UNE : TYRAN DES CIEUX ── -->
+        <div class="alert-box">
+            <h2 class="alert-title">Le Tyran des Cieux : Tiki Outpost Assiégé</h2>
+            <span class="alert-subtitle">Rapport Classifié</span>
+
+            <img src="../003/img/BossEagle.png" alt="Tyran Ailé à l'Avant-Poste Tiki" class="alert-img">
+
+            <div class="alert-text">
+                <p>Les ennuis s'accumulent au paradis ! Le paisible <strong> Tiki Outpost</strong> vit désormais dans la terreur depuis qu'un <strong>mystérieux Tyran Ailé a établi sa domination sur les cieux.</strong> Les habitants rapportent que le tyran amasse trésors et ressources volées, bâtissant son propre Royaume des Cieux, taxe après taxe.</p>
+                <p>Surnommé le <em>« Percepteur du Ciel »</em>, ce boss fond sur les marchés et entrepôts tous les quelques jours. Les marchands chuchotent que des cargaisons entières disparaissent en quelques secondes, et les villageois offrent désormais des tributs pour éviter le désastre.</p>
+                <p><strong>Personne n'ose le défier... et vous ?</strong></p>
+            </div>
+        </div>
+
+        <!-- ── DEUX COLONNES : GRAVITY + CREATION ── -->
+        <div class="content-columns">
+
+            <!-- COLONNE GAUCHE : GRAVITY -->
+            <div class="left-col">
+                <h2 class="article-title">Mystère Météorique Résolu : Gravity Déchaîné !</h2>
+                <span class="article-byline">Par BAMP Empire</span>
+
+                <img src="../003/img/Gravity4.png" alt="Rework de Gravity" class="article-img">
+
+                <div class="article-text">
+                    <p>Les cieux s'effondrent... au sens littéral. <strong>De violentes pluies de météores ont été associées à un utilisateur renégat du Fruit Gravity</strong>, classifié comme Menace de Classe X. Les forces gouvernementales cherchent urgemment à le capturer pour prévenir un chaos gravitationnel et protéger les îles de <strong>nouvelles frappes de météores.</strong></p>
+                    <p>De récents renseignements révèlent une trahison choquante : le renégat a acquis des pouvoirs gravitationnels sans précédent en abusant de la confiance d'un <strong>scientifique réputé pour accéder à des expériences secrètes</strong>. Ces <strong>modifications non autorisées ont conféré à l'utilisateur des capacités</strong> jamais vues auparavant, représentant une menace existentielle bien au-delà des estimations initiales.</p>
+                </div>
+
+                <div class="summary"><b>📌 Résumé :</b>Teaser du rework de Gravity, présenté comme une menace gravitationnelle à l'échelle nationale.</div>
+            </div>
+
+            <!-- COLONNE DROITE : CREATION FRUIT -->
+            <div class="right-col">
+                <h2 style="font-size: 18px; border-bottom: 2px solid #111; padding-bottom: 10px;">Fini les Barrières : La Révolution du Fruit Création</h2>
+                <span class="article-byline" style="margin-top: 5px;">Par la Division de Recherche sur les Fruits</span>
+
+                <div class="article-text" style="font-size: 14px;">
+                    <p>Dans une découverte révolutionnaire, le Département de Recherche sur les Fruits du gouvernement a réussi à <strong>transformer un Fruit Barrier</strong> en l'extraordinaire <strong>Fruit Création</strong>, offrant à ses utilisateurs le pouvoir de matérialiser des objets physiques instantanément à partir de leur imagination.</p>
+                    <p>Ce fruit ne bloque plus — il construit. Les utilisateurs peuvent désormais <strong>faire apparaître d'imposantes structures, invoquer des ponts, des tours et même des forteresses depuis le néant.</strong> Les nations se disputent ce pouvoir pour la guerre, la défense et la construction à grande échelle.</p>
+                    <p>Ce fruit incroyable a déjà amélioré le quotidien des habitants, leur permettant de construire des maisons, de produire des ressources essentielles, et même de secourir un chaton apeuré perché en haut d'un arbre en <strong>invoquant une main bienveillante.</strong></p>
+                </div>
+
+                <img src="../003/img/CatTree2.png" alt="Fruit Création" class="article-img">
+
+                <div class="summary"><b>📌 Résumé :</b>Annonce du fruit Création — évolution du Fruit Barrier avec de nouvelles capacités de construction.</div>
+            </div>
+
+        </div>
+
+        <!-- ── RANGERS REPORT ── -->
+        <div class="rangers-section">
+            <h2 class="article-title">Rapport des Rangers : Une Nouvelle Espèce Prend Son Envol</h2>
+            <span class="article-byline">Société des Observateurs de la Faune Sauvage</span>
+
+            <div class="rangers-inner">
+                <div class="rangers-text">
+                    <div class="article-text">
+                        <p>Une puissante <strong>nouvelle espèce d'aigles a été aperçue planant dans les cieux</strong> — plus rapide, plus féroce et plus adaptable que jamais. Ces créatures remarquables arborent des <strong>variations d'ailes aux couleurs vives</strong> et possèdent l'effrayante capacité de lancer des <strong>plumes explosives</strong>, poussant les autorités à mettre en garde la population contre de potentiels dangers.</p>
+                        <p>Bien que fascinantes, il est conseillé aux observateurs de garder leurs distances, car leurs impressionnants vols acrobatiques peuvent rapidement devenir dangereux.</p>
+                    </div>
+                    <div class="summary"><b>📌 Résumé :</b>Teaser d'une nouvelle espèce d'aigles — probablement un nouveau fruit ou boss à venir.</div>
+                </div>
+                <img src="../003/img/Bird.png" alt="Rapport des Rangers" class="rangers-img">
+            </div>
+
+            <div class="stay-tuned-italic">
+                Restez à l'écoute — Le prochain numéro révèle d'importantes informations sur la prochaine mise à jour !
+            </div>
+        </div>
+
+        <!-- ── BOUTON RETOUR ── -->
+        <div class="back-button-container">
+            <a href="../index.html" class="back-button">← Retour aux Actualités</a>
+        </div>
+
+    </main>
+        </div>
+    </footer>
+
+</body>
+</html>
