@@ -76,7 +76,7 @@
 
                 /* BANDEAU BLEU */
         .blue-banner {
-            background-color: #373737;
+            background-color: #175ec2;
             color: #ffffff;
             text-align: center;
             padding: 14px;
@@ -88,6 +88,23 @@
             margin-bottom: 25px;
             font-family: 'LuckiestGuy Regular', 'Luckiest Guy', cursive;
         }
+
+                /* BOUTON RETOUR */
+        .back-button-container { text-align: center; margin: 40px 0 50px 0; }
+        .back-button {
+            background-color: var(--color-primary);
+            color: #000000;
+            font-weight: 900;
+            text-transform: uppercase;
+            padding: 12px 30px;
+            border: 2px solid #000000;
+            text-decoration: none;
+            font-size: 14px;
+            border-radius: 4px;
+            display: inline-block;
+            transition: transform 0.1s;
+        }
+        .back-button:hover { transform: scale(1.03); }
 
         /* STYLE DES CARTES DE NEWS */
         .news-card {
@@ -189,6 +206,11 @@
 
     <main class="main-content">
         <div class="blue-banner">NeoNews</div>
+
+
+                <div class="back-button-container">
+            <a href="../index.html" class="back-button">←</a>
+        </div>
 
         <div class="news-grid">
 
