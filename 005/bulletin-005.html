@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Le Bulletin Blox #005 – Blox Fruits</title>
+
+    <link rel="shortcut icon" href="https://gamerrobot.com/cdn/shop/files/bf-logo-l_32x32.png?v=1695322686" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
+
+    <style>
+        @font-face {
+            font-family: 'LuckiestGuy Regular';
+            src: url('../fonts/LuckiestGuy-Regular.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        :root {
+            --color-text: #333132;
+            --color-border: #ebebeb;
+            --font-stack-body: 'Inter', sans-serif;
+            --color-primary: #ffda00;
+        }
+
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: var(--font-stack-body);
+            color: var(--color-text);
+            background-color: #ffffff;
+            line-height: 1.6;
+        }
+
+        /* ── NAVBAR ── */
+        .site-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 55px;
+            background-color: #ffffff;
+            border-bottom: 1px solid var(--color-border);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .site-header__logo img { height: 45px; width: auto; display: block; }
+        .site-nav { display: flex; gap: 25px; padding: 0; margin: 0; list-style: none; }
+        .site-nav a {
+            color: var(--color-text);
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 25px;
+            text-transform: uppercase;
+            font-family: 'LuckiestGuy Regular', 'Luckiest Guy', cursive;
+        }
+        .site-header__icons { display: flex; gap: 20px; color: var(--color-text); cursor: pointer; }
+
+        /* ── CONTENEUR ── */
+        .bulletin-container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
+
+        /* ── BANDEAU BLEU ── */
+        .blue-banner {
+            background-color: #175ec2;
+            color: #ffffff;
+            text-align: center;
+            padding: 14px;
+            font-size: 33px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-radius: 4px;
+            margin-bottom: 25px;
+            font-family: 'LuckiestGuy Regular', 'Luckiest Guy', cursive;
+        }
+
+        /* ── HERO ── */
+        .hero-image-wrapper { width: 100%; margin-bottom: 15px; }
+        .hero-image { width: 100%; height: auto; display: block; border-radius: 20px; border: 3px solid #000; }
+        .publish-date { font-size: 15px; font-weight: bold; color: #222; margin-bottom: 25px; }
+
+        /* ── EN-TÊTE JOURNAL ── */
+        .journal-header { text-align: center; margin-top: 30px; }
+        .journal-title { font-family: 'Georgia', serif; font-size: 52px; font-weight: bold; color: #111; margin: 0 0 10px 0; letter-spacing: -1px; }
+        .journal-subtitle { font-family: 'Georgia', serif; font-style: italic; font-size: 18px; color: #555; margin: 0 0 25px 0; }
+        .journal-meta { font-weight: bold; font-size: 14px; color: #111; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .dashed-line { border-top: 2px dashed #111; margin: 15px 0 35px 0; }
+
+        /* ── BANNER RETOUR DE LA RÉDACTION ── */
+        .comeback-box {
+            background-color: #fce8e6;
+            border: 2px solid #000;
+            border-left: 6px solid #c53929;
+            padding: 20px 25px;
+            margin-bottom: 35px;
+            text-align: center;
+        }
+        .comeback-box h2 {
+            color: #111;
+            font-size: 22px;
+            font-weight: 900;
+            margin: 0 0 4px 0;
+            border: none;
+            padding: 0;
+        }
+        .comeback-box .byline {
+            font-style: italic;
+            font-size: 13px;
+            color: #555;
+            display: block;
+            margin-bottom: 14px;
+        }
+        .comeback-box p { font-size: 14.5px; margin: 0 0 10px 0; text-align: left; }
+        .comeback-box p:last-child { margin-bottom: 0; }
+
+        /* ── DEUX COLONNES ── */
+        .content-columns { display: flex; gap: 30px; margin-bottom: 35px; }
+        .left-col { flex: 1.7; }
+        .right-col { flex: 1.3; background-color: #f2f2f2; padding: 20px; border-radius: 8px; height: fit-content; border: 1px solid #ccc; }
+
+        h2 { border-bottom: 2px solid #111; padding-bottom: 5px; font-size: 22px; font-weight: 900; margin: 0 0 6px 0; color: #111; }
+        .section-subtext { font-style: italic; font-size: 13.5px; color: #555; margin-bottom: 16px; display: block; }
+
+        /* ── Q&A ── */
+        .qa-img { width: 100%; height: auto; border: 3px solid #000; border-radius: 8px; margin-bottom: 20px; }
+        .qa-item { margin-bottom: 20px; }
+        .qa-user { font-weight: bold; font-size: 14.5px; margin-bottom: 6px; color: #111; }
+        .qa-answer {
+            border-left: 4px solid #999;
+            padding: 10px 15px;
+            font-size: 14px;
+            color: #222;
+            line-height: 1.55;
+            background-color: #fafafa;
+            margin: 0;
+        }
+        .qa-footer {
+            font-style: italic;
+            font-size: 13.5px;
+            color: #444;
+            margin-top: 16px;
+            border-top: 1px solid #ccc;
+            padding-top: 12px;
+        }
+
+        /* ── COLONNE DROITE CRITIQUE ── */
+        .right-col h2 { font-size: 19px; line-height: 1.3; }
+        .right-col img { width: 100%; height: auto; border: 3px solid #000; border-radius: 6px; margin-bottom: 14px; }
+        .right-col p { font-size: 13.5px; margin: 0 0 12px 0; }
+
+        /* ── ARTICLE STATE PARK ── */
+        .statepark-box {
+            background-color: #f2f2f2;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        .statepark-box h2 { font-size: 22px; }
+        .statepark-inner { display: flex; gap: 20px; align-items: flex-start; margin-top: 14px; }
+        .statepark-text { flex: 1; }
+        .statepark-text p { font-size: 14.5px; margin: 0 0 12px 0; }
+        .statepark-img { width: 240px; flex-shrink: 0; height: auto; border: 3px solid #000; border-radius: 8px; }
+
+        /* ── DEVELOPER THOUGHT ── */
+        .dev-thought-box {
+            background-color: #ffffff;
+            border: 2px solid #000;
+            border-radius: 8px;
+            padding: 20px 25px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+        }
+        .dev-thought-box img { width: 90px; height: 90px; border: 2px solid #000; border-radius: 8px; flex-shrink: 0; object-fit: cover; }
+        .dev-thought-text { font-size: 14.5px; }
+        .dev-thought-title { font-weight: 900; font-size: 18px; margin-bottom: 8px; display: block; }
+
+        /* ── ENCART JAUNE CRÉATION ── */
+        .creation-box {
+            background-color: #fffbe6;
+            border: 2px dashed #c8960c;
+            border-radius: 6px;
+            padding: 20px 25px;
+            margin-bottom: 25px;
+        }
+        .creation-box h3 { font-size: 18px; font-weight: 900; margin: 0 0 10px 0; color: #111; }
+        .creation-box p { font-size: 14.5px; margin: 0; }
+        .creation-box a { color: #175ec2; font-weight: 700; }
+
+        /* ── STAY TUNED ── */
+        .stay-tuned-italic {
+            font-style: italic;
+            font-size: 14px;
+            color: #444;
+            text-align: center;
+            padding: 10px 0 20px 0;
+        }
+
+        /* ── RÉSUMÉ ── */
+        .summary {
+            background: rgba(88, 101, 242, 0.09);
+            border-left: 4px solid #5865f2;
+            padding: 12px 16px;
+            margin-top: 15px;
+            font-size: 13.5px;
+            font-style: italic;
+            color: #2c3e50;
+            border-radius: 0 6px 6px 0;
+        }
+        .summary b {
+            color: #5865f2;
+            text-transform: uppercase;
+            font-size: 11px;
+            font-style: normal;
+            display: block;
+            margin-bottom: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        /* ── PARTAGE SOCIAL ── */
+        .social-share { display: flex; gap: 10px; margin: 20px 0; }
+        .social-share a {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 8px 14px;
+            border: 2px solid #000;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 700;
+            text-decoration: none;
+            color: #000;
+            text-transform: uppercase;
+        }
+        .social-share a.fb { background-color: #3b5998; color: #fff; border-color: #3b5998; }
+        .social-share a.tw { background-color: #1da1f2; color: #fff; border-color: #1da1f2; }
+        .social-share a.pi { background-color: #e60023; color: #fff; border-color: #e60023; }
+
+        /* ── BOUTON RETOUR ── */
+        .back-button-container { text-align: center; margin: 30px 0 50px 0; }
+        .back-button {
+            background-color: var(--color-primary);
+            color: #000;
+            font-weight: 900;
+            text-transform: uppercase;
+            padding: 12px 30px;
+            border: 2px solid #000;
+            text-decoration: none;
+            font-size: 14px;
+            border-radius: 4px;
+            display: inline-block;
+            transition: transform 0.1s;
+        }
+        .back-button:hover { transform: scale(1.03); }
+
+        /* ── FOOTER ── */
+        .site-footer {
+            background-color: #f0f0f0;
+            border-top: 1px solid #ccc;
+            padding: 40px 55px;
+            display: flex;
+            gap: 60px;
+        }
+        .footer-col h3 { font-size: 15px; font-weight: 900; text-transform: uppercase; margin: 0 0 14px 0; }
+        .footer-col ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+        .footer-col ul li a { color: #333; text-decoration: none; font-size: 14px; }
+        .footer-col p { font-size: 13px; color: #555; margin: 0 0 10px 0; }
+        .footer-community-links { display: flex; flex-direction: column; gap: 8px; }
+        .footer-community-links a { color: #175ec2; text-decoration: none; font-weight: 700; font-size: 14px; }
+
+        @media (max-width: 768px) {
+            .site-header { padding: 12px 20px; }
+            .site-nav { display: none; }
+            .content-columns { flex-direction: column; }
+            .statepark-inner { flex-direction: column; }
+            .statepark-img { width: 100%; }
+            .dev-thought-box { flex-direction: column; }
+            .dev-thought-box img { width: 100%; max-width: 160px; }
+            .site-footer { flex-direction: column; gap: 30px; padding: 30px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <header class="site-header">
+        <div class="site-header__logo">
+            <img src="../shared/img/logo.png" alt="Blox Fruits">
+        </div>
+        <nav>
+            <ul class="site-nav">
+                <li><a href="#">Game</a></li>
+                <li><a href="#">Merch</a></li>
+                <li><a href="#">DLC</a></li>
+                <li><a href="../index.html" style="color: black;">Blog</a></li>
+                <li><a href="#" style="font-size:20px;">?</a></li>
+            </ul>
+        </nav>
+        <div class="site-header__icons">
+            <span class="material-symbols-outlined">search</span>
+            <span class="material-symbols-outlined">person</span>
+            <span class="material-symbols-outlined">shopping_bag</span>
+        </div>
+    </header>
+
+    <main class="bulletin-container">
+
+        <!-- BANDEAU BLEU -->
+        <div class="blue-banner">The Blox Bulletin #005</div>
+
+        <!-- HERO -->
+        <div class="hero-image-wrapper">
+            <img src="../005/img/1th_img.png" class="hero-image" alt="The Blox Bulletin 005 – Blox News Live">
+        </div>
+
+        <!-- DATE -->
+        <div class="publish-date">15 Mai 2025</div>
+
+        <!-- EN-TÊTE JOURNAL -->
+        <div class="journal-header">
+            <h1 class="journal-title">The Blox Bulletin</h1>
+            <p class="journal-subtitle">Encre Fraîche, Nouvelles Fraîches : Le Numéro #005 est Arrivé</p>
+            <div class="journal-meta">Numéro : 005 | 9 Mai 2025</div>
+        </div>
+
+        <div class="dashed-line"></div>
+
+        <!-- RETOUR DE LA RÉDACTION -->
+        <div class="comeback-box">
+            <h2>Chaîne 4 : Fruitcast News</h2>
+            <span class="byline">Par : L'Équipe du Bulletin</span>
+            <p><strong>On est de retour !</strong> Après des semaines de silence et un fâcheux incident météoritique au bureau, la salle de rédaction est de retour — plus grande, plus brillante, et avec 43 % de chaises supplémentaires !</p>
+            <p>Le nouveau QG est opérationnel et les presses tournent à nouveau. Laissez-nous vous remettre à jour.</p>
+        </div>
+
+        <!-- DEUX COLONNES : Q&A + CRITIQUE -->
+        <div class="content-columns">
+
+            <!-- GAUCHE : Q&A DEVS #2 -->
+            <div class="left-col">
+                <h2>Questions aux Développeurs #2</h2>
+                <span class="section-subtext">Réponses de l'Équipe</span>
+
+                <img src="../005/img/QandA.png" alt="Podcast avec les développeurs" class="qa-img">
+
+                <div class="qa-item">
+                    <div class="qa-user">Doma : Prévoyez-vous de publier une nouvelle feuille de route des mises à jour ?</div>
+                    <div class="qa-answer">Même si nous savons que les joueurs sont impatients d'avoir une roadmap, nous avons appris qu'en s'y engageant, on se fait souvent plus de mal que de bien. Livrer des mises à jour de qualité — dans les temps, sans compromis — n'est pas toujours prévisible des mois à l'avance. Cela dit, la prochaine mise à jour étant déjà bien avancée, vous pourriez commencer à sentir le rythme s'accélérer.</div>
+                </div>
+
+                <div class="qa-item">
+                    <div class="qa-user">Mystic : Allez-vous vous concentrer sur le rework de tous les fruits avant d'en ajouter de nouveaux ?</div>
+                    <div class="qa-answer">Nous visons à ce qu'aucun fruit ne soit laissé pour compte en matière de rework — mais cela ne nous a pas empêchés de créer et sortir de <strong>nouveaux fruits uniques</strong> en chemin...</div>
+                </div>
+
+                <div class="qa-item">
+                    <div class="qa-user">EternityRuler : Quand les chromatiques Dragon restants seront-ils sortis ?</div>
+                    <div class="qa-answer">Un <strong>nouveau chromatique</strong> arrive bientôt — et ce n'est pas pour le Fruit Dragon. Les Chromatiques Dragon sortent toujours, mais nous nous assurons qu'ils soient <strong>ajustés efficacement</strong> sur la base des retours de la première sortie du skin Eclipse.</div>
+                </div>
+
+                <div class="qa-item">
+                    <div class="qa-user">Divinity : Reworkez-vous le grinding ou ajoutez-vous des éléments de storyline ?</div>
+                    <div class="qa-answer">Oui. De nouveaux types de quêtes, la progression narrative et des récompenses de niveaux gratuites sont tous en cours d'exploration pour faire du grind en début de jeu une <strong>expérience bien meilleure pour les débutants.</strong></div>
+                </div>
+
+                <div class="qa-item">
+                    <div class="qa-user">Pho : Y a-t-il un plan pour lutter contre le power creep ?</div>
+                    <div class="qa-answer">Absolument. Nous évaluons différentes méthodes — que ce soit réduire la vitesse à laquelle les combats se terminent, ou donner aux joueurs des moyens de devenir plus résistants. <strong>Nous explorons des options qui ne retirent pas le fun et l'essence du PvP.</strong></div>
+                </div>
+
+                <p class="qa-footer"><em>Vous avez une question ? Postez-la sur le Discord, elle pourrait apparaître dans la prochaine Q&A !</em></p>
+
+                <div class="summary"><b>📌 Résumé :</b>Roadmap flexible, nouveaux fruits en parallèle des reworks, chromatique Dragon ajusté, amélioration du grind débutant et lutte contre le power creep.</div>
+            </div>
+
+            <!-- DROITE : CRITIQUE CONSTRUCTIVE -->
+            <div class="right-col">
+                <h2 style="font-size: 19px; border-bottom: 2px solid #111; padding-bottom: 8px; line-height: 1.3;">Engrenages en Marche, Esprits en Ébullition, et Critique Constructive Modérée</h2>
+                <span class="section-subtext">Par Boome E.R. Jenkins</span>
+
+                <img src="../005/img/Criticism.png" alt="Critique constructive – Fruit Création" style="width:100%; height:auto; border:3px solid #000; border-radius:6px; margin-bottom:14px;">
+
+                <p>De mon temps, les mers, c'était une question de courage, de timing et d'avoir l'œil aiguisé ! Pas de réaliser des cascades tape-à-l'œil comme si vous passiez une audition pour un show télévisé !</p>
+
+                <p>De nos jours, ces <strong>utilisateurs du Fruit Création</strong> traitent le monde comme un numéro de cirque ! J'ai vu quelqu'un ricocher sur un mur en plein combat et appeler ça des « tactiques de haut niveau ».</p>
+
+                <p>J'ai du respect pour la créativité... mais peut-être — juste peut-être — que ce pouvoir pourrait servir à construire quelque chose avec un peu plus de soin. Aider le monde à respirer à nouveau. Créer quelque chose qui dure. Pas tout ce qui vole doit décoller vers le ciel... peut-être quelque chose qui pourrait <strong>aider les autres à avancer</strong>, ou même laisser quelque chose de vert <strong>reprendre racine</strong>, qui sait !</p>
+
+                <p>Juste une pensée. Mais sérieusement, ça vaut la peine d'y réfléchir.</p>
+
+                <div class="summary"><b>📌 Résumé :</b>Chronique d'opinion humoristique sur les joueurs du Fruit Création.</div>
+            </div>
+        </div>
+
+        <!-- THE STATE PARK REOPENS -->
+        <div class="statepark-box">
+            <h2>Le Parc d'État Rouvre ses Portes !</h2>
+            <span class="section-subtext">Par Twiggy Logleaf</span>
+            <div class="statepark-inner">
+                <div class="statepark-text">
+                    <p>Le parc d'État longtemps oublié est de retour — et c'est déjà un succès ! Les campeurs se <strong>rassemblent autour des feux de camp</strong>, y jetant viandes, herbes et mystérieuses pelures de fruits lumineux.</p>
+                    <p>« Ce n'est pas juste dormir sous les étoiles, » dit un campeur. « C'est une connexion avec la nature — et avec des indices d'un <strong>ragoût lumineux</strong> qui parle. Mais qu'est-ce qu'il y avait dedans, au juste ? »</p>
+                </div>
+                <img src="../005/img/StatePark.png" alt="Le Parc d'État rouvre" class="statepark-img">
+            </div>
+            <div class="summary"><b>📌 Résumé :</b>Teaser d'une nouvelle zone — le Parc d'État — avec une mécanique mystérieuse autour des feux de camp.</div>
+        </div>
+
+        <!-- DEVELOPER THOUGHT -->
+        <div class="dev-thought-box">
+            <img src="../005/img/DevThought.png" alt="Pensée des développeurs – Heart of Tiki">
+            <div class="dev-thought-text">
+                <span class="dev-thought-title">Pensée des Développeurs</span>
+                Suite à la célébration de la défaite du Tyran Aigle, le Chef de l'Avant-Poste Tiki a révélé que le légendaire <strong>« Cœur de Tiki »</strong> est réel — et que voyager vers ces lieux sacrés a enfin été autorisé <strong>pour ceux qui ont aidé à abattre le Tyran</strong>. Ce sera un sacré voyage !
+            </div>
+        </div>
+
+        <!-- ENCART CRÉATION BUILDS -->
+        <div class="creation-box">
+            <h3>🏗 Montrez vos Créations du Fruit Création !</h3>
+            <p>Vous avez construit quelque chose d'incroyable avec le Fruit Création ? On veut voir ça ! Soumettez vos <strong>meilleures constructions</strong> via ce formulaire : <a href="#">Soumettre une Création</a> — et vous pourriez être <strong>mis en avant dans le prochain numéro !</strong></p>
+        </div>
+
+        <!-- STAY TUNED -->
+        <div class="stay-tuned-italic">
+            Plus de révélations et de contenu communautaire vous attendent dans le numéro #006 !
+        </div>
+
+        <!-- PARTAGE SOCIAL -->
+        <div class="social-share">
+            <a href="#" class="fb">📱 Partager</a>
+            <a href="#" class="tw">🐦 Tweeter</a>
+            <a href="#" class="pi">📌 Épingler</a>
+        </div>
+
+        <!-- BOUTON RETOUR -->
+        <div class="back-button-container">
+            <a href="../index.html" class="back-button">← Retour aux Actualités</a>
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="site-footer">
+        <div class="footer-col">
+            <h3>Liens Rapides</h3>
+            <ul>
+                <li><a href="#">Recherche</a></li>
+                <li><a href="#">Politique de Remboursement</a></li>
+                <li><a href="#">Politique de Confidentialité</a></li>
+                <li><a href="#">Conditions d'Utilisation</a></li>
+            </ul>
+        </div>
+        <div class="footer-col">
+            <h3>Rejoindre la Communauté</h3>
+            <p>Restez connecté avec la communauté Blox Fruits !</p>
+            <div class="footer-community-links">
+                <a href="#">🎮 Discord</a>
+                <a href="#">🐦 Twitter / X</a>
+                <a href="#">▶️ YouTube</a>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
