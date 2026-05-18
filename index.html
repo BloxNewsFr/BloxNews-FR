@@ -26,20 +26,19 @@
         * { box-sizing: border-box; }
 
         /* ── CONFIGURATION DU BACKGROUND PROPRE ET SANS PERTE ── */
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: var(--font-stack-body);
-            color: var(--color-text);
-            background-color: #ffffff;
-            
-            /* L'image se cale sous la barre (hauteur estimée de la barre : 86px) */
-            background-image: url('./shared/background.png'); 
-            background-repeat: no-repeat;
-            background-position: center 86px; 
-            background-size: contain; 
-            min-height: 100vh; /* Force la page à faire au moins toute la hauteur de l'écran */
-        }
+body {
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-stack-body);
+    color: var(--color-text);
+    background-color: #ffffff;
+    
+    background-image: url('./shared/background.png'); 
+    background-repeat: no-repeat;
+    background-position: center 85px; /* ── MODIFIÉ ICI ── */
+    background-size: contain; 
+    min-height: 100vh;
+}
 
         /* 🎯 PRESERVATION QUALITÉ PNG DU FOND UNIQUEMENT */
         @supports (background-image: url('./shared/background.png')) {
@@ -56,19 +55,19 @@
         }
 
         /* ── NAVBAR ── */
-        .site-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 15px 55px;
-            background-color: #ffffff;
-            border-bottom: 1px solid var(--color-border);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            font-family: 'LuckiestGuy Regular', cursive;
-            height: 86px; /* On fixe la hauteur pour correspondre au démarrage de l'image de fond */
-        }
+.site-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 55px;
+    background-color: #ffffff;
+    border-bottom: none; /* ── MODIFIÉ ICI ── */
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    font-family: 'LuckiestGuy Regular', cursive;
+    height: 85px; /* ── RECALIBRÉ ICI ── */
+}
         .site-header__logo img { height: 45px; width: auto; display: block; }
         .site-nav { display: flex; gap: 25px; padding: 0; margin: 0; list-style: none; }
         .site-nav a { color: var(--color-text); text-decoration: none; font-weight: 700; font-size: 25px; text-transform: uppercase; }
