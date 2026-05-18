@@ -16,32 +16,6 @@
             font-style: normal;
         }
 
-body {
-    margin: 0;
-    padding: 0;
-    /* On applique le fond normalement */
-    background-image: url('./shared/background.png'); 
-    background-repeat: no-repeat;
-    background-position: top center;
-    background-size: contain; /* ou 100% auto */
-    
-    /* ❌ ON ENLÈVE l'image-rendering d'ici pour ne pas casser les autres images */
-}
-
-/* 🎯 ON CIBLE UNIQUEMENT LE FOND DU BODY POUR LA QUALITÉ DU PNG */
-@supports (background-image: url('./shared/background.png')) {
-    body {
-        image-rendering: -webkit-optimize-contrast;
-        image-rendering: crisp-edges;
-    }
-}
-
-/* 🛡️ ON FORCE TOUTES LES AUTRES IMAGES DU SITE À RESTER NORMALES ET FLUIDES */
-img, .site-header img, .chromatic-card img, .wanted-img {
-    image-rendering: auto !important;
-    transform: translateZ(0); /* Force le lissage matériel du navigateur */
-}
-
         :root {
             --color-text: #333132;
             --color-border: #ebebeb;
@@ -50,11 +24,35 @@ img, .site-header img, .chromatic-card img, .wanted-img {
         }
 
         * { box-sizing: border-box; }
+
+        /* ── CONFIGURATION DU BACKGROUND PROPRE ET SANS PERTE ── */
         body {
             margin: 0;
+            padding: 0;
             font-family: var(--font-stack-body);
             color: var(--color-text);
             background-color: #ffffff;
+            
+            /* L'image se cale sous la barre (hauteur estimée de la barre : 86px) */
+            background-image: url('./shared/background.png'); 
+            background-repeat: no-repeat;
+            background-position: center 86px; 
+            background-size: contain; 
+            min-height: 100vh; /* Force la page à faire au moins toute la hauteur de l'écran */
+        }
+
+        /* 🎯 PRESERVATION QUALITÉ PNG DU FOND UNIQUEMENT */
+        @supports (background-image: url('./shared/background.png')) {
+            body {
+                image-rendering: -webkit-optimize-contrast;
+                image-rendering: crisp-edges;
+            }
+        }
+
+        /* 🛡️ EFFET MIROIR POUR QUE TOUTES LES AUTRES IMAGES DU SITE RESTENT NETTES ET FLUIDES */
+        img, .site-header img, .news-card__image {
+            image-rendering: auto !important;
+            transform: translateZ(0);
         }
 
         /* ── NAVBAR ── */
@@ -69,6 +67,7 @@ img, .site-header img, .chromatic-card img, .wanted-img {
             top: 0;
             z-index: 1000;
             font-family: 'LuckiestGuy Regular', cursive;
+            height: 86px; /* On fixe la hauteur pour correspondre au démarrage de l'image de fond */
         }
         .site-header__logo img { height: 45px; width: auto; display: block; }
         .site-nav { display: flex; gap: 25px; padding: 0; margin: 0; list-style: none; }
@@ -248,10 +247,11 @@ img, .site-header img, .chromatic-card img, .wanted-img {
         }
 
         @media (max-width: 768px) {
-            .site-header { padding: 15px 20px; }
+            .site-header { padding: 15px 20px; height: auto; }
             .site-nav { display: none; }
             .news-grid { grid-template-columns: 1fr; }
             .pagination-bar { flex-direction: column; align-items: flex-start; gap: 12px; }
+            body { background-position: center top; }
         }
     </style>
 </head>
@@ -279,7 +279,6 @@ img, .site-header img, .chromatic-card img, .wanted-img {
 
         <div class="blue-banner">NeoNews</div>
 
-        <!-- TITRE + FLÈCHES (haut) -->
         <div class="pagination-bar">
             <h1 class="page-title"></h1>
             <div class="pagination-controls">
@@ -289,10 +288,8 @@ img, .site-header img, .chromatic-card img, .wanted-img {
             </div>
         </div>
 
-        <!-- GRILLE DES CARTES -->
         <div class="news-grid" id="news-grid"></div>
 
-        <!-- FLÈCHES BAS -->
         <div class="pagination-bottom">
             <button id="prev-bot" onclick="changePage(-1)" disabled>←</button>
             <span class="pagination-info" id="page-info-bot">1 / 4</span>
