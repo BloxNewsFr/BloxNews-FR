@@ -19,21 +19,27 @@
 body {
     margin: 0;
     padding: 0;
-    /* L'arrière-plan commence sous la barre si ta barre est dans le flux normal du HTML */
-    background-image: url('./shared/background.png'); /* Remplace par le nom exact de ton PNG */
-    
-    /* Préserve la qualité maximale de l'image */
+    /* On applique le fond normalement */
+    background-image: url('./shared/background.png'); 
     background-repeat: no-repeat;
-    background-position: top center; /* Aligne l'image en haut pour démarrer sous la barre */
+    background-position: top center;
+    background-size: contain; /* ou 100% auto */
     
-    /* Options de taille pour respecter la qualité : */
-    background-size: contain; /* Ajuste l'image entière sans la déformer ni rogner sa qualité */
-    /* OU utilise la ligne ci-dessous si tu veux que l'image prenne toute la largeur sans zoom destructeur : */
-    /* background-size: 100% auto; */
-    
-    /* Empêche le flou de compression du navigateur sur les bords nets du PNG */
-    image-rendering: -webkit-optimize-contrast;
-    image-rendering: crisp-edges;
+    /* ❌ ON ENLÈVE l'image-rendering d'ici pour ne pas casser les autres images */
+}
+
+/* 🎯 ON CIBLE UNIQUEMENT LE FOND DU BODY POUR LA QUALITÉ DU PNG */
+@supports (background-image: url('./shared/background.png')) {
+    body {
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: crisp-edges;
+    }
+}
+
+/* 🛡️ ON FORCE TOUTES LES AUTRES IMAGES DU SITE À RESTER NORMALES ET FLUIDES */
+img, .site-header img, .chromatic-card img, .wanted-img {
+    image-rendering: auto !important;
+    transform: translateZ(0); /* Force le lissage matériel du navigateur */
 }
 
         :root {
