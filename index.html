@@ -25,45 +25,35 @@
 
         * { box-sizing: border-box; }
 
+        /* ── BACKGROUND PROPRE ET FLUIDE SUR TOUT L'ÉCRAN ── */
         body {
             margin: 0;
             padding: 0;
             font-family: var(--font-stack-body);
             color: var(--color-text);
             background-color: #ffffff;
+            
+            background-image: url('./shared/background2.jpeg'); 
+            background-repeat: no-repeat;
+            background-position: center top; /* Calé en haut au centre */
+            background-size: cover;          /* S'adapte à 100% de l'écran sans déformer ni laisser de blanc */
+            background-attachment: fixed;    /* Bloque le fond pendant le défilement */
             min-height: 100vh;
         }
 
-        /* ── LE SITE BACKGROUND DÉDIÉ PRÉCIS AU PIXEL PRÈS ── */
-        .bg-container {
-            position: fixed;
-            top: 85px; /* Démarre PILE sous ta barre de 85px */
-            left: 0;
-            width: 100%;
-            height: calc(100vh - 85px); /* Occupe tout le reste de l'écran */
-            z-index: -1; /* Se place derrière tout ton contenu */
-            
-            background-image: url('./shared/background2.jpeg');
-            background-repeat: no-repeat;
-            background-position: top center;
-            background-size: cover; /* Remplit l'espace de manière moderne, nette et fluide */
-        }
-
-        /* ── NAVBAR ── */
+        /* ── NAVBAR ÉPINGLÉE EN HAUT ── */
         .site-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding: 15px 55px;
             background-color: #ffffff;
-            border-bottom: none; 
             position: sticky;
             top: 0;
             z-index: 1000;
             font-family: 'LuckiestGuy Regular', cursive;
-            height: 85px; 
+            height: 85px;
         }
-
         .site-header__logo img { height: 45px; width: auto; display: block; }
         .site-nav { display: flex; gap: 25px; padding: 0; margin: 0; list-style: none; }
         .site-nav a { color: var(--color-text); text-decoration: none; font-weight: 700; font-size: 25px; text-transform: uppercase; }
@@ -133,20 +123,14 @@
             color: #aaa;
             cursor: not-allowed;
         }
-        .pagination-info {
-            font-size: 15px;
-            font-weight: 700;
-            color: #444;
-            min-width: 60px;
-            text-align: center;
-        }
-
+        
         .pagination-info-bis {
             font-size: 15px;
             font-weight: 700;
-            color: #e0e0e0;
+            color: #ffffff; /* Passé en blanc pour être lisible sur fond sombre */
             min-width: 60px;
             text-align: center;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
         }
 
         /* ── GRILLE ── */
@@ -254,18 +238,10 @@
             .site-nav { display: none; }
             .news-grid { grid-template-columns: 1fr; }
             .pagination-bar { flex-direction: column; align-items: flex-start; gap: 12px; }
-            body { background-position: center top; }
         }
     </style>
 </head>
 <body>
-
-    <div class="bg-container"></div>
-
-    <header class="site-header">
-        <div class="site-header__logo">
-            <img src="./BF_news.png" alt="Blox Fruits">
-        </div>
 
     <header class="site-header">
         <div class="site-header__logo">
