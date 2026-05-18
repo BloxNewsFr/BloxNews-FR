@@ -25,8 +25,6 @@
 
         * { box-sizing: border-box; }
 
-        /* ── UN SEUL BLOC BODY PROPRE POUR LE BACKGROUND ── */
-        /* ── UN SEUL BLOC BODY PROPRE POUR LE BACKGROUND ── */
         body {
             margin: 0;
             padding: 0;
@@ -37,8 +35,8 @@
             /* Configuration pour étirer l'image proprement sur toute la largeur */
             background-image: url('./shared/background2.jpeg'); 
             background-repeat: no-repeat;
-            background-position: center 85px; /* Reste calé pile sous les 85px de la navbar */
-            background-size: 100% auto;       /* 🎯 PREND TOUTE LA LARGEUR DE L'ÉCRAN SANS ÊTRE COUPÉ EN HAUT */
+            background-position: center 80px; /* 🎯 MODIFIÉ À 80px : l'image remonte de 5px et la ligne blanche est masquée par le menu ! */
+            background-size: 100% auto;       
             min-height: 100vh;
         }
 
