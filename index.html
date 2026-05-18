@@ -25,50 +25,36 @@
 
         * { box-sizing: border-box; }
 
-        /* ── CONFIGURATION DU BACKGROUND PROPRE ET SANS PERTE ── */
-body {
-    margin: 0;
-    padding: 0;
-    font-family: var(--font-stack-body);
-    color: var(--color-text);
-    background-color: #ffffff;
-    
-    /* ── CONFIGURATION DU FOND JPEG ── */
-    background-image: url('./shared/background2.jpeg'); /* Vérifie bien que l'extension est .jpg ou .jpeg */
-    background-repeat: no-repeat;
-    background-position: center 85px; /* Aligné pile sous les 85px de la navbar */
-    background-size: contain; 
-    min-height: 100vh;
-}
-
-        /* 🎯 PRESERVATION QUALITÉ PNG DU FOND UNIQUEMENT */
-        @supports (background-image: url('./shared/background2.jpeg')) {
-            body {
-                image-rendering: -webkit-optimize-contrast;
-                image-rendering: crisp-edges;
-            }
-        }
-
-        /* 🛡️ EFFET MIROIR POUR QUE TOUTES LES AUTRES IMAGES DU SITE RESTENT NETTES ET FLUIDES */
-        img, .site-header img, .news-card__image {
-            image-rendering: auto !important;
-            transform: translateZ(0);
+        /* ── UN SEUL BLOC BODY PROPRE POUR LE BACKGROUND ── */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: var(--font-stack-body);
+            color: var(--color-text);
+            background-color: #ffffff; /* Couleur de fond si l'image ne remplit pas tout */
+            
+            /* Configuration haute qualité sans étirement */
+            background-image: url('./shared/background2.jpeg'); /* Ajuste ici si c'est .jpg ou .jpeg */
+            background-repeat: no-repeat;
+            background-position: top center; 
+            background-size: auto; /* Garde la netteté et la taille d'origine de ton image */
+            min-height: 100vh;
         }
 
         /* ── NAVBAR ── */
-.site-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 15px 55px;
-    background-color: #ffffff;
-    border-bottom: none; /* Supprime définitivement la ligne blanche */
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    font-family: 'LuckiestGuy Regular', cursive;
-    height: 85px; /* Hauteur fixe pour faire la jonction parfaite avec le fond */
-}
+        .site-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 55px;
+            background-color: #ffffff;
+            border-bottom: none; /* Plus de ligne blanche */
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            font-family: 'LuckiestGuy Regular', cursive;
+            height: 85px; 
+        }
         .site-header__logo img { height: 45px; width: auto; display: block; }
         .site-nav { display: flex; gap: 25px; padding: 0; margin: 0; list-style: none; }
         .site-nav a { color: var(--color-text); text-decoration: none; font-weight: 700; font-size: 25px; text-transform: uppercase; }
@@ -146,7 +132,7 @@ body {
             text-align: center;
         }
 
-                .pagination-info-bis {
+        .pagination-info-bis {
             font-size: 15px;
             font-weight: 700;
             color: #e0e0e0;
