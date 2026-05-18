@@ -25,24 +25,28 @@
 
         * { box-sizing: border-box; }
 
-        /* ── UN SEUL BLOC BODY PROPRE POUR LE BACKGROUND ── */
         body {
             margin: 0;
             padding: 0;
             font-family: var(--font-stack-body);
             color: var(--color-text);
-            background-color: #ffffff; 
-            
-            /* Configuration par masquage sous la barre */
-            background-image: url('./shared/background2.jpeg'); 
-            background-repeat: no-repeat;
-            background-position: top center; /* Fixé tout en haut derrière le menu */
-            background-size: 100% auto;       
+            background-color: #ffffff;
             min-height: 100vh;
+        }
+
+        /* ── LE SITE BACKGROUND DÉDIÉ PRÉCIS AU PIXEL PRÈS ── */
+        .bg-container {
+            position: fixed;
+            top: 85px; /* Démarre PILE sous ta barre de 85px */
+            left: 0;
+            width: 100%;
+            height: calc(100vh - 85px); /* Occupe tout le reste de l'écran */
+            z-index: -1; /* Se place derrière tout ton contenu */
             
-            /* 🎯 L'ASTUCE : On décale tout le contenu interne de la page de 85px vers le bas 
-               pour laisser le menu respirer sans bouger l'image de fond */
-            padding-top: 85px; 
+            background-image: url('./shared/background2.jpeg');
+            background-repeat: no-repeat;
+            background-position: top center;
+            background-size: cover; /* Remplit l'espace de manière moderne, nette et fluide */
         }
 
         /* ── NAVBAR ── */
@@ -255,6 +259,13 @@
     </style>
 </head>
 <body>
+
+    <div class="bg-container"></div>
+
+    <header class="site-header">
+        <div class="site-header__logo">
+            <img src="./BF_news.png" alt="Blox Fruits">
+        </div>
 
     <header class="site-header">
         <div class="site-header__logo">
