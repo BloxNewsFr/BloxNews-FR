@@ -16,12 +16,24 @@
             font-style: normal;
         }
 
-        body {
-    background-image: url('./shared/background.png');
-    background-size: cover;
-    background-position: center;
+body {
+    margin: 0;
+    padding: 0;
+    /* L'arrière-plan commence sous la barre si ta barre est dans le flux normal du HTML */
+    background-image: url('nom_de_ton_fichier.png'); /* Remplace par le nom exact de ton PNG */
+    
+    /* Préserve la qualité maximale de l'image */
     background-repeat: no-repeat;
-    background-attachment: fixed;
+    background-position: top center; /* Aligne l'image en haut pour démarrer sous la barre */
+    
+    /* Options de taille pour respecter la qualité : */
+    background-size: contain; /* Ajuste l'image entière sans la déformer ni rogner sa qualité */
+    /* OU utilise la ligne ci-dessous si tu veux que l'image prenne toute la largeur sans zoom destructeur : */
+    /* background-size: 100% auto; */
+    
+    /* Empêche le flou de compression du navigateur sur les bords nets du PNG */
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
 }
 
         :root {
