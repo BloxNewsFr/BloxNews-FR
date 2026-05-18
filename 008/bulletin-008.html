@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Le Bulletin Blox #008 – Blox Fruits</title>
+
+    <link rel="icon" type="image/png" href="./shared/favicon.png">
+    <link rel="shortcut icon" href="../shared/bf_logo.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
+
+    <style>
+        @font-face {
+            font-family: 'LuckiestGuy Regular';
+            src: url('../fonts/LuckiestGuy-Regular.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        :root {
+            --color-text: #333132;
+            --color-border: #ebebeb;
+            --font-stack-body: 'Inter', sans-serif;
+            --color-primary: #ffda00;
+        }
+
+        * { box-sizing: border-box; }
+        body { margin: 0; font-family: var(--font-stack-body); color: var(--color-text); background-color: #fff; line-height: 1.6; }
+
+        /* ── NAVBAR ── */
+        .site-header { display: flex; align-items: center; justify-content: space-between; padding: 15px 55px; background-color: #fff; border-bottom: 1px solid var(--color-border); position: sticky; top: 0; z-index: 1000; }
+        .site-header__logo img { height: 45px; width: auto; display: block; }
+        .site-nav { display: flex; gap: 25px; padding: 0; margin: 0; list-style: none; }
+        .site-nav a { color: var(--color-text); text-decoration: none; font-weight: 700; font-size: 25px; text-transform: uppercase; font-family: 'LuckiestGuy Regular', 'Luckiest Guy', cursive; }
+        .site-header__icons { display: flex; gap: 20px; color: var(--color-text); cursor: pointer; }
+
+        /* ── CONTENEUR ── */
+        .bulletin-container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
+
+        /* ── BANDEAU BLEU ── */
+        .blue-banner { background-color: #175ec2; color: #fff; text-align: center; padding: 14px; font-size: 33px; text-transform: uppercase; letter-spacing: 2px; border-radius: 4px; margin-bottom: 25px; font-family: 'LuckiestGuy Regular', 'Luckiest Guy', cursive; }
+
+        /* ── HERO ── */
+        .hero-image-wrapper { width: 100%; margin-bottom: 15px; }
+        .hero-image { width: 100%; height: auto; display: block; border-radius: 20px; border: 3px solid #000; }
+        .publish-date { font-size: 15px; font-weight: bold; color: #222; margin-bottom: 25px; }
+
+        /* ── EN-TÊTE JOURNAL ── */
+        .journal-header { text-align: center; margin-top: 30px; }
+        .journal-title { font-family: 'Georgia', serif; font-size: 52px; font-weight: bold; color: #111; margin: 0 0 10px 0; letter-spacing: -1px; }
+        .journal-subtitle { font-family: 'Georgia', serif; font-style: italic; font-size: 18px; color: #555; margin: 0 0 25px 0; }
+        .journal-meta { font-weight: bold; font-size: 14px; color: #111; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .dashed-line { border-top: 2px dashed #111; margin: 15px 0 35px 0; }
+
+        /* ── ARTICLE LORE GRIS ── */
+        .lore-box { background-color: #f2f2f2; border: 1px solid #ccc; border-radius: 6px; padding: 25px; margin-bottom: 35px; }
+        .lore-box h2 { font-size: 22px; font-weight: 900; color: #111; margin: 0 0 4px 0; border-bottom: 2px solid #111; padding-bottom: 6px; }
+        .lore-box .byline { font-style: italic; font-size: 13px; color: #555; display: block; margin-bottom: 16px; }
+        .lore-inner { display: flex; gap: 20px; align-items: flex-start; }
+        .lore-inner img { width: 180px; flex-shrink: 0; height: auto; border: 3px solid #000; border-radius: 8px; }
+        .lore-text p { font-size: 14.5px; margin: 0 0 12px 0; }
+
+        /* ── RÉSUMÉ ── */
+        .summary { background: rgba(88,101,242,0.09); border-left: 4px solid #5865f2; padding: 12px 16px; margin-top: 15px; font-size: 13.5px; font-style: italic; color: #2c3e50; border-radius: 0 6px 6px 0; }
+        .summary b { color: #5865f2; text-transform: uppercase; font-size: 11px; font-style: normal; display: block; margin-bottom: 4px; letter-spacing: 0.5px; }
+
+        /* ── DEUX COLONNES ── */
+        .content-columns { display: flex; gap: 30px; margin-bottom: 35px; }
+        .left-col { flex: 1.7; }
+        .right-col { flex: 1.3; background-color: #f2f2f2; padding: 20px; border-radius: 8px; border: 1px solid #ccc; height: fit-content; }
+
+        h2 { border-bottom: 2px solid #111; padding-bottom: 5px; font-size: 22px; font-weight: 900; margin: 0 0 6px 0; color: #111; }
+        .section-subtext { font-style: italic; font-size: 13.5px; color: #555; margin-bottom: 16px; display: block; }
+
+        /* ── RAPPORT (GAUCHE) ── */
+        .col-img { width: 100%; height: auto; border: 3px solid #000; border-radius: 8px; margin-bottom: 16px; }
+        .col-text p { font-size: 14.5px; margin: 0 0 12px 0; }
+
+        /* ── DESIGN RÉSULTATS SONDAGE (DROITE) ── */
+        .poll-results-box { background-color: #ffffff; border: 2px solid #175ec2; border-radius: 8px; padding: 16px; margin-top: 12px; }
+        .poll-results-box h3 { font-size: 16px; font-weight: 900; margin: 0 0 12px 0; color: #111; text-transform: uppercase; }
+        .result-bar-wrapper { margin-bottom: 12px; }
+        .result-label { display: flex; justify-content: space-between; font-size: 12.5px; font-weight: bold; margin-bottom: 4px; }
+        .bar-container { background-color: #e0e0e0; height: 12px; border-radius: 6px; overflow: hidden; border: 1px solid #aaa; }
+        .bar-fill { background-color: #175ec2; height: 100%; border-radius: 5px; }
+        .bar-fill.winner { background-color: #6c47b8; } /* Option gagnante du sondage 007 */
+
+        /* ── SECTION INFÉRIEURE (BOSS/ÉVÉNEMENT) ── */
+        .boss-section { margin-bottom: 30px; }
+        .boss-inner { display: flex; gap: 20px; align-items: flex-start; margin-top: 14px; }
+        .boss-text { flex: 1; }
+        .boss-text p { font-size: 14.5px; margin: 0 0 12px 0; }
+        .boss-img { width: 280px; flex-shrink: 0; height: auto; border: 3px solid #000; border-radius: 8px; }
+
+        /* ── STAY TUNED ── */
+        .stay-tuned-italic { font-style: italic; font-size: 14px; color: #444; text-align: center; padding: 16px 0 20px 0; border-top: 2px solid #111; margin-top: 10px; }
+
+        /* ── BOUTON RETOUR ── */
+        .back-button-container { text-align: center; margin: 30px 0 50px 0; }
+        .back-button { background-color: var(--color-primary); color: #000; font-weight: 900; text-transform: uppercase; padding: 12px 30px; border: 2px solid #000; text-decoration: none; font-size: 14px; border-radius: 4px; display: inline-block; transition: transform 0.1s; }
+        .back-button:hover { transform: scale(1.03); }
+
+        @media (max-width: 768px) {
+            .site-header { padding: 12px 20px; }
+            .site-nav { display: none; }
+            .content-columns { flex-direction: column; }
+            .lore-inner { flex-direction: column; }
+            .lore-inner img { width: 100%; }
+            .boss-inner { flex-direction: column; }
+            .boss-img { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="site-header">
+        <div class="site-header__logo">
+            <img src="../BF_news.png" alt="Blox Fruits">
+        </div>
+        <nav>
+            <ul class="site-nav">
+                <li><a href="#">Game</a></li>
+                <li><a href="#">DLC</a></li>
+                <li><a href="../index.html">News</a></li>
+            </ul>
+        </nav>
+        <div class="site-header__icons">
+            <span class="material-symbols-outlined">search</span>
+            <span class="material-symbols-outlined">person</span>
+            <span class="material-symbols-outlined">shopping_bag</span>
+        </div>
+    </header>
+
+    <main class="bulletin-container">
+
+        <div class="blue-banner">The Blox Bulletin #008</div>
+
+        <div class="hero-image-wrapper">
+            <img src="../008/img/ZiolesAuraFarm.png" class="hero-image" alt="The Blox Bulletin 008">
+        </div>
+
+        <div class="publish-date">30 Mai 2025</div>
+
+        <div class="journal-header">
+            <h1 class="journal-title">The Blox Bulletin</h1>
+            <p class="journal-subtitle">Là où les Légendes et les Mises à Jour se Rencontrent</p>
+            <div class="journal-meta">Numéro : 008 | 30 Mai 2025</div>
+        </div>
+
+        <div class="dashed-line"></div>
+
+        <div class="lore-box">
+            <h2>Avancée Majeure : Les Expériences du Scientifique Mystérieux</h2>
+            <span class="byline">Par Blotniral Omnik</span>
+
+            <div class="lore-inner">
+                <img src="../007/img/HiddenBosses.png" alt="Laboratoire secrets et technologies">
+                <div class="lore-text">
+                    <p>Le <strong>Scientifique Mystérieux</strong>, autrefois confiné dans l'ombre de ses laboratoires secrets, vient de franchir un cap critique. Des sources proches de la Mer Céleste rapportent des vagues d'énergie résiduelle jamais vues auparavant.</p>
+                    <p>Ses recherches sur l'extraction d'énergie pure à partir de fragments antiques avancent à grands pas. Certains murmurent qu'il tente de stabiliser la puissance instable des anciens boss pour l'injecter directement dans de nouveaux artefacts.</p>
+                    <p><em>« Le pouvoir ne doit pas être craint, il doit être canalisé, »</em> aurait déclaré le Scientifique à ses assistants. Les conséquences de ses manipulations pourraient radicalement changer notre façon de combattre.</p>
+                </div>
+            </div>
+            <div class="summary"><b>📌 Résumé :</b> Avancées narratives sur le Scientifique Mystérieux, annonçant de potentiels nouveaux systèmes d'artefacts ou de buffs d'armes basés sur les boss héritage.</div>
+        </div>
+
+        <div class="content-columns">
+
+            <div class="left-col">
+                <h2>Rapport des Rangers : L'Énigme des Énergies de la Forêt</h2>
+                <span class="section-subtext">Par Twiggy Logleaf</span>
+
+                <img src="../007/img/TastyFood.png" alt="Analyse des campements" class="col-img">
+
+                <div class="col-text">
+                    <p>Faisant suite à notre rapport de la semaine dernière concernant les vertus médicinales de la cuisine de feu de camp, d'étranges relevés atmosphériques ont été enregistrés près des frontières du Parc d'État.</p>
+                    <p>Les feux de camp ne font pas que cuire la nourriture : ils semblent réagir à des micro-variations de l'écosystème environnant. Les rangers soupçonnent que la faune et la flore locales absorbent une partie des flux d'Aura qui s'échappent des îles voisines.</p>
+                    <p>Il est recommandé à tous les aventuriers de rester vigilants lors de la collecte d'ingrédients sauvages dans les zones denses.</p>
+                </div>
+
+                <div class="summary"><b>📌 Résumé :</b> Le système de cuisine est étroitement lié aux forces environnementales et pourrait interagir directement avec votre niveau d'Aura.</div>
+            </div>
+
+            <div class="right-col">
+                <h2>Résultats officiels : Le Choix de la Communauté</h2>
+                <span class="section-subtext">Par l'Équipe Admin</span>
+
+                <p>Vous avez été des milliers à voter dans le <strong>Bulletin #007</strong> pour désigner vos priorités absolues. Voici les résultats définitifs de vos votes !</p>
+
+                <div class="poll-results-box">
+                    <h3>Résultats du Sondage #001</h3>
+                    
+                    <div class="result-bar-wrapper">
+                        <div class="result-label"><span>Nouveau contenu (fruits, zones)</span> <span>34%</span></div>
+                        <div class="bar-container"><div class="bar-fill winner" style="width: 34%;"></div></div>
+                    </div>
+
+                    <div class="result-bar-wrapper">
+                        <div class="result-label"><span>Reworks de fruits existants</span> <span>22%</span></div>
+                        <div class="bar-container"><div class="bar-fill" style="width: 22%;"></div></div>
+                    </div>
+
+                    <div class="result-bar-wrapper">
+                        <div class="result-label"><span>Équilibrage PvP</span> <span>18%</span></div>
+                        <div class="bar-container"><div class="bar-fill" style="width: 18%;"></div></div>
+                    </div>
+
+                    <div class="result-bar-wrapper">
+                        <div class="result-label"><span>Optimisation & Bugs</span> <span>14%</span></div>
+                        <div class="bar-container"><div class="bar-fill" style="width: 14%;"></div></div>
+                    </div>
+
+                    <div class="result-bar-wrapper">
+                        <div class="result-label"><span>Système de Crews / Autre</span> <span>12%</span></div>
+                        <div class="bar-container"><div class="bar-fill" style="width: 12%;"></div></div>
+                    </div>
+                </div>
+
+                <p style="margin-top: 15px; font-size: 13px; color: #555;">Le <strong>Nouveau contenu</strong> l'emporte haut la main. L'équipe de développement a bien pris note de vos attentes !</p>
+
+                <div class="summary"><b>📌 Résumé :</b> Clôture du sondage du numéro 007. Priorité absolue demandée par les joueurs sur le contenu inédit.</div>
+            </div>
+
+        </div>
+
+        <div class="boss-section">
+            <h2>La Ferme d'Aura de Zioles Ouvre ses Portes</h2>
+            <span class="section-subtext">Par Moakoa Shellspine</span>
+
+            <div class="boss-inner">
+                <div class="boss-text">
+                    <p>C'est l'événement majeur de cette fin de mois. La légendaire <strong>Ferme d'Aura de Zioles</strong> s'est illuminée d'une lueur violette intense. Cet endroit sacré offre aux guerriers une chance unique d'harmoniser leur énergie spirituelle.</p>
+                    <p>Les joueurs qui s'y rendront pourront participer à des épreuves de méditation et affronter des vagues de manifestations spectrales afin de raffiner leur maîtrise de l'Aura.</p>
+                    <p>Préparez vos armes, car l'accès à la ferme nécessite non seulement du courage, mais une pureté d'esprit sans faille.</p>
+                </div>
+                <img src="../008/img/ZiolesAuraFarm.png" alt="Entrée de la ferme de Zioles" class="boss-img">
+            </div>
+
+            <div class="summary"><b>📌 Résumé :</b> Présentation de la zone de la Ferme de Zioles dédiée aux fonctionnalités et progressions liées à l'Aura.</div>
+
+            <div class="stay-tuned-italic">
+                Les secrets s'épaississent et les énergies s'éveillent sur nos îles ! Restez connectés pour découvrir ce que le pack d'extension nous réserve dans le prochain Bulletin #009 !
+            </div>
+        </div>
+
+        <div class="back-button-container">
+            <a href="../index.html" class="back-button">← Retour aux Actualités</a>
+        </div>
+
+    </main>
+
+</body>
+</html>
