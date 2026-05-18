@@ -25,6 +25,7 @@
 
         * { box-sizing: border-box; }
 
+        /* ── UN SEUL BLOC BODY PROPRE POUR LE BACKGROUND ── */
         body {
             margin: 0;
             padding: 0;
@@ -32,12 +33,16 @@
             color: var(--color-text);
             background-color: #ffffff; 
             
-            /* Configuration pour étirer l'image proprement sur toute la largeur */
+            /* Configuration par masquage sous la barre */
             background-image: url('./shared/background2.jpeg'); 
             background-repeat: no-repeat;
-            background-position: center 80px; /* 🎯 MODIFIÉ À 80px : l'image remonte de 5px et la ligne blanche est masquée par le menu ! */
+            background-position: top center; /* Fixé tout en haut derrière le menu */
             background-size: 100% auto;       
             min-height: 100vh;
+            
+            /* 🎯 L'ASTUCE : On décale tout le contenu interne de la page de 85px vers le bas 
+               pour laisser le menu respirer sans bouger l'image de fond */
+            padding-top: 85px; 
         }
 
         /* ── NAVBAR ── */
@@ -47,13 +52,14 @@
             justify-content: space-between;
             padding: 15px 55px;
             background-color: #ffffff;
-            border-bottom: none; /* Plus de ligne blanche */
+            border-bottom: none; 
             position: sticky;
             top: 0;
             z-index: 1000;
             font-family: 'LuckiestGuy Regular', cursive;
             height: 85px; 
         }
+
         .site-header__logo img { height: 45px; width: auto; display: block; }
         .site-nav { display: flex; gap: 25px; padding: 0; margin: 0; list-style: none; }
         .site-nav a { color: var(--color-text); text-decoration: none; font-weight: 700; font-size: 25px; text-transform: uppercase; }
