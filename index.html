@@ -33,9 +33,10 @@ body {
     color: var(--color-text);
     background-color: #ffffff;
     
-    background-image: url('./shared/background2.jpeg'); 
+    /* ── CONFIGURATION DU FOND JPEG ── */
+    background-image: url('./shared/background.jpg'); /* Vérifie bien que l'extension est .jpg ou .jpeg */
     background-repeat: no-repeat;
-    background-position: center 85px; /* ── MODIFIÉ ICI ── */
+    background-position: center 85px; /* Aligné pile sous les 85px de la navbar */
     background-size: contain; 
     min-height: 100vh;
 }
@@ -61,12 +62,12 @@ body {
     justify-content: space-between;
     padding: 15px 55px;
     background-color: #ffffff;
-    border-bottom: none; /* ── MODIFIÉ ICI ── */
+    border-bottom: none; /* Supprime définitivement la ligne blanche */
     position: sticky;
     top: 0;
     z-index: 1000;
     font-family: 'LuckiestGuy Regular', cursive;
-    height: 85px; /* ── RECALIBRÉ ICI ── */
+    height: 85px; /* Hauteur fixe pour faire la jonction parfaite avec le fond */
 }
         .site-header__logo img { height: 45px; width: auto; display: block; }
         .site-nav { display: flex; gap: 25px; padding: 0; margin: 0; list-style: none; }
