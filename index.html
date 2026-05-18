@@ -26,18 +26,19 @@
         * { box-sizing: border-box; }
 
         /* ── UN SEUL BLOC BODY PROPRE POUR LE BACKGROUND ── */
+        /* ── UN SEUL BLOC BODY PROPRE POUR LE BACKGROUND ── */
         body {
             margin: 0;
             padding: 0;
             font-family: var(--font-stack-body);
             color: var(--color-text);
-            background-color: #ffffff; /* Couleur de fond si l'image ne remplit pas tout */
+            background-color: #ffffff; 
             
-            /* Configuration haute qualité sans étirement */
-            background-image: url('./shared/background2.jpeg'); /* Ajuste ici si c'est .jpg ou .jpeg */
+            /* Configuration pour étirer l'image proprement sur toute la largeur */
+            background-image: url('./shared/background2.jpeg'); 
             background-repeat: no-repeat;
-            background-position: top center; 
-            background-size: auto; /* Garde la netteté et la taille d'origine de ton image */
+            background-position: center 85px; /* Reste calé pile sous les 85px de la navbar */
+            background-size: 100% auto;       /* 🎯 PREND TOUTE LA LARGEUR DE L'ÉCRAN SANS ÊTRE COUPÉ EN HAUT */
             min-height: 100vh;
         }
 
