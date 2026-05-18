@@ -26,19 +26,25 @@
         * { box-sizing: border-box; }
 
         /* ── BACKGROUND PROPRE ET FLUIDE SUR TOUT L'ÉCRAN ── */
+        /* ── CONFIGURATION PAR DÉFAUT (POUR LES TÉLÉPHONES) ── */
         body {
             margin: 0;
             padding: 0;
             font-family: var(--font-stack-body);
             color: var(--color-text);
-            background-color: #ffffff;
-            
-            background-image: url('./shared/background2.jpeg'); 
-            background-repeat: no-repeat;
-            background-position: center top; /* Calé en haut au centre */
-            background-size: cover;          /* S'adapte à 100% de l'écran sans déformer ni laisser de blanc */
-            background-attachment: fixed;    /* Bloque le fond pendant le défilement */
+            background-color: #ffffff; /* Fond blanc uni sur mobile */
             min-height: 100vh;
+        }
+
+        /* ── CONFIGURATION UNIQUEMENT POUR PC ET TABLETTES (ÉCRANS > 768px) ── */
+        @media (min-width: 769px) {
+            body {
+                background-image: url('./shared/background2.jpeg'); 
+                background-repeat: no-repeat;
+                background-position: center top; 
+                background-size: cover;          
+                background-attachment: fixed;    
+            }
         }
 
         /* ── NAVBAR ÉPINGLÉE EN HAUT ── */
