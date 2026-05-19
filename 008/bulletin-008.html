@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Le Bulletin Blox #008 – Blox Fruits</title>
 
-    <link rel="icon" type="image/png" href="./shared/favicon.png">
-    <link rel="shortcut icon" href="../shared/bf_logo.png" type="image/png">
+    <link rel="icon" href="../BF_news.png" type="image/png">
+    <link rel="shortcut icon" href="../BF_news.png" type="image/png">
     <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
 
@@ -14,58 +14,55 @@
         @font-face {
             font-family: 'LuckiestGuy Regular';
             src: url('../fonts/LuckiestGuy-Regular.ttf') format('truetype');
-            font-weight: normal;
-            font-style: normal;
+            font-weight: normal; font-style: normal;
         }
-
         :root {
             --color-text: #333132;
             --color-border: #ebebeb;
             --font-stack-body: 'Inter', sans-serif;
             --color-primary: #ffda00;
         }
-
         * { box-sizing: border-box; }
         body { margin: 0; font-family: var(--font-stack-body); color: var(--color-text); background-color: #fff; line-height: 1.6; }
 
-        /* ── NAVBAR ── */
+        /* NAVBAR */
         .site-header { display: flex; align-items: center; justify-content: space-between; padding: 15px 55px; background-color: #fff; border-bottom: 1px solid var(--color-border); position: sticky; top: 0; z-index: 1000; }
         .site-header__logo img { height: 45px; width: auto; display: block; }
         .site-nav { display: flex; gap: 25px; padding: 0; margin: 0; list-style: none; }
         .site-nav a { color: var(--color-text); text-decoration: none; font-weight: 700; font-size: 25px; text-transform: uppercase; font-family: 'LuckiestGuy Regular', 'Luckiest Guy', cursive; }
         .site-header__icons { display: flex; gap: 20px; color: var(--color-text); cursor: pointer; }
 
-        /* ── CONTENEUR ── */
+        /* CONTENEUR */
         .bulletin-container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
 
-        /* ── BANDEAU BLEU ── */
+        /* BANDEAU BLEU */
         .blue-banner { background-color: #175ec2; color: #fff; text-align: center; padding: 14px; font-size: 33px; text-transform: uppercase; letter-spacing: 2px; border-radius: 4px; margin-bottom: 25px; font-family: 'LuckiestGuy Regular', 'Luckiest Guy', cursive; }
 
-        /* ── HERO ── */
+        /* HERO */
         .hero-image-wrapper { width: 100%; margin-bottom: 15px; }
         .hero-image { width: 100%; height: auto; display: block; border-radius: 20px; border: 3px solid #000; }
         .publish-date { font-size: 15px; font-weight: bold; color: #222; margin-bottom: 25px; }
 
-        /* ── EN-TÊTE JOURNAL ── */
+        /* EN-TÊTE JOURNAL */
         .journal-header { text-align: center; margin-top: 30px; }
         .journal-title { font-family: 'Georgia', serif; font-size: 52px; font-weight: bold; color: #111; margin: 0 0 10px 0; letter-spacing: -1px; }
         .journal-subtitle { font-family: 'Georgia', serif; font-style: italic; font-size: 18px; color: #555; margin: 0 0 25px 0; }
         .journal-meta { font-weight: bold; font-size: 14px; color: #111; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
         .dashed-line { border-top: 2px dashed #111; margin: 15px 0 35px 0; }
 
-        /* ── ARTICLE LORE GRIS ── */
-        .lore-box { background-color: #f2f2f2; border: 1px solid #ccc; border-radius: 6px; padding: 25px; margin-bottom: 35px; }
-        .lore-box h2 { font-size: 22px; font-weight: 900; color: #111; margin: 0 0 4px 0; border-bottom: 2px solid #111; padding-bottom: 6px; }
-        .lore-box .byline { font-style: italic; font-size: 13px; color: #555; display: block; margin-bottom: 16px; }
-        .lore-inner { display: flex; gap: 20px; align-items: flex-start; }
-        .lore-inner img { width: 180px; flex-shrink: 0; height: auto; border: 3px solid #000; border-radius: 8px; }
-        .lore-text p { font-size: 14.5px; margin: 0 0 12px 0; }
+        /* ALERTE UNE ROSE */
+        .front-box { background-color: #fce8e6; border: 2px solid #000; border-left: 6px solid #c53929; padding: 25px; margin-bottom: 35px; }
+        .front-box h2 { color: #c53929; font-size: 22px; font-weight: 900; margin: 0 0 4px 0; border: none; padding: 0; }
+        .front-box .byline { font-style: italic; font-size: 13px; color: #555; display: block; margin-bottom: 14px; }
+        .front-box .alert-lead { font-weight: 900; font-size: 14.5px; margin-bottom: 14px; }
+        .front-box p { font-size: 14.5px; margin: 0 0 12px 0; }
+        .front-box img { width: 100%; height: auto; border: 3px solid #000; border-radius: 10px; margin-bottom: 18px; }
 
-        /* ── RÉSUMÉ ── */
+        /* RÉSUMÉ */
         .summary { background: rgba(88,101,242,0.09); border-left: 4px solid #5865f2; padding: 12px 16px; margin-top: 15px; font-size: 13.5px; font-style: italic; color: #2c3e50; border-radius: 0 6px 6px 0; }
         .summary b { color: #5865f2; text-transform: uppercase; font-size: 11px; font-style: normal; display: block; margin-bottom: 4px; letter-spacing: 0.5px; }
 
-        /* ── DEUX COLONNES ── */
+        /* DEUX COLONNES */
         .content-columns { display: flex; gap: 30px; margin-bottom: 35px; }
         .left-col { flex: 1.7; }
         .right-col { flex: 1.3; background-color: #f2f2f2; padding: 20px; border-radius: 8px; border: 1px solid #ccc; height: fit-content; }
@@ -73,182 +70,319 @@
         h2 { border-bottom: 2px solid #111; padding-bottom: 5px; font-size: 22px; font-weight: 900; margin: 0 0 6px 0; color: #111; }
         .section-subtext { font-style: italic; font-size: 13.5px; color: #555; margin-bottom: 16px; display: block; }
 
-        /* ── RAPPORT (GAUCHE) ── */
+        /* LEFT COL */
         .col-img { width: 100%; height: auto; border: 3px solid #000; border-radius: 8px; margin-bottom: 16px; }
         .col-text p { font-size: 14.5px; margin: 0 0 12px 0; }
 
-        /* ── DESIGN RÉSULTATS SONDAGE (DROITE) ── */
-        .poll-results-box { background-color: #ffffff; border: 2px solid #175ec2; border-radius: 8px; padding: 16px; margin-top: 12px; }
-        .poll-results-box h3 { font-size: 16px; font-weight: 900; margin: 0 0 12px 0; color: #111; text-transform: uppercase; }
-        .result-bar-wrapper { margin-bottom: 12px; }
-        .result-label { display: flex; justify-content: space-between; font-size: 12.5px; font-weight: bold; margin-bottom: 4px; }
-        .bar-container { background-color: #e0e0e0; height: 12px; border-radius: 6px; overflow: hidden; border: 1px solid #aaa; }
-        .bar-fill { background-color: #175ec2; height: 100%; border-radius: 5px; }
-        .bar-fill.winner { background-color: #6c47b8; } /* Option gagnante du sondage 007 */
+        /* ── GRAPHIQUE CIRCULAIRE ── */
+        .right-col h2 { font-size: 20px; line-height: 1.3; }
+        .poll-result-intro { font-size: 13.5px; margin: 0 0 12px 0; }
+        .poll-result-intro strong { color: #111; }
+        .chart-wrapper { position: relative; width: 180px; height: 180px; margin: 16px auto; }
+        .chart-wrapper canvas { display: block; }
+        .chart-tooltip {
+            position: absolute;
+            background: rgba(0,0,0,0.82);
+            color: #fff;
+            font-size: 12px;
+            padding: 6px 10px;
+            border-radius: 6px;
+            pointer-events: none;
+            display: none;
+            white-space: nowrap;
+            z-index: 10;
+            transform: translate(-50%, -110%);
+        }
+        .poll-legend { margin-top: 14px; display: flex; flex-direction: column; gap: 6px; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-size: 12.5px; }
+        .legend-dot { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
 
-        /* ── SECTION INFÉRIEURE (BOSS/ÉVÉNEMENT) ── */
-        .boss-section { margin-bottom: 30px; }
-        .boss-inner { display: flex; gap: 20px; align-items: flex-start; margin-top: 14px; }
-        .boss-text { flex: 1; }
-        .boss-text p { font-size: 14.5px; margin: 0 0 12px 0; }
-        .boss-img { width: 280px; flex-shrink: 0; height: auto; border: 3px solid #000; border-radius: 8px; }
+        /* PORT TOWN */
+        .porttown-box { background-color: #f2f2f2; border: 1px solid #ccc; border-radius: 6px; padding: 25px; margin-bottom: 30px; }
+        .porttown-box h2 { font-size: 22px; border-bottom: 2px solid #111; padding-bottom: 6px; }
+        .porttown-inner { display: flex; gap: 20px; align-items: flex-start; margin-top: 14px; }
+        .porttown-text { flex: 1; }
+        .porttown-text p { font-size: 14.5px; margin: 0 0 12px 0; }
+        .porttown-img { width: 280px; flex-shrink: 0; height: auto; border: 3px solid #000; border-radius: 8px; }
 
-        /* ── STAY TUNED ── */
+        /* STAY TUNED */
         .stay-tuned-italic { font-style: italic; font-size: 14px; color: #444; text-align: center; padding: 16px 0 20px 0; border-top: 2px solid #111; margin-top: 10px; }
 
-        /* ── BOUTON RETOUR ── */
+        /* PARTAGE */
+        .social-share { display: flex; gap: 10px; margin: 20px 0; }
+        .social-share a { display: inline-flex; align-items: center; gap: 7px; padding: 8px 14px; border: 2px solid #000; border-radius: 4px; font-size: 13px; font-weight: 700; text-decoration: none; color: #000; text-transform: uppercase; }
+        .social-share a.fb { background-color: #3b5998; color: #fff; border-color: #3b5998; }
+        .social-share a.tw { background-color: #1da1f2; color: #fff; border-color: #1da1f2; }
+        .social-share a.pi { background-color: #e60023; color: #fff; border-color: #e60023; }
+
+        /* RETOUR */
         .back-button-container { text-align: center; margin: 30px 0 50px 0; }
         .back-button { background-color: var(--color-primary); color: #000; font-weight: 900; text-transform: uppercase; padding: 12px 30px; border: 2px solid #000; text-decoration: none; font-size: 14px; border-radius: 4px; display: inline-block; transition: transform 0.1s; }
         .back-button:hover { transform: scale(1.03); }
+
+        /* FOOTER */
+        .site-footer { background-color: #f0f0f0; border-top: 1px solid #ccc; padding: 40px 55px; display: flex; gap: 60px; }
+        .footer-col h3 { font-size: 15px; font-weight: 900; text-transform: uppercase; margin: 0 0 14px 0; }
+        .footer-col ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+        .footer-col ul li a { color: #333; text-decoration: none; font-size: 14px; }
+        .footer-col p { font-size: 13px; color: #555; margin: 0 0 10px 0; }
+        .footer-community-links { display: flex; flex-direction: column; gap: 8px; }
+        .footer-community-links a { color: #175ec2; text-decoration: none; font-weight: 700; font-size: 14px; }
 
         @media (max-width: 768px) {
             .site-header { padding: 12px 20px; }
             .site-nav { display: none; }
             .content-columns { flex-direction: column; }
-            .lore-inner { flex-direction: column; }
-            .lore-inner img { width: 100%; }
-            .boss-inner { flex-direction: column; }
-            .boss-img { width: 100%; }
+            .porttown-inner { flex-direction: column; }
+            .porttown-img { width: 100%; }
+            .site-footer { flex-direction: column; gap: 30px; padding: 30px 20px; }
         }
     </style>
 </head>
 <body>
 
-    <header class="site-header">
-        <div class="site-header__logo">
-            <img src="../BF_news.png" alt="Blox Fruits">
-        </div>
-        <nav>
-            <ul class="site-nav">
-                <li><a href="#">Game</a></li>
-                <li><a href="#">DLC</a></li>
-                <li><a href="../index.html">News</a></li>
-            </ul>
-        </nav>
-        <div class="site-header__icons">
-            <span class="material-symbols-outlined">search</span>
-            <span class="material-symbols-outlined">person</span>
-            <span class="material-symbols-outlined">shopping_bag</span>
-        </div>
-    </header>
+<header class="site-header">
+    <div class="site-header__logo"><img src="../shared/img/logo.png" alt="Blox Fruits"></div>
+    <nav>
+        <ul class="site-nav">
+            <li><a href="#">Game</a></li>
+            <li><a href="#">Merch</a></li>
+            <li><a href="#">DLC</a></li>
+            <li><a href="../index.html" style="color:black;">Blog</a></li>
+            <li><a href="#" style="font-size:20px;">?</a></li>
+        </ul>
+    </nav>
+    <div class="site-header__icons">
+        <span class="material-symbols-outlined">search</span>
+        <span class="material-symbols-outlined">person</span>
+        <span class="material-symbols-outlined">shopping_bag</span>
+    </div>
+</header>
 
-    <main class="bulletin-container">
+<main class="bulletin-container">
 
-        <div class="blue-banner">The Blox Bulletin #008</div>
+    <div class="blue-banner">The Blox Bulletin #008</div>
 
-        <div class="hero-image-wrapper">
-            <img src="../008/img/ZiolesAuraFarm.png" class="hero-image" alt="The Blox Bulletin 008">
-        </div>
+    <div class="hero-image-wrapper">
+        <img src="../008/img/ZiolesAuraFarm.png" class="hero-image" alt="The Blox Bulletin 008">
+    </div>
 
-        <div class="publish-date">30 Mai 2025</div>
+    <div class="publish-date">30 Mai 2025</div>
 
-        <div class="journal-header">
-            <h1 class="journal-title">The Blox Bulletin</h1>
-            <p class="journal-subtitle">Là où les Légendes et les Mises à Jour se Rencontrent</p>
-            <div class="journal-meta">Numéro : 008 | 30 Mai 2025</div>
-        </div>
+    <div class="journal-header">
+        <h1 class="journal-title">The Blox Bulletin</h1>
+        <p class="journal-subtitle">Les Yeux sur l'Horizon : un journal perdu, un criminel appréhendé, et des murmures de l'équipe de développement !</p>
+        <div class="journal-meta">Numéro : 008 | 29 Mai 2025</div>
+    </div>
 
-        <div class="dashed-line"></div>
+    <div class="dashed-line"></div>
 
-        <div class="lore-box">
-            <h2>Avancée Majeure : Les Expériences du Scientifique Mystérieux</h2>
-            <span class="byline">Par Blotniral Omnik</span>
+    <!-- À LA UNE ROSE -->
+    <div class="front-box">
+        <h2>Un Assaillant Déchaîne une Attaque Dévastatrice lors de son Arrestation !</h2>
+        <span class="byline">Alerte Émise par les Autorités</span>
 
-            <div class="lore-inner">
-                <img src="../007/img/HiddenBosses.png" alt="Laboratoire secrets et technologies">
-                <div class="lore-text">
-                    <p>Le <strong>Scientifique Mystérieux</strong>, autrefois confiné dans l'ombre de ses laboratoires secrets, vient de franchir un cap critique. Des sources proches de la Mer Céleste rapportent des vagues d'énergie résiduelle jamais vues auparavant.</p>
-                    <p>Ses recherches sur l'extraction d'énergie pure à partir de fragments antiques avancent à grands pas. Certains murmurent qu'il tente de stabiliser la puissance instable des anciens boss pour l'injecter directement dans de nouveaux artefacts.</p>
-                    <p><em>« Le pouvoir ne doit pas être craint, il doit être canalisé, »</em> aurait déclaré le Scientifique à ses assistants. Les conséquences de ses manipulations pourraient radicalement changer notre façon de combattre.</p>
-                </div>
-            </div>
-            <div class="summary"><b>📌 Résumé :</b> Avancées narratives sur le Scientifique Mystérieux, annonçant de potentiels nouveaux systèmes d'artefacts ou de buffs d'armes basés sur les boss héritage.</div>
-        </div>
+        <img src="../008/img/Explosion.png" alt="Explosion lors de l'arrestation au Village Pirate">
 
-        <div class="content-columns">
+        <p class="alert-lead">Une explosion a eu lieu au Village Pirate lors d'une arrestation de haute importance ! Plusieurs blessés !</p>
+        <p>Un signalement anonyme d'un résident du Village Pirate a rapporté un <strong>homme suspect</strong> rôdant dans le quartier avec l'air d'être « en train de préparer quelque chose ».</p>
+        <p>Après avoir correspondu à la description du criminel responsable de l'attaque soudaine sur le stand du vendeur de popcorn deux semaines plus tôt, le suspect a été rapidement encerclé par des escadrons de Marines armés.</p>
+        <p>Une fois appréhendé et mis aux arrêts, juste avant d'être escorté, le prisonnier a brusquement ouvert son manteau gris, révélant un arsenal caché d'<strong>explosifs compacts !</strong> Le souffle de l'explosion a projeté plusieurs Marines au sol et a dispersé des débris sur toute l'île.</p>
+        <p>Les autorités confirment que le criminel reste en détention et sera placé sous surveillance renforcée du directeur de la prison locale.</p>
 
-            <div class="left-col">
-                <h2>Rapport des Rangers : L'Énigme des Énergies de la Forêt</h2>
-                <span class="section-subtext">Par Twiggy Logleaf</span>
+        <div class="summary"><b>📌 Résumé :</b>Suite du lore du Fruit Bomb/Popcorn — le criminel est arrêté mais déclenche une explosion lors de son arrestation. Probablement lié à un futur boss ou PNJ.</div>
+    </div>
 
-                <img src="../007/img/TastyFood.png" alt="Analyse des campements" class="col-img">
+    <!-- DEUX COLONNES -->
+    <div class="content-columns">
 
-                <div class="col-text">
-                    <p>Faisant suite à notre rapport de la semaine dernière concernant les vertus médicinales de la cuisine de feu de camp, d'étranges relevés atmosphériques ont été enregistrés près des frontières du Parc d'État.</p>
-                    <p>Les feux de camp ne font pas que cuire la nourriture : ils semblent réagir à des micro-variations de l'écosystème environnant. Les rangers soupçonnent que la faune et la flore locales absorbent une partie des flux d'Aura qui s'échappent des îles voisines.</p>
-                    <p>Il est recommandé à tous les aventuriers de rester vigilants lors de la collecte d'ingrédients sauvages dans les zones denses.</p>
-                </div>
+        <!-- GAUCHE : SO WHAT HAPPENED -->
+        <div class="left-col">
+            <h2>Alors... Que s'est-il passé ?</h2>
+            <span class="section-subtext">Par l'Équipe de Développement</span>
 
-                <div class="summary"><b>📌 Résumé :</b> Le système de cuisine est étroitement lié aux forces environnementales et pourrait interagir directement avec votre niveau d'Aura.</div>
-            </div>
+            <img src="../008/img/WhereBoard.png" alt="Tableau mystérieux - What happened?" class="col-img">
 
-            <div class="right-col">
-                <h2>Résultats officiels : Le Choix de la Communauté</h2>
-                <span class="section-subtext">Par l'Équipe Admin</span>
-
-                <p>Vous avez été des milliers à voter dans le <strong>Bulletin #007</strong> pour désigner vos priorités absolues. Voici les résultats définitifs de vos votes !</p>
-
-                <div class="poll-results-box">
-                    <h3>Résultats du Sondage #001</h3>
-                    
-                    <div class="result-bar-wrapper">
-                        <div class="result-label"><span>Nouveau contenu (fruits, zones)</span> <span>34%</span></div>
-                        <div class="bar-container"><div class="bar-fill winner" style="width: 34%;"></div></div>
-                    </div>
-
-                    <div class="result-bar-wrapper">
-                        <div class="result-label"><span>Reworks de fruits existants</span> <span>22%</span></div>
-                        <div class="bar-container"><div class="bar-fill" style="width: 22%;"></div></div>
-                    </div>
-
-                    <div class="result-bar-wrapper">
-                        <div class="result-label"><span>Équilibrage PvP</span> <span>18%</span></div>
-                        <div class="bar-container"><div class="bar-fill" style="width: 18%;"></div></div>
-                    </div>
-
-                    <div class="result-bar-wrapper">
-                        <div class="result-label"><span>Optimisation & Bugs</span> <span>14%</span></div>
-                        <div class="bar-container"><div class="bar-fill" style="width: 14%;"></div></div>
-                    </div>
-
-                    <div class="result-bar-wrapper">
-                        <div class="result-label"><span>Système de Crews / Autre</span> <span>12%</span></div>
-                        <div class="bar-container"><div class="bar-fill" style="width: 12%;"></div></div>
-                    </div>
-                </div>
-
-                <p style="margin-top: 15px; font-size: 13px; color: #555;">Le <strong>Nouveau contenu</strong> l'emporte haut la main. L'équipe de développement a bien pris note de vos attentes !</p>
-
-                <div class="summary"><b>📌 Résumé :</b> Clôture du sondage du numéro 007. Priorité absolue demandée par les joueurs sur le contenu inédit.</div>
+            <div class="col-text">
+                <p>Les reworks de map, les changements d'interface, les nouvelles mécaniques, les reworks de fruits... où est tout ça ? On vous entend.</p>
+                <p>Nous avons montré des aperçus au fil des années. De nouvelles îles, une interface repensée, et de nouveaux systèmes. Une grande partie de ce contenu était déjà bien avancée en développement, certains même terminés. Mais au final, ça ne répondait pas à nos standards. C'est quelque chose avec lequel nous nous battons constamment en équilibrant la quantité de mises à jour et la <strong>qualité à long terme</strong>.</p>
+                <p>Même si nous faisons encore face à des <strong>problèmes de performances</strong> aujourd'hui, ça aurait pu être bien pire si nous avions continué avec certains reworks d'îles. Nous ne voulons pas ajouter des choses qui ont l'air nouvelles si elles compromettent la <strong>stabilité du jeu</strong>. Ou pire, faire dériver le jeu vers quelque chose qu'il n'était pas censé être.</p>
+                <p>Le rework de l'interface, par exemple, avait un look plus moderne. Mais vos retours étaient clairs. <strong>Ça ne ressemblait plus à Blox Fruits.</strong></p>
+                <p>Pendant ce temps, des changements de map à grande échelle et de nouveaux systèmes ont commencé à empiler des <strong>problèmes de performances</strong>. À mesure que ces mises à jour grandissent, on réalise que l'optimisation doit passer en premier. On a remarqué qu'un grand nombre de joueurs au niveau maximum vont en Deuxième Mer pour le PvP, simplement parce que c'est moins exigeant pour leurs appareils.</p>
+                <p>Donc, <strong>le contenu teasé n'a pas disparu, il est en train d'être réimagné avec les performances en tête</strong>. Merci pour la patience, et pour avoir aidé à guider la direction des mises à jour.</p>
             </div>
 
+            <div class="summary"><b>📌 Résumé :</b>Explication officielle des contenus annulés/retardés — qualité et stabilité avant tout. Le contenu teasé revient, repensé pour de meilleures performances.</div>
         </div>
 
-        <div class="boss-section">
-            <h2>La Ferme d'Aura de Zioles Ouvre ses Portes</h2>
-            <span class="section-subtext">Par Moakoa Shellspine</span>
+        <!-- DROITE : RÉSULTATS DU SONDAGE -->
+        <div class="right-col">
+            <h2>Donnez Votre Avis : Résultats du Sondage !</h2>
+            <span class="section-subtext">Par l'Équipe Admin</span>
 
-            <div class="boss-inner">
-                <div class="boss-text">
-                    <p>C'est l'événement majeur de cette fin de mois. La légendaire <strong>Ferme d'Aura de Zioles</strong> s'est illuminée d'une lueur violette intense. Cet endroit sacré offre aux guerriers une chance unique d'harmoniser leur énergie spirituelle.</p>
-                    <p>Les joueurs qui s'y rendront pourront participer à des épreuves de méditation et affronter des vagues de manifestations spectrales afin de raffiner leur maîtrise de l'Aura.</p>
-                    <p>Préparez vos armes, car l'accès à la ferme nécessite non seulement du courage, mais une pureté d'esprit sans faille.</p>
-                </div>
-                <img src="../008/img/ZiolesAuraFarm.png" alt="Entrée de la ferme de Zioles" class="boss-img">
+            <img src="../008/img/PollResults.png" alt="Résultats du sondage communautaire" style="width:100%;height:auto;border:3px solid #000;border-radius:6px;margin-bottom:14px;">
+
+            <p class="poll-result-intro"><strong>Les résultats sont arrivés !</strong> Des choses vraiment intéressantes à analyser ici ! Voici le décompte de plus de <strong>100 000 votes</strong> sur le sondage de la semaine dernière.</p>
+            <p class="poll-result-intro" style="font-style:italic; font-size:12.5px; color:#555;">Passez la souris sur le graphique pour voir les détails !</p>
+
+            <div class="chart-wrapper">
+                <canvas id="pollChart" width="180" height="180"></canvas>
+                <div class="chart-tooltip" id="chartTooltip"></div>
             </div>
 
-            <div class="summary"><b>📌 Résumé :</b> Présentation de la zone de la Ferme de Zioles dédiée aux fonctionnalités et progressions liées à l'Aura.</div>
+            <div class="poll-legend" id="pollLegend"></div>
 
-            <div class="stay-tuned-italic">
-                Les secrets s'épaississent et les énergies s'éveillent sur nos îles ! Restez connectés pour découvrir ce que le pack d'extension nous réserve dans le prochain Bulletin #009 !
+            <div class="summary"><b>📌 Résumé :</b>Reworks de fruits et optimisation en tête — la communauté veut de la qualité avant de la quantité.</div>
+        </div>
+
+    </div>
+
+    <!-- PORT TOWN MYSTERY -->
+    <div class="porttown-box">
+        <h2>Le Mystère Échoué de Port Town</h2>
+        <span class="section-subtext">Par Wenloco E. Savage</span>
+
+        <div class="porttown-inner">
+            <div class="porttown-text">
+                <p>Une caisse abîmée s'est échouée sur le rivage de Port Town en début de semaine, et son contenu est <strong>tout sauf ordinaire.</strong></p>
+                <p>Le bois de la caisse avait gonflé avec l'eau de mer, et à l'intérieur se trouvait un seul objet resté globalement intact : un grand journal relié en cuir. Bien que de nombreuses pages soient imbibées et presque illisibles, les aperçus de son contenu suscitent déjà beaucoup d'intérêt !</p>
+                <p>Des symboles griffonnés, des croquis, des informations perspicaces, des références à des noms jamais vus auparavant. Tous les indices suggèrent que ce journal appartenait autrefois à quelqu'un ayant accès à des <strong>renseignements de haut niveau.</strong></p>
+                <p>Malheureusement, une grande partie du livre est trop fragile pour être manipulée. Les archivistes locaux disent qu'il faudra du temps pour sécher, restaurer et étudier les pages restantes. Nous ferons un rapport dès que davantage sera récupéré. Pour l'instant, la mer nous a offert un mystère — que nous avons bien l'intention de résoudre !</p>
             </div>
+            <img src="../008/img/MysteryJournal.png" alt="Journal mystérieux échoué" class="porttown-img">
         </div>
 
-        <div class="back-button-container">
-            <a href="../index.html" class="back-button">← Retour aux Actualités</a>
-        </div>
+        <div class="summary"><b>📌 Résumé :</b>Teaser d'un journal mystérieux contenant des informations classifiées — probablement lié à une nouvelle quête ou storyline à venir.</div>
 
-    </main>
+        <div class="stay-tuned-italic">
+            Rendez-vous jeudi prochain pour le Bulletin 009, avec une nouvelle Q&A des développeurs, plus de découvertes du journal, et de grandes histoires !
+        </div>
+    </div>
+
+    <!-- PARTAGE -->
+    <div class="social-share">
+        <a href="#" class="fb">📱 Partager</a>
+        <a href="#" class="tw">🐦 Tweeter</a>
+        <a href="#" class="pi">📌 Épingler</a>
+    </div>
+
+    <!-- BOUTON RETOUR -->
+    <div class="back-button-container">
+        <a href="../index.html" class="back-button">← Retour aux Actualités</a>
+    </div>
+
+</main>
+
+<footer class="site-footer">
+    <div class="footer-col">
+        <h3>Liens Rapides</h3>
+        <ul>
+            <li><a href="#">Recherche</a></li>
+            <li><a href="#">Politique de Remboursement</a></li>
+            <li><a href="#">Politique de Confidentialité</a></li>
+            <li><a href="#">Conditions d'Utilisation</a></li>
+        </ul>
+    </div>
+    <div class="footer-col">
+        <h3>Rejoindre la Communauté</h3>
+        <p>Restez connecté avec la communauté Blox Fruits !</p>
+        <div class="footer-community-links">
+            <a href="#">🎮 Discord</a>
+            <a href="#">🐦 Twitter / X</a>
+            <a href="#">▶️ YouTube</a>
+        </div>
+    </div>
+</footer>
+
+<script>
+// ── DONNÉES DU SONDAGE (résultats réels du poll #007) ──
+const pollData = [
+    { label: "Reworks de fruits",           pct: 22, color: "#e05c5c" },
+    { label: "Optimisation / Plus de lag",  pct: 19, color: "#5c8ee0" },
+    { label: "Nouveau contenu",             pct: 13, color: "#e0a85c" },
+    { label: "Rework des îles / Map",       pct: 10, color: "#5cc4e0" },
+    { label: "Système de Crews 2.0",        pct:  8, color: "#a05ce0" },
+    { label: "Styles de combat",            pct:  7, color: "#5ce07a" },
+    { label: "Quêtes & progression",        pct:  6, color: "#e0d45c" },
+    { label: "Bounty / Réputation",         pct:  5, color: "#e08c5c" },
+    { label: "Équilibrage PvP",             pct:  4, color: "#5ce0c4" },
+    { label: "Sous-classes / GUI",          pct:  3, color: "#c45ce0" },
+    { label: "Autres",                      pct:  3, color: "#aaaaaa" },
+];
+
+// ── DESSIN DU PIE CHART ──
+const canvas = document.getElementById("pollChart");
+const ctx = canvas.getContext("2d");
+const cx = canvas.width / 2, cy = canvas.height / 2, r = 82;
+const tooltip = document.getElementById("chartTooltip");
+
+const slices = [];
+let startAngle = -Math.PI / 2;
+pollData.forEach(d => {
+    const angle = (d.pct / 100) * 2 * Math.PI;
+    slices.push({ ...d, start: startAngle, end: startAngle + angle });
+    startAngle += angle;
+});
+
+function drawChart(hovered = -1) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    slices.forEach((s, i) => {
+        ctx.beginPath();
+        const offset = i === hovered ? 6 : 0;
+        const midA = (s.start + s.end) / 2;
+        ctx.moveTo(cx + Math.cos(midA) * offset, cy + Math.sin(midA) * offset);
+        ctx.arc(cx + Math.cos(midA) * offset, cy + Math.sin(midA) * offset, r, s.start, s.end);
+        ctx.closePath();
+        ctx.fillStyle = s.color;
+        ctx.fill();
+        ctx.strokeStyle = "#fff";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+    });
+}
+
+drawChart();
+
+canvas.addEventListener("mousemove", e => {
+    const rect = canvas.getBoundingClientRect();
+    const mx = e.clientX - rect.left - cx;
+    const my = e.clientY - rect.top - cy;
+    const dist = Math.sqrt(mx * mx + my * my);
+    let found = -1;
+    if (dist <= r) {
+        let angle = Math.atan2(my, mx);
+        slices.forEach((s, i) => {
+            let start = s.start, end = s.end;
+            if (angle >= start && angle < end) found = i;
+            if (start < -Math.PI / 2 && angle >= start + 2 * Math.PI) found = i;
+        });
+    }
+    drawChart(found);
+    if (found >= 0) {
+        const s = slices[found];
+        tooltip.textContent = `${s.label} : ${s.pct}%`;
+        tooltip.style.display = "block";
+        tooltip.style.left = (e.clientX - rect.left) + "px";
+        tooltip.style.top  = (e.clientY - rect.top) + "px";
+    } else {
+        tooltip.style.display = "none";
+    }
+});
+canvas.addEventListener("mouseleave", () => {
+    drawChart();
+    tooltip.style.display = "none";
+});
+
+// ── LÉGENDE ──
+const legend = document.getElementById("pollLegend");
+pollData.forEach(d => {
+    const item = document.createElement("div");
+    item.className = "legend-item";
+    item.innerHTML = `<div class="legend-dot" style="background:${d.color}"></div>
+        <span><strong>${d.pct}%</strong> — ${d.label}</span>`;
+    legend.appendChild(item);
+});
+</script>
 
 </body>
 </html>
