@@ -1,7 +1,5 @@
 # 📰 The Blox Bulletin
 
-Site d'actualités pour Blox Fruits — les bulletins hebdomadaires traduits en français.
-
 ## Structure des fichiers
 
 ```
@@ -44,8 +42,3 @@ blox-bulletin/
 ### 004/img/
 - `1th_img.png`, `TrailerandUpdateRelease.png`, `NewBoss.png`
 - `Hidden_CR.png`, `Hidden_EM2.png`, `Hidden_GM.png`
-
-## Déploiement GitHub Pages
-1. Upload tous les fichiers sur GitHub
-2. Settings → Pages → Branch: main → Save
-3. Site disponible sur `https://TON_PSEUDO.github.io/blox-bulletin/`
