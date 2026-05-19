@@ -155,6 +155,8 @@
             transition: transform 0.2s ease, box-shadow 0.2s ease;
             display: flex;
             flex-direction: column;
+                        align-items: center;
+            justify-content: center;
         }
         .news-card:hover {
             transform: translateY(-5px);
@@ -165,18 +167,24 @@
             padding-top: 56.25%;
             position: relative;
             background-color: #f4f4f4;
+                        align-items: center;
+            justify-content: center;
         }
         .news-card__image {
             position: absolute;
             top: 0; left: 0;
             width: 100%; height: 100%;
             object-fit: cover;
+                        align-items: center;
+            justify-content: center;
         }
         .news-card__content {
             padding: 25px;
             display: flex;
             flex-direction: column;
             flex-grow: 1;
+                        align-items: center;
+            justify-content: center;
         }
         .news-card__date {
             font-size: 13px;
@@ -184,6 +192,8 @@
             color: #888;
             margin-bottom: 10px;
             text-transform: uppercase;
+                        align-items: center;
+            justify-content: center;
         }
         .news-card__title {
             font-size: 22px;
@@ -191,6 +201,9 @@
             margin: 0 0 15px 0;
             color: #111;
             line-height: 1.3;
+            text-align: center;
+                        align-items: center;
+            justify-content: center;
         }
         .news-card__button {
             margin-top: auto;
@@ -205,6 +218,7 @@
             font-size: 14px;
             text-transform: uppercase;
             transition: background-color 0.2s;
+            text-align: center;
         }
         .news-card__button:hover { background-color: #e6c300; }
 
@@ -313,8 +327,8 @@
                         <img src="${b.img}" class="news-card__image" alt="Bulletin #${b.num}">
                     </div>
                     <div class="news-card__content">
-                        <div class="news-card__date">The Blox Bulletin – Issue ${b.num}</div>
-                        <h2 class="news-card__title">The Blox Bulletin #${b.num}</h2>
+                        <div class="news-card__date">The Neo Bulletin – Issue ${b.num}</div>
+                        <h2 class="news-card__title">The Neo Bulletin #${b.num}</h2>
                         <a href="${b.href}" class="news-card__button">Voir plus</a>
                     </div>
                 </article>
