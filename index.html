@@ -141,13 +141,16 @@
 
         /* ── GRILLE ── */
         .news-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            display: flex;
+            flex-wrap: wrap;
             gap: 30px;
+            justify-content: center;
         }
 
         /* ── CARTE ── */
         .news-card {
+            width: 340px;
+            max-width: 100%;
             background: #ffffff;
             border-radius: 16px;
             overflow: hidden;
