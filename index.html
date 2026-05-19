@@ -65,6 +65,35 @@
         .site-nav a { color: var(--color-text); text-decoration: none; font-weight: 700; font-size: 25px; text-transform: uppercase; }
         .site-header__icons { display: flex; gap: 20px; color: var(--color-text); cursor: pointer; }
 
+        /* Animation swipe */
+.news-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    justify-content: center;
+
+    transition: transform 0.4s ease, opacity 0.4s ease;
+    will-change: transform;
+}
+
+/* état visible */
+.news-grid.active {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+/* entrée depuis droite */
+.news-grid.from-right {
+    transform: translateX(100%);
+    opacity: 0;
+}
+
+/* entrée depuis gauche */
+.news-grid.from-left {
+    transform: translateX(-100%);
+    opacity: 0;
+}
+
         /* ── CONTENU PRINCIPAL ── */
         .main-content {
             max-width: 1200px;
@@ -140,12 +169,6 @@
         }
 
         /* ── GRILLE ── */
-        .news-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 30px;
-            justify-content: center;
-        }
 
         /* ── CARTE ── */
         .news-card {
@@ -350,13 +373,60 @@
                 document.getElementById(id).disabled = currentPage === totalPages);
         }
 
-        function changePage(dir) {
-            currentPage += dir;
-            renderPage();
-            window.scrollTo({ top: 0, behavior: "smooth" });
-        }
+function changePage(dir) {
+    const grid = document.getElementById("news-grid");
 
+    if ((dir === -1 && currentPage === 1) || (dir === 1 && currentPage === totalPages)) {
+        return;
+    }
+
+    // direction animation
+    const directionClass = dir === 1 ? "from-right" : "from-left";
+
+    // appliquer sortie
+    grid.classList.remove("active", "from-left", "from-right");
+    grid.classList.add(directionClass);
+
+    // attendre la fin de sortie AVANT de changer le contenu
+    setTimeout(() => {
+        currentPage += dir;
         renderPage();
+
+        // remettre au centre après render
+        const newGrid = document.getElementById("news-grid");
+        newGrid.classList.remove("from-left", "from-right");
+        newGrid.classList.add("active");
+
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    }, 200); // doit être < durée CSS (0.4s)
+}
+
+renderPage();
+document.getElementById("news-grid").classList.add("active");
+
+let startX = 0;
+
+const grid = document.getElementById("news-grid");
+
+grid.addEventListener("touchstart", (e) => {
+    startX = e.touches[0].clientX;
+}, { passive: true });
+
+grid.addEventListener("touchend", (e) => {
+    const endX = e.changedTouches[0].clientX;
+    const diff = endX - startX;
+
+    if (Math.abs(diff) < 60) return;
+
+    if (diff < 0) {
+        changePage(1);
+    } else {
+        changePage(-1);
+    }
+});
+
+renderPage();
+document.getElementById("news-grid").classList.add("active");
     </script>
 
 </body>

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Le Bulletin Blox #011 – Blox Fruits</title>
+    <link rel="icon" href="../shared/bf_logo.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
+    <style>
+        @font-face { font-family: 'LuckiestGuy Regular'; src: url('../fonts/LuckiestGuy-Regular.ttf') format('truetype'); }
+        :root { --color-text: #333132; --color-border: #ebebeb; --font-stack-body: 'Inter', sans-serif; --color-primary: #ffda00; }
+        * { box-sizing: border-box; }
+        body { margin: 0; font-family: var(--font-stack-body); color: var(--color-text); background: #fff; line-height: 1.6; }
+        .site-header { display: flex; align-items: center; justify-content: space-between; padding: 15px 55px; background: #fff; border-bottom: 1px solid var(--color-border); position: sticky; top: 0; z-index: 1000; }
+        .site-header__logo img { height: 45px; display: block; }
+        .site-nav { display: flex; gap: 25px; padding: 0; margin: 0; list-style: none; }
+        .site-nav a { color: var(--color-text); text-decoration: none; font-weight: 700; font-size: 25px; text-transform: uppercase; font-family: 'LuckiestGuy Regular', cursive; }
+        .site-header__icons { display: flex; gap: 20px; color: var(--color-text); cursor: pointer; }
+        .bulletin-container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
+        .blue-banner { background: #175ec2; color: #fff; text-align: center; padding: 14px; font-size: 33px; text-transform: uppercase; letter-spacing: 2px; border-radius: 4px; margin-bottom: 25px; font-family: 'LuckiestGuy Regular', cursive; }
+        .hero-image { width: 100%; height: auto; display: block; border-radius: 20px; border: 3px solid #000; margin-bottom: 15px; }
+        .publish-date { font-size: 15px; font-weight: bold; color: #222; margin-bottom: 25px; }
+        .journal-header { text-align: center; margin-top: 30px; }
+        .journal-title { font-family: 'Georgia', serif; font-size: 52px; font-weight: bold; color: #111; margin: 0 0 10px 0; }
+        .journal-subtitle { font-family: 'Georgia', serif; font-style: italic; font-size: 18px; color: #555; margin: 0 0 25px 0; }
+        .journal-meta { font-weight: bold; font-size: 14px; color: #111; margin-bottom: 12px; text-transform: uppercase; }
+        .dashed-line { border-top: 2px dashed #111; margin: 15px 0 35px 0; }
+        /* GRIS */
+        .grey-box { background: #f2f2f2; border: 1px solid #ccc; border-radius: 6px; padding: 25px; margin-bottom: 30px; }
+        .grey-box h2 { font-size: 22px; font-weight: 900; color: #111; margin: 0 0 4px 0; border-bottom: 2px solid #111; padding-bottom: 6px; }
+        .grey-box .byline { font-style: italic; font-size: 13px; color: #555; display: block; margin-bottom: 14px; }
+        .grey-box img { width: 100%; height: auto; border: 3px solid #000; border-radius: 8px; margin-bottom: 16px; }
+        .grey-box p { font-size: 14.5px; margin: 0 0 12px 0; }
+        /* COLONNES */
+        .content-columns { display: flex; gap: 30px; margin-bottom: 30px; }
+        .left-col { flex: 1.7; }
+        .right-col { flex: 1.3; background: #f2f2f2; padding: 20px; border-radius: 8px; border: 1px solid #ccc; height: fit-content; }
+        h2 { border-bottom: 2px solid #111; padding-bottom: 5px; font-size: 22px; font-weight: 900; margin: 0 0 6px 0; color: #111; }
+        .section-subtext { font-style: italic; font-size: 13.5px; color: #555; margin-bottom: 16px; display: block; }
+        .col-img { width: 100%; height: auto; border: 3px solid #000; border-radius: 8px; margin-bottom: 16px; }
+        .col-text p { font-size: 14.5px; margin: 0 0 12px 0; }
+        .right-col h2 { font-size: 20px; line-height: 1.3; }
+        .right-col img { width: 100%; height: auto; border: 3px solid #000; border-radius: 6px; margin-bottom: 14px; }
+        .right-col p { font-size: 13.5px; margin: 0 0 12px 0; }
+        /* POLL BOX */
+        .poll-box { background: #fff; border: 2px solid #6c47b8; border-radius: 8px; padding: 16px; margin-top: 12px; }
+        .poll-box h3 { font-size: 17px; font-weight: 900; margin: 0 0 8px 0; color: #111; }
+        .poll-box p { font-size: 13px; color: #444; margin: 0 0 12px 0; }
+        .poll-box textarea { width: 100%; border: 1px solid #ccc; border-radius: 6px; padding: 10px; font-size: 13px; resize: vertical; min-height: 80px; font-family: inherit; }
+        .poll-btn { margin-top: 12px; background: #6c47b8; color: #fff; border: none; border-radius: 6px; padding: 10px 18px; font-size: 14px; font-weight: 700; cursor: pointer; width: 100%; }
+        .poll-btn:hover { background: #5a3a9a; }
+        /* INLINE ARTICLE */
+        .article-inline { margin-bottom: 30px; }
+        .article-inline h2 { font-size: 22px; border-bottom: 2px solid #111; padding-bottom: 6px; }
+        .article-inner { display: flex; gap: 20px; align-items: flex-start; margin-top: 14px; }
+        .article-text { flex: 1; }
+        .article-text p { font-size: 14.5px; margin: 0 0 12px 0; }
+        .article-img { width: 270px; flex-shrink: 0; border: 3px solid #000; border-radius: 8px; }
+        /* RÉSUMÉ */
+        .summary { background: rgba(88,101,242,0.09); border-left: 4px solid #5865f2; padding: 12px 16px; margin-top: 15px; font-size: 13.5px; font-style: italic; color: #2c3e50; border-radius: 0 6px 6px 0; }
+        .summary b { color: #5865f2; text-transform: uppercase; font-size: 11px; font-style: normal; display: block; margin-bottom: 4px; }
+        .stay-tuned { font-style: italic; font-size: 14px; color: #444; text-align: center; padding: 16px 0; border-top: 2px solid #111; margin-top: 10px; }
+        .social-share { display: flex; gap: 10px; margin: 20px 0; }
+        .social-share a { display: inline-flex; align-items: center; gap: 7px; padding: 8px 14px; border: 2px solid #000; border-radius: 4px; font-size: 13px; font-weight: 700; text-decoration: none; color: #000; text-transform: uppercase; }
+        .social-share a.fb { background: #3b5998; color: #fff; border-color: #3b5998; }
+        .social-share a.tw { background: #1da1f2; color: #fff; border-color: #1da1f2; }
+        .social-share a.pi { background: #e60023; color: #fff; border-color: #e60023; }
+        .back-button-container { text-align: center; margin: 30px 0 50px 0; }
+        .back-button { background: var(--color-primary); color: #000; font-weight: 900; text-transform: uppercase; padding: 12px 30px; border: 2px solid #000; text-decoration: none; font-size: 14px; border-radius: 4px; display: inline-block; }
+        .site-footer { background: #f0f0f0; border-top: 1px solid #ccc; padding: 40px 55px; display: flex; gap: 60px; }
+        .footer-col h3 { font-size: 15px; font-weight: 900; text-transform: uppercase; margin: 0 0 14px 0; }
+        .footer-col ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+        .footer-col ul li a { color: #333; text-decoration: none; font-size: 14px; }
+        .footer-col p { font-size: 13px; color: #555; margin: 0 0 10px 0; }
+        .footer-community-links { display: flex; flex-direction: column; gap: 8px; }
+        .footer-community-links a { color: #175ec2; text-decoration: none; font-weight: 700; font-size: 14px; }
+        @media (max-width: 768px) { .site-header { padding: 12px 20px; } .site-nav { display: none; } .content-columns { flex-direction: column; } .article-inner { flex-direction: column; } .article-img { width: 100%; } .site-footer { flex-direction: column; gap: 30px; padding: 30px 20px; } }
+    </style>
+</head>
+<body>
+<header class="site-header">
+    <div class="site-header__logo"><img src="../BF_news.png" alt="Blox Fruits"></div>
+    <nav><ul class="site-nav">
+        <li><a href="#">Game</a></li>
+    </li><li><a href="#">DLC</a></li>
+        <li><a href="../index.html">News</a></li>
+    </ul></nav>
+    <div class="site-header__icons">
+        <span class="material-symbols-outlined">search</span>
+        <span class="material-symbols-outlined">person</span>
+        <span class="material-symbols-outlined">shopping_bag</span>
+    </div>
+</header>
+
+<main class="bulletin-container">
+    <div class="blue-banner">The Blox Bulletin #011</div>
+    <img src="../011/img/bulletin011cover.png" class="hero-image" alt="Bulletin 011">
+    <div class="publish-date">20 Juin 2025</div>
+
+    <div class="journal-header">
+        <h1 class="journal-title">The Blox Bulletin</h1>
+        <p class="journal-subtitle">Civilisations Englouties, Poissons Tapis dans l'Ombre, et Bien Plus !</p>
+        <div class="journal-meta">Numéro : 011 | 20 Juin 2025</div>
+    </div>
+    <div class="dashed-line"></div>
+
+    <!-- OCEAN EXPLORATION -->
+    <div class="grey-box">
+        <h2>Exploration Océanique : Le Voyage Tant Attendu !</h2>
+        <span class="byline">Moakoa Shellspine</span>
+        <img src="../011/img/UnderwaterInfested.png" alt="Exploration sous-marine du Tiki Outpost">
+        <p>Le Chef de l'Avant-Poste Tiki est parti avec quelques citoyens vers l'île submergée qui était autrefois connectée à l'Avant-Poste Tiki.</p>
+        <p>Les autres passagers et moi avons eu l'ordre de porter des bandages sur les yeux pour éviter de connaître la route vers l'île. Après un moment, nous avons été autorisés à les retirer, pour découvrir une vue devant nous qui n'était rien de moins qu'extraordinaire...</p>
+        <p>Ce qui a été révélé était une île impressionnante engloutie à la fois par l'océan et le temps : des ruines antiques, des murs imposants, des reliques couvertes de coraux, et un <strong>étang sacré qui semblait abriter des poissons particuliers</strong>. Mais le plus choquant, c'est que l'île était occupée !</p>
+        <p>Des tribus de Fishmen, ainsi que ce qui semblait être des <strong>figures dangereuses</strong> en robes, rôdaient sur l'île...</p>
+        <p>Le Chef était stupéfait qu'il existe quelque chose comme une civilisation ici ! Qu'est-ce que cela signifie pour l'île, et pour les gens en surface ? Revenez plus tard alors que nous continuons à explorer l'île et à débusquer plus d'indices sur ce qu'elle a à offrir !</p>
+        <div class="summary"><b>📌 Résumé :</b>Découverte de l'île sous-marine du Tiki Outpost — civilisation Fishman, ruines, étang sacré avec des poissons spéciaux. Futur biome sous-marin confirmé.</div>
+    </div>
+
+    <!-- DEUX COLONNES : PÊCHE + POTIONS -->
+    <div class="content-columns">
+        <div class="left-col">
+            <h2>À la Pêche !</h2>
+            <span class="section-subtext">Par l'Équipe de Développement</span>
+            <img src="../011/img/FishiesInTheWater.png" alt="Système de pêche" class="col-img">
+            <div class="col-text">
+                <p>La pêche fait son entrée dans le monde de Blox Fruits ! La pêche est un nouveau système de gameplay qui apporte une profession de compétence de vie au jeu, offrant aux joueurs une façon plus immersive et relaxante de s'engager dans le jeu au-delà du PvP et du grinding de combat.</p>
+                <p><strong>La pêche sera accessible à TOUS les joueurs.</strong> Vous pourrez apprendre à pêcher auprès de vos formateurs respectifs dans <strong>chaque mer</strong> du jeu. Alors, comment fonctionne la pêche exactement ?</p>
+                <p>Environ <strong>30 nouvelles espèces de poissons sont introduites dans cette mise à jour</strong>, certaines espèces apparaissant plus souvent autour d'îles spécifiques, selon la <strong>Canne et l'Appât</strong> que vous utilisez. Gardez donc un œil sur quel appât vous aidera à trouver ce que vous cherchez !</p>
+                <p>Cependant, certains poissons pourraient être trop difficiles à attraper, donc nous recommandons d'augmenter votre compétence de pêche ! Chaque joueur aura la capacité de <strong>monter sa compétence de pêche jusqu'au niveau 100 maximum.</strong> Votre niveau augmente uniquement en fonction de chaque poisson attrapé. <strong>Plus vous pêchez, plus vous devenez efficace</strong> pour attraper des poissons plus puissants.</p>
+                <p>Nous sommes tellement enthousiastes à l'idée de sortir cette mécanique et nous avons hâte de voir ce que tout le monde en fait. Alors, une fois la mise à jour disponible, attrapez votre canne et commencez à pêcher ! Pas seulement pour les droits de vantardise, mais aussi pour commencer à accumuler des <strong>consommables craftables</strong> !</p>
+            </div>
+            <div class="summary"><b>📌 Résumé :</b>Système de pêche confirmé — 30 poissons, compétence jusqu'au niveau 100, différente selon les mers, liée au crafting.</div>
+        </div>
+
+        <div class="right-col">
+            <h2>Donnez Votre Avis : Sondage sur les Potions !</h2>
+            <span class="section-subtext">Par l'Équipe Admin</span>
+            <img src="../011/img/PotionBrews.png" alt="Sondage sur les potions">
+            <p>Ouais, si vous ne l'aviez pas deviné, les <strong>potions arrivent dans Blox Fruits !</strong> Vous pourrez les crafter en utilisant des ingrédients que vous trouvez dans la nature. Boire ces potions offrira des effets <em>intéressants</em> !</p>
+            <p>Cependant... nous voulons vos idées. Soumettez votre concept de potion la plus utile, ou la plus farfelue, via le formulaire ci-dessous, et il y a une <strong>chance qu'elle soit ajoutée au jeu.</strong></p>
+
+            <div class="poll-box">
+                <h3>Sondage Potions Blox Fruits</h3>
+                <p>Les potions arrivent comme l'une des mécaniques ajoutées dans la prochaine mise à jour ! Quelles sont vos idées de potions fun, loufoques ou sérieuses ?</p>
+                <textarea placeholder="Ex: Potion de vitesse x2, Potion de vol temporaire, Potion d'invisibilité..."></textarea>
+                <button class="poll-btn" onclick="alert('Merci pour votre idée ! Elle sera examinée par les développeurs 🧪')">Envoyer mon idée</button>
+            </div>
+            <div class="summary"><b>📌 Résumé :</b>Système de potions confirmé — craftables avec des ingrédients du monde, effets variés. La communauté peut soumettre des idées.</div>
+        </div>
+    </div>
+
+    <!-- OUT WITH THE UGLY -->
+    <div class="article-inline">
+        <h2>Place au Style !</h2>
+        <span class="section-subtext">Par Flamey Watkins</span>
+        <div class="article-inner">
+            <div class="article-text">
+                <p>Le monde évolue, <em>et</em> le monde de la mode autour de lui aussi ! Soyons honnêtes, qui porte encore ces vieilles pièces old-school ? Il est temps de changer.</p>
+                <p>Certains de nos meilleurs créateurs de design chez Fizzy O' Style préparent une toute nouvelle gamme d'équipements expressifs et de <strong>haute qualité pour la nouvelle génération.</strong> Non seulement ils peuvent exprimer leur <strong>énergie de personnage principal de façon stylée</strong>, mais nous introduisons également une nouvelle ligne d'<strong>équipements d'accent</strong> qui n'a pas besoin de remplacer votre pièce principale.</p>
+                <p>Alors que vous vous accrochiez à votre cape classique ou que vous portiez quelque chose de bold et nouveau, cet <strong>équipement supplémentaire vous donne le pouvoir d'améliorer votre style et votre survie</strong> en mer !</p>
+            </div>
+            <img src="../011/img/DripExpert.png" alt="Nouveau gear stylé" class="article-img">
+        </div>
+        <div class="summary"><b>📌 Résumé :</b>Nouveau système d'équipements d'accent — slots supplémentaires pour accessoires sans remplacer l'équipement principal.</div>
+    </div>
+
+    <!-- CREATION FRUIT NEW LAYERS -->
+    <div class="grey-box">
+        <h2>Le Fruit Création a Débloqué de Nouvelles Couches</h2>
+        <span class="section-subtext">Par Sirtet Thornside</span>
+        <div class="article-inner" style="margin-top:14px;">
+            <img src="../011/img/ObstacleCourse2.png" alt="Fruit Création nouvelles couches" style="width:270px;flex-shrink:0;border:3px solid #000;border-radius:8px;">
+            <div>
+                <p>Le Fruit Création n'est-il <em>pas</em> tout ce que vous pensiez que ce serait ? Vous vous demandez s'il aurait pu être plus ? Eh bien, vous avez de la chance !</p>
+                <p>À travers les mers, de plus en plus d'utilisateurs du Fruit Création trouvent des façons inventives d'en pousser le potentiel. C'était amusant de concevoir des choses pendant un moment, mais maintenant <strong>la fonctionnalité a été atteinte.</strong></p>
+                <p><strong>Des sols à convoyeurs pour se déplacer plus vite, des trampolines pour atteindre des hauteurs, des voitures conduisibles qui peuvent escalader des murs, des arbres décoratifs, et même des pièges à portes amusantes.</strong> Les nouvelles capacités cachées semblent presque tout avoir !</p>
+                <p>Qu'est-ce que cela signifie pour le reste du monde ? Eh bien, une chose est sûre : ce fruit ne peut plus être plus ridicule !</p>
+            </div>
+        </div>
+        <div class="summary"><b>📌 Résumé :</b>Le Fruit Création dispose de nouvelles mécaniques fonctionnelles — convoyeurs, trampolines, voitures, pièges. Construction utilitaire confirmée.</div>
+
+        <div class="stay-tuned">Revenez la semaine prochaine pour le Bulletin #012, où les histoires deviennent encore plus intéressantes à l'approche de la prochaine mise à jour !</div>
+    </div>
+
+    <div class="back-button-container">
+        <a href="../index.html" class="back-button">← Retour aux Actualités</a>
+    </div>
+</main>
+
+</body>
+</html>

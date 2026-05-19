@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Le Bulletin Blox #010 – Blox Fruits</title>
+    <link rel="icon" href="../shared/bf_logo.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
+    <style>
+        @font-face { font-family: 'LuckiestGuy Regular'; src: url('../fonts/LuckiestGuy-Regular.ttf') format('truetype'); }
+        :root { --color-text: #333132; --color-border: #ebebeb; --font-stack-body: 'Inter', sans-serif; --color-primary: #ffda00; }
+        * { box-sizing: border-box; }
+        body { margin: 0; font-family: var(--font-stack-body); color: var(--color-text); background: #fff; line-height: 1.6; }
+        .site-header { display: flex; align-items: center; justify-content: space-between; padding: 15px 55px; background: #fff; border-bottom: 1px solid var(--color-border); position: sticky; top: 0; z-index: 1000; }
+        .site-header__logo img { height: 45px; display: block; }
+        .site-nav { display: flex; gap: 25px; padding: 0; margin: 0; list-style: none; }
+        .site-nav a { color: var(--color-text); text-decoration: none; font-weight: 700; font-size: 25px; text-transform: uppercase; font-family: 'LuckiestGuy Regular', cursive; }
+        .site-header__icons { display: flex; gap: 20px; color: var(--color-text); cursor: pointer; }
+        .bulletin-container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
+        .blue-banner { background: #175ec2; color: #fff; text-align: center; padding: 14px; font-size: 33px; text-transform: uppercase; letter-spacing: 2px; border-radius: 4px; margin-bottom: 25px; font-family: 'LuckiestGuy Regular', cursive; }
+        .hero-image { width: 100%; height: auto; display: block; border-radius: 20px; border: 3px solid #000; margin-bottom: 15px; }
+        .publish-date { font-size: 15px; font-weight: bold; color: #222; margin-bottom: 25px; }
+        .journal-header { text-align: center; margin-top: 30px; }
+        .journal-title { font-family: 'Georgia', serif; font-size: 52px; font-weight: bold; color: #111; margin: 0 0 10px 0; }
+        .journal-subtitle { font-family: 'Georgia', serif; font-style: italic; font-size: 18px; color: #555; margin: 0 0 25px 0; }
+        .journal-meta { font-weight: bold; font-size: 14px; color: #111; margin-bottom: 12px; text-transform: uppercase; }
+        .dashed-line { border-top: 2px dashed #111; margin: 15px 0 0 0; }
+        /* IMPORTANT NEWS BANNER */
+        .important-banner { background: #fce8e6; border-top: 3px solid #c53929; border-bottom: 3px solid #c53929; text-align: center; padding: 16px; margin-bottom: 0; }
+        .important-banner span { color: #c53929; font-size: 22px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; }
+        /* UNE ROSE */
+        .front-box { background: #fce8e6; border: 2px solid #000; border-left: 6px solid #c53929; border-top: none; padding: 25px; margin-bottom: 35px; }
+        .front-box h2 { font-size: 22px; font-weight: 900; color: #111; margin: 0 0 4px 0; border: none; padding: 0; }
+        .front-box .byline { font-style: italic; font-size: 13px; color: #555; display: block; margin-bottom: 14px; }
+        .front-box p { font-size: 14.5px; margin: 0 0 12px 0; }
+        .front-inner { display: flex; gap: 20px; align-items: flex-start; margin-bottom: 14px; }
+        .front-inner img { width: 280px; flex-shrink: 0; border: 3px solid #000; border-radius: 8px; }
+        .front-inner-text p { font-size: 14.5px; margin: 0 0 12px 0; }
+        /* COLONNES 50/50 */
+        .two-col { display: flex; gap: 25px; margin-bottom: 30px; }
+        .col-half { flex: 1; background: #f2f2f2; border: 1px solid #ccc; border-radius: 6px; padding: 20px; }
+        .col-half h2 { font-size: 20px; font-weight: 900; color: #111; border-bottom: 2px solid #111; padding-bottom: 6px; margin: 0 0 6px 0; line-height: 1.3; }
+        .col-half .byline { font-style: italic; font-size: 13px; color: #555; display: block; margin-bottom: 14px; }
+        .col-half img { width: 100%; height: auto; border: 3px solid #000; border-radius: 8px; margin-bottom: 14px; }
+        .col-half p { font-size: 13.5px; margin: 0 0 12px 0; }
+        .col-half img.inline-img { float: right; width: 180px; margin: 0 0 10px 14px; }
+        /* RÉSUMÉ */
+        .summary { background: rgba(88,101,242,0.09); border-left: 4px solid #5865f2; padding: 12px 16px; margin-top: 15px; font-size: 13.5px; font-style: italic; color: #2c3e50; border-radius: 0 6px 6px 0; }
+        .summary b { color: #5865f2; text-transform: uppercase; font-size: 11px; font-style: normal; display: block; margin-bottom: 4px; }
+        .stay-tuned { font-style: italic; font-size: 14px; color: #444; text-align: center; padding: 16px 0; border-top: 2px solid #111; margin-top: 10px; }
+        .social-share { display: flex; gap: 10px; margin: 20px 0; }
+        .social-share a { display: inline-flex; align-items: center; gap: 7px; padding: 8px 14px; border: 2px solid #000; border-radius: 4px; font-size: 13px; font-weight: 700; text-decoration: none; color: #000; text-transform: uppercase; }
+        .social-share a.fb { background: #3b5998; color: #fff; border-color: #3b5998; }
+        .social-share a.tw { background: #1da1f2; color: #fff; border-color: #1da1f2; }
+        .social-share a.pi { background: #e60023; color: #fff; border-color: #e60023; }
+        .back-button-container { text-align: center; margin: 30px 0 50px 0; }
+        .back-button { background: var(--color-primary); color: #000; font-weight: 900; text-transform: uppercase; padding: 12px 30px; border: 2px solid #000; text-decoration: none; font-size: 14px; border-radius: 4px; display: inline-block; }
+        .site-footer { background: #f0f0f0; border-top: 1px solid #ccc; padding: 40px 55px; display: flex; gap: 60px; }
+        .footer-col h3 { font-size: 15px; font-weight: 900; text-transform: uppercase; margin: 0 0 14px 0; }
+        .footer-col ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+        .footer-col ul li a { color: #333; text-decoration: none; font-size: 14px; }
+        .footer-col p { font-size: 13px; color: #555; margin: 0 0 10px 0; }
+        .footer-community-links { display: flex; flex-direction: column; gap: 8px; }
+        .footer-community-links a { color: #175ec2; text-decoration: none; font-weight: 700; font-size: 14px; }
+        @media (max-width: 768px) { .site-header { padding: 12px 20px; } .site-nav { display: none; } .two-col { flex-direction: column; } .front-inner { flex-direction: column; } .front-inner img { width: 100%; } .site-footer { flex-direction: column; gap: 30px; padding: 30px 20px; } }
+    </style>
+</head>
+<body>
+<header class="site-header">
+    <div class="site-header__logo"><img src="../BF_news.png" alt="Blox Fruits"></div>
+    <nav><ul class="site-nav">
+        <li><a href="#">Game</a></li>
+    </li><li><a href="#">DLC</a></li>
+        <li><a href="../index.html">News</a></li>
+    </ul></nav>
+    <div class="site-header__icons">
+        <span class="material-symbols-outlined">search</span>
+        <span class="material-symbols-outlined">person</span>
+        <span class="material-symbols-outlined">shopping_bag</span>
+    </div>
+</header>
+
+<main class="bulletin-container">
+    <div class="blue-banner">The Blox Bulletin #010</div>
+    <img src="../010/img/RipVSRed.png" class="hero-image" alt="Bulletin 010">
+    <div class="publish-date">13 Juin 2025</div>
+
+    <div class="journal-header">
+        <h1 class="journal-title">The Blox Bulletin</h1>
+        <p class="journal-subtitle">Nouvelles de la Mise à Jour 27, Journaux Révélés et Affaires de Poissons</p>
+        <div class="journal-meta">Numéro : 010 | 12 Juin 2025</div>
+    </div>
+    <div class="dashed-line"></div>
+
+    <!-- IMPORTANT NEWS BANNER -->
+    <div class="important-banner"><span>NOUVELLES IMPORTANTES !</span></div>
+
+    <!-- LA GRANDE ANNONCE -->
+    <div class="front-box">
+        <h2>L'Expansion Estivale des 50 Milliards !</h2>
+        <span class="byline">Par l'Équipe Admin</span>
+
+        <div class="front-inner">
+            <div class="front-inner-text">
+                <p>Place, parce qu'une grande nouvelle a frappé !</p>
+                <p>Blox Fruits a décidé de lancer certains de ses <strong>plans les plus ambitieux à ce jour</strong>. Pour célébrer l'incroyable jalon de <strong>50 milliards de visites</strong>, nous introduisons un <strong>nouveau format de mise à jour</strong> conçu pour livrer du contenu plus fréquemment et de manière plus cohérente. Cette nouvelle approche marque un pas majeur dans la façon dont nous apportons de nouvelles expériences à nos joueurs.</p>
+                <p>En commençant en <strong>fin juillet</strong>, l'Expansion Estivale déploiera une <strong>série de mises à jour hebdomadaires</strong>. Celles-ci incluront des reworks de fruits, des <strong>nouvelles mécaniques de gameplay</strong>, et plusieurs <strong>fonctionnalités très attendues</strong> teasées dans les récents articles de blog. Préparez-vous à une vague de changements passionnants dans le monde de Blox Fruits !</p>
+            </div>
+            <img src="../010/img/FruitReworks2.png" alt="50 Milliards de visites">
+        </div>
+
+        <div class="front-inner">
+            <img src="../010/img/RipandRedSide.png" alt="Summer Expansion" style="width:280px;border:3px solid #000;border-radius:8px;flex-shrink:0;">
+            <div class="front-inner-text">
+                <p>Dans le cadre de cette expansion multi-semaines, un <strong>événement de célébration à durée limitée</strong> sera lancé plus tard dans le cycle de mise à jour. Conçu pour marquer le jalon des 50 milliards de visites, cette nouvelle expérience offrira aux joueurs la chance de gagner des <strong>objets exclusifs</strong> — et pourrait ouvrir la voie à plus d'événements du genre à l'avenir.</p>
+                <p>Grâce à notre lead Blox Fruit Technician, CJ_Oyer, le pipeline de développement est plus agile que jamais — rendant possible des contenus surprises comme celui-ci. Faites-nous savoir ce que vous en pensez une fois que c'est en direct !</p>
+            </div>
+        </div>
+
+        <div class="summary"><b>📌 Résumé :</b>50 milliards de visites célébrés avec une Expansion Estivale — mises à jour hebdomadaires à partir de fin juillet, event exclusif à durée limitée.</div>
+    </div>
+
+    <!-- DEUX COLONNES -->
+    <div class="two-col">
+        <div class="col-half">
+            <h2>Les Secrets du Journal du Biographe se Dévoilent</h2>
+            <span class="byline">Par Xonae, Technologue Ancien</span>
+            <p>L'intégralité du journal du bulletin précédent a enfin été récupérée, et les découvertes sont rien moins qu'extraordinaires !</p>
+            <p>Les découvertes montrent que le biographe anonyme n'était pas un simple observateur. Chaque page offre un <strong>compte rendu soigneusement consigné de la construction d'une personne, de son équipage, de ses achievements</strong>, et même de ses habitudes de langage ! Une page note qu'une personne utilise fréquemment le mot « Mangos »... étrange.</p>
+            <p>Ce journal sera bientôt partagé avec le public, agissant comme une <strong>sorte d'encyclopédie</strong>. Quel étrange héritage laissé derrière... mais c'en est un qui aidera d'innombrables aventuriers à suivre les uns les autres, forger des réputations, et suivre leur propre progression personnelle.</p>
+            <img src="../010/img/ProfilesPic.png" alt="Journal révélé" style="width:100%;border:3px solid #000;border-radius:8px;margin-top:10px;">
+            <div class="summary"><b>📌 Résumé :</b>Le journal devient une encyclopédie publique — système de réputation et de profil de joueur confirmé.</div>
+        </div>
+        <div class="col-half">
+            <h2>Miracle Soudain ! Le Parc d'État Respire à Nouveau</h2>
+            <span class="byline">Par Twiggy Logleaf</span>
+            <img src="../010/img/LakeReturned.png" alt="Parc d'État revitalisé">
+            <p>Après quelques journées difficiles au parc d'État asséché, un miracle mystérieux s'est produit quand des nuages de pluie ont survolé la zone, trempant à nouveau la forêt !</p>
+            <p>Les campeurs, les randonneurs et les équipages locaux affluent au parc avec leurs <strong>cannes à pêche en main</strong>, et des tonnes d'histoires à raconter. Avec les <strong>poissons qui remontent le courant</strong> et la forêt bourdonnante de vie, le temps de qualité passé ici n'a pas été aussi significatif depuis longtemps.</p>
+            <p>Le parc d'État est vivant à nouveau, et l'esprit de la forêt aussi. Cela nous enseigne que peu importe combien durent les difficultés, le temps nous en viendra toujours à bout.</p>
+            <div class="summary"><b>📌 Résumé :</b>Le parc est revitalisé — teaser du système de pêche et retour de l'animation du parc naturel.</div>
+        </div>
+    </div>
+
+    <div class="stay-tuned">J'espère que vous avez apprécié ce Bulletin ! Revenez jeudi prochain pour le Bulletin #011 !</div>
+
+    <div class="back-button-container">
+        <a href="../index.html" class="back-button">← Retour aux Actualités</a>
+    </div>
+</main>
+
+<footer class="site-footer">
+    <div class="footer-col">
+        <h3>Liens Rapides</h3>
+        <ul><li><a href="#">Recherche</a></li><li><a href="#">Remboursement</a></li><li><a href="#">Confidentialité</a></li><li><a href="#">Conditions</a></li></ul>
+    </div>
+
+</body>
+</html>

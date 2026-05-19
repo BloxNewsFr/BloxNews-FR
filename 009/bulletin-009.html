@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Le Bulletin Blox #009 – Blox Fruits</title>
+    <link rel="icon" href="../shared/bf_logo.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
+    <style>
+        @font-face { font-family: 'LuckiestGuy Regular'; src: url('../fonts/LuckiestGuy-Regular.ttf') format('truetype'); }
+        :root { --color-text: #333132; --color-border: #ebebeb; --font-stack-body: 'Inter', sans-serif; --color-primary: #ffda00; }
+        * { box-sizing: border-box; }
+        body { margin: 0; font-family: var(--font-stack-body); color: var(--color-text); background: #fff; line-height: 1.6; }
+        .site-header { display: flex; align-items: center; justify-content: space-between; padding: 15px 55px; background: #fff; border-bottom: 1px solid var(--color-border); position: sticky; top: 0; z-index: 1000; }
+        .site-header__logo img { height: 45px; width: auto; display: block; }
+        .site-nav { display: flex; gap: 25px; padding: 0; margin: 0; list-style: none; }
+        .site-nav a { color: var(--color-text); text-decoration: none; font-weight: 700; font-size: 25px; text-transform: uppercase; font-family: 'LuckiestGuy Regular', cursive; }
+        .site-header__icons { display: flex; gap: 20px; color: var(--color-text); cursor: pointer; }
+        .bulletin-container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
+        .blue-banner { background: #175ec2; color: #fff; text-align: center; padding: 14px; font-size: 33px; text-transform: uppercase; letter-spacing: 2px; border-radius: 4px; margin-bottom: 25px; font-family: 'LuckiestGuy Regular', cursive; }
+        .hero-image { width: 100%; height: auto; display: block; border-radius: 20px; border: 3px solid #000; margin-bottom: 15px; }
+        .publish-date { font-size: 15px; font-weight: bold; color: #222; margin-bottom: 25px; }
+        .journal-header { text-align: center; margin-top: 30px; }
+        .journal-title { font-family: 'Georgia', serif; font-size: 52px; font-weight: bold; color: #111; margin: 0 0 10px 0; }
+        .journal-subtitle { font-family: 'Georgia', serif; font-style: italic; font-size: 18px; color: #555; margin: 0 0 25px 0; }
+        .journal-meta { font-weight: bold; font-size: 14px; color: #111; margin-bottom: 12px; text-transform: uppercase; }
+        .dashed-line { border-top: 2px dashed #111; margin: 15px 0 35px 0; }
+        /* LORE BOX */
+        .lore-box { background: #f2f2f2; border: 1px solid #ccc; border-radius: 6px; padding: 25px; margin-bottom: 35px; }
+        .lore-box h2 { font-size: 22px; font-weight: 900; color: #111; margin: 0 0 4px 0; border-bottom: 2px solid #111; padding-bottom: 6px; }
+        .lore-box .byline { font-style: italic; font-size: 13px; color: #555; display: block; margin-bottom: 16px; }
+        .lore-box img { width: 100%; height: auto; border: 3px solid #000; border-radius: 8px; margin-bottom: 16px; }
+        .lore-box p { font-size: 14.5px; margin: 0 0 12px 0; }
+        /* COLONNES */
+        .content-columns { display: flex; gap: 30px; margin-bottom: 35px; }
+        .left-col { flex: 1.7; }
+        .right-col { flex: 1.3; background: #f2f2f2; padding: 20px; border-radius: 8px; border: 1px solid #ccc; height: fit-content; }
+        h2 { border-bottom: 2px solid #111; padding-bottom: 5px; font-size: 22px; font-weight: 900; margin: 0 0 6px 0; color: #111; }
+        .section-subtext { font-style: italic; font-size: 13.5px; color: #555; margin-bottom: 16px; display: block; }
+        .col-img { width: 100%; height: auto; border: 3px solid #000; border-radius: 8px; margin-bottom: 16px; }
+        /* Q&A */
+        .qa-item { margin-bottom: 18px; }
+        .qa-user { font-weight: bold; font-size: 14.5px; color: #111; }
+        .qa-answer { border-left: 4px solid #999; padding: 10px 15px; font-size: 14px; color: #333; background: #fafafa; font-style: italic; margin: 6px 0 0 0; }
+        .qa-footer { font-style: italic; font-weight: 700; font-size: 13px; color: #333; margin-top: 16px; border-top: 1px solid #ccc; padding-top: 12px; }
+        /* DROITE */
+        .right-col h2 { font-size: 19px; line-height: 1.3; }
+        .right-col img { width: 100%; height: auto; border: 3px solid #000; border-radius: 6px; margin-bottom: 14px; }
+        .right-col p { font-size: 13.5px; margin: 0 0 12px 0; }
+        .right-col blockquote { border-left: 4px solid #e05c5c; margin: 10px 0; padding: 8px 14px; font-style: italic; font-size: 13.5px; color: #333; background: #fff8f8; }
+        /* ARTICLES BAS */
+        .article-box { margin-bottom: 30px; }
+        .article-box h2 { font-size: 22px; border-bottom: 2px solid #111; padding-bottom: 6px; }
+        .article-inner { display: flex; gap: 20px; align-items: flex-start; margin-top: 14px; }
+        .article-text { flex: 1; }
+        .article-text p { font-size: 14.5px; margin: 0 0 12px 0; }
+        .article-img { width: 270px; flex-shrink: 0; border: 3px solid #000; border-radius: 8px; }
+        /* RÉSUMÉ */
+        .summary { background: rgba(88,101,242,0.09); border-left: 4px solid #5865f2; padding: 12px 16px; margin-top: 15px; font-size: 13.5px; font-style: italic; color: #2c3e50; border-radius: 0 6px 6px 0; }
+        .summary b { color: #5865f2; text-transform: uppercase; font-size: 11px; font-style: normal; display: block; margin-bottom: 4px; }
+        .stay-tuned { font-style: italic; font-size: 14px; color: #444; text-align: center; padding: 16px 0; border-top: 2px solid #111; margin-top: 10px; }
+        .social-share { display: flex; gap: 10px; margin: 20px 0; }
+        .social-share a { display: inline-flex; align-items: center; gap: 7px; padding: 8px 14px; border: 2px solid #000; border-radius: 4px; font-size: 13px; font-weight: 700; text-decoration: none; color: #000; text-transform: uppercase; }
+        .social-share a.fb { background: #3b5998; color: #fff; border-color: #3b5998; }
+        .social-share a.tw { background: #1da1f2; color: #fff; border-color: #1da1f2; }
+        .social-share a.pi { background: #e60023; color: #fff; border-color: #e60023; }
+        .back-button-container { text-align: center; margin: 30px 0 50px 0; }
+        .back-button { background: var(--color-primary); color: #000; font-weight: 900; text-transform: uppercase; padding: 12px 30px; border: 2px solid #000; text-decoration: none; font-size: 14px; border-radius: 4px; display: inline-block; }
+        .site-footer { background: #f0f0f0; border-top: 1px solid #ccc; padding: 40px 55px; display: flex; gap: 60px; }
+        .footer-col h3 { font-size: 15px; font-weight: 900; text-transform: uppercase; margin: 0 0 14px 0; }
+        .footer-col ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+        .footer-col ul li a { color: #333; text-decoration: none; font-size: 14px; }
+        .footer-col p { font-size: 13px; color: #555; margin: 0 0 10px 0; }
+        .footer-community-links { display: flex; flex-direction: column; gap: 8px; }
+        .footer-community-links a { color: #175ec2; text-decoration: none; font-weight: 700; font-size: 14px; }
+        @media (max-width: 768px) { .site-header { padding: 12px 20px; } .site-nav { display: none; } .content-columns { flex-direction: column; } .article-inner { flex-direction: column; } .article-img { width: 100%; } .site-footer { flex-direction: column; gap: 30px; padding: 30px 20px; } }
+    </style>
+</head>
+<body>
+<header class="site-header">
+    <div class="site-header__logo"><img src="../BF_news.png" alt="Blox Fruits"></div>
+    <nav><ul class="site-nav">
+        <li><a href="#">Game</a></li>
+        <li><a href="#">DLC</a></li>
+        <li><a href="../index.html">News</a></li>
+    </ul></nav>
+    <div class="site-header__icons">
+        <span class="material-symbols-outlined">search</span>
+        <span class="material-symbols-outlined">person</span>
+        <span class="material-symbols-outlined">shopping_bag</span>
+    </div>
+</header>
+
+<main class="bulletin-container">
+    <div class="blue-banner">The Blox Bulletin #009</div>
+    <img src="../009/img/duel.png" class="hero-image" alt="Bulletin 009">
+    <div class="publish-date">5 Juin 2025</div>
+
+    <div class="journal-header">
+        <h1 class="journal-title">The Blox Bulletin</h1>
+        <p class="journal-subtitle">Équipez-vous, Séchez, et Lisez.</p>
+        <div class="journal-meta">Numéro : 009 | 5 Juin 2025</div>
+    </div>
+    <div class="dashed-line"></div>
+
+    <!-- JOURNAL LORE -->
+    <div class="lore-box">
+        <h2>La Vérité du Journal : Une Vie Gravée dans les Pages</h2>
+        <span class="byline">K. Marrow, Biographe de Terrain</span>
+        <img src="../009/img/RecoveringBook2.png" alt="Restauration du journal">
+        <p>La restauration du journal noyé trouvé près de Port Town progresse enfin. Sous les soins d'un conservateur expérimenté, une poignée de pages fragiles ont été déchiffrées — et ce qu'elles révèlent n'est pas une histoire ordinaire...</p>
+        <p>Le livre semble appartenir à un <strong>biographe méticuleux</strong> qui a consigné les <strong>traits, la progression et les forces</strong> de diverses <strong>personnes puissantes</strong>. Chaque entrée est soigneusement rédigée, avec des notes soulignant leurs forces, leur évolution au fil du temps, et de petits détails qui suggèrent qu'il y a plus à leur histoire que ce qui apparaît en surface.</p>
+        <p>Seules quelques entrées ont été récupérées jusqu'à présent, mais d'autres arrivent. Si le reste du journal ressemble à ces premières pages, cela pourrait bien être le <strong>registre de connaissances et d'observations le plus instructif</strong> que nous ayons mis au jour en des années !</p>
+        <div class="summary"><b>📌 Résumé :</b>Suite du lore du journal — il s'agit d'une encyclopédie de joueurs avec stats, équipage, achievements. Probablement le futur système de Réputation.</div>
+    </div>
+
+    <!-- DEUX COLONNES -->
+    <div class="content-columns">
+        <div class="left-col">
+            <h2>Questions aux Développeurs #4</h2>
+            <span class="section-subtext">Réponses de l'Équipe</span>
+            <img src="../009/img/ripredQnA6.png" alt="Q&A #4" class="col-img">
+
+            <div class="qa-item">
+                <div class="qa-user">zeph : Peut-on s'attendre à des sneak peeks mensuels, voire hebdomadaires en dehors des blogs ?</div>
+                <div class="qa-answer">Nous prévoyons d'utiliser les blogs quand le contenu est en début de développement, puis de commencer de vrais sneak peeks une fois que le blog confirme le contenu.</div>
+            </div>
+            <div class="qa-item">
+                <div class="qa-user">Zel : Que vouliez-vous dire par différents types de quêtes, ou de quêtes de storyline ?</div>
+                <div class="qa-answer">Lorsque les anciennes mers seront repensées et ajoutées au jeu, nous aimerions aussi introduire de nouveaux types de quêtes que les joueurs peuvent <em>optionnellement</em> suivre. Ces quêtes seront pour tout le monde, pas bloquées derrière un boss de haut niveau difficile. Parmi les récompenses, il y aura des niveaux supplémentaires pour améliorer l'expérience de grinding.</div>
+            </div>
+            <div class="qa-item">
+                <div class="qa-user">Fries : Ajouterez-vous plus d'Achievements ? (Badges sur Roblox)</div>
+                <div class="qa-answer">Peut-être pas de vrais Badges Roblox sur le profil, mais plutôt des badges <em>dans</em> Blox Fruits. Ces « Badges » seront liés à vos achievements et titres obtenus. Mais laissez-moi ne pas gâcher la surprise, vous verrez ça dans la prochaine mise à jour de toute façon !</div>
+            </div>
+            <div class="qa-item">
+                <div class="qa-user">Fulgurus : Y a-t-il des plans pour donner plus d'utilité à la monnaie « Valor » ?</div>
+                <div class="qa-answer">Notre plan actuel est de transformer le Valor en une monnaie « matériau » dans votre inventaire, comme les Bones ou les Hearts. Cela nous permettra d'introduire des sous-classes avec leurs propres monnaies uniques à l'avenir, si nous choisissons de les ajouter.</div>
+            </div>
+            <div class="qa-item">
+                <div class="qa-user">Zel : Ferez-vous des changements sur les taux d'apparition des événements marins ?</div>
+                <div class="qa-answer">Nous avons une idée où les joueurs en fin de jeu pourront choisir quel type d'événement marin apparaît pour les joueurs. Mais... quelles sont vos théories sur la façon dont nous allons procéder ?</div>
+            </div>
+
+            <p class="qa-footer">Avons-nous répondu à toutes vos questions brûlantes ? Nous adorerions en avoir de meilleures pour la prochaine Q&A ! Postez vos questions sur notre Discord pour avoir une chance d'être répondu.</p>
+            <div class="summary"><b>📌 Résumé :</b>Sneak peeks post-blog, nouvelles quêtes optionnelles, badges in-game, Valor → monnaie matériau, choix des événements marins.</div>
+        </div>
+
+        <div class="right-col">
+            <h2>Exclusif : La Réponse d'Uzoth aux Nouvelles du Sharkman Karate</h2>
+            <span class="section-subtext">Par Dragon Talon Prodigy</span>
+            <img src="../009/img/MadUzoth.png" alt="Uzoth répond">
+            <p>Avec des murmures d'une nouvelle zone dédiée aux formes originales du Sharkman Karate en hausse, nous avons demandé une réponse à l'homme avec l'avis le plus <em>brûlant</em> sur la question.</p>
+            <blockquote>« Ils peuvent polir leurs techniques autant qu'ils veulent ! Mais soyons honnêtes, il n'y a qu'un seul vrai maître des enseignements ici ! »</blockquote>
+            <blockquote>« Je veux dire... PFFT. Comme s'ils pouvaient battre la voie du Dragon Talon. Avec mes méthodes et mes <strong>enseignements de techniques secrètes</strong>, rien ne peut s'en approcher... n'est-ce pas ? »</blockquote>
+            <p>Avec le retour des arts anciens, les projecteurs se tournent vers le Sharkman Karate. Qui sait ce qui est en réserve, surtout maintenant qu'il est enseigné par ses puissants créateurs originaux. Certains disent que ces enseignements incluent non seulement les bases, mais aussi des <strong>enseignements avancés pour les compétences individuelles</strong> !</p>
+            <div class="summary"><b>📌 Résumé :</b>Teaser du rework du Sharkman Karate avec enseignements avancés — Uzoth jaloux.</div>
+        </div>
+    </div>
+
+    <!-- DRY DAYS -->
+    <div class="article-box">
+        <h2>Journées Sèches au Parc d'État…</h2>
+        <span class="section-subtext">Par Twiggy Logleaf</span>
+        <div class="article-inner">
+            <div class="article-text">
+                <p>Le frisson du plein air a rencontré un obstacle. Les rangers ont signalé cette semaine que le ruisseau près de Ridge Hollow s'est complètement asséché ! Autrefois une source fiable d'eau fraîche et de nourriture, il a maintenant complètement disparu.</p>
+                <p><em>« J'avais l'habitude de pêcher mon dîner <strong>directement dans le lac</strong>, mais maintenant il est parti, »</em> soupira un campeur en tapotant une vieille botte. <em>« J'ai trouvé ça... je suppose que ça fera l'affaire. »</em></p>
+                <p>Avec les provisions qui s'amenuisent, les <strong>ingrédients récupérés deviennent plus... douteux</strong>, et les conversations autour de la forêt ont changé. Certains se demandent désormais si quelque chose peut sauver les campeurs de leur soif et de leur faim en ces temps difficiles.</p>
+            </div>
+            <img src="../009/img/StarvingNoobs.png" alt="Parc asséché" class="article-img">
+        </div>
+        <div class="summary"><b>📌 Résumé :</b>Suite du lore — le ruisseau du parc est asséché, teaser d'un futur système de survie/crafting.</div>
+    </div>
+
+    <!-- ROUILLE ET REFORGEAGE -->
+    <div class="lore-box">
+        <h2>Rouille, Regrets et Rénovation</h2>
+        <span class="section-subtext">Par Tay le Bricoleur</span>
+        <div class="article-inner" style="margin-top:14px;">
+            <img src="../009/img/BlacksmithSmithing.png" alt="Le forgeron" style="width:280px;border:3px solid #000;border-radius:8px;flex-shrink:0;">
+            <div>
+                <p>La file d'attente du forgeron devient impatiente ! Sa boutique résonne du son du métal qui claque, de nouvelles commandes s'accumulent à mesure que de plus en plus de clients arrivent avec des armes dépassées à la main.</p>
+                <p>Quand on lui demande certains des <strong>équipements longtemps négligés</strong> qu'il n'a pas encore touchés, comme le populaire Spikey Trident, le forgeron lève les yeux, visiblement agacé. <em>« Certains outils prennent juste plus longtemps à reforger, »</em> marmonne-t-il en s'essuyant le front.</p>
+                <p>Avec la demande qui s'intensifie et la pression qui monte, il serait peut-être enfin temps que certaines armes oubliées reçoivent les <strong>mises à jour tant attendues</strong> qu'elles méritent.</p>
+            </div>
+        </div>
+        <div class="summary"><b>📌 Résumé :</b>Teaser du rework des armes legacy — Spikey Trident et autres outils longtemps ignorés arrivent bientôt.</div>
+
+        <div class="stay-tuned">Revenez la semaine prochaine pour le Bulletin #010, où nous avons stocké de grandes histoires !</div>
+    </div>
+
+
+    <div class="back-button-container">
+        <a href="../index.html" class="back-button">← Retour aux Actualités</a>
+    </div>
+</main>
+
+</body>
+</html>
