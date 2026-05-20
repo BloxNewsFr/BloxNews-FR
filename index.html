@@ -25,8 +25,7 @@
 
         * { box-sizing: border-box; }
 
-        /* ── BACKGROUND PROPRE ET FLUIDE SUR TOUT L'ÉCRAN ── */
-        /* ── CONFIGURATION PAR DÉFAUT (POUR LES TÉLÉPHONES) ── */
+
         body {
             margin: 0;
             padding: 0;
@@ -77,7 +76,7 @@
     will-change: transform, opacity;
 }
 
-/* Classe pour désactiver l'animation pendant la "téléportation" */
+
 .news-grid.no-transition {
     transition: none !important;
 }
@@ -174,7 +173,7 @@
             text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
         }
 
-        /* ── GRILLE ── */
+
 
         /* ── CARTE ── */
         .news-card {
@@ -382,14 +381,12 @@
 function changePage(dir) {
     const grid = document.getElementById("news-grid");
 
-    // Bloquer si on est au bout de la pagination
+
     if ((dir === -1 && currentPage === 1) || (dir === 1 && currentPage === totalPages)) {
         return;
     }
 
-    // 1. Déterminer la direction de sortie et d'entrée
-    // Si Suivant (1) : on sort vers la gauche, on entrera par la droite.
-    // Si Précédent (-1) : on sort vers la droite, on entrera par la gauche.
+
     const outClass = dir === 1 ? "slide-left" : "slide-right";
     const inClass  = dir === 1 ? "slide-right" : "slide-left";
 
@@ -397,33 +394,32 @@ function changePage(dir) {
     grid.classList.remove("active");
     grid.classList.add(outClass);
 
-    // 2. Attendre la fin de la transition CSS (400ms)
+
     setTimeout(() => {
-        // Changer de page et mettre à jour le HTML
+
         currentPage += dir;
         renderPage();
 
-        // 3. Téléporter instantanément la grille du côté de l'entrée
-        grid.classList.add("no-transition"); // On coupe le moteur d'animation
+        grid.classList.add("no-transition"); 
         grid.classList.remove(outClass);
         grid.classList.add(inClass);
 
-        // Forcer le navigateur à enregistrer cette nouvelle position (Reflow)
+
         grid.offsetHeight; 
 
-        // 4. Ramener la grille au centre avec l'animation
-        grid.classList.remove("no-transition"); // On rallume le moteur d'animation
+
+        grid.classList.remove("no-transition"); 
         grid.classList.remove(inClass);
         grid.classList.add("active");
 
-        // Remonter en haut de page en douceur
+
         window.scrollTo({ top: 0, behavior: "smooth" });
-    }, 400); // Doit correspondre exactement à la durée de ton CSS (0.4s)
+    }, 400);
 }
 
 // ── GESTION DU SWIPE MOBILE AMÉLIORÉE ──
 let startX = 0;
-let startY = 0; // Ajout du Y pour éviter les conflits avec le scroll vertical
+let startY = 0;
 
 const gridTouch = document.getElementById("news-grid");
 
@@ -451,7 +447,7 @@ gridTouch.addEventListener("touchend", (e) => {
         changePage(-1); // Swipe vers la droite = Précédent
     }
 });
-// Afficher la première page au lancement du site
+
 renderPage();
 document.getElementById("news-grid").classList.add("active");
     </script>
