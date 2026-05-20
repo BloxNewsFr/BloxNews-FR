@@ -66,31 +66,37 @@
         .site-header__icons { display: flex; gap: 20px; color: var(--color-text); cursor: pointer; }
 
         /* Animation swipe */
+
 .news-grid {
     display: flex;
     flex-wrap: wrap;
     gap: 30px;
     justify-content: center;
-
-    transition: transform 0.4s ease, opacity 0.4s ease;
-    will-change: transform;
+    /* La transition de base */
+    transition: transform 0.4s ease-in-out, opacity 0.4s ease-in-out;
+    will-change: transform, opacity;
 }
 
-/* état visible */
+/* Classe pour désactiver l'animation pendant la "téléportation" */
+.news-grid.no-transition {
+    transition: none !important;
+}
+
+/* État central (visible) */
 .news-grid.active {
     transform: translateX(0);
     opacity: 1;
 }
 
-/* entrée depuis droite */
-.news-grid.from-right {
-    transform: translateX(100%);
+/* Position hors de l'écran à GAUCHE */
+.news-grid.slide-left {
+    transform: translateX(-100%);
     opacity: 0;
 }
 
-/* entrée depuis gauche */
-.news-grid.from-left {
-    transform: translateX(-100%);
+/* Position hors de l'écran à DROITE */
+.news-grid.slide-right {
+    transform: translateX(100%);
     opacity: 0;
 }
 
@@ -376,55 +382,76 @@
 function changePage(dir) {
     const grid = document.getElementById("news-grid");
 
+    // Bloquer si on est au bout de la pagination
     if ((dir === -1 && currentPage === 1) || (dir === 1 && currentPage === totalPages)) {
         return;
     }
 
-    // direction animation
-    const directionClass = dir === 1 ? "from-right" : "from-left";
+    // 1. Déterminer la direction de sortie et d'entrée
+    // Si Suivant (1) : on sort vers la gauche, on entrera par la droite.
+    // Si Précédent (-1) : on sort vers la droite, on entrera par la gauche.
+    const outClass = dir === 1 ? "slide-left" : "slide-right";
+    const inClass  = dir === 1 ? "slide-right" : "slide-left";
 
-    // appliquer sortie
-    grid.classList.remove("active", "from-left", "from-right");
-    grid.classList.add(directionClass);
+    // Lancer l'animation de sortie
+    grid.classList.remove("active");
+    grid.classList.add(outClass);
 
-    // attendre la fin de sortie AVANT de changer le contenu
+    // 2. Attendre la fin de la transition CSS (400ms)
     setTimeout(() => {
+        // Changer de page et mettre à jour le HTML
         currentPage += dir;
         renderPage();
 
-        // remettre au centre après render
-        const newGrid = document.getElementById("news-grid");
-        newGrid.classList.remove("from-left", "from-right");
-        newGrid.classList.add("active");
+        // 3. Téléporter instantanément la grille du côté de l'entrée
+        grid.classList.add("no-transition"); // On coupe le moteur d'animation
+        grid.classList.remove(outClass);
+        grid.classList.add(inClass);
 
+        // Forcer le navigateur à enregistrer cette nouvelle position (Reflow)
+        grid.offsetHeight; 
+
+        // 4. Ramener la grille au centre avec l'animation
+        grid.classList.remove("no-transition"); // On rallume le moteur d'animation
+        grid.classList.remove(inClass);
+        grid.classList.add("active");
+
+        // Remonter en haut de page en douceur
         window.scrollTo({ top: 0, behavior: "smooth" });
-    }, 200); // doit être < durée CSS (0.4s)
+    }, 400); // Doit correspondre exactement à la durée de ton CSS (0.4s)
 }
 
-renderPage();
-document.getElementById("news-grid").classList.add("active");
-
+// ── GESTION DU SWIPE MOBILE AMÉLIORÉE ──
 let startX = 0;
+let startY = 0; // Ajout du Y pour éviter les conflits avec le scroll vertical
 
-const grid = document.getElementById("news-grid");
+const gridTouch = document.getElementById("news-grid");
 
-grid.addEventListener("touchstart", (e) => {
+gridTouch.addEventListener("touchstart", (e) => {
     startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
 }, { passive: true });
 
-grid.addEventListener("touchend", (e) => {
+gridTouch.addEventListener("touchend", (e) => {
     const endX = e.changedTouches[0].clientX;
-    const diff = endX - startX;
+    const endY = e.changedTouches[0].clientY;
+    
+    const diffX = endX - startX;
+    const diffY = endY - startY;
 
-    if (Math.abs(diff) < 60) return;
+    // Si l'utilisateur scroll plus de haut en bas que de gauche à droite, on ignore
+    if (Math.abs(diffY) > Math.abs(diffX)) return;
 
-    if (diff < 0) {
-        changePage(1);
+    // Seuil minimum pour déclencher le swipe
+    if (Math.abs(diffX) < 50) return;
+
+    if (diffX < 0) {
+        changePage(1); // Swipe vers la gauche = Suivant
     } else {
-        changePage(-1);
+        changePage(-1); // Swipe vers la droite = Précédent
     }
 });
-
+// Afficher la première page au lancement du site
 renderPage();
 document.getElementById("news-grid").classList.add("active");
     </script>
