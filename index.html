@@ -276,6 +276,119 @@
             .news-grid { grid-template-columns: 1fr; }
             .pagination-bar { flex-direction: column; align-items: flex-start; gap: 12px; }
         }
+
+/* ── EFFET GLITCH EXTRÊME (RETOUR) ── */
+/* La carte reste à sa place mais vibre légèrement */
+.news-card.glitch-card {
+    border: 2px solid #00ff00;
+    box-shadow: 0 0 15px rgba(0, 255, 0, 0.4);
+    background-color: #000000;
+    position: relative;
+    overflow: hidden; /* Empêche l'image de déborder quand elle se déchire */
+    animation: card-vibrate 0.1s infinite;
+}
+
+/* Les scanlines (lignes de balayage) */
+.news-card.glitch-card::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 255, 0, 0.1),
+        rgba(0, 255, 0, 0.1) 2px,
+        transparent 2px,
+        transparent 4px
+    );
+    pointer-events: none;
+    z-index: 10;
+    animation: scanline-scroll 10s linear infinite;
+}
+
+.news-card.glitch-card .news-card__content {
+    background-color: #050505;
+    position: relative;
+    z-index: 2;
+}
+
+/* Le texte qui se déchire fort */
+.news-card.glitch-card .news-card__title,
+.news-card.glitch-card .news-card__date {
+    color: #00ff00;
+    font-family: monospace;
+    text-transform: uppercase;
+    animation: heavy-glitch-text 0.2s infinite alternate;
+}
+
+/* Bouton avec un faux contact */
+.news-card.glitch-card .news-card__button {
+    background-color: #000;
+    color: #00ff00;
+    border: 1px dashed #00ff00;
+    font-family: monospace;
+    font-weight: bold;
+    animation: button-flash 2s infinite;
+}
+
+.news-card.glitch-card .news-card__button:hover {
+    background-color: #00ff00;
+    color: #000;
+    box-shadow: 0 0 20px #00ff00;
+    border-style: solid;
+}
+
+/* L'image subit une corruption totale à l'intérieur de son cadre */
+.news-card.glitch-card .news-card__image {
+    filter: sepia(1) hue-rotate(90deg) saturate(300%) contrast(120%);
+    animation: extreme-glitch-image 1.5s infinite linear alternate-reverse;
+    transform: scale(1.1); /* Zoom léger pour cacher les bords vides lors des secousses */
+}
+
+/* ── LES ANIMATIONS ── */
+
+/* Petite vibration rapide qui ne casse pas la grille + Flash rouge d'erreur */
+@keyframes card-vibrate {
+    0% { transform: translate(0, 0); box-shadow: 0 0 15px rgba(0, 255, 0, 0.4); }
+    50% { transform: translate(1px, -1px); box-shadow: 0 0 20px rgba(255, 0, 0, 0.6); border-color: #ff0000; } 
+    100% { transform: translate(-1px, 1px); box-shadow: 0 0 15px rgba(0, 255, 0, 0.4); }
+}
+
+@keyframes heavy-glitch-text {
+    0% { text-shadow: 3px 0 red, -3px 0 blue; transform: translate(1px, 1px); }
+    25% { text-shadow: -4px 0 red, 4px 0 blue; transform: translate(-1px, -1px); opacity: 0.8; }
+    50% { text-shadow: 3px 0 red, -3px 0 blue; transform: translate(2px, -1px); letter-spacing: 1px; }
+    75% { text-shadow: -3px 0 red, 3px 0 blue; transform: translate(-2px, 1px); opacity: 1; }
+    100% { text-shadow: 5px 0 lime, -5px 0 magenta; transform: translate(0, 0); }
+}
+
+@keyframes extreme-glitch-image {
+    0% { transform: skew(0deg) scale(1.1); filter: sepia(1) hue-rotate(90deg) saturate(300%) contrast(120%); }
+    15% { transform: skew(0deg) scale(1.1); filter: sepia(1) hue-rotate(90deg) saturate(300%) contrast(120%); }
+    16% { transform: skew(-15deg) scale(1.2) translateX(5px); filter: sepia(1) hue-rotate(90deg) saturate(500%) contrast(300%) invert(0.8); }
+    18% { transform: skew(15deg) scale(1.2) translateX(-5px); filter: invert(1) hue-rotate(180deg); } /* Flash Négatif */
+    20% { transform: skew(0deg) scale(1.1); filter: sepia(1) hue-rotate(90deg) saturate(300%) contrast(120%); }
+    60% { transform: skew(0deg) scale(1.1); opacity: 1; }
+    61% { transform: skew(5deg) scale(1.1) translateY(-2px); opacity: 0.5; filter: hue-rotate(180deg) saturate(400%); }
+    62% { transform: skew(-5deg) scale(1.1) translateY(2px); opacity: 1; }
+    64% { transform: skew(0deg) scale(1.1); filter: sepia(1) hue-rotate(90deg) saturate(300%) contrast(120%); }
+    90% { transform: scale(1.1); }
+    91% { transform: scale(1.3); filter: brightness(3) contrast(3); } /* Flash Blanc */
+    92% { transform: scale(1.1); }
+}
+
+@keyframes button-flash {
+    0%, 90% { opacity: 1; }
+    92% { opacity: 0; }
+    94% { opacity: 1; background: #00ff00; color: #000; }
+    96% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+@keyframes scanline-scroll {
+    0% { background-position: 0 0; }
+    100% { background-position: 0 100vh; }
+}
+
     </style>
 </head>
 <body>
@@ -355,18 +468,29 @@
             const start = (currentPage - 1) * PER_PAGE;
             const slice = bulletins.slice(start, start + PER_PAGE);
 
-            grid.innerHTML = slice.map(b => `
-                <article class="news-card">
+            grid.innerHTML = slice.map(b => {
+                // Condition : Si c'est le bulletin 12, on applique le hack
+                const isHacked = b.num === "012";
+                
+                return `
+                <article class="news-card ${isHacked ? 'glitch-card' : ''}">
                     <div class="news-card__image-wrapper">
                         <img src="${b.img}" class="news-card__image" alt="Bulletin #${b.num}">
                     </div>
                     <div class="news-card__content">
-                        <div class="news-card__date">The Blox Bulletin – Issue ${b.num}</div>
-                        <h2 class="news-card__title">The Blox Bulletin #${b.num}</h2>
-                        <a href="${b.href}" class="news-card__button">Voir plus</a>
+                        <div class="news-card__date">
+                            ${isHacked ? 'ERREUR SYSTÈME CRITIQUE' : `The Blox Bulletin – Issue ${b.num}`}
+                        </div>
+                        <h2 class="news-card__title">
+                            ${isHacked ? 'PIRATÉ PAR QUEENA' : `The Blox Bulletin #${b.num}`}
+                        </h2>
+                        <a href="${b.href}" class="news-card__button">
+                            ${isHacked ? 'ACCÉDER AU TERMINAL' : 'Voir plus'}
+                        </a>
                     </div>
                 </article>
-            `).join("");
+                `;
+            }).join("");
 
             const info = `${currentPage} / ${totalPages}`;
             document.getElementById("page-info-top").textContent = info;
