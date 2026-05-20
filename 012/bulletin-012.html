@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Neo Bulletin #012 – PIRATÉ PAR QUEENA</title>
+    <link rel="icon" href="../shared/bf_logo.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Luckiest+Guy&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
+    <style>
+        @font-face { font-family: 'LuckiestGuy Regular'; src: url('../fonts/LuckiestGuy-Regular.ttf') format('truetype'); }
+
+        :root {
+            --green: #00ff41;
+            --dark-green: #003b00;
+            --matrix-bg: #000000;
+            --color-primary: #ffda00;
+        }
+
+        * { box-sizing: border-box; }
+
+        /* ── MATRIX BACKGROUND ── */
+        body {
+            margin: 0;
+            font-family: 'Share Tech Mono', monospace;
+            color: var(--green);
+            background-color: var(--matrix-bg);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Canvas Matrix rain */
+        #matrixCanvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0;
+            opacity: 0.18;
+            pointer-events: none;
+        }
+
+        /* ── NAVBAR (style hacké) ── */
+        .site-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 55px;
+            background-color: rgba(0,0,0,0.85);
+            border-bottom: 2px solid var(--green);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .site-header__logo img { height: 45px; display: block; filter: hue-rotate(100deg) saturate(2); }
+        .site-nav { display: flex; gap: 25px; padding: 0; margin: 0; list-style: none; }
+        .site-nav a { color: var(--green); text-decoration: none; font-weight: 700; font-size: 20px; text-transform: uppercase; font-family: 'LuckiestGuy Regular', cursive; text-shadow: 0 0 8px var(--green); }
+        .site-header__icons { display: flex; gap: 20px; color: var(--green); cursor: pointer; }
+
+        /* ── CONTENEUR ── */
+        .bulletin-container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ── BANDEAU BLEU (hacké en vert) ── */
+        .blue-banner {
+            background-color: #17c220;
+            color: #fff;
+            text-align: center;
+            padding: 14px;
+            font-size: 33px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-radius: 4px;
+            margin-bottom: 25px;
+            font-family: 'LuckiestGuy Regular', cursive;
+            border: 2px solid var(--green);
+            box-shadow: 0 0 20px var(--green);
+        }
+
+        .hero-image { width: 100%; height: auto; display: block; border-radius: 20px; border: 3px solid var(--green); margin-bottom: 15px; box-shadow: 0 0 20px var(--green); }
+        .publish-date { font-size: 15px; font-weight: bold; color: var(--green); margin-bottom: 25px; text-shadow: 0 0 6px var(--green); }
+
+        /* ── EN-TÊTE GLITCHÉ ── */
+        .journal-header {
+            text-align: center;
+            margin-top: 30px;
+            background: rgba(0,0,0,0.8);
+            border: 2px solid var(--green);
+            padding: 20px;
+            border-radius: 4px;
+            position: relative;
+            overflow: hidden;
+        }
+        .journal-title {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 42px;
+            font-weight: bold;
+            color: var(--green);
+            margin: 0 0 10px 0;
+            text-shadow: 2px 0 #ff0000, -2px 0 #0000ff, 0 0 20px var(--green);
+            animation: glitch 3s infinite;
+        }
+        @keyframes glitch {
+            0%, 90%, 100% { text-shadow: 2px 0 #ff0000, -2px 0 #0000ff, 0 0 20px var(--green); transform: none; }
+            92% { text-shadow: -4px 0 #ff0000, 4px 0 #0000ff; transform: translateX(2px); }
+            94% { text-shadow: 4px 0 #ff0000, -4px 0 #0000ff; transform: translateX(-2px); }
+            96% { transform: none; }
+        }
+        .journal-subtitle { font-size: 16px; color: #ff4444; margin: 0 0 10px 0; animation: blink 1s step-end infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
+        .journal-meta { font-weight: bold; font-size: 14px; color: var(--green); margin-bottom: 5px; text-transform: uppercase; }
+        .dashed-line { border-top: 2px solid var(--green); margin: 15px 0 35px 0; box-shadow: 0 0 8px var(--green); }
+
+        /* ── TERMINAL CODE BLOCK ── */
+        .terminal-block {
+            background: rgba(0, 20, 0, 0.9);
+            border: 2px solid var(--green);
+            border-radius: 4px;
+            padding: 20px;
+            margin-bottom: 30px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 14px;
+            color: var(--green);
+            white-space: pre-wrap;
+            box-shadow: 0 0 15px rgba(0,255,65,0.3);
+        }
+        .terminal-block .cursor { animation: blink 1s step-end infinite; }
+
+        /* ── ARTICLE HACKÉ (fond blanc visible, texte noir) ── */
+        .hacked-box {
+            background: rgba(255,255,255,0.96);
+            border: 3px solid var(--green);
+            border-radius: 6px;
+            padding: 25px;
+            margin-bottom: 30px;
+            color: #111;
+            font-family: 'Share Tech Mono', monospace;
+            box-shadow: 0 0 20px rgba(0,255,65,0.4);
+        }
+        .hacked-box h2 { font-size: 20px; font-weight: 900; color: #111; margin: 0 0 6px 0; border-bottom: 2px solid #000; padding-bottom: 6px; font-family: 'Share Tech Mono', monospace; }
+        .hacked-box .byline { font-style: italic; font-size: 12px; color: #555; display: block; margin-bottom: 14px; }
+        .hacked-box img { width: 100%; height: auto; border: 3px solid #000; border-radius: 6px; margin-bottom: 14px; }
+        .hacked-box p { font-size: 14px; margin: 0 0 10px 0; line-height: 1.5; }
+        .hacked-box .emphasis { font-weight: 900; color: #000; }
+
+        /* ── DEUX COLONNES HACKÉES ── */
+        .hack-columns { display: flex; gap: 20px; margin-bottom: 30px; }
+        .hack-col { flex: 1; }
+        .hack-col-narrow { flex: 0.8; }
+
+        /* ── SECTION POTION (toute petite, texte bizarre) ── */
+        .glitch-section {
+            background: rgba(255,255,255,0.96);
+            border: 3px solid var(--green);
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 30px;
+            color: #111;
+            font-family: 'Share Tech Mono', monospace;
+            box-shadow: 0 0 20px rgba(0,255,65,0.4);
+        }
+        .glitch-section h2 { font-size: 22px; font-weight: 900; border-bottom: 2px solid #000; padding-bottom: 6px; margin: 0 0 6px 0; }
+        .glitch-section .byline { font-style: italic; font-size: 12px; color: #555; display: block; margin-bottom: 14px; }
+        .glitch-section p { font-size: 14px; margin: 0 0 10px 0; }
+
+        /* ── INVENTAIRE / DERNIÈRE SECTION ── */
+        .inventory-section {
+            background: rgba(255,255,255,0.96);
+            border: 3px solid var(--green);
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+            font-family: 'Share Tech Mono', monospace;
+            color: #111;
+        }
+        .inventory-section img { width: 280px; flex-shrink: 0; border: 3px solid #000; border-radius: 6px; }
+        .inventory-section h2 { font-size: 18px; font-weight: 900; margin: 0 0 6px 0; border-bottom: 2px solid #000; padding-bottom: 6px; }
+        .inventory-section .byline { font-style: italic; font-size: 12px; color: #555; display: block; margin-bottom: 12px; }
+        .inventory-section p { font-size: 13.5px; margin: 0 0 10px 0; }
+
+        /* ── FOOTER HACKÉ ── */
+        .hacked-footer {
+            background: rgba(0,0,0,0.9);
+            border-top: 2px solid var(--green);
+            text-align: center;
+            padding: 20px;
+            font-family: 'Share Tech Mono', monospace;
+            color: var(--green);
+            font-size: 14px;
+            font-style: italic;
+            text-shadow: 0 0 8px var(--green);
+            margin-bottom: 30px;
+        }
+
+        /* BOUTON RETOUR */
+        .back-button-container { text-align: center; margin: 30px 0 50px 0; position: relative; z-index: 1; }
+        .back-button { background-color: var(--green); color: #000; font-weight: 900; text-transform: uppercase; padding: 12px 30px; border: 2px solid #000; text-decoration: none; font-size: 14px; border-radius: 4px; display: inline-block; font-family: 'Share Tech Mono', monospace; box-shadow: 0 0 15px var(--green); }
+
+        /* FOOTER */
+        .site-footer { background: rgba(0,0,0,0.9); border-top: 2px solid var(--green); padding: 40px 55px; display: flex; gap: 60px; position: relative; z-index: 1; }
+        .footer-col h3 { font-size: 15px; font-weight: 900; text-transform: uppercase; margin: 0 0 14px 0; color: var(--green); }
+        .footer-col ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+        .footer-col ul li a { color: var(--green); text-decoration: none; font-size: 14px; }
+        .footer-col p { font-size: 13px; color: var(--green); margin: 0 0 10px 0; }
+        .footer-community-links { display: flex; flex-direction: column; gap: 8px; }
+        .footer-community-links a { color: var(--green); text-decoration: none; font-weight: 700; font-size: 14px; }
+
+        @media (max-width: 768px) {
+            .site-header { padding: 12px 20px; }
+            .site-nav { display: none; }
+            .hack-columns { flex-direction: column; }
+            .inventory-section { flex-direction: column; }
+            .inventory-section img { width: 100%; }
+            .site-footer { flex-direction: column; gap: 30px; padding: 30px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<canvas id="matrixCanvas"></canvas>
+
+<header class="site-header">
+    <div class="site-header__logo"><img src="../BF_news.png" alt="Blox Fruits"></div>
+    <nav><ul class="site-nav">
+        <li><a href="#">GAME</a></li>
+        <li><a href="#">DLC</a></li>
+        <li><a href="../index.html">NEWS</a></li>
+    </ul></nav>
+    <div class="site-header__icons">
+        <span class="material-symbols-outlined" style="color:var(--green)">search</span>
+        <span class="material-symbols-outlined" style="color:var(--green)">person</span>
+        <span class="material-symbols-outlined" style="color:var(--green)">shopping_bag</span>
+    </div>
+</header>
+
+<main class="bulletin-container">
+
+    <div class="blue-banner">THE BLOX BULLETIN #012</div>
+
+    <img src="../012/img/hack.png" class="hero-image" alt="Bulletin 012 – Hacké par Queena">
+    <div class="publish-date">20 Juin 2025</div>
+
+    <!-- EN-TÊTE GLITCHÉ -->
+    <div class="journal-header">
+        <h1 class="journal-title">THE QUEENA BULLETIN</h1>
+        <p class="journal-subtitle">ERREUR ! GOLD SAMA HAS ARRIVED !!! 🔴🔴</p>
+        <div class="journal-meta">ISSUE: 012 • JUNE 26 2025</div>
+    </div>
+    <div class="dashed-line"></div>
+
+    <!-- TERMINAL D'INITIALISATION -->
+    <div class="terminal-block">Initializing... Loading Frank v.6.30
+Dim x As Integer
+MMControl1.Command = "Take Control"
+End
+
+OHHH MY GOL!!!! ITS ME QUEENA AKA DOGHOUSE INDRA XXX <span class="emphasis">I HAVE FINALLY TOOK CONTROL OVER BLOG POSTS!</span>
+
+THAT DOG UZOTH HAS BEEN FULL HACK BY ME AND SO I BLOG POST
+TODAY I FRANK GOLD SAMA WILL PUBLISH LEAK OF GAME BLOX FRUIT!!!!<span class="cursor">_</span></div>
+
+    <!-- FRANK LE ROI EST DE RETOUR -->
+    <div class="hacked-box">
+        <h2>FRANK LE ROI EST DE RETOUR 🤙🤣🤙!!!!</h2>
+        <span class="byline">2E ROI DES MERS DE NSUNS4</span>
+        <img src="../012/img/queen1.png" alt="Frank le Roi est de retour">
+    </div>
+
+    <!-- DEUX COLONNES : BARRIER + FISH MECHANIC -->
+    <div class="hack-columns">
+        <div class="hack-col">
+            <div class="hacked-box">
+                <h2>CAPACITÉ CACHÉE DU BARRIER ?! ;o (RÉEL)</h2>
+                <span class="byline">Par GOLD SAMA</span>
+                <img src="../012/img/c485d0afede64cb4972838e594ee5674.mp4" alt="Capacité cachée du Barrier">
+                <p>hm...</p>
+                <p>HM!</p>
+                <p>HM!!!</p>
+                <p>HMMMM!!!!1!!!</p>
+                <p>HM!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!</p>
+                <p class="emphasis">GRRRRRRR.... POPS SAIT BIEN QUE JE CODE BIEN ET QUE JE PRENDS LE CONTRÔLE DES BLOG POST... ?? >:( JE VAIS LEAKER LA VIDÉO DU FRUIT CREATION</p>
+                <p>CE NOUVEAU POUVOIR DU JEU BLOX FRUIT DE MON MEILLEUR AMI RIP_INDRA (IL A MIS DES MOIS À DÉVELOPPER AVEC D'AUTRES LEAKS QUE JE MONTRE PLUS TARD) EST UNE PARTIE DU FRUIT CREATION</p>
+                <p>!!!!!</p>
+                <p>EN TANT QUE FILS DE RIP_INDRA, MON EX ATTENDAIT QUE CE FRUIT PUISSE FAIRE DES MURS DEPUIS 4 ANS MAINTENANT DEPUIS LA SORTIE DU JEU...</p>
+                <p class="emphasis">JE SUIS TELLEMENT JALOUX DE L'ÉQUIPE DEV OMGGGGG!!!!!!!! <em>UZOTH NE PEUT ME BATTRE QU'AVEC SON POUVOIR D'ADMIN!</em> BATS-MOI COMME UN <strong>VRAI HOMME</strong></p>
+                <p>APRÈS CE BLOG POST JE VAIS ÉTUDIER LE SCRIPT ET UN JOUR PIRATER LE JEU BLOX YUSSSSSSSSSSSSSSSSSSSS MAIS OMG C'EST TELLEMENT DUR D'APPRENDRE LE SCRIPT SI TU NE PARLES PAS ANGLAIS ;c</p>
+            </div>
+        </div>
+        <div class="hack-col-narrow">
+            <div class="hacked-box">
+                <h2>MA NOUVELLE MÉCANIQUE DE POISSON</h2>
+                <span class="byline">Par XINDRA_TENTASHUN</span>
+                <img src="../012/img/19334934bbfb4005a8d27e4fbb22fa5b.mp4" alt="Ma mécanique de poisson">
+                <p>PERSONNE N'ÉTAIT ASSEZ DIGNE POUR ÊTRE AU-DESSUS DE MOI EN TANT QUE HEAD MOD 🤬🤬🤬 UZOTH M'A RETIRÉ MON POUVOIR IN-GAME ET M'A SÉPARÉ DU DISCORD ET DE MES FANS.. OHHHH TU OSES... ATTENDS TOI À CE QUI VA ARRIVER 🤙🤣🤙</p>
+                <p>MOI, GOLDSAMA J'AI FAIT UNE VIDÉO DE PÊCHE. J'AI PASSÉ 10 HEURES EN TESTING EN DÉCOUVRANT TOUT ET J'AI TROUVÉ LE SECRET!! ÇA ME RAPPELLE QUAND MON POPS ET MOI ON JOUAIT À ROG ET ON PÊCHAIT DANS KHEL. MON POPS ET MOI ÉTIONS DES ULTIMATE GANKERS.</p>
+                <p>DE TOUTE FAÇON OUI PÊCHE je pêche plein d'heures ET REGARDE SUR MON PROFIL CE QUE J'AI ATTRAPÉ. J'AI PRESQUE TOUT ATTRAPÉ. <span class="emphasis">LE POISSON LE PLUS LOURD QUE J'AI PÊCHÉ ÉTAIT 16KG ;o</span></p>
+                <p class="emphasis">(IMPORTANT!!! DÉCIDEZ MAINTENANT ICI QUI ÉCRIT DE MEILLEURS BULLETINS. RACONTER DES HISTOIRES OU DE VRAIES NOUVELLES AVEC DE VRAIES PREUVES) AS TU PU LE DIRE LES CHIENS JOURNALISTES NE TE MONTRENT PAS AUTANT QUE TON ROI !!! QUI EST LE MEILLEUR HACKER/ADMIN ? FRANK. DIS LE BIEN</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- NOUVELLE POTION -->
+    <div class="glitch-section">
+        <h2>NOUVELLE POTION ARRIVE BIENTÔT</h2>
+        <span class="byline">Par LE FILS DE RIP_INDRA - FRANK</span>
+        <p>TU SAIS BIEN QU'ON EST DES BLAGUEURS MAIS DANS CE BLOG JE NE PLAISANTE <em>PAS</em> COMME MON GRAND-PÈRE FUD... <strong>UNIQUEMENT DES VRAIS LEAKS!!!!</strong></p>
+        <p>JE ME SUIS DONNÉ L'ACCÈS ET J'AI TROUVÉ QUELQUE CHOSE D'INTÉRESSANT... hmmm... HMMM!!!!</p>
+        <p>PAS AUTANT QUE CE QUE SENSEI RIP_INDRA M'A DONNÉ DANS MES ANNÉES AVEC LUI MAIS ASSEZ POUR SURVIVRE À LA LAVE. CE PETIT BLESS DE POUVOIR M'EST ACCORDÉ PAR UNE POTION. IL SEMBLE AIDER À GRINDER MAIS J'ATTENDRAI QUE POPS ME DONNE UN SPEC BOOST. IL Y A D'AUTRES POTIONS MAIS JE M'EN FOUS MAINTENANT BRB AFK</p>
+        <p class="emphasis">JE N'AURAI JAMAIS À ÊTRE JALOUX DU JEU BLOX FRUIT OU DE ZOLES OU D'UZOH OU DE MYGAME.. CE HACK C'EST UNE REVANCHE POUR TOUTE LA SOUFFRANCE APPORTÉE À GOLDSAMA ;C</p>
+        <img src="../012/img/933b3e1a3b6247c98ed962e9013f63df.mp4" alt="Leak de potion" style="width:100%;border:3px solid #000;border-radius:6px;margin-top:14px;">
+    </div>
+
+    <!-- INVENTAIRE QUI CHANGE -->
+    <div class="inventory-section">
+        <div>
+            <h2>GRR BLOX FRUITS CHANGE TROP MAINTENANT</h2>
+            <span class="byline">Par LE ROI DES NSUNS QUEENA</span>
+            <p>ÇA FAIT 2 JOURS QUE MON INVENTAIRE IN-GAME A CHANGÉ DE LOOK GRRRRRR... LE JEU A CHANGÉ ENCORE !!!!!!</p>
+            <p>JE ME SOUVIENS DES VIEUX JOURS DE LA SORTIE UPD. 1 LE JEU BLOX FRUIT ÉTAIT DÉJÀ PARFAIT ET MAINTENANT TOUT CHANGE... 🤬🤬🤬 JE N'AI QUE LE ROCKET FRUIT MAINTENANT ET MA MÉMOIRE S'EFFACE ;C</p>
+            <p>MON POPS A TRAVAILLÉ SUR CET INV AU LIEU DE MON NOUVEAU POUVOIR BÉNI À 5% D'AUGMENTATION COMME PROMIS. IL M'A DONNÉ UN ULTIMATUM que si j'suis sage il restaure mon pouvoir. MAIS ÇA FAIT 2 ANS DEPUIS MON POUVOIR. BLOX FRUITS DISCORD BOYCOTT LE JEU MAINTENANT PARCE QU'IL CHANGE TOUT MAINTENANT.. GRRRRR MON POPS 2 OCCUPÉ 2 DONNER ATTENTION À MOI MAINTENANT ;C ;C ;CCCC MON EX N'EST PLUS</p>
+        </div>
+        <img src="../012/img/GRRINVENTORY.png" alt="Inventaire modifié">
+    </div>
+
+    <!-- FOOTER HACKÉ -->
+    <div class="hacked-footer">
+        J'ESSAIERAI AU PROCHAIN BULLETIN AVEC PLUS D'EXPOS SECRETS SI MON POPS NE ME REDONNE PAS MON POUVOIR.... HAHAHAHA LES CHIENS
+    </div>
+
+    <!-- BOUTON RETOUR -->
+    <div class="back-button-container">
+        <a href="../index.html" class="back-button">← RETOUR AUX ACTUALITÉS</a>
+    </div>
+
+</main>
+
+<!-- <footer class="site-footer">
+    <div class="footer-col">
+        <h3>Liens Rapides</h3>
+        <ul>
+            <li><a href="#">Recherche</a></li>
+            <li><a href="#">Remboursement</a></li>
+            <li><a href="#">Confidentialité</a></li>
+            <li><a href="#">Conditions</a></li>
+        </ul>
+    </div>
+    <div class="footer-col">
+        <h3>Rejoindre la Communauté</h3>
+        <p>Restez connecté !</p>
+        <div class="footer-community-links">
+            <a href="#">🎮 Discord</a>
+            <a href="#">🐦 Twitter / X</a>
+            <a href="#">▶️ YouTube</a>
+        </div>
+    </div>
+</footer> -->
+
+<!-- MATRIX RAIN ANIMATION -->
+<script>
+const canvas = document.getElementById('matrixCanvas');
+const ctx = canvas.getContext('2d');
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+const chars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノ';
+const fontSize = 14;
+const columns = Math.floor(canvas.width / fontSize);
+const drops = Array(columns).fill(1);
+
+function drawMatrix() {
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#00ff41';
+    ctx.font = fontSize + 'px Share Tech Mono, monospace';
+    for (let i = 0; i < drops.length; i++) {
+        const char = chars[Math.floor(Math.random() * chars.length)];
+        ctx.fillText(char, i * fontSize, drops[i] * fontSize);
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+        drops[i]++;
+    }
+}
+
+setInterval(drawMatrix, 35);
+window.addEventListener('resize', () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+});
+</script>
+</body>
+</html>
