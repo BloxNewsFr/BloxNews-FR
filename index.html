@@ -277,82 +277,53 @@
             .pagination-bar { flex-direction: column; align-items: flex-start; gap: 12px; }
         }
 
-/* ── EFFET GLITCH EXTRÊME (RETOUR) ── */
-/* La carte reste à sa place mais vibre légèrement */
+
+
+/* =========================================
+   BASE : SÉCURITÉ POUR LES ANIMATIONS
+========================================= */
+.news-card {
+    position: relative;
+    overflow: hidden; /* CRUCIAL : Empêche les effets de sortir de la carte et de casser la grille */
+}
+
+/* =========================================
+   THÈME 012 : GLITCH EXTRÊME (LE HACK)
+========================================= */
 .news-card.glitch-card {
     border: 2px solid #00ff00;
     box-shadow: 0 0 15px rgba(0, 255, 0, 0.4);
     background-color: #000000;
-    position: relative;
-    overflow: hidden; /* Empêche l'image de déborder quand elle se déchire */
     animation: card-vibrate 0.1s infinite;
 }
-
-/* Les scanlines (lignes de balayage) */
 .news-card.glitch-card::before {
-    content: "";
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: repeating-linear-gradient(
-        0deg,
-        rgba(0, 255, 0, 0.1),
-        rgba(0, 255, 0, 0.1) 2px,
-        transparent 2px,
-        transparent 4px
-    );
-    pointer-events: none;
-    z-index: 10;
+    content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: repeating-linear-gradient(0deg, rgba(0, 255, 0, 0.1), rgba(0, 255, 0, 0.1) 2px, transparent 2px, transparent 4px);
+    pointer-events: none; z-index: 10;
     animation: scanline-scroll 10s linear infinite;
 }
-
-.news-card.glitch-card .news-card__content {
-    background-color: #050505;
-    position: relative;
-    z-index: 2;
-}
-
-/* Le texte qui se déchire fort */
-.news-card.glitch-card .news-card__title,
-.news-card.glitch-card .news-card__date {
-    color: #00ff00;
-    font-family: monospace;
-    text-transform: uppercase;
+.news-card.glitch-card .news-card__content { background-color: #050505; position: relative; z-index: 2; }
+.news-card.glitch-card .news-card__title, .news-card.glitch-card .news-card__date {
+    color: #00ff00; font-family: 'Share Tech Mono', monospace, sans-serif; text-transform: uppercase;
     animation: heavy-glitch-text 0.2s infinite alternate;
 }
-
-/* Bouton avec un faux contact */
 .news-card.glitch-card .news-card__button {
-    background-color: #000;
-    color: #00ff00;
-    border: 1px dashed #00ff00;
-    font-family: monospace;
-    font-weight: bold;
+    background-color: #000; color: #00ff00; border: 1px dashed #00ff00;
+    font-family: 'Share Tech Mono', monospace, sans-serif; font-weight: bold;
     animation: button-flash 2s infinite;
 }
-
-.news-card.glitch-card .news-card__button:hover {
-    background-color: #00ff00;
-    color: #000;
-    box-shadow: 0 0 20px #00ff00;
-    border-style: solid;
-}
-
-/* L'image subit une corruption totale à l'intérieur de son cadre */
+.news-card.glitch-card .news-card__button:hover { background-color: #00ff00; color: #000; box-shadow: 0 0 20px #00ff00; border-style: solid; }
 .news-card.glitch-card .news-card__image {
     filter: sepia(1) hue-rotate(90deg) saturate(300%) contrast(120%);
     animation: extreme-glitch-image 1.5s infinite linear alternate-reverse;
-    transform: scale(1.1); /* Zoom léger pour cacher les bords vides lors des secousses */
+    transform: scale(1.1);
 }
 
-/* ── LES ANIMATIONS ── */
-
-/* Petite vibration rapide qui ne casse pas la grille + Flash rouge d'erreur */
 @keyframes card-vibrate {
     0% { transform: translate(0, 0); box-shadow: 0 0 15px rgba(0, 255, 0, 0.4); }
     50% { transform: translate(1px, -1px); box-shadow: 0 0 20px rgba(255, 0, 0, 0.6); border-color: #ff0000; } 
     100% { transform: translate(-1px, 1px); box-shadow: 0 0 15px rgba(0, 255, 0, 0.4); }
 }
-
 @keyframes heavy-glitch-text {
     0% { text-shadow: 3px 0 red, -3px 0 blue; transform: translate(1px, 1px); }
     25% { text-shadow: -4px 0 red, 4px 0 blue; transform: translate(-1px, -1px); opacity: 0.8; }
@@ -360,35 +331,126 @@
     75% { text-shadow: -3px 0 red, 3px 0 blue; transform: translate(-2px, 1px); opacity: 1; }
     100% { text-shadow: 5px 0 lime, -5px 0 magenta; transform: translate(0, 0); }
 }
-
 @keyframes extreme-glitch-image {
-    0% { transform: skew(0deg) scale(1.1); filter: sepia(1) hue-rotate(90deg) saturate(300%) contrast(120%); }
-    15% { transform: skew(0deg) scale(1.1); filter: sepia(1) hue-rotate(90deg) saturate(300%) contrast(120%); }
+    0%, 15%, 20%, 64% { transform: skew(0deg) scale(1.1); filter: sepia(1) hue-rotate(90deg) saturate(300%) contrast(120%); }
     16% { transform: skew(-15deg) scale(1.2) translateX(5px); filter: sepia(1) hue-rotate(90deg) saturate(500%) contrast(300%) invert(0.8); }
-    18% { transform: skew(15deg) scale(1.2) translateX(-5px); filter: invert(1) hue-rotate(180deg); } /* Flash Négatif */
-    20% { transform: skew(0deg) scale(1.1); filter: sepia(1) hue-rotate(90deg) saturate(300%) contrast(120%); }
+    18% { transform: skew(15deg) scale(1.2) translateX(-5px); filter: invert(1) hue-rotate(180deg); }
     60% { transform: skew(0deg) scale(1.1); opacity: 1; }
     61% { transform: skew(5deg) scale(1.1) translateY(-2px); opacity: 0.5; filter: hue-rotate(180deg) saturate(400%); }
     62% { transform: skew(-5deg) scale(1.1) translateY(2px); opacity: 1; }
-    64% { transform: skew(0deg) scale(1.1); filter: sepia(1) hue-rotate(90deg) saturate(300%) contrast(120%); }
-    90% { transform: scale(1.1); }
-    91% { transform: scale(1.3); filter: brightness(3) contrast(3); } /* Flash Blanc */
-    92% { transform: scale(1.1); }
+    90%, 92% { transform: scale(1.1); }
+    91% { transform: scale(1.3); filter: brightness(3) contrast(3); }
+}
+@keyframes button-flash { 0%, 90%, 100% { opacity: 1; } 92%, 96% { opacity: 0; } 94% { opacity: 1; background: #00ff00; color: #000; } }
+@keyframes scanline-scroll { 0% { background-position: 0 0; } 100% { background-position: 0 100vh; } }
+
+
+/* =========================================
+   THÈME 017 : VAMPIRE / DARK BAT (CORRIGÉ & SÉCURISÉ)
+========================================= */
+.news-card.vampire-card {
+    background: #06010a;
+    border: 2px solid #5a189a;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.95), 0 0 15px rgba(90, 24, 154, 0.5);
+    position: relative;
+    overflow: hidden;
 }
 
-@keyframes button-flash {
-    0%, 90% { opacity: 1; }
-    92% { opacity: 0; }
-    94% { opacity: 1; background: #00ff00; color: #000; }
-    96% { opacity: 0; }
-    100% { opacity: 1; }
+/* L'image reste bien au-dessus du fond */
+.news-card.vampire-card .news-card__image-wrapper {
+    position: relative;
+    z-index: 2;
 }
 
-@keyframes scanline-scroll {
-    0% { background-position: 0 0; }
-    100% { background-position: 0 100vh; }
+/* On protège le texte avec un fond semi-transparent pour garantir la lisibilité */
+.news-card.vampire-card .news-card__content { 
+    background-color: rgba(6, 1, 10, 0.85); 
+    position: relative; 
+    z-index: 3; 
 }
 
+/* Les couleurs du texte */
+.news-card.vampire-card .news-card__title { color: #e0b1ff; text-shadow: 0 0 8px rgba(138, 43, 226, 0.8); }
+.news-card.vampire-card .news-card__date { color: #9d4edd; }
+.news-card.vampire-card .news-card__button { 
+    background: #2a0a4a; color: #e0b1ff; border: 1px solid #7b2cbf; 
+}
+.news-card.vampire-card .news-card__button:hover { 
+    background: #9d4edd; color: #000; box-shadow: 0 0 15px #9d4edd; 
+}
+
+/* La brume toxique (simplifiée pour ne pas bugger sur mobile) */
+.news-card.vampire-card::before {
+    content: "";
+    position: absolute;
+    top: -50%; left: -50%; width: 200%; height: 200%;
+    background: radial-gradient(circle at 50% 50%, rgba(138, 43, 226, 0.25), transparent 60%),
+                radial-gradient(circle at 80% 20%, rgba(90, 24, 154, 0.3), transparent 50%);
+    filter: blur(15px);
+    animation: smoke-spin 12s linear infinite;
+    z-index: 1;
+    pointer-events: none;
+}
+
+/* La chauve-souris (attachée à la carte, pas au texte) */
+.news-card.vampire-card::after {
+    content: "🦇"; 
+    position: absolute; 
+    font-size: 1.8rem; 
+    z-index: 4; /* Passe au-dessus de tout */
+    opacity: 0.7;
+    pointer-events: none;
+    animation: safe-bat-flight 6s linear infinite;
+}
+
+/* Animations optimisées */
+@keyframes smoke-spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes safe-bat-flight {
+    0% { top: 100%; left: -20%; transform: scale(0.8) rotate(15deg); }
+    25% { top: 60%; left: 30%; transform: scale(1.1) rotate(-10deg); }
+    50% { top: 30%; left: 70%; transform: scale(0.9) rotate(20deg); }
+    100% { top: -20%; left: 120%; transform: scale(1.3) rotate(-15deg); }
+}
+
+
+/* =========================================
+   THÈME 019 : VIRUS D'AMOUR / HEARTS
+========================================= */
+.news-card.valentine-card {
+    background: linear-gradient(180deg, #2b0014 0%, #120008 100%);
+    border: 2px solid #ff1493;
+    animation: double-heartbeat 2s infinite;
+}
+.news-card.valentine-card .news-card__content { background-color: transparent; position: relative; z-index: 3; }
+.news-card.valentine-card .news-card__title { color: #ff69b4; text-shadow: 0 0 12px rgba(255, 20, 147, 0.8); }
+.news-card.valentine-card .news-card__date { color: #ff1493; }
+.news-card.valentine-card .news-card__button { background: #4a0026; color: #ffb6c1; border-color: #ff1493; }
+.news-card.valentine-card .news-card__button:hover { background: #ff1493; color: #fff; box-shadow: 0 0 20px #ff1493; }
+.news-card.valentine-card .news-card__image { filter: sepia(0.8) hue-rotate(310deg) saturate(250%) contrast(120%); }
+
+/* Particules de cœurs flottantes */
+.news-card.valentine-card::before, .news-card.valentine-card::after {
+    content: "💖"; position: absolute; z-index: 2; opacity: 0; pointer-events: none;
+    filter: drop-shadow(0 0 8px #ff1493);
+}
+.news-card.valentine-card::before { font-size: 2rem; left: 15%; animation: float-up 4s ease-in-out infinite; }
+.news-card.valentine-card::after { font-size: 1.2rem; left: 75%; animation: float-up 5s ease-in-out infinite 1.5s; }
+
+@keyframes double-heartbeat {
+    0%, 100% { box-shadow: 0 0 10px rgba(255, 20, 147, 0.3); transform: scale(1); }
+    15% { box-shadow: 0 0 25px rgba(255, 20, 147, 0.7); transform: scale(1.02); }
+    30% { box-shadow: 0 0 10px rgba(255, 20, 147, 0.3); transform: scale(1); }
+    45% { box-shadow: 0 0 35px rgba(255, 20, 147, 1); transform: scale(1.04); }
+}
+@keyframes float-up {
+    0% { bottom: -10%; opacity: 0; transform: scale(0.5) rotate(-15deg); }
+    20%, 80% { opacity: 0.8; }
+    100% { bottom: 100%; opacity: 0; transform: scale(1.5) rotate(20deg); }
+}
     </style>
 </head>
 <body>
@@ -468,29 +530,43 @@
             const start = (currentPage - 1) * PER_PAGE;
             const slice = bulletins.slice(start, start + PER_PAGE);
 
-            grid.innerHTML = slice.map(b => {
-                // Condition : Si c'est le bulletin 12, on applique le hack
-                const isHacked = b.num === "012";
-                
-                return `
-                <article class="news-card ${isHacked ? 'glitch-card' : ''}">
-                    <div class="news-card__image-wrapper">
-                        <img src="${b.img}" class="news-card__image" alt="Bulletin #${b.num}">
-                    </div>
-                    <div class="news-card__content">
-                        <div class="news-card__date">
-                            ${isHacked ? 'ERREUR SYSTÈME CRITIQUE' : `The Blox Bulletin – Issue ${b.num}`}
-                        </div>
-                        <h2 class="news-card__title">
-                            ${isHacked ? 'PIRATÉ PAR QUEENA' : `The Blox Bulletin #${b.num}`}
-                        </h2>
-                        <a href="${b.href}" class="news-card__button">
-                            ${isHacked ? 'ACCÉDER AU TERMINAL' : 'Voir plus'}
-                        </a>
-                    </div>
-                </article>
-                `;
-            }).join("");
+        grid.innerHTML = slice.map(b => {
+            let themeClass = '';
+            let customDate = `The Blox Bulletin – Issue ${b.num}`;
+            let customTitle = `The Blox Bulletin #${b.num}`;
+            let customBtn = 'Voir plus';
+
+            // Les 3 thèmes spéciaux
+            if (b.num === '012') {
+                themeClass = 'glitch-card';
+                customDate = 'ERREUR SYSTÈME CRITIQUE';
+                customTitle = 'PIRATÉ PAR QUEENA';
+                customBtn = 'ACCÉDER AU TERMINAL';
+            } else if (b.num === '017') {
+                themeClass = 'vampire-card';
+                customDate = 'LA NUIT TOMBE...';
+                customTitle = 'ÉDITION D\'OUTRE-TOMBE';
+                customBtn = 'ENTRER DANS L\'OMBRE';
+            } else if (b.num === '019') {
+                themeClass = 'valentine-card';
+                customDate = 'ANOMALIE DÉTECTÉE';
+                customTitle = 'VIRUS D\'AMOUR';
+                customBtn = 'ACCEPTER LE CHARME';
+            }
+
+            return `
+            <article class="news-card ${themeClass}">
+                <div class="news-card__image-wrapper">
+                    <img src="${b.img}" class="news-card__image" alt="Bulletin #${b.num}">
+                </div>
+                <div class="news-card__content">
+                    <div class="news-card__date">${customDate}</div>
+                    <h2 class="news-card__title">${customTitle}</h2>
+                    <a href="${b.href}" class="news-card__button">${customBtn}</a>
+                </div>
+            </article>
+            `;
+        }).join("");
 
             const info = `${currentPage} / ${totalPages}`;
             document.getElementById("page-info-top").textContent = info;

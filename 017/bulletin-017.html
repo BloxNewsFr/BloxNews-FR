@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Le Bulletin Blox #017 – Blox Fruits</title>
+    <link rel="icon" href="../BF_news.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
+    <style>
+        @font-face { font-family: 'LuckiestGuy Regular'; src: url('../fonts/LuckiestGuy-Regular.ttf') format('truetype'); }
+        :root { --color-text: #333132; --color-border: #ebebeb; --font-stack-body: 'Inter', sans-serif; --color-primary: #ffda00; }
+        * { box-sizing: border-box; }
+        body { margin: 0; font-family: var(--font-stack-body); color: var(--color-text); background: #fff; line-height: 1.6; }
+        .site-header { display: flex; align-items: center; justify-content: space-between; padding: 15px 55px; background: #fff; border-bottom: 1px solid var(--color-border); position: sticky; top: 0; z-index: 1000; }
+        .site-header__logo img { height: 45px; display: block; }
+        .site-nav { display: flex; gap: 25px; padding: 0; margin: 0; list-style: none; }
+        .site-nav a { color: var(--color-text); text-decoration: none; font-weight: 700; font-size: 25px; text-transform: uppercase; font-family: 'LuckiestGuy Regular', cursive; }
+        .site-header__icons { display: flex; gap: 20px; color: var(--color-text); cursor: pointer; }
+        .bulletin-container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
+
+        /* ── BANDEAU DARK ── */
+        .dark-banner {
+            background: linear-gradient(135deg, #0a0a0a, #1a0a2e, #0a0a0a);
+            color: #cc88ff;
+            text-align: center;
+            padding: 18px 14px;
+            font-size: 33px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            border-radius: 4px;
+            margin-bottom: 25px;
+            font-family: 'LuckiestGuy Regular', cursive;
+            border: 2px solid #7722cc;
+            box-shadow: 0 0 30px rgba(120, 0, 200, 0.6), inset 0 0 30px rgba(80, 0, 150, 0.2);
+            text-shadow: 0 0 15px #aa44ff, 0 0 30px #8800cc;
+        }
+
+        /* ── HERO DARK avec AURA FUMÉE ── */
+        .hero-dark-wrapper {
+            position: relative;
+            width: 100%;
+            margin-bottom: 20px;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 3px solid #5500aa;
+            box-shadow: 0 0 40px rgba(100, 0, 180, 0.8), 0 0 80px rgba(60, 0, 120, 0.4);
+        }
+        .hero-dark-wrapper img {
+            width: 100%;
+            height: auto;
+            display: block;
+            filter: brightness(0.85) saturate(1.2) contrast(1.1);
+        }
+
+        /* CANVAS SMOKE */
+        #smokeCanvas {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            mix-blend-mode: screen;
+        }
+
+        /* PULSE VIGNETTE */
+        .hero-dark-wrapper::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at center, transparent 40%, rgba(60, 0, 120, 0.7) 100%);
+            pointer-events: none;
+            animation: pulseVignette 4s ease-in-out infinite;
+        }
+        @keyframes pulseVignette {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+
+        /* ── EN-TÊTE DARK ── */
+        .journal-header { text-align: center; margin-top: 30px; }
+        .journal-title {
+            font-family: 'Georgia', serif;
+            font-size: 52px;
+            font-weight: bold;
+            color: #111;
+            margin: 0 0 10px 0;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .journal-subtitle { font-family: 'Georgia', serif; font-style: italic; font-size: 18px; color: #555; margin: 0 0 25px 0; }
+        .journal-meta { font-weight: bold; font-size: 14px; color: #111; margin-bottom: 12px; text-transform: uppercase; }
+        .dashed-line { border-top: 2px dashed #111; margin: 15px 0 35px 0; }
+        .publish-date { font-size: 15px; font-weight: bold; color: #222; margin-bottom: 5px; }
+
+        /* ── ARTICLES ── */
+        .front-box { background: #fce8e6; border: 2px solid #000; border-left: 6px solid #c53929; padding: 25px; margin-bottom: 35px; }
+        .front-box h2 { color: #c53929; font-size: 22px; font-weight: 900; margin: 0 0 4px 0; border: none; }
+        .front-box .byline { font-style: italic; font-size: 13px; color: #555; display: block; margin-bottom: 14px; }
+        .front-box img { width: 100%; height: auto; border: 3px solid #000; border-radius: 8px; margin-bottom: 16px; }
+        .front-box p { font-size: 14.5px; margin: 0 0 12px 0; }
+        .content-columns { display: flex; gap: 30px; margin-bottom: 35px; }
+        .left-col { flex: 1.7; }
+        .right-col { flex: 1.3; background: #f2f2f2; padding: 20px; border-radius: 8px; border: 1px solid #ccc; height: fit-content; }
+        h2 { border-bottom: 2px solid #111; padding-bottom: 5px; font-size: 22px; font-weight: 900; margin: 0 0 6px 0; color: #111; }
+        .section-subtext { font-style: italic; font-size: 13.5px; color: #555; margin-bottom: 16px; display: block; }
+        .col-img { width: 100%; height: auto; border: 3px solid #000; border-radius: 8px; margin-bottom: 16px; }
+        .col-text p { font-size: 14.5px; margin: 0 0 12px 0; }
+        .right-col h2 { font-size: 20px; line-height: 1.3; }
+        .right-col img { width: 100%; height: auto; border: 3px solid #000; border-radius: 6px; margin-bottom: 14px; }
+        .right-col p { font-size: 13.5px; margin: 0 0 12px 0; }
+        .grey-box { background: #f2f2f2; border: 1px solid #ccc; border-radius: 6px; padding: 25px; margin-bottom: 30px; }
+        .grey-box h2 { font-size: 22px; font-weight: 900; color: #111; margin: 0 0 4px 0; border-bottom: 2px solid #111; padding-bottom: 6px; }
+        .grey-box .byline { font-style: italic; font-size: 13px; color: #555; display: block; margin-bottom: 14px; }
+        .grey-box img { width: 100%; height: auto; border: 3px solid #000; border-radius: 8px; margin-bottom: 16px; }
+        .grey-box p { font-size: 14.5px; margin: 0 0 12px 0; }
+        .grey-inner { display: flex; gap: 20px; align-items: flex-start; }
+        .grey-inner img { width: 260px; flex-shrink: 0; border: 3px solid #000; border-radius: 8px; }
+        .grey-inner-text p { font-size: 14.5px; margin: 0 0 12px 0; }
+        .summary { background: rgba(88,101,242,0.09); border-left: 4px solid #5865f2; padding: 12px 16px; margin-top: 15px; font-size: 13.5px; font-style: italic; color: #2c3e50; border-radius: 0 6px 6px 0; }
+        .summary b { color: #5865f2; text-transform: uppercase; font-size: 11px; font-style: normal; display: block; margin-bottom: 4px; }
+        .stay-tuned { font-style: italic; font-size: 14px; color: #444; text-align: center; padding: 16px 0; border-top: 2px solid #111; margin-top: 10px; }
+        .social-share { display: flex; gap: 10px; margin: 20px 0; }
+        .social-share a { display: inline-flex; align-items: center; gap: 7px; padding: 8px 14px; border: 2px solid #000; border-radius: 4px; font-size: 13px; font-weight: 700; text-decoration: none; color: #000; text-transform: uppercase; }
+        .social-share a.fb { background: #3b5998; color: #fff; border-color: #3b5998; }
+        .social-share a.tw { background: #1da1f2; color: #fff; border-color: #1da1f2; }
+        .social-share a.pi { background: #e60023; color: #fff; border-color: #e60023; }
+        .back-button-container { text-align: center; margin: 30px 0 50px 0; }
+        .back-button { background: var(--color-primary); color: #000; font-weight: 900; text-transform: uppercase; padding: 12px 30px; border: 2px solid #000; text-decoration: none; font-size: 14px; border-radius: 4px; display: inline-block; }
+        .site-footer { background: #f0f0f0; border-top: 1px solid #ccc; padding: 40px 55px; display: flex; gap: 60px; }
+        .footer-col h3 { font-size: 15px; font-weight: 900; text-transform: uppercase; margin: 0 0 14px 0; }
+        .footer-col ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+        .footer-col ul li a { color: #333; text-decoration: none; font-size: 14px; }
+        .footer-col p { font-size: 13px; color: #555; margin: 0 0 10px 0; }
+        .footer-community-links { display: flex; flex-direction: column; gap: 8px; }
+        .footer-community-links a { color: #175ec2; text-decoration: none; font-weight: 700; font-size: 14px; }
+        @media (max-width: 768px) { .site-header { padding: 12px 20px; } .site-nav { display: none; } .content-columns { flex-direction: column; } .grey-inner { flex-direction: column; } .grey-inner img { width: 100%; } .site-footer { flex-direction: column; gap: 30px; padding: 30px 20px; } }
+    </style>
+</head>
+<body>
+
+<header class="site-header">
+    <div class="site-header__logo"><img src="../shared/img/logo.png" alt="Blox Fruits"></div>
+    <nav><ul class="site-nav">
+        <li><a href="#">Game</a></li><li><a href="#">Merch</a></li><li><a href="#">DLC</a></li>
+        <li><a href="../index.html" style="color:black;">Blog</a></li>
+    </ul></nav>
+    <div class="site-header__icons">
+        <span class="material-symbols-outlined">search</span>
+        <span class="material-symbols-outlined">person</span>
+        <span class="material-symbols-outlined">shopping_bag</span>
+    </div>
+</header>
+
+<main class="bulletin-container">
+
+    <div class="dark-banner">The Blox Bulletin #017</div>
+
+    <!-- HERO AVEC AURA FUMÉE ANIMÉE -->
+    <div class="hero-dark-wrapper" id="heroWrapper">
+        <img src="../017/img/halloween.png" alt="The Blox Bulletin 017">
+        <canvas id="smokeCanvas"></canvas>
+    </div>
+
+    <div class="publish-date">Octobre 2025</div>
+
+    <div class="journal-header">
+        <h1 class="journal-title">The Blox Bulletin</h1>
+        <p class="journal-subtitle">L'Obscurité Rôde, les Ombres Parlent...</p>
+        <div class="journal-meta">Numéro : 017 | Octobre 2025</div>
+    </div>
+    <div class="dashed-line"></div>
+
+    <!-- ARTICLE PRINCIPAL -->
+    <div class="front-box">
+        <h2>Les Ténèbres Envahissent les Mers — L'Événement d'Halloween est Arrivé !</h2>
+        <span class="byline">Par l'Équipe du Bulletin</span>
+        <img src="../017/img/HalloweenEvent.png" alt="Événement Halloween">
+        <p>Une obscurité étrange s'étend sur les îles. Des créatures que personne n'avait vues depuis des années émergent de nouveau, des ombres se déplacent là où la lumière devrait régner, et une fumée violette mystérieuse enveloppe les ports au crépuscule.</p>
+        <p>L'<strong>Événement Halloween</strong> est officiellement lancé ! Explorez des zones modifiées, combattez des boss saisonniers et récoltez des récompenses exclusives avant que la nuit ne se dissipe...</p>
+        <p><strong>Préparez-vous. Quelque chose d'ancien se réveille.</strong></p>
+        <div class="summary"><b>📌 Résumé :</b>Événement Halloween saisonnier — boss exclusifs, zones modifiées, récompenses limitées.</div>
+    </div>
+
+    <!-- COLONNES -->
+    <div class="content-columns">
+        <div class="left-col">
+            <h2>Nouvelles des Mers Sombres</h2>
+            <span class="section-subtext">Par les Observateurs de l'Ombre</span>
+            <img src="../017/img/DarkSeas.png" alt="Les mers sombres" class="col-img">
+            <div class="col-text">
+                <p>Des rapports en provenance de plusieurs îles font état d'un phénomène inquiétant : des <strong>brumes noires et violettes</strong> flottent sur les eaux à la tombée du jour, et des silhouettes encapuchonnées ont été aperçues sur les plages au clair de lune.</p>
+                <p>Les marins les plus téméraires rapportent avoir entendu des voix dans le vent — des chuchotements dans une langue oubliée. Certains affirment que ces voix murmurent des secrets sur des <strong>trésors cachés depuis des siècles</strong>.</p>
+                <p>Les autorités conseillent la plus grande prudence lors des traversées nocturnes. Les îles sont actives, et la frontière entre le monde des vivants et celui des ombres semble plus mince que jamais cette saison.</p>
+            </div>
+            <div class="summary"><b>📌 Résumé :</b>Lore d'Halloween — des brumes mystérieuses et des voix enveloppent les îles à la tombée du jour.</div>
+        </div>
+        <div class="right-col">
+            <h2>Récompenses de la Saison des Ombres</h2>
+            <span class="section-subtext">Par l'Équipe Admin</span>
+            <img src="../017/img/HalloweenRewards.png" alt="Récompenses Halloween">
+            <p>Complétez les défis saisonniers pour débloquer :</p>
+            <p>🎃 <strong>Aura Fantôme</strong> — Une traîne de fumée violette suit chaque mouvement</p>
+            <p>💀 <strong>Skin Crâne</strong> — Pour les fruits sélectionnés cette saison</p>
+            <p>🦇 <strong>Accessoire Chauve-Souris</strong> — Volette autour de votre personnage</p>
+            <p>🌑 <strong>Titre « Maître des Ombres »</strong> — Pour les plus courageux</p>
+            <div class="summary"><b>📌 Résumé :</b>Récompenses Halloween exclusives à durée limitée — aura, skin, accessoire et titre.</div>
+        </div>
+    </div>
+
+    <div class="stay-tuned">La nuit n'est pas encore terminée... Revenez la semaine prochaine pour le Bulletin #018 !</div>
+
+
+    <div class="back-button-container">
+        <a href="../index.html" class="back-button">← Retour aux Actualités</a>
+    </div>
+</main>
+
+
+
+<!-- SMOKE ANIMATION -->
+<script>
+const canvas = document.getElementById('smokeCanvas');
+const wrapper = document.getElementById('heroWrapper');
+const ctx = canvas.getContext('2d');
+
+function resize() {
+    canvas.width = wrapper.offsetWidth;
+    canvas.height = wrapper.offsetHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+const particles = [];
+
+class SmokeParticle {
+    constructor() { this.reset(); }
+    reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = canvas.height + 20;
+        this.radius = Math.random() * 60 + 30;
+        this.opacity = Math.random() * 0.25 + 0.05;
+        this.speed = Math.random() * 0.6 + 0.2;
+        this.drift = (Math.random() - 0.5) * 0.4;
+        // Couleurs sombres : violet, bleu nuit, noir
+        const colors = [
+            [80, 0, 160],
+            [40, 0, 100],
+            [100, 20, 180],
+            [20, 0, 60],
+            [60, 0, 120],
+        ];
+        this.color = colors[Math.floor(Math.random() * colors.length)];
+        this.grow = Math.random() * 0.3 + 0.1;
+    }
+    update() {
+        this.y -= this.speed;
+        this.x += this.drift;
+        this.radius += this.grow;
+        this.opacity -= 0.0015;
+        if (this.opacity <= 0 || this.y < -this.radius) this.reset();
+    }
+    draw() {
+        const [r,g,b] = this.color;
+        const grad = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.radius);
+        grad.addColorStop(0, `rgba(${r},${g},${b},${this.opacity})`);
+        grad.addColorStop(1, `rgba(${r},${g},${b},0)`);
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.fillStyle = grad;
+        ctx.fill();
+    }
+}
+
+// Initialiser les particules
+for (let i = 0; i < 35; i++) {
+    const p = new SmokeParticle();
+    p.y = Math.random() * canvas.height; // positions initiales réparties
+    particles.push(p);
+}
+
+function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach(p => { p.update(); p.draw(); });
+    requestAnimationFrame(animate);
+}
+animate();
+</script>
+
+</body>
+</html>

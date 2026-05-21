@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Le Bulletin Blox #013 – Blox Fruits</title>
+    <link rel="icon" href="../BF_news.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
+    <style>
+        @font-face { font-family: 'LuckiestGuy Regular'; src: url('../fonts/LuckiestGuy-Regular.ttf') format('truetype'); }
+        :root { --color-text: #333132; --color-border: #ebebeb; --font-stack-body: 'Inter', sans-serif; --color-primary: #ffda00; }
+        * { box-sizing: border-box; }
+        body { margin: 0; font-family: var(--font-stack-body); color: var(--color-text); background: #fff; line-height: 1.6; }
+        .site-header { display: flex; align-items: center; justify-content: space-between; padding: 15px 55px; background: #fff; border-bottom: 1px solid var(--color-border); position: sticky; top: 0; z-index: 1000; }
+        .site-header__logo img { height: 45px; display: block; }
+        .site-nav { display: flex; gap: 25px; padding: 0; margin: 0; list-style: none; }
+        .site-nav a { color: var(--color-text); text-decoration: none; font-weight: 700; font-size: 25px; text-transform: uppercase; font-family: 'LuckiestGuy Regular', cursive; }
+        .site-header__icons { display: flex; gap: 20px; color: var(--color-text); cursor: pointer; }
+        .bulletin-container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
+        .blue-banner { background: #175ec2; color: #fff; text-align: center; padding: 14px; font-size: 33px; text-transform: uppercase; letter-spacing: 2px; border-radius: 4px; margin-bottom: 25px; font-family: 'LuckiestGuy Regular', cursive; }
+        .hero-image { width: 100%; height: auto; display: block; border-radius: 20px; border: 3px solid #000; margin-bottom: 15px; }
+        .publish-date { font-size: 15px; font-weight: bold; color: #222; margin-bottom: 25px; }
+        .journal-header { text-align: center; margin-top: 30px; }
+        .journal-title { font-family: 'Georgia', serif; font-size: 52px; font-weight: bold; color: #111; margin: 0 0 10px 0; }
+        .journal-subtitle { font-family: 'Georgia', serif; font-style: italic; font-size: 18px; color: #555; margin: 0 0 25px 0; }
+        .journal-meta { font-weight: bold; font-size: 14px; color: #111; margin-bottom: 12px; text-transform: uppercase; }
+        .dashed-line { border-top: 2px dashed #111; margin: 15px 0 35px 0; }
+        /* ALERTE ROSE */
+        .front-box { background: #fce8e6; border: 2px solid #000; border-left: 6px solid #c53929; padding: 25px; margin-bottom: 35px; }
+        .front-box h2 { color: #c53929; font-size: 20px; font-weight: 900; margin: 0 0 6px 0; text-align: center; border: none; }
+        .front-box .byline { font-style: italic; font-size: 13px; color: #555; display: block; margin-bottom: 14px; text-align: center; }
+        .front-box img { width: 100%; height: auto; border: 3px solid #000; border-radius: 8px; margin-bottom: 16px; }
+        .front-box p { font-size: 14.5px; margin: 0 0 12px 0; }
+        /* COLONNES */
+        .content-columns { display: flex; gap: 30px; margin-bottom: 35px; }
+        .left-col { flex: 1.7; }
+        .right-col { flex: 1.3; background: #f2f2f2; padding: 20px; border-radius: 8px; border: 1px solid #ccc; height: fit-content; }
+        h2 { border-bottom: 2px solid #111; padding-bottom: 5px; font-size: 22px; font-weight: 900; margin: 0 0 6px 0; color: #111; }
+        .section-subtext { font-style: italic; font-size: 13.5px; color: #555; margin-bottom: 16px; display: block; }
+        .col-img { width: 100%; height: auto; border: 3px solid #000; border-radius: 8px; margin-bottom: 16px; }
+        .col-text p { font-size: 14.5px; margin: 0 0 12px 0; }
+        .right-col h2 { font-size: 20px; line-height: 1.3; }
+        .right-col img { width: 100%; height: auto; border: 3px solid #000; border-radius: 6px; margin-bottom: 14px; }
+        .right-col p { font-size: 13.5px; margin: 0 0 12px 0; }
+        /* GRIS BOX */
+        .grey-box { background: #f2f2f2; border: 1px solid #ccc; border-radius: 6px; padding: 25px; margin-bottom: 30px; }
+        .grey-box h2 { font-size: 22px; font-weight: 900; color: #111; margin: 0 0 4px 0; border-bottom: 2px solid #111; padding-bottom: 6px; }
+        .grey-box .byline { font-style: italic; font-size: 13px; color: #555; display: block; margin-bottom: 14px; }
+        .grey-box p { font-size: 14.5px; margin: 0 0 12px 0; }
+        .grey-inner { display: flex; gap: 20px; align-items: flex-start; margin-top: 14px; }
+        .grey-inner img { width: 300px; flex-shrink: 0; border: 3px solid #000; border-radius: 8px; }
+        .grey-inner-text p { font-size: 14.5px; margin: 0 0 12px 0; }
+        /* RÉSUMÉ */
+        .summary { background: rgba(88,101,242,0.09); border-left: 4px solid #5865f2; padding: 12px 16px; margin-top: 15px; font-size: 13.5px; font-style: italic; color: #2c3e50; border-radius: 0 6px 6px 0; }
+        .summary b { color: #5865f2; text-transform: uppercase; font-size: 11px; font-style: normal; display: block; margin-bottom: 4px; }
+        .stay-tuned { font-style: italic; font-size: 14px; color: #444; text-align: center; padding: 16px 0; border-top: 2px solid #111; margin-top: 10px; }
+        .social-share { display: flex; gap: 10px; margin: 20px 0; }
+        .social-share a { display: inline-flex; align-items: center; gap: 7px; padding: 8px 14px; border: 2px solid #000; border-radius: 4px; font-size: 13px; font-weight: 700; text-decoration: none; color: #000; text-transform: uppercase; }
+        .social-share a.fb { background: #3b5998; color: #fff; border-color: #3b5998; }
+        .social-share a.tw { background: #1da1f2; color: #fff; border-color: #1da1f2; }
+        .social-share a.pi { background: #e60023; color: #fff; border-color: #e60023; }
+        .back-button-container { text-align: center; margin: 30px 0 50px 0; }
+        .back-button { background: var(--color-primary); color: #000; font-weight: 900; text-transform: uppercase; padding: 12px 30px; border: 2px solid #000; text-decoration: none; font-size: 14px; border-radius: 4px; display: inline-block; }
+        .site-footer { background: #f0f0f0; border-top: 1px solid #ccc; padding: 40px 55px; display: flex; gap: 60px; }
+        .footer-col h3 { font-size: 15px; font-weight: 900; text-transform: uppercase; margin: 0 0 14px 0; }
+        .footer-col ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+        .footer-col ul li a { color: #333; text-decoration: none; font-size: 14px; }
+        .footer-col p { font-size: 13px; color: #555; margin: 0 0 10px 0; }
+        .footer-community-links { display: flex; flex-direction: column; gap: 8px; }
+        .footer-community-links a { color: #175ec2; text-decoration: none; font-weight: 700; font-size: 14px; }
+        @media (max-width: 768px) { .site-header { padding: 12px 20px; } .site-nav { display: none; } .content-columns { flex-direction: column; } .grey-inner { flex-direction: column; } .grey-inner img { width: 100%; } .site-footer { flex-direction: column; gap: 30px; padding: 30px 20px; } }
+    </style>
+</head>
+<body>
+<header class="site-header">
+    <div class="site-header__logo"><img src="../shared/img/logo.png" alt="Blox Fruits"></div>
+    <nav><ul class="site-nav">
+        <li><a href="#">Game</a></li><li><a href="#">Merch</a></li><li><a href="#">DLC</a></li>
+        <li><a href="../index.html" style="color:black;">Blog</a></li>
+    </ul></nav>
+    <div class="site-header__icons">
+        <span class="material-symbols-outlined">search</span>
+        <span class="material-symbols-outlined">person</span>
+        <span class="material-symbols-outlined">shopping_bag</span>
+    </div>
+</header>
+
+<main class="bulletin-container">
+    <div class="blue-banner">The Blox Bulletin #013</div>
+    <img src="../013/img/BrokenShip.png" class="hero-image" alt="Bulletin 013">
+    <div class="publish-date">4 Juillet 2025</div>
+
+    <div class="journal-header">
+        <h1 class="journal-title">The Blox Bulletin</h1>
+        <p class="journal-subtitle">Toutes nos excuses pour l'interruption, retour aux nouvelles normales.</p>
+        <div class="journal-meta">Numéro : 013 | 4 Juillet 2025</div>
+    </div>
+    <div class="dashed-line"></div>
+
+    <!-- EXCUSES POST-HACK -->
+    <div class="front-box">
+        <h2>À propos des interruptions de la semaine dernière...</h2>
+        <span class="byline">Par : L'Équipe du Bulletin</span>
+        <img src="../013/img/HaxedByQueena.png" alt="Haxed by Queena">
+        <p>L'édition de la semaine dernière du Blox Bulletin a été retardée de manière inattendue suite à une faille de sécurité liée à un individu connu en ligne sous le nom de <strong>Doghouse Frank</strong>. L'interruption a été rapidement prise en charge, et les opérations de publication régulières ont repris.</p>
+        <p>Dans le sillage de cet incident, l'équipe du Bulletin a pris le temps de passer en revue les retours de la communauté. Un point d'intérêt récurrent était la réaction positive aux <strong>sneak peeks en temps réel</strong>. La plupart des gens ont apprécié que le blog change de format pour montrer de <strong>véritables avancées en jeu</strong>, plutôt que des histoires constamment inventées.</p>
+        <p>Bien que de telles révélations ne soient pas incluses dans chaque numéro, ces instantanés de développement seront partagés dès que l'équipe du Bulletin pourra obtenir du matériel fiable depuis les coulisses.</p>
+        <div class="summary"><b>📌 Résumé :</b>Retour à la normale après le hack de Queena/Frank — la communauté a apprécié les vrais sneak peeks in-game.</div>
+    </div>
+
+    <!-- DEUX COLONNES -->
+    <div class="content-columns">
+        <!-- CHALLENGER MYSTÉRIEUX -->
+        <div class="left-col">
+            <h2>Le Challenger Mystérieux : Démasqué !</h2>
+            <span class="section-subtext">Par Lenny Lefthook</span>
+            <img src="../013/img/PainFruitChallenger.png" alt="Le challenger mystérieux" class="col-img">
+            <div class="col-text">
+                <p>Il y a quelques semaines, une histoire a émergé à propos d'un combattant capable de transformer la punition en puissance. Il était connu pour encaisser les coups afin de revenir encore plus fort. Maintenant, il fait la une après avoir remporté un combat en mêlée générale à 20 personnes lors du récent Brawler Summit. Cependant, l'homme a été disqualifié du prize pool d'un million de dollars suite à des soupçons d'endurance anormale.</p>
+                <p>Les officiels affirment qu'il se battait à l'aide d'un fruit puissant : une nouvelle avancée du <strong>Fruit Pain</strong>.</p>
+                <p>Ce rework embrasse une philosophie brutale : les dégâts encaissés alimentent un <strong>compteur de douleur</strong> qui se renforce à chaque coup. À mesure que la souffrance de l'utilisateur s'intensifie, une <strong>aura rose-rougeâtre</strong> commence à pulser et à flamboyer, récompensant les coups précis tout en drainant le pouvoir des attaques manquées.</p>
+                <p>Au bord de la défaite, <strong>Last Stand</strong> s'active, faisant remonter l'utilisateur dans un état volatile avec un compteur plein et une courte fenêtre pour libérer une puissance maximale avant de s'épuiser complètement. Le combattant en question a depuis été définitivement banni de l'<strong>Ultra Fighting Committee</strong>, citant un « avantage physique inéquitable » et la nature non réglementée des capacités qu'il a affichées.</p>
+            </div>
+            <div class="summary"><b>📌 Résumé :</b>Teaser du rework du Fruit Pain — compteur de douleur, aura rose, capacité Last Stand. Mécanique basée sur les dégâts reçus.</div>
+        </div>
+
+        <!-- ÉPÉES & ACCESSOIRES -->
+        <div class="right-col">
+            <h2>Épées & Accessoires : Un Regard Approfondi sur les Reworks</h2>
+            <span class="section-subtext">Par l'Équipe de Développement</span>
+            <img src="../013/img/SwordReworks.png" alt="Reworks d'épées et accessoires">
+            <p>Bonjour à tous ! Nous avons travaillé dur dans les coulisses pour insuffler une nouvelle vie à certaines des armes et des accessoires les plus anciens du jeu. Aujourd'hui, nous sommes ravis de vous donner un premier aperçu de quelques-uns des <strong>reworks d'épées et d'accessoires</strong> à venir dans la prochaine mise à jour !</p>
+            <p>Notre objectif avec ces reworks est de rendre votre équipement <strong>bien plus stylé et moderne.</strong> Que ce soient des épées ou des accessoires, tout ce avec quoi vous avez commencé est en cours de redesign pour mieux correspondre à la qualité et au style modernes de Blox Fruits. Nous voulons que vos tenues soient plus attrayantes pendant vos aventures !</p>
+            <p>Ce que vous voyez aujourd'hui n'est qu'une <em>partie</em> de la gamme complète. J'espère que cela vous donne un aperçu de ce sur quoi nous travaillons et du type de changements à venir en matière d'accessoires.</p>
+            <div class="summary"><b>📌 Résumé :</b>Premiers visuels des reworks d'épées et d'accessoires — style modernisé pour toute la gamme d'équipements.</div>
+        </div>
+    </div>
+
+    <!-- RETOUR AU GRAND BLEU -->
+    <div class="grey-box">
+        <h2>Retour au Grand Bleu</h2>
+        <span class="byline">Par Moakoa Shellspine</span>
+        <div class="grey-inner">
+            <div class="grey-inner-text">
+                <p>Je devais y retourner. Quelque chose à propos de cette île... ses ruines, son silence, ses gardiens... ça continuait de résonner dans mon esprit. Alors, sans le Chef cette fois, j'ai fait le voyage à nouveau. Je voulais voir par moi-même ce qui se trouvait là en bas.</p>
+                <p>Ce qui aurait dû être un simple morceau de pierre et de sable oublié ne l'était absolument pas. Les ruines antiques subsistent, mais maintenant plus vivantes que jamais. Des <strong>Fishmen</strong> patrouillent le périmètre avec détermination, et plus profondément dans les rues couvertes de coraux, des <strong>cultistes en robes</strong> rôdent dans les ombres. Je n'arrivais pas à distinguer leurs visages... mais j'entendais leurs voix.</p>
+                <p>Des murmures. Ils répétaient quelque chose encore et encore à voix basse. Quelque chose à propos d'une <strong>relique toute-puissante</strong>...?</p>
+                <p>Je n'ai pas vraiment saisi, mais mon instinct me criait de ne pas tenter ma chance. Avant de partir, j'ai réussi à prendre une photo rapprochée de l'île. Étudiez-la attentivement, lecteurs. Cet endroit n'est plus simplement un mystère archéologique — il est actif. Il est gardé. Et quelque chose me dit... <strong>nous ne sommes pas censés être ici.</strong></p>
+            </div>
+            <img src="../013/img/DeepBlue.png" alt="Retour au Grand Bleu">
+        </div>
+        <div class="summary"><b>📌 Résumé :</b>L'île sous-marine est active et gardée — Fishmen + cultistes en robes cherchant une relique toute-puissante. Le mystère s'approfondit.</div>
+
+        <div class="stay-tuned">Ça avance ! Restez à l'écoute la semaine prochaine pour la prochaine, et DERNIÈRE révélation de rework de fruit, ainsi que d'autres nouvelles passionnantes !</div>
+    </div>
+
+    <div class="social-share">
+        <a href="#" class="fb">📱 Partager</a>
+        <a href="#" class="tw">🐦 Tweeter</a>
+        <a href="#" class="pi">📌 Épingler</a>
+    </div>
+    <div class="back-button-container">
+        <a href="../index.html" class="back-button">← Retour aux Actualités</a>
+    </div>
+</main>
+
+<footer class="site-footer">
+    <div class="footer-col">
+        <h3>Liens Rapides</h3>
+        <ul><li><a href="#">Recherche</a></li><li><a href="#">Remboursement</a></li><li><a href="#">Confidentialité</a></li><li><a href="#">Conditions</a></li></ul>
+    </div>
+    <div class="footer-col">
+        <h3>Rejoindre la Communauté</h3>
+        <p>Restez connecté avec la communauté Blox Fruits !</p>
+        <div class="footer-community-links">
+            <a href="#">🎮 Discord</a><a href="#">🐦 Twitter / X</a><a href="#">▶️ YouTube</a>
+        </div>
+    </div>
+</footer>
+</body>
+</html>
