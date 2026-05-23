@@ -43,7 +43,28 @@
         }
 
         /* NAVBAR */
-        .site-header { display: flex; align-items: center; justify-content: space-between; padding: 0 55px; background: rgba(255,255,255,0.92); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.6); position: sticky; top: 0; z-index: 1000; height: 72px; box-shadow: 0 4px 30px rgba(0,0,0,0.08); }
+                /* NAVBAR LIQUID GLASS */
+        /* NAVBAR APPLE LIQUID GLASS (COMPATIBLE iOS) */
+        .site-header { 
+            display: flex; align-items: center; justify-content: space-between; padding: 0 55px; 
+            position: sticky; top: 0; z-index: 1000; height: 72px; 
+            
+            /* 1. Base semi-transparente très claire (Gris/Blanc d'Apple) */
+            background-color: rgba(255, 255, 255, 0.45); 
+            
+            /* 2. LE SECRET APPLE : webkit en PREMIER avec flou intense */
+            -webkit-backdrop-filter: saturate(180%) blur(20px); 
+            backdrop-filter: saturate(180%) blur(20px); 
+            
+            /* 3. Liseré fin translucide en bas pour l'épaisseur du verre */
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3); 
+            
+            /* 4. Légère ombre subtile pour décoller la barre */
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05); 
+            
+            /* Bonus Apple : Adoucit le rendu des polices sur Safari */
+            -webkit-font-smoothing: antialiased; 
+        }
         .site-header__logo img { height: 42px; width: auto; display: block; }
         .site-nav { display: flex; gap: 8px; padding: 0; margin: 0; list-style: none; font-weight: 900;}
         .site-nav a { color: var(--color-text); text-decoration: none; font-weight: 900; font-size: 17px; text-transform: uppercase; font-family: 'LuckiestGuy Regular', cursive; padding: 8px 16px; border-radius: 10px; transition: background 0.2s, color 0.2s; }
@@ -210,15 +231,13 @@
         <nav>
             <ul class="site-nav">
                 <li><a href="https://www.roblox.com/fr/games/2753915549/Blox-Fruits">Game</a></li>
-                <li><a href="#">DLC</a></li>
                 <li><a href="./index.html">News</a></li>
-                <li><a href="./neo_bulletin.html">Sneaks</a></li>
+                <li><a href="./neo_bulletin.html">Leaks</a></li>
             </ul>
         </nav>
         <div class="site-header__icons">
             <span class="material-symbols-outlined">search</span>
             <span class="material-symbols-outlined">person</span>
-            <span class="material-symbols-outlined">shopping_bag</span>
         </div>
     </header>
 
