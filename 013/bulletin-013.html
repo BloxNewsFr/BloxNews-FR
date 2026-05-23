@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Le Bulletin Blox #013 – Blox Fruits</title>
-    <link rel="icon" href="../BF_news.png" type="image/png">
+    <link rel="icon" href="../shared/bf_logo.png" type="image/png">
     <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
     <style>
@@ -18,7 +18,17 @@
         .site-nav a { color: var(--color-text); text-decoration: none; font-weight: 700; font-size: 25px; text-transform: uppercase; font-family: 'LuckiestGuy Regular', cursive; }
         .site-header__icons { display: flex; gap: 20px; color: var(--color-text); cursor: pointer; }
         .bulletin-container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
-        .blue-banner { background: #175ec2; color: #fff; text-align: center; padding: 14px; font-size: 33px; text-transform: uppercase; letter-spacing: 2px; border-radius: 4px; margin-bottom: 25px; font-family: 'LuckiestGuy Regular', cursive; }
+        .blue-banner { 
+    display: center; 
+    background: linear-gradient(135deg, #175ec2, #2980d4, #175ec2); background-size: 200% auto; 
+    color: #fff; padding: 16px 60px; font-size: 36px; 
+    text-transform: uppercase; letter-spacing: 3px; 
+    border-radius: 100px; font-family: 'LuckiestGuy Regular', cursive; 
+    box-shadow: 0 8px 32px rgba(23,94,194,0.45), 0 2px 8px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.2); 
+    animation: shimmerBanner 3s linear infinite; margin-bottom: 20px; 
+    text-align: center;
+    
+}
         .hero-image { width: 100%; height: auto; display: block; border-radius: 20px; border: 3px solid #000; margin-bottom: 15px; }
         .publish-date { font-size: 15px; font-weight: bold; color: #222; margin-bottom: 25px; }
         .journal-header { text-align: center; margin-top: 30px; }
@@ -74,10 +84,11 @@
 </head>
 <body>
 <header class="site-header">
-    <div class="site-header__logo"><img src="../shared/img/logo.png" alt="Blox Fruits"></div>
+    <div class="site-header__logo"><img src="../BF_news.png" alt="Blox Fruits"></div>
     <nav><ul class="site-nav">
-        <li><a href="#">Game</a></li><li><a href="#">Merch</a></li><li><a href="#">DLC</a></li>
-        <li><a href="../index.html" style="color:black;">Blog</a></li>
+        <li><a href="#">Game</a></li>
+        <li><a href="#">DLC</a></li>
+        <li><a href="../index.html">News</a></li>
     </ul></nav>
     <div class="site-header__icons">
         <span class="material-symbols-outlined">search</span>

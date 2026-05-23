@@ -12,9 +12,9 @@
         @font-face { font-family: 'LuckiestGuy Regular'; src: url('./fonts/LuckiestGuy-Regular.ttf') format('truetype'); }
         :root { --color-text: #1a1a2e; --color-border: #e8e8f0; --color-primary: #ffda00; --color-accent: #175ec2; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Inter', sans-serif; color: var(--color-text); background-color: #f0f2f8; min-height: 100vh; }
+        body { font-family: 'Inter', sans-serif; color: var(--color-text); background: #f0f2f8 url('./shared/fond_bulletinpng.png') center top / cover no-repeat; min-height: 100vh; }
         @media (min-width: 769px) {
-            body { background-image: url('./shared/background2.jpeg'); background-repeat: no-repeat; background-position: center top; background-size: cover; background-attachment: fixed; }
+            body { background-attachment: fixed; }
         }
         /* NAVBAR */
         .site-header { display: flex; align-items: center; justify-content: space-between; padding: 0 55px; background: rgba(255,255,255,0.92); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.6); position: sticky; top: 0; z-index: 1000; height: 72px; box-shadow: 0 4px 30px rgba(0,0,0,0.08); }
