@@ -69,7 +69,6 @@
     
         /* SPECIAL CARDS */
         .news-card.glitch-card,
-        .news-card.halloween-card,
         .news-card.valentine-card { isolation: isolate; }
 
         .news-card.glitch-card .news-card__image-wrapper,
@@ -167,470 +166,411 @@
         .news-card.glitch-card:hover .news-card__button { background: #00ff41; color: #000; box-shadow: 0 0 28px #00ff41; }
         .news-card.glitch-card .news-card__bar { background: linear-gradient(90deg, #00ff41, #ff0058, #00a2ff, #00ff41); }
 
-        /* ══════════════════════════════════════════════════
-           017 — HALLOWEEN  "HELLFIRE HUD"
-           Octogone gaming UI · feu de lave orange/rouge
-           Braises volantes · filtre apocalyptique · scan-lines
-           ══════════════════════════════════════════════════ */
+        /* ════════════════════════════════════════════════════
+           017 ── HALLOWEEN  "VIOLET HELLFIRE"
+           Carte arrondie · feu violet VIVANT derrière · chauves-souris
+        ════════════════════════════════════════════════════ */
         .news-card.halloween-card {
-            overflow: visible;
-            background:
-                repeating-linear-gradient(0deg,   rgba(255,70,0,0.028) 0 1px, transparent 1px 3px),
-                repeating-linear-gradient(90deg,  rgba(255,70,0,0.028) 0 1px, transparent 1px 3px),
-                radial-gradient(ellipse at 50% 100%, rgba(255,80,0,0.32) 0 18%, transparent 54%),
-                linear-gradient(180deg, #0c0003 0%, #050001 100%);
-            border: none;
-            border-radius: 0;
-            clip-path: polygon(
-                22px 0%, calc(100% - 22px) 0%,
-                100% 22px, 100% calc(100% - 22px),
-                calc(100% - 22px) 100%, 22px 100%,
-                0% calc(100% - 22px), 0% 22px
-            );
-            box-shadow: none;
-            animation: fadeInUp 0.4s ease both, hw-fire-glow 3s ease-in-out infinite;
+            border-radius: 24px;
+            overflow: clip;            /* clip children to border-radius */
+            background: linear-gradient(165deg,#08000f 0%,#14002a 45%,#050010 100%);
+            border: 2px solid rgba(160,55,255,0.78);
+            box-shadow:
+                0 0 0 1px rgba(255,255,255,0.06) inset,
+                0 0 38px rgba(145,0,255,0.9),
+                0 0 85px rgba(105,0,210,0.44),
+                0 30px 80px rgba(0,0,0,0.75);
+            animation: fadeInUp 0.4s ease both, hw-border-pulse 3s ease-in-out infinite;
         }
-        /* Lava pool — fond de la carte */
+        /* 🔥 FEU VIOLET QUI BOUGE — derrière la carte via z-index:-1 */
         .news-card.halloween-card::before {
             content: "";
-            position: absolute; inset: 0; z-index: 0; pointer-events: none;
+            position: absolute;
+            left:-40px; right:-40px; bottom:-65px; top:auto;
+            height: 140px;
+            z-index: -1;
+            pointer-events: none;
+            border-radius: 0 0 60% 60%;
             background:
-                radial-gradient(ellipse 80% 55% at 50% 105%, rgba(255,80,0,0.55) 0 18%, transparent 62%),
-                radial-gradient(ellipse 45% 28% at 20% 105%, rgba(255,30,0,0.38) 0 14%, transparent 48%),
-                radial-gradient(ellipse 45% 28% at 80% 105%, rgba(255,130,0,0.35) 0 14%, transparent 48%);
-            animation: hw-lava-pulse 2.2s ease-in-out infinite;
+                radial-gradient(ellipse 62% 82% at 18% 100%, rgba(190,0,255,1)     0%, transparent 55%),
+                radial-gradient(ellipse 58% 72% at 82% 100%, rgba(130,0,235,0.92)  0%, transparent 52%),
+                radial-gradient(ellipse 42% 68% at 50% 100%, rgba(225,105,255,0.88)0%, transparent 50%),
+                radial-gradient(ellipse 28% 52% at 28% 88%,  rgba(165,0,255,0.72)  0%, transparent 46%),
+                radial-gradient(ellipse 28% 52% at 72% 88%,  rgba(205,65,255,0.72) 0%, transparent 46%),
+                radial-gradient(ellipse 18% 36% at  8% 96%,  rgba(100,0,205,0.62)  0%, transparent 43%),
+                radial-gradient(ellipse 18% 36% at 92% 96%,  rgba(155,0,255,0.62)  0%, transparent 43%);
+            filter: blur(22px) saturate(2.2);
+            animation: hw-fire-main 2s ease-in-out infinite;
         }
-        /* Scan-lines + craquelures d'énergie orange */
+        /* Couche haute du feu — rythme différent */
         .news-card.halloween-card::after {
             content: "";
-            position: absolute; inset: 0; z-index: 9; pointer-events: none;
+            position: absolute;
+            left:-26px; right:-26px; bottom:-32px; top:auto;
+            height: 85px;
+            z-index: -1;
+            pointer-events: none;
+            border-radius: 0 0 52% 52%;
             background:
-                repeating-linear-gradient(0deg, rgba(255,80,0,0.08) 0 1px, transparent 1px 4px),
-                linear-gradient(90deg,
-                    transparent 0 9%,  rgba(255,60,0,0.1) 10% 11%,  transparent 12% 38%,
-                    rgba(255,120,0,0.07) 39% 40%, transparent 41% 74%,
-                    rgba(255,40,0,0.09) 75% 76%, transparent 77%);
-            mix-blend-mode: screen;
-            animation: hw-scan 5.5s linear infinite;
+                radial-gradient(ellipse 36% 62% at  8% 100%, rgba(215,85,255,0.92)  0%, transparent 50%),
+                radial-gradient(ellipse 30% 57% at 92% 100%, rgba(175,32,255,0.88)  0%, transparent 48%),
+                radial-gradient(ellipse 48% 72% at 50% 100%, rgba(245,148,255,0.72) 0%, transparent 54%);
+            filter: blur(15px) saturate(1.9);
+            animation: hw-fire-top 2.6s ease-in-out infinite reverse;
         }
         .news-card.halloween-card .news-card__image-wrapper {
-            background: #04000c;
-            border-radius: 0;
-            box-shadow: inset 0 -4px 0 rgba(255,80,0,0.75);
-            z-index: 1;
+            background: #05000d;
+            border-radius: 22px 22px 0 0;
+            box-shadow: inset 0 -2px 0 rgba(180,80,255,0.82);
             overflow: hidden;
         }
-        /* Coulée de lave sous l'image */
-        .news-card.halloween-card .news-card__image-wrapper::before {
-            content: "";
-            position: absolute;
-            bottom: -22px; left: 0; right: 0;
-            height: 50px; z-index: 6; pointer-events: none;
-            background:
-                radial-gradient(ellipse 11px 26px at  7% 0%, #cc3300 0 58%, transparent 64%),
-                radial-gradient(ellipse  7px 16px at 16% 0%, #ff6600 0 48%, transparent 56%),
-                radial-gradient(ellipse 14px 32px at 27% 0%, #aa1e00 0 64%, transparent 70%),
-                radial-gradient(ellipse  6px 14px at 36% 0%, #ee5500 0 44%, transparent 52%),
-                radial-gradient(ellipse 16px 38px at 47% 0%, #bb2200 0 68%, transparent 74%),
-                radial-gradient(ellipse  9px 20px at 57% 0%, #ff7700 0 54%, transparent 62%),
-                radial-gradient(ellipse 13px 28px at 68% 0%, #cc3300 0 60%, transparent 67%),
-                radial-gradient(ellipse  6px 15px at 77% 0%, #ff6600 0 46%, transparent 55%),
-                radial-gradient(ellipse 15px 36px at 87% 0%, #aa1e00 0 66%, transparent 72%),
-                radial-gradient(ellipse  8px 18px at 95% 0%, #ee5500 0 52%, transparent 60%);
-            filter: drop-shadow(0 8px 12px rgba(255,80,0,0.98)) blur(0.6px);
-            animation: hw-drip 2.5s ease-in-out infinite;
-        }
-        /* Vignette + halo de feu */
         .news-card.halloween-card .news-card__image-wrapper::after {
-            z-index: 4;
+            z-index: 4; border-radius: 22px 22px 0 0;
             background:
-                radial-gradient(circle at 50% 50%, transparent 0 14%, rgba(0,0,0,0.48) 55%, rgba(0,0,0,0.9) 100%),
-                radial-gradient(circle at 50% 5%, rgba(255,80,0,0.32) 0 28%, transparent 58%);
+                radial-gradient(circle at 50% 50%, transparent 0 16%, rgba(0,0,0,0.46) 60%, rgba(0,0,0,0.9) 100%),
+                radial-gradient(circle at 50% 4%,  rgba(170,60,255,0.3) 0 32%, transparent 64%);
         }
         .news-card.halloween-card .news-card__image {
-            filter: sepia(0.65) hue-rotate(322deg) saturate(500%) contrast(185%) brightness(0.47);
-            transform: scale(1.08);
+            filter: sepia(0.1) hue-rotate(258deg) saturate(280%) contrast(148%) brightness(0.65);
+            transform: scale(1.1);
             transition: filter 0.4s ease, transform 0.5s ease;
         }
         .news-card.halloween-card:hover .news-card__image {
-            filter: sepia(0.45) hue-rotate(316deg) saturate(580%) contrast(200%) brightness(0.75);
-            transform: scale(1.19) rotate(-0.6deg);
+            filter: sepia(0.06) hue-rotate(262deg) saturate(370%) contrast(162%) brightness(0.9);
+            transform: scale(1.19) rotate(-0.5deg);
         }
-        .news-card.halloween-card .news-card__badge {
-            background: rgba(12,2,0,0.94);
-            color: #ff7700;
-            border: 1px solid rgba(255,100,0,0.72);
-            border-radius: 3px;
-            box-shadow: 0 0 15px rgba(255,80,0,0.92), inset 0 0 8px rgba(255,80,0,0.14);
-            font-family: 'LuckiestGuy Regular', cursive;
-            text-shadow: 0 0 8px rgba(255,130,0,0.95);
-            backdrop-filter: blur(4px);
-            animation: hw-badge-flicker 3.6s steps(1) infinite;
+        .news-card.halloween-card:hover {
+            box-shadow:
+                0 0 0 1px rgba(255,255,255,0.08) inset,
+                0 0 58px rgba(170,0,255,1),
+                0 0 125px rgba(115,0,225,0.62),
+                0 32px 90px rgba(0,0,0,0.82);
         }
+        .news-card.halloween-card .news-card__badge,
         .news-card.halloween-card .news-card__new {
-            background: rgba(100,0,0,0.92);
-            color: #ffcc00;
-            border: 1px solid rgba(255,160,0,0.62);
-            border-radius: 3px;
-            box-shadow: 0 0 18px rgba(255,180,0,0.82);
-            animation: hw-new-blink 2.9s steps(1) infinite;
+            background: rgba(6,0,14,0.93);
+            color: #d090ff;
+            border: 1px solid rgba(178,82,255,0.72);
+            box-shadow: 0 0 22px rgba(158,0,255,0.92), inset 0 0 10px rgba(142,0,255,0.13);
+            backdrop-filter: blur(8px);
         }
         .news-card.halloween-card .news-card__content {
             background:
-                radial-gradient(circle at 84% 10%, rgba(255,80,0,0.13), transparent 34%),
-                radial-gradient(circle at 14% 90%, rgba(255,50,0,0.09), transparent 32%),
-                linear-gradient(180deg, #0d0004, #060002);
-            border-top: 1px solid rgba(255,80,0,0.58);
+                radial-gradient(circle at 86% 10%, rgba(150,0,255,0.19), transparent 36%),
+                radial-gradient(circle at 12% 85%, rgba(110,0,212,0.12), transparent 32%),
+                linear-gradient(180deg,#0b0016,#050009);
+            border-top: 1px solid rgba(162,58,255,0.65);
             position: relative; z-index: 1;
+            border-radius: 0 0 22px 22px;
         }
         .news-card.halloween-card .news-card__content::before {
-            content: "💀";
-            position: absolute; right: 14px; top: 11px;
-            font-size: 28px; line-height: 1;
-            filter: drop-shadow(0 0 10px rgba(255,80,0,1));
-            pointer-events: none;
-            animation: hw-skull-bob 3.4s ease-in-out infinite;
+            content: "🔮";
+            position: absolute; right:16px; top:12px;
+            font-size: 28px; line-height:1; pointer-events:none;
+            filter: drop-shadow(0 0 14px rgba(200,100,255,1));
+            animation: hw-orb-float 3.2s ease-in-out infinite;
         }
         .news-card.halloween-card .news-card__content::after {
-            content: "🔥";
-            position: absolute; left: 14px; bottom: 14px;
-            font-size: 18px; opacity: 0.72;
-            pointer-events: none;
-            animation: hw-fire-bob 2.2s ease-in-out infinite;
+            content: "🕷️";
+            position: absolute; left:15px; bottom:14px;
+            font-size:18px; opacity:0.4; pointer-events:none;
         }
         .news-card.halloween-card .news-card__eyebrow {
-            color: #ff9933;
-            text-shadow: 0 0 10px rgba(255,130,0,0.82);
-            letter-spacing: 2px;
+            color: #b878ff;
+            text-shadow: 0 0 12px rgba(185,80,255,0.85);
+            letter-spacing: 1px;
         }
         .news-card.halloween-card .news-card__title {
-            color: #ff7700;
+            color: #ddb8ff;
             text-shadow:
-                0 0 22px rgba(255,100,0,1),
-                0 0 55px rgba(255,55,0,0.65),
-                2px 2px 0 rgba(80,8,0,0.9);
-            animation: hw-title-flicker 4.2s ease-in-out infinite;
+                0 0 22px rgba(190,80,255,1),
+                0 0 55px rgba(140,0,255,0.7),
+                2px 0 rgba(110,0,210,0.5),
+               -2px 0 rgba(230,130,255,0.4);
+            animation: hw-title-haunt 5s ease-in-out infinite;
         }
         .news-card.halloween-card .news-card__button {
-            background: linear-gradient(135deg, #1a0002, #550008 52%, #240006);
-            color: #ff9922;
-            border: 1px solid rgba(255,100,0,0.65);
-            border-radius: 4px;
-            box-shadow: 0 0 20px rgba(255,70,0,0.68), inset 0 1px 0 rgba(255,130,0,0.2);
-            font-family: 'LuckiestGuy Regular', cursive;
+            background: linear-gradient(135deg,#180030,#6600cc 52%,#380060);
+            color: #cc88ff;
+            border: 1px solid rgba(165,70,255,0.62);
+            border-radius: 100px;
+            box-shadow: 0 0 22px rgba(140,0,255,0.7), inset 0 1px 0 rgba(210,140,255,0.25);
             overflow: hidden;
         }
         .news-card.halloween-card .news-card__button::before {
-            background: linear-gradient(90deg, transparent, rgba(255,140,0,0.6), transparent);
-            animation: halloween-button-rune 2.5s ease-in-out infinite;
+            background: linear-gradient(90deg,transparent,rgba(210,140,255,0.55),transparent);
+            animation: hw-btn-shine 2.6s ease-in-out infinite;
         }
         .news-card.halloween-card:hover .news-card__button {
-            background: linear-gradient(135deg, #ff5500, #cc1c00 52%, #880000);
+            background: linear-gradient(135deg,#9900ff,#6600cc 50%,#440088);
             color: #fff;
-            box-shadow: 0 0 36px rgba(255,80,0,1), 0 0 75px rgba(255,50,0,0.55);
-            transform: translateX(4px);
+            box-shadow: 0 0 44px rgba(165,0,255,1), 0 0 92px rgba(122,0,212,0.56);
         }
         .news-card.halloween-card .news-card__bar {
-            background: linear-gradient(90deg, #ff1a00, #ff8800, #ffcc00, #ff8800, #ff1a00);
+            background: linear-gradient(90deg,#4400aa,#cc00ff,#8800ee,#5500bb,#4400aa);
             background-size: 300% auto;
-            animation: barSlide 1.7s linear infinite;
-            height: 5px; z-index: 1;
+            animation: barSlide 2s linear infinite;
+            height: 5px; border-radius: 0 0 22px 22px;
         }
-        /* Braises volantes + chauves-souris (injected) */
-        .hw-deco { position: absolute; inset: 0; z-index: 15; pointer-events: none; overflow: visible; }
-        .hw-ember {
-            position: absolute;
-            bottom: var(--ey, 20%); left: var(--ex);
-            width: var(--es, 3px); height: var(--es, 3px); border-radius: 50%;
-            background: radial-gradient(circle, #ffee44 20%, #ff6600 80%);
-            box-shadow: 0 0 5px 2px rgba(255,150,0,0.9);
-            opacity: 0;
-            animation: hw-ember-rise var(--ed, 2.5s) var(--eo, 0s) ease-out infinite;
-        }
-        .hw-bat { position: absolute; top: var(--bt,-8px); left: var(--bx); font-size: 16px; opacity: 0; animation: hw-bat-fly 5.5s calc(var(--bd)) ease-in-out infinite; filter: drop-shadow(0 0 5px rgba(255,80,0,0.85)); }
-        .hw-bat::before { content: "🦇"; }
+        /* Chauves-souris + crâne injectés via JS */
+        .hw-deco { position:absolute; inset:0; z-index:15; pointer-events:none; overflow:visible; border-radius:24px; }
+        .hw-bat  { position:absolute; top:var(--bt,-10px); left:var(--bx); font-size:18px; opacity:0; filter:drop-shadow(0 0 6px rgba(190,80,255,0.9)); animation:hw-bat-fly 6s var(--bd) ease-in-out infinite; }
+        .hw-bat::before  { content:"🦇"; }
+        .hw-skull { position:absolute; right:14px; top:40%; font-size:22px; opacity:0; filter:drop-shadow(0 0 10px rgba(165,0,255,1)); animation:hw-skull-pop 8s ease-in-out infinite; }
+        .hw-skull::before { content:"💀"; }
 
-        /* ══════════════════════════════════════════════════
-           019 — SAINT-VALENTIN  "VELVET LETTER"
-           Forme lettre pliée · Velours bordeaux · or rosé
-           Cœurs ascendants · sceau de cire · shimmer soie
-           ══════════════════════════════════════════════════ */
+        /* ════════════════════════════════════════════════════
+           019 ── SAINT-VALENTIN  "BOUM-BOUM"
+           Carte arrondie · battement de cœur physique · cœurs flottants
+        ════════════════════════════════════════════════════ */
         .news-card.valentine-card {
+            border-radius: 24px;
             overflow: visible;
-            background:
-                radial-gradient(ellipse at 28% 0%,   rgba(255,180,200,0.16), transparent 42%),
-                radial-gradient(ellipse at 85% 100%, rgba(200,60,90,0.18),   transparent 38%),
-                linear-gradient(158deg, #5e0018 0%, #3c000e 42%, #1e0008 100%);
-            border: none; border-radius: 0;
-            clip-path: polygon(0% 0%, calc(100% - 48px) 0%, 100% 48px, 100% 100%, 0% 100%);
-            animation: fadeInUp 0.4s ease both, val-card-pulse 4.2s ease-in-out infinite;
+            background: linear-gradient(155deg,#1a0008 0%,#400015 40%,#180008 100%);
+            border: 2px solid rgba(255,55,95,0.72);
+            box-shadow:
+                0 0 0 1px rgba(255,145,175,0.15) inset,
+                0 0 35px rgba(255,38,88,0.78),
+                0 0 78px rgba(202,0,58,0.36),
+                0 28px 80px rgba(82,0,28,0.66);
+            /* LE BOUM-BOUM ── battement double comme un vrai cœur */
+            animation: fadeInUp 0.4s ease both, val-heartbeat 1.05s ease-in-out infinite;
+            transform-origin: center center;
         }
-        /* Shimmer soie diagonal */
+        /* Halo extérieur qui pulse */
         .news-card.valentine-card::before {
             content: "";
-            position: absolute; inset: 0; z-index: 1; pointer-events: none;
-            background:
-                linear-gradient(132deg,
-                    transparent 0 42%,
-                    rgba(255,200,215,0.28) 43% 45%,
-                    transparent 46% 100%),
-                repeating-linear-gradient(45deg,
-                    transparent 0 22px,
-                    rgba(220,120,140,0.04) 22px 23px),
-                repeating-linear-gradient(-45deg,
-                    transparent 0 22px,
-                    rgba(255,240,245,0.06) 22px 23px);
-            animation: val-shimmer 5s ease-in-out infinite;
+            position: absolute; inset:-18px; z-index:-1;
+            border-radius: 36px; pointer-events:none;
+            background: radial-gradient(ellipse at 50% 62%, rgba(255,28,78,0.42) 0%, rgba(202,0,48,0.22) 40%, transparent 70%);
+            filter: blur(18px);
+            animation: val-halo-pulse 1.05s ease-in-out infinite;
         }
-        /* Coin plié — triangle doré */
+        /* Reflet soie diagonal */
         .news-card.valentine-card::after {
             content: "";
-            position: absolute;
-            top: 0; right: 0;
-            width: 48px; height: 48px;
-            z-index: 12; pointer-events: none;
-            background: linear-gradient(
-                225deg,
-                rgba(230,190,120,0.9) 0 42%,
-                rgba(180,100,80,0.7)  43% 58%,
-                transparent           59%
-            );
-            filter: drop-shadow(-3px 3px 6px rgba(0,0,0,0.4));
+            position: absolute; inset:0; z-index:1; pointer-events:none;
+            border-radius: 24px;
+            background: linear-gradient(130deg,transparent 0 44%,rgba(255,178,198,0.22) 46% 48%,transparent 50%);
+            animation: val-silk-sweep 4s ease-in-out infinite;
         }
         .news-card.valentine-card .news-card__image-wrapper {
-            background: #2e0010;
-            border-radius: 0;
-            box-shadow: inset 0 -3px 0 rgba(200,120,100,0.6);
+            background: #200008;
+            border-radius: 22px 22px 0 0;
+            box-shadow: inset 0 -2px 0 rgba(255,58,98,0.72);
             overflow: hidden;
         }
-        /* Reflet doré en haut de l'image */
-        .news-card.valentine-card .news-card__image-wrapper::before {
-            content: "";
-            position: absolute;
-            top: 0; left: 0; right: 0; height: 55px;
-            z-index: 4; pointer-events: none;
-            background: linear-gradient(180deg,
-                rgba(220,170,100,0.28) 0%,
-                rgba(180,60,80,0.12) 60%,
-                transparent 100%);
-            animation: val-gold-sheen 3.8s ease-in-out infinite;
-        }
-        /* Vignette rose bordeaux */
         .news-card.valentine-card .news-card__image-wrapper::after {
-            z-index: 3;
+            z-index:4; border-radius:22px 22px 0 0;
             background:
-                radial-gradient(circle at 50% 50%, transparent 0 22%, rgba(60,0,20,0.4) 60%, rgba(30,0,10,0.85) 100%),
-                linear-gradient(180deg, rgba(220,120,100,0.1), rgba(180,40,60,0.32));
-            animation: val-vignette-pulse 4s ease-in-out infinite;
+                radial-gradient(circle at 50% 50%, transparent 0 20%, rgba(58,0,18,0.4) 62%, rgba(28,0,8,0.88) 100%),
+                linear-gradient(180deg,rgba(255,78,108,0.12),rgba(182,0,48,0.3));
+            animation: val-vignette-beat 1.05s ease-in-out infinite;
         }
         .news-card.valentine-card .news-card__image {
-            filter: sepia(0.28) hue-rotate(320deg) saturate(190%) contrast(118%) brightness(0.82);
+            filter: sepia(0.2) hue-rotate(320deg) saturate(200%) contrast(120%) brightness(0.78);
             transform: scale(1.07);
             transition: filter 0.4s ease, transform 0.5s ease;
         }
         .news-card.valentine-card:hover .news-card__image {
-            filter: sepia(0.15) hue-rotate(325deg) saturate(260%) contrast(128%) brightness(1.05);
-            transform: scale(1.17) rotate(0.5deg);
+            filter: sepia(0.1) hue-rotate(325deg) saturate(260%) contrast(130%) brightness(1.05);
+            transform: scale(1.16) rotate(0.5deg);
         }
-        .news-card.valentine-card .news-card__badge {
-            background: rgba(30,5,10,0.94);
-            color: #e8b870;
-            border: 1px solid rgba(220,170,90,0.7);
-            border-radius: 3px;
-            box-shadow: 0 0 16px rgba(220,160,80,0.8), inset 0 0 6px rgba(220,150,60,0.12);
-            text-shadow: 0 0 8px rgba(240,190,80,0.85);
-            backdrop-filter: blur(4px);
-            animation: val-gold-flicker 4s steps(1) infinite;
-        }
+        .news-card.valentine-card .news-card__badge,
         .news-card.valentine-card .news-card__new {
-            background: rgba(90,0,30,0.94);
-            color: #ffd0e0;
-            border: 1px solid rgba(255,120,140,0.55);
-            border-radius: 3px;
-            box-shadow: 0 0 18px rgba(255,80,100,0.75);
-            animation: val-new-pulse 3s ease-in-out infinite;
+            background: rgba(30,0,12,0.92);
+            color: #ff90b0;
+            border: 1px solid rgba(255,58,98,0.62);
+            box-shadow: 0 0 18px rgba(255,28,78,0.87), inset 0 0 8px rgba(255,0,48,0.1);
+            backdrop-filter: blur(8px);
+            z-index: 6;
         }
-        /* Zone de contenu — parchemin crème */
         .news-card.valentine-card .news-card__content {
             background:
-                radial-gradient(circle at 80% 8%,  rgba(220,160,80,0.14), transparent 30%),
-                radial-gradient(circle at 12% 88%, rgba(180,40,60,0.08),  transparent 28%),
-                linear-gradient(180deg, #fff5ee, #f5e0e6);
-            border-top: 2px solid rgba(200,150,80,0.45);
-            position: relative; z-index: 1;
+                radial-gradient(circle at 85% 10%, rgba(255,28,78,0.17), transparent 32%),
+                radial-gradient(circle at 10% 85%, rgba(202,0,52,0.1), transparent 30%),
+                linear-gradient(180deg,#1e000a,#100005);
+            border-top: 1px solid rgba(255,48,88,0.62);
+            position: relative; z-index:1;
+            border-radius: 0 0 22px 22px;
         }
-        /* Sceau de cire — disque */
+        /* Grand cœur qui bat dans le contenu, synchronisé */
         .news-card.valentine-card .news-card__content::before {
-            content: "";
-            position: absolute; right: 14px; top: 12px;
-            width: 44px; height: 44px; border-radius: 50%;
-            background: radial-gradient(circle at 30% 25%, rgba(255,240,220,0.7) 0 8px, #c0002a 10px 100%);
-            box-shadow:
-                0 0 0 2px rgba(200,150,60,0.6),
-                0 0 22px rgba(180,20,50,0.7),
-                0 4px 10px rgba(80,0,20,0.5);
-            animation: val-seal-pulse 3.2s ease-in-out infinite;
-            pointer-events: none;
+            content: "❤️";
+            position: absolute; right:14px; top:10px;
+            font-size: 32px; line-height:1; pointer-events:none;
+            filter: drop-shadow(0 0 16px rgba(255,28,78,1));
+            animation: val-heart-icon-beat 1.05s ease-in-out infinite;
         }
-        /* Sceau de cire — ♥ */
         .news-card.valentine-card .news-card__content::after {
-            content: "♥";
-            position: absolute; right: 27px; top: 22px;
-            color: rgba(255,220,220,0.95); font-size: 20px; line-height: 1;
-            text-shadow: 0 0 6px rgba(200,0,40,0.8);
-            pointer-events: none;
+            content: "💋";
+            position: absolute; left:14px; bottom:12px;
+            font-size:20px; opacity:0.44; pointer-events:none;
         }
         .news-card.valentine-card .news-card__eyebrow {
-            color: #b04060;
-            font-style: italic;
-            text-transform: none;
-            letter-spacing: 0.5px;
+            color: #ff6080; text-transform:none; font-style:italic;
+            text-shadow: 0 0 10px rgba(255,48,78,0.62);
         }
         .news-card.valentine-card .news-card__title {
-            color: #3a000e;
-            font-family: 'LuckiestGuy Regular', cursive;
-            text-shadow: 0 1px 0 rgba(255,220,220,0.8), 0 0 12px rgba(180,20,50,0.2);
+            color: #ffccd8;
+            text-shadow:
+                0 0 20px rgba(255,58,88,0.92),
+                0 0 50px rgba(222,0,52,0.52),
+                0 1px 0 rgba(100,0,28,0.82);
         }
         .news-card.valentine-card .news-card__button {
-            background: linear-gradient(135deg, #5e0015, #a01830 50%, #6e000f);
-            color: #f0c090;
-            border: 1px solid rgba(220,160,80,0.55);
-            border-radius: 4px;
-            box-shadow: 0 0 20px rgba(180,20,50,0.55), inset 0 1px 0 rgba(220,170,80,0.25);
+            background: linear-gradient(135deg,#800020,#cc0040 52%,#900030);
+            color: #ffccd8;
+            border: 1px solid rgba(255,58,98,0.58);
+            border-radius: 100px;
+            box-shadow: 0 0 22px rgba(220,0,52,0.67), inset 0 1px 0 rgba(255,128,158,0.25);
             overflow: hidden;
         }
         .news-card.valentine-card .news-card__button::before {
-            background: linear-gradient(90deg, transparent, rgba(230,185,100,0.5), transparent);
+            background: linear-gradient(90deg,transparent,rgba(255,178,198,0.52),transparent);
+            animation: val-btn-shine 2.8s ease-in-out infinite;
         }
         .news-card.valentine-card .news-card__button::after {
             content: "♥";
-            position: absolute; right: 14px; top: 50%;
-            color: rgba(240,180,120,0.9); font-size: 14px;
-            transform: translateY(-50%) scale(0.7);
-            opacity: 0; transition: opacity 0.25s, transform 0.25s;
+            position: absolute; right:16px; top:50%;
+            font-size:14px; color:rgba(255,158,178,0.92);
+            transform: translateY(-50%) scale(0.7); opacity:0;
+            transition: opacity 0.22s, transform 0.22s;
         }
         .news-card.valentine-card:hover .news-card__button {
-            background: linear-gradient(135deg, #e8c070, #d4a040 50%, #c08020);
-            color: #2a0008;
-            box-shadow: 0 0 32px rgba(220,160,60,0.9);
+            background: linear-gradient(135deg,#ff2060,#ff0045 52%,#dd0038);
+            color: #fff;
+            box-shadow: 0 0 40px rgba(255,18,68,1), 0 0 82px rgba(202,0,48,0.52);
             padding-right: 36px;
         }
-        .news-card.valentine-card:hover .news-card__button::after {
-            opacity: 1; transform: translateY(-50%) scale(1); color: #8a0020;
-        }
+        .news-card.valentine-card:hover .news-card__button::after { opacity:1; transform:translateY(-50%) scale(1); color:#fff; }
         .news-card.valentine-card .news-card__bar {
-            background: linear-gradient(90deg, #c00028, #e8b060, #fff0d0, #e8b060, #c00028);
+            background: linear-gradient(90deg,#cc0030,#ff3060,#ffb0c0,#ff3060,#cc0030);
             background-size: 300% auto;
             animation: barSlide 3s linear infinite;
-            height: 5px; z-index: 1;
+            height: 5px; border-radius: 0 0 22px 22px;
         }
-        /* Cœurs ascendants + étoiles (injected) */
-        .val-deco { position: absolute; inset: 0; z-index: 14; pointer-events: none; overflow: hidden; border-radius: 0; }
-        .val-heart {
-            position: absolute; bottom: -20px; left: var(--hx);
-            font-size: var(--hs, 1em); opacity: 0;
-            filter: drop-shadow(0 0 5px rgba(200,40,80,0.7));
-            animation: val-heart-rise 5s calc(var(--hd)) ease-in-out infinite;
-        }
-        .val-heart::before { content: "❤️"; }
-        .val-heart:nth-child(3n)::before { content: "💕"; }
-        .val-heart:nth-child(5n)::before { content: "🌹"; }
-        .val-sparkle {
-            position: absolute; left: var(--sx); top: var(--sy);
-            pointer-events: none;
-            animation: val-sparkle-pop 3.4s calc(var(--sd)) ease-in-out infinite;
-        }
-        .val-sparkle::before {
-            content: "✦"; font-size: 14px;
-            color: #e8c070;
-            text-shadow: 0 0 8px rgba(220,160,60,0.95);
-        }
+        /* Cœurs flottants injectés via JS */
+        .val-deco { position:absolute; inset:0; z-index:14; pointer-events:none; overflow:hidden; border-radius:24px; }
+        .val-heart { position:absolute; bottom:-20px; left:var(--hx); font-size:var(--hs,1.1em); opacity:0; filter:drop-shadow(0 0 5px rgba(255,38,78,0.78)); animation:val-heart-rise 4.5s var(--hd) ease-in-out infinite; }
+        .val-heart::before { content:"❤️"; }
+        .val-heart:nth-child(3n)::before { content:"💕"; }
+        .val-heart:nth-child(5n)::before { content:"💗"; }
 
+        /* ════ KEYFRAMES glitch (inchangés) ════ */
         @keyframes glitch-card-surge {
-            0%, 100% { box-shadow: 0 0 24px rgba(0,255,65,0.7), 0 0 60px rgba(0,255,65,0.22), 0 18px 46px rgba(0,0,0,0.55); }
-            18% { box-shadow: 0 0 34px rgba(255,0,88,0.82), 0 0 70px rgba(0,255,65,0.26), 0 18px 46px rgba(0,0,0,0.55); }
-            19% { box-shadow: 0 0 28px rgba(0,162,255,0.82), 0 0 70px rgba(0,255,65,0.26), 0 18px 46px rgba(0,0,0,0.55); }
-            48% { border-color: #ff0058; }
-            49% { border-color: #00ff41; }
+            0%,100%{box-shadow:0 0 24px rgba(0,255,65,.7),0 0 60px rgba(0,255,65,.22),0 18px 46px rgba(0,0,0,.55)}
+            18%{box-shadow:0 0 34px rgba(255,0,88,.82),0 0 70px rgba(0,255,65,.26),0 18px 46px rgba(0,0,0,.55)}
+            19%{box-shadow:0 0 28px rgba(0,162,255,.82),0 0 70px rgba(0,255,65,.26),0 18px 46px rgba(0,0,0,.55)}
+            48%{border-color:#ff0058}49%{border-color:#00ff41}
         }
-        @keyframes glitch-scan { 0% { background-position: 0 0, 0 0; } 100% { background-position: 0 220px, 120px 0; } }
-        @keyframes glitch-warning {
-            0%, 70%, 100% { opacity: 0; transform: translateX(0) skewX(-12deg); }
-            72% { opacity: 1; transform: translateX(-14px) skewX(-12deg); }
-            74% { opacity: 0.45; transform: translateX(12px) skewX(12deg); }
-            76% { opacity: 1; transform: translateX(0) skewX(-12deg); }
+        @keyframes glitch-scan{0%{background-position:0 0,0 0}100%{background-position:0 220px,120px 0}}
+        @keyframes glitch-warning{
+            0%,70%,100%{opacity:0;transform:translateX(0) skewX(-12deg)}
+            72%{opacity:1;transform:translateX(-14px) skewX(-12deg)}
+            74%{opacity:.45;transform:translateX(12px) skewX(12deg)}
+            76%{opacity:1;transform:translateX(0) skewX(-12deg)}
         }
-        @keyframes glitch-image-break {
-            0%, 14%, 20%, 63%, 100% { transform: scale(1.12); filter: sepia(1) hue-rotate(82deg) saturate(420%) contrast(150%) brightness(0.86); }
-            15% { transform: translateX(8px) skewX(-8deg) scale(1.18); filter: invert(1) hue-rotate(180deg) contrast(220%); }
-            17% { transform: translateX(-8px) skewX(8deg) scale(1.16); filter: sepia(1) hue-rotate(120deg) saturate(520%) contrast(220%); }
-            64% { transform: translateY(-5px) scale(1.2); filter: brightness(2.4) contrast(260%); }
-            66% { transform: translateY(3px) scale(1.1); }
+        @keyframes glitch-image-break{
+            0%,14%,20%,63%,100%{transform:scale(1.12);filter:sepia(1) hue-rotate(82deg) saturate(420%) contrast(150%) brightness(.86)}
+            15%{transform:translateX(8px) skewX(-8deg) scale(1.18);filter:invert(1) hue-rotate(180deg) contrast(220%)}
+            17%{transform:translateX(-8px) skewX(8deg) scale(1.16);filter:sepia(1) hue-rotate(120deg) saturate(520%) contrast(220%)}
+            64%{transform:translateY(-5px) scale(1.2);filter:brightness(2.4) contrast(260%)}
+            66%{transform:translateY(3px) scale(1.1)}
         }
-        @keyframes glitch-label-blink { 0%, 55%, 100% { opacity: 1; } 56%, 62% { opacity: 0; } 63%, 66% { opacity: 1; } }
-        @keyframes glitch-text-break {
-            0% { transform: translate(0,0); text-shadow: 2px 0 #ff0058, -2px 0 #00a2ff, 0 0 14px #00ff41; }
-            50% { transform: translate(1px,-1px); text-shadow: -3px 0 #ff0058, 3px 0 #00a2ff, 0 0 18px #00ff41; }
-            100% { transform: translate(-1px,1px); }
+        @keyframes glitch-label-blink{0%,55%,100%{opacity:1}56%,62%{opacity:0}63%,66%{opacity:1}}
+        @keyframes glitch-text-break{
+            0%{transform:translate(0,0);text-shadow:2px 0 #ff0058,-2px 0 #00a2ff,0 0 14px #00ff41}
+            50%{transform:translate(1px,-1px);text-shadow:-3px 0 #ff0058,3px 0 #00a2ff,0 0 18px #00ff41}
+            100%{transform:translate(-1px,1px)}
         }
-        @keyframes violet-fire-aura {
-            0%, 100% { transform: translateY(10px) scaleX(1) skewX(0deg); opacity: 0.68; }
-            34% { transform: translateY(-8px) scaleX(1.08) skewX(-4deg); opacity: 1; }
-            68% { transform: translateY(1px) scaleX(0.96) skewX(5deg); opacity: 0.82; }
+        /* ════ KEYFRAMES Halloween ════ */
+        @keyframes hw-border-pulse{
+            0%,100%{box-shadow:0 0 0 1px rgba(255,255,255,.06) inset,0 0 38px rgba(145,0,255,.9),0 0 85px rgba(105,0,210,.44),0 30px 80px rgba(0,0,0,.75);border-color:rgba(160,55,255,.78)}
+            50%     {box-shadow:0 0 0 1px rgba(255,255,255,.09) inset,0 0 58px rgba(175,0,255,1),  0 0 125px rgba(135,0,245,.62),0 30px 92px rgba(0,0,0,.82);border-color:rgba(205,82,255,1)}
         }
-        @keyframes violet-smoke-sweep {
-            0%, 100% { transform: translateX(-80%) skewX(-18deg); opacity: 0; }
-            42% { opacity: 0.8; }
-            70% { transform: translateX(80%) skewX(-18deg); opacity: 0; }
+        @keyframes hw-fire-main{
+            0%  {transform:translateY(0)     scaleX(1)    scaleY(1);   filter:blur(22px) saturate(2.2) hue-rotate(0deg)}
+            25% {transform:translateY(-20px) scaleX(1.12) scaleY(1.28);filter:blur(19px) saturate(2.5) hue-rotate(16deg)}
+            50% {transform:translateY(-9px)  scaleX(.9)   scaleY(1.42);filter:blur(24px) saturate(1.9) hue-rotate(-12deg)}
+            75% {transform:translateY(-24px) scaleX(1.09) scaleY(1.2); filter:blur(18px) saturate(2.6) hue-rotate(22deg)}
+            100%{transform:translateY(0)     scaleX(1)    scaleY(1);   filter:blur(22px) saturate(2.2) hue-rotate(0deg)}
         }
-        @keyframes violet-flames-lick {
-            0%, 100% { transform: translateY(10px) scaleY(0.92); opacity: 0.55; }
-            44% { transform: translateY(-11px) scaleY(1.18); opacity: 0.95; }
-            72% { transform: translateY(-2px) scaleY(1.04); opacity: 0.78; }
+        @keyframes hw-fire-top{
+            0%  {transform:translateY(0)     scaleX(1)    scaleY(1);   opacity:.88}
+            33% {transform:translateY(-16px) scaleX(1.14) scaleY(1.34);opacity:1}
+            66% {transform:translateY(-6px)  scaleX(.86)  scaleY(1.16);opacity:.72}
+            100%{transform:translateY(0)     scaleX(1)    scaleY(1);   opacity:.88}
         }
-        @keyframes halloween-portal-breathe {
-            0%, 100% { opacity: 0.75; filter: saturate(1); }
-            48% { opacity: 1; filter: saturate(1.35) brightness(1.08); }
+        @keyframes hw-orb-float{
+            0%,100%{transform:translateY(0) rotate(-8deg); filter:drop-shadow(0 0 14px rgba(200,100,255,1))}
+            50%    {transform:translateY(-7px) rotate(8deg);filter:drop-shadow(0 0 26px rgba(222,132,255,1)) drop-shadow(0 0 42px rgba(162,0,255,.72))}
         }
-        @keyframes halloween-moon-float {
-            0%, 100% { transform: translateY(0) rotate(-6deg); opacity: 0.62; }
-            50% { transform: translateY(-5px) rotate(8deg); opacity: 1; }
+        @keyframes hw-title-haunt{
+            0%,100%{text-shadow:0 0 22px rgba(190,80,255,1),0 0 55px rgba(140,0,255,.7),2px 0 rgba(110,0,210,.5),-2px 0 rgba(230,130,255,.4)}
+            50%    {text-shadow:0 0 36px rgba(222,112,255,1),0 0 82px rgba(172,0,255,.88),-3px 0 rgba(78,0,182,.62),3px 0 rgba(255,162,255,.52)}
         }
-        @keyframes halloween-button-rune {
-            0%, 55%, 100% { opacity: 0; transform: translateX(-120%); }
-            68% { opacity: 0.85; transform: translateX(115%); }
+        @keyframes hw-btn-shine{0%,60%,100%{opacity:0;transform:translateX(-120%)}74%{opacity:.9;transform:translateX(122%)}}
+        @keyframes hw-bat-fly{
+            0%  {opacity:0;transform:translate(0,0) scale(.7) rotate(-5deg)}
+            8%  {opacity:.9}
+            50% {opacity:.85;transform:translate(32px,-36vh) scale(1.12) rotate(15deg)}
+            92% {opacity:.28}
+            100%{opacity:0;transform:translate(-22px,-102vh) scale(.8) rotate(-22deg)}
         }
-        @keyframes valentine-heartbeat {
-            0%, 100% { transform: scale(1); }
-            14% { transform: scale(1.022); }
-            24% { transform: scale(1); }
-            38% { transform: scale(1.04); }
-            58% { transform: scale(1); }
+        @keyframes hw-skull-pop{
+            0%,55%,100%{opacity:0;transform:translateX(22px) scale(.7)}
+            62%{opacity:1;transform:translateX(0) scale(1.12)}
+            74%{opacity:1;transform:translateX(-4px) scale(1)}
+            88%{opacity:0;transform:translateX(-22px) scale(.7)}
         }
-        @keyframes valentine-orbit-left {
-            0%, 100% { transform: translate(0, 0) scale(0.9) rotate(-12deg); opacity: 0.62; }
-            42% { transform: translate(15px, -12px) scale(1.25) rotate(10deg); opacity: 1; }
-            72% { transform: translate(42px, 2px) scale(1) rotate(-4deg); opacity: 0.78; }
+        /* ════ KEYFRAMES Valentine ════ */
+        /* Double systole — BOUM … boum */
+        @keyframes val-heartbeat{
+            0%  {transform:scale(1)}
+            8%  {transform:scale(1.034)}
+            16% {transform:scale(.994)}
+            24% {transform:scale(1.022)}
+            36% {transform:scale(1)}
+            100%{transform:scale(1)}
         }
-        @keyframes valentine-orbit-right {
-            0%, 100% { transform: translate(0, 0) scale(0.86) rotate(12deg); opacity: 0.58; }
-            38% { transform: translate(-20px, -14px) scale(1.18) rotate(-8deg); opacity: 1; }
-            72% { transform: translate(-46px, 4px) scale(0.98) rotate(7deg); opacity: 0.78; }
+        @keyframes val-halo-pulse{
+            0%,36%,100%{opacity:.5;transform:scale(1)}
+            8%  {opacity:1;  transform:scale(1.05)}
+            24% {opacity:.88;transform:scale(1.028)}
         }
-        @keyframes valentine-heart-crown {
-            0%, 100% { transform: translateY(0) scale(0.94); opacity: 0.72; letter-spacing: 6px; }
-            42% { transform: translateY(-8px) scale(1.08); opacity: 1; letter-spacing: 10px; }
-            70% { transform: translateY(3px) scale(1); opacity: 0.84; }
+        @keyframes val-vignette-beat{
+            0%,36%,100%{opacity:.82}
+            8%  {opacity:1;filter:saturate(1.5) brightness(1.16)}
+            24% {opacity:.94;filter:saturate(1.28) brightness(1.08)}
         }
-        @keyframes valentine-image-glow {
-            0%, 100% { opacity: 0.82; filter: saturate(1); }
-            46% { opacity: 1; filter: saturate(1.28) brightness(1.08); }
+        @keyframes val-heart-icon-beat{
+            0%,36%,100%{transform:scale(1);   filter:drop-shadow(0 0 16px rgba(255,28,78,1))}
+            8%         {transform:scale(1.38); filter:drop-shadow(0 0 30px rgba(255,28,78,1)) drop-shadow(0 0 52px rgba(202,0,48,.82))}
+            16%        {transform:scale(.94)}
+            24%        {transform:scale(1.22); filter:drop-shadow(0 0 22px rgba(255,28,78,1))}
         }
-        @keyframes valentine-seal-pulse {
-            0%, 100% { transform: scale(1); box-shadow: 0 0 18px rgba(255,47,125,0.62); }
-            38% { transform: scale(1.1); box-shadow: 0 0 28px rgba(255,47,125,0.9); }
-            58% { transform: scale(1); }
+        @keyframes val-silk-sweep{
+            0%  {background-position:-150% 0;opacity:.6}
+            50% {opacity:1}
+            100%{background-position:252% 0;opacity:.6}
         }
+        @keyframes val-heart-rise{
+            0%  {opacity:0;transform:translateY(0)     scale(.7) rotate(-10deg)}
+            10% {opacity:.9}
+            55% {opacity:.8;transform:translateY(-46vh) scale(1.12) rotate(8deg)}
+            90% {opacity:.2}
+            100%{opacity:0;transform:translateY(-96vh) scale(.8) rotate(-5deg)}
+        }
+        @keyframes val-btn-shine{0%,62%,100%{opacity:0;transform:translateX(-120%)}76%{opacity:.88;transform:translateX(122%)}}
+        /* conservés pour compatibilité */
+        @keyframes valentine-heartbeat{0%,100%{transform:scale(1)}14%{transform:scale(1.022)}24%{transform:scale(1)}38%{transform:scale(1.04)}58%{transform:scale(1)}}
+        @keyframes valentine-orbit-left{0%,100%{transform:translate(0,0) scale(.9) rotate(-12deg);opacity:.62}42%{transform:translate(15px,-12px) scale(1.25) rotate(10deg);opacity:1}}
+        @keyframes valentine-orbit-right{0%,100%{transform:translate(0,0) scale(.86) rotate(12deg);opacity:.58}38%{transform:translate(-20px,-14px) scale(1.18) rotate(-8deg);opacity:1}}
+        @keyframes valentine-heart-crown{0%,100%{transform:translateY(0) scale(.94);opacity:.72}42%{transform:translateY(-8px) scale(1.08);opacity:1}}
+        @keyframes valentine-image-glow{0%,100%{opacity:.82}46%{opacity:1;filter:saturate(1.28) brightness(1.08)}}
+        @keyframes valentine-seal-pulse{0%,100%{transform:scale(1)}38%{transform:scale(1.1)}58%{transform:scale(1)}}
+        @keyframes valentine-card-breathe{0%,100%{box-shadow:0 0 28px rgba(255,79,147,.68)}50%{box-shadow:0 0 45px rgba(255,79,147,1)}}
 
         @media (max-width: 768px) {
             .news-card.halloween-card,
@@ -736,7 +676,14 @@
                 const isNew = globalIndex >= total - NEW_THRESHOLD;
                 const statusLabel = special.status || (isNew ? "Nouveau" : "");
                 const delay = i * 0.07;
+                let deco = "";
+                if (special.className === "halloween-card") {
+                    deco = `<div class="hw-deco" aria-hidden="true"><span class="hw-bat" style="--bx:10%;--bd:-0.2s;--bt:-12px"></span><span class="hw-bat" style="--bx:60%;--bd:-2.4s;--bt:-8px"></span><span class="hw-bat" style="--bx:35%;--bd:-1.2s;--bt:-10px"></span><span class="hw-skull"></span></div>`;
+                } else if (special.className === "valentine-card") {
+                    deco = `<div class="val-deco" aria-hidden="true"><span class="val-heart" style="--hx:8%;--hd:-0.1s;--hs:1em"></span><span class="val-heart" style="--hx:28%;--hd:-1.7s;--hs:1.4em"></span><span class="val-heart" style="--hx:52%;--hd:-0.8s;--hs:.85em"></span><span class="val-heart" style="--hx:72%;--hd:-2.3s;--hs:1.2em"></span><span class="val-heart" style="--hx:88%;--hd:-0.5s;--hs:.96em"></span></div>`;
+                }
                 return `<article class="news-card ${special.className || ""}" style="animation-delay:${delay}s" onclick="window.location='${b.href}'">
+                    ${deco}
                     <div class="news-card__image-wrapper">
                         <img src="${b.img}" class="news-card__image" alt="Bulletin #${b.num}" loading="lazy">
                         <div class="news-card__badge">${special.badge || `Issue #${b.num}`}</div>
