@@ -313,7 +313,53 @@ function animate() {
     requestAnimationFrame(animate);
 }
 animate();
-</script>
 
+    window.addEventListener('scroll', () => {
+        const header = document.querySelector('.site-header');
+        const darkZones = document.querySelectorAll('.blue-banner, .hero-image');
+        
+        let isOverDarkZone = false;
+        const headerCenter = header.getBoundingClientRect().top + (header.offsetHeight / 2);
+        
+        darkZones.forEach(zone => {
+            const rect = zone.getBoundingClientRect();
+            if (headerCenter >= rect.top && headerCenter <= rect.bottom) {
+                isOverDarkZone = true;
+            }
+        });
+        
+        if (isOverDarkZone) {
+            header.classList.add('nav-light-text');
+        } else {
+            header.classList.remove('nav-light-text');
+        }
+    });
+
+    window.dispatchEvent(new Event('scroll'));
+</script>
+<script>
+    window.addEventListener('scroll', () => {
+        const header = document.querySelector('.site-header');
+        const darkZones = document.querySelectorAll('.blue-banner, .hero-image');
+        
+        let isOverDarkZone = false;
+        const headerCenter = header.getBoundingClientRect().top + (header.offsetHeight / 2);
+        
+        darkZones.forEach(zone => {
+            const rect = zone.getBoundingClientRect();
+            if (headerCenter >= rect.top && headerCenter <= rect.bottom) {
+                isOverDarkZone = true;
+            }
+        });
+        
+        if (isOverDarkZone) {
+            header.classList.add('nav-light-text');
+        } else {
+            header.classList.remove('nav-light-text');
+        }
+    });
+
+    window.dispatchEvent(new Event('scroll'));
+</script>
 </body>
 </html>

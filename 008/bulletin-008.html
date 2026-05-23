@@ -25,8 +25,83 @@
         * { box-sizing: border-box; }
         body { margin: 0; font-family: var(--font-stack-body); color: var(--color-text); background-color: #fff; line-height: 1.6; }
 
-        /* NAVBAR */
-        .site-header { display: flex; align-items: center; justify-content: space-between; padding: 0 55px; background: rgba(255, 255, 255, 0.749); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.6); position: sticky; top: 0; z-index: 1000; height: 72px; box-shadow: 0 4px 30px rgba(0,0,0,0.08); }
+        /* ── CONFIGURATION PARFAITE DU FOND VIA PICTURE ── */
+        .site-background {
+            position: fixed; /* Reste fixe sur l'écran pendant le scroll */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            z-index: -1;  /* Reste bien en dessous de TOUT le site */
+            pointer-events: none;
+        }
+        .site-background img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Remplit l'écran proprement sans déformer */
+            display: block;
+        }
+
+        /* Sur mobile, on cache le fond pour garder les performances */
+        @media (max-width: 768px) {
+            .site-background { display: none; }
+        }
+
+                /* ── NAVBAR : VRAI LIQUID GLASS APPLE (Mac, PC, iOS) ── */
+        /* ══════════════════════════════════════
+           VRAI LIQUID GLASS APPLE — NAVBAR
+           ══════════════════════════════════════ */
+        /* ── CORRECTION COULEUR INTELLIGENTE DU TEXTE ── */
+        .site-header {
+            /* ... garde tout ton CSS de positionnement et de liquid glass existant ... */
+            display: flex; align-items: center; justify-content: space-between; padding: 0 55px;
+            position: sticky; top: 0; z-index: 1000; height: 72px;
+            background: rgba(255, 255, 255, 0.18);
+            -webkit-backdrop-filter: blur(40px) saturate(220%) brightness(1.1) contrast(1.05);
+            backdrop-filter: blur(40px) saturate(220%) brightness(1.1) contrast(1.05);
+            border: none; border-top: 1px solid rgba(255, 255, 255, 0.80); border-bottom: 1px solid rgba(255, 255, 255, 0.20);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.70), inset 0 -1px 0 rgba(255, 255, 255, 0.10), 0 8px 40px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
+            isolation: isolate;
+        }
+
+        /* ── MAGIE DU BLEND MODE ICI ── */
+        .site-nav { display: flex; gap: 8px; padding: 0; margin: 0; list-style: none; font-weight: 900; }
+            /* ── TEXTES NAVBAR (AVEC TRANSITION DOUCE) ── */
+        /* 1. On applique le contour noir uniquement aux textes et icônes */
+/* État normal : Aucun contour */
+.site-nav a, .site-header__icons {
+    color: var(--color-text); /* Couleur par défaut */
+    text-shadow: none;        /* Pas de bordure */
+    transition: color 0.3s ease, text-shadow 0.3s ease;
+}
+
+/* État "zone sombre" (via la classe nav-light-text du script) */
+.site-header.nav-light-text .site-nav a,
+.site-header.nav-light-text .site-header__icons {
+    color: #ffffff; /* Texte en blanc */
+    
+    /* Contour épais façon sticker (8 couches d'ombres pour l'épaisseur) */
+    text-shadow: 
+         1px  1px 0 #000, -1px -1px 0 #000,  1px -1px 0 #000, -1px  1px 0 #000,
+         1px  0px 0 #000, -1px  0px 0 #000,  0px  1px 0 #000,  0px -1px 0 #000,
+         2px  2px 0 #000; /* Ombre supplémentaire pour renforcer l'épaisseur */
+}
+
+/* On garde la transition douce */
+.site-nav a, .site-header__icons {
+    transition: color 0.3s ease, text-shadow 0.3s ease;
+}
+
+/* On s'assure que le logo ne bouge pas */
+.site-header__logo img { 
+    height: 42px; width: auto; display: block; 
+    filter: none !important;
+}
+        .site-header.nav-light-text .site-header__logo img {
+            filter: brightness(0) invert(1); /* Transforme le logo noir en blanc */
+        }
+
+
         .site-header__logo img { height: 42px; width: auto; display: block; }
         .site-nav { display: flex; gap: 8px; padding: 0; margin: 0; list-style: none; font-weight: 900;}
         .site-nav a { color: var(--color-text); text-decoration: none; font-weight: 900; font-size: 17px; text-transform: uppercase; font-family: 'LuckiestGuy Regular', cursive; padding: 8px 16px; border-radius: 10px; transition: background 0.2s, color 0.2s; }
@@ -384,6 +459,29 @@ pollData.forEach(d => {
     legend.appendChild(item);
 });
 </script>
+<script>
+    window.addEventListener('scroll', () => {
+        const header = document.querySelector('.site-header');
+        const darkZones = document.querySelectorAll('.blue-banner, .hero-image');
+        
+        let isOverDarkZone = false;
+        const headerCenter = header.getBoundingClientRect().top + (header.offsetHeight / 2);
+        
+        darkZones.forEach(zone => {
+            const rect = zone.getBoundingClientRect();
+            if (headerCenter >= rect.top && headerCenter <= rect.bottom) {
+                isOverDarkZone = true;
+            }
+        });
+        
+        if (isOverDarkZone) {
+            header.classList.add('nav-light-text');
+        } else {
+            header.classList.remove('nav-light-text');
+        }
+    });
 
+    window.dispatchEvent(new Event('scroll'));
+</script>
 </body>
 </html>
