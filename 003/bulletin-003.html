@@ -268,28 +268,73 @@
             letter-spacing: 0.5px;
         }
 
-        /* ── PARTAGE SOCIAL ── */
-        .social-share {
-            display: flex;
-            gap: 10px;
-            margin: 30px 0 10px 0;
-        }
-        .social-share a {
-            display: inline-flex;
-            align-items: center;
-            gap: 7px;
-            padding: 8px 14px;
-            border: 2px solid #000;
-            border-radius: 4px;
-            font-size: 13px;
-            font-weight: 700;
-            text-decoration: none;
-            color: #000;
-            text-transform: uppercase;
-        }
-        .social-share a.fb { background-color: #3b5998; color: #fff; border-color: #3b5998; }
-        .social-share a.tw { background-color: #1da1f2; color: #fff; border-color: #1da1f2; }
-        .social-share a.pi { background-color: #e60023; color: #fff; border-color: #e60023; }
+        .social-share {  
+    display: flex;         /* Utilise Flexbox */
+    justify-content: center; /* Centre horizontalement */
+    gap: 15px;             /* Espace entre les boutons */
+    margin: 30px 0;        /* Espace haut/bas */
+    width: 100%;           /* S'assure qu'il prend toute la largeur */
+}
+
+/* On enlève les contraintes qui bloquaient le centrage */
+.social-share a { 
+    display: inline-flex; 
+    align-items: center; 
+    gap: 7px; 
+    padding: 8px 14px; 
+    border: 2px solid #000; 
+    border-radius: 4px; 
+    font-size: 13px; 
+    font-weight: 900; 
+    text-decoration: none; 
+    color: #000; 
+    text-transform: uppercase; 
+}
+        .social-share a.fb { background: #3b5998; color: #fff; border-color: #3b5998; }
+        .social-share a.tw { background: linear-gradient(135deg, #1dddf2, #f21de4); color: #fff; border-color: #1da1f2; }
+        .social-share a.pi { background: #e60023; color: #fff; border-color: #e60023; }
+        .back-button-container { text-align: center; margin: 30px 0 50px 0; }
+
+        /* Taille et alignement du logo TikTok */
+.tiktok-icon {
+    width: 20px;       /* Ajuste la taille ici (ex: 20px, 24px) */
+    height: 20px;      /* Garde la même valeur pour un carré parfait */
+    vertical-align: middle;
+}
+
+/* Style du bouton TikTok pour qu'il corresponde aux autres */
+.social-share a.tt { 
+background: linear-gradient(135deg, #1d56f2, #f21de4); 
+color: #fff; 
+border-color: #140d73 ;  /* Couleur TikTok */
+}
+
+.youtube-icon {
+    width: 20px;       /* Ajuste la taille ici (ex: 20px, 24px) */
+    height: 20px;      /* Garde la même valeur pour un carré parfait */
+    vertical-align: middle;
+}
+
+/* Style du bouton TikTok pour qu'il corresponde aux autres */
+.social-share a.ty { 
+background: #ec1717e0; 
+color: #fff; 
+border-color: #a11414; ;  /* Couleur TikTok */
+}
+
+.discord-icon {
+    width: 20px;       /* Ajuste la taille ici (ex: 20px, 24px) */
+    height: 20px;      /* Garde la même valeur pour un carré parfait */
+    vertical-align: middle;
+}
+
+/* Style du bouton TikTok pour qu'il corresponde aux autres */
+.social-share a.td { 
+background: #2222d8bc; 
+color: #fff; 
+border-color: #1b1ba0bc; ;  /* Couleur TikTok */
+}
+
 
         /* ── BOUTON RETOUR ── */
         .back-button-container { text-align: center; margin: 30px 0 50px 0; }
@@ -458,6 +503,19 @@
             </div>
         </div>
 
+<div class="social-share">
+
+    <a href="https://discord.gg/a6S6eugPn" class="td">
+        <img src="../shared/discord.png" class="discord-icon" alt="Discord"> Discord
+    </a>
+    <a href="https://tiktok.com/@dc_neolixx" class="tt">
+        <img src="../shared/tiktok.png" class="tiktok-icon" alt="TikTok"> TikTok
+    </a>
+        <a href="https://www.youtube.com/@Dc_neolixx" class="ty">
+        <img src="../shared/youtube.png" class="youtube-icon" alt="Youtube"> Youtube
+    </a>
+
+</div>
         <!-- ── BOUTON RETOUR ── -->
         <div class="back-button-container">
             <a href="../index.html" class="back-button">← Retour aux Actualités</a>
