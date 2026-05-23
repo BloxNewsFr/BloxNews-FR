@@ -14,7 +14,21 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Inter', sans-serif; color: var(--color-text); background-color: #f0f2f8; min-height: 100vh; }
         @media (min-width: 769px) {
-            body { font-family: 'Inter', sans-serif; color: var(--color-text); background: #f0f2f8 url('./shared/fond_bulletinpng.png') center top / cover no-repeat; min-height: 100vh; }
+            body { 
+                font-family: 'Inter', sans-serif; 
+                color: var(--color-text); 
+                
+                /* 🎯 LA MÉTHODE DE FUSION : QUALITÉ NETTE + FOND FLUIDE EN BAS */
+                background-color: #b6c8fc; /* La couleur de fond qui prend le relais tout en bas */
+                background-image: 
+                    linear-gradient(to bottom, rgba(240, 242, 248, 0) 60%, #bbcaf5 180%), 
+                    url('./shared/fond_bulletinpng.png');
+                
+                background-position: center top;
+                background-size: 120% auto; /* L'image garde sa proportion parfaite sans zoomer */
+                background-repeat: no-repeat;
+                min-height: 100vh; 
+            }
         }
 
 
