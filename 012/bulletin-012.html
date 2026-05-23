@@ -212,7 +212,29 @@
 
         /* BOUTON RETOUR */
         .back-button-container { text-align: center; margin: 30px 0 50px 0; position: relative; z-index: 1; }
-        .back-button { background-color: var(--green); color: #000; font-weight: 900; text-transform: uppercase; padding: 12px 30px; border: 2px solid #000; text-decoration: none; font-size: 14px; border-radius: 4px; display: inline-block; font-family: 'Share Tech Mono', monospace; box-shadow: 0 0 15px var(--green); }
+        
+
+                .back-button {
+            align-self: flex-start; 
+            background-color: var(--green);
+            color: #000; text-decoration: none; 
+            font-weight: 900; padding: 11px 24px; 
+            border-radius: 100px; font-size: 13px; 
+            text-transform: uppercase; 
+            letter-spacing: 0.5px; 
+            transition: all 0.25s ease; 
+            box-shadow: 0 4px 15px rgba(255,218,0,0.4); 
+            border: 2px solid rgba(0,0,0,0.08); 
+            position: relative; overflow: hidden; 
+            display: inline-block;
+            transition: transform 0.1s;
+            font-family: 'Share Tech Mono', 
+            monospace; box-shadow: 0 0 15px var(--green);
+            animation: glitch-label-blink 1.2s steps(1) infinite;
+                        box-shadow: 0 0 24px rgba(0,255,65,0.7), 0 0 60px rgba(0,255,65,0.22), 0 18px 46px rgba(0,0,0,0.55);
+            animation: fadeInUp 0.4s ease both, glitch-card-surge 2.8s steps(1) infinite;
+        }
+
 
         /* FOOTER */
         .site-footer { background: rgba(0,0,0,0.9); border-top: 2px solid var(--green); padding: 40px 55px; display: flex; gap: 60px; position: relative; z-index: 1; }
