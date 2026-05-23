@@ -45,18 +45,31 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 15px 55px;
-            background-color: rgba(0,0,0,0.85);
+            padding: 0 55px;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border-bottom: 2px solid var(--green);
             position: sticky;
             top: 0;
             z-index: 1000;
+            height: 72px; box-shadow: 0 4px 30px rgba(0,0,0,0.08);
         }
         .site-header__logo img { height: 45px; display: block; filter: hue-rotate(100deg) saturate(2); }
         .site-nav { display: flex; gap: 25px; padding: 0; margin: 0; list-style: none; }
         .site-nav a { color: var(--green); text-decoration: none; font-weight: 700; font-size: 20px; text-transform: uppercase; font-family: 'LuckiestGuy Regular', cursive; text-shadow: 0 0 8px var(--green); }
         .site-header__icons { display: flex; gap: 20px; color: var(--green); cursor: pointer; }
 
+/* 
+        .site-header { display: flex; align-items: center; justify-content: space-between; padding: 0 55px; background: rgba(255,255,255,0.92); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.6); position: sticky; top: 0; z-index: 1000; height: 72px; box-shadow: 0 4px 30px rgba(0,0,0,0.08); }
+        .site-header__logo img { height: 42px; width: auto; display: block; }
+        .site-nav { display: flex; gap: 8px; padding: 0; margin: 0; list-style: none; font-weight: 900;}
+        .site-nav a { color: var(--color-text); text-decoration: none; font-weight: 900; font-size: 17px; text-transform: uppercase; font-family: 'LuckiestGuy Regular', cursive; padding: 8px 16px; border-radius: 10px; transition: background 0.2s, color 0.2s; }
+        .site-nav a:hover { background: var(--color-primary); color: #000; }
+        .site-header__icons { display: flex; gap: 12px; color: var(--color-text); cursor: pointer; align-items: center; }
+        .site-header__icons span { padding: 8px; border-radius: 10px; transition: background 0.2s; }
+        .site-header__icons span:hover { background: rgba(0,0,0,0.06); }
+        
         /* ── CONTENEUR ── */
         .bulletin-container {
             max-width: 900px;
@@ -269,7 +282,6 @@
     <div class="site-header__icons">
         <span class="material-symbols-outlined" style="color:var(--green)">search</span>
         <span class="material-symbols-outlined" style="color:var(--green)">person</span>
-        <span class="material-symbols-outlined" style="color:var(--green)">shopping_bag</span>
     </div>
 </header>
 
