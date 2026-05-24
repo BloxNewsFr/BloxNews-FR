@@ -20,33 +20,28 @@
             min-height: 100vh; 
         }
 
-        /* ── CONFIGURATION PARFAITE DU FOND VIA PICTURE ── */
         .site-background {
-            position: fixed; /* Reste fixe sur l'écran pendant le scroll */
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100vh;
-            z-index: -1;  /* Reste bien en dessous de TOUT le site */
+            z-index: -1;  
             pointer-events: none;
         }
         .site-background img {
             width: 100%;
             height: 100%;
-            object-fit: cover; /* Remplit l'écran proprement sans déformer */
+            object-fit: cover; 
             display: block;
         }
 
-        /* Sur mobile, on cache le fond pour garder les performances */
+        /* Sur mobile */
         @media (max-width: 768px) {
             .site-background { display: none; }
         }
 
-                /* ── NAVBAR : VRAI LIQUID GLASS APPLE (Mac, PC, iOS) ── */
-        /* ══════════════════════════════════════
-           VRAI LIQUID GLASS APPLE — NAVBAR
-           ══════════════════════════════════════ */
-        /* ── CORRECTION COULEUR INTELLIGENTE DU TEXTE ── */
+                /* ── NAVBAR (Mac, PC, iOS) ── */
         .site-header {
             /* ... garde tout ton CSS de positionnement et de liquid glass existant ... */
             display: flex; align-items: center; justify-content: space-between; padding: 0 55px;
@@ -59,23 +54,21 @@
             isolation: isolate;
         }
 
-        /* ── MAGIE DU BLEND MODE ICI ── */
         .site-nav { display: flex; gap: 8px; padding: 0; margin: 0; list-style: none; font-weight: 900; }
-            /* ── TEXTES NAVBAR (AVEC TRANSITION DOUCE) ── */
-        /* 1. On applique le contour noir uniquement aux textes et icônes */
-/* État normal : Aucun contour */
+
+
 .site-nav a, .site-header__icons {
     color: var(--color-text); /* Couleur par défaut */
     text-shadow: none;        /* Pas de bordure */
     transition: color 0.3s ease, text-shadow 0.3s ease;
 }
 
-/* État "zone sombre" (via la classe nav-light-text du script) */
+
 .site-header.nav-light-text .site-nav a,
 .site-header.nav-light-text .site-header__icons {
     color: #ffffff; /* Texte en blanc */
     
-    /* Contour épais façon sticker (8 couches d'ombres pour l'épaisseur) */
+
     text-shadow: 
          1px  1px 0 #000, -1px -1px 0 #000,  1px -1px 0 #000, -1px  1px 0 #000,
          1px  0px 0 #000, -1px  0px 0 #000,  0px  1px 0 #000,  0px -1px 0 #000,
@@ -393,7 +386,7 @@
         }
         renderPage();
 
-        /* ── DÉTECTION FOND SOMBRE SOUS LA NAVBAR ── */
+
         (function() {
             const header = document.querySelector('.site-header');
             const canvas = document.createElement('canvas');
@@ -409,7 +402,7 @@
                 let totalLum = 0;
                 let count = 0;
 
-                // Méthode 1 : getComputedStyle sur les éléments sous la navbar
+
                 sampleX.forEach(x => {
                     const el = document.elementFromPoint(x, sampleY);
                     if (!el) return;
@@ -423,11 +416,11 @@
                     }
                 });
 
-                // Méthode 2 : si l'arrière-plan est une image (body), on analyse via canvas
+
                 const bodyBg = getComputedStyle(document.body).backgroundImage;
                 if (bodyBg && bodyBg !== 'none') {
-                    // On prend la couleur du body pour estimer (arrière-plan image sombre ou clair)
-                    // En fallback : si pas de données solid, on regarde la bgcolor du body
+
+
                     const solidBg = getComputedStyle(document.body).backgroundColor;
                     const m = solidBg.match(/\d+/g);
                     if (m && m.length >= 3 && count === 0) {
