@@ -10,6 +10,7 @@ import time
 # ==========================================
 SITE_URL = "https://gamerrobot.com/blogs/news"
 INDEX_FILE = "index.html"
+DOSSIER_BASE = "/Users/Admin/Documents/Neolixx News/blox-bulletinfr"
 LAST_ARTICLE_FILE = "dernier_article_lu.txt"
 
 translator = GoogleTranslator(source='auto', target='fr')
