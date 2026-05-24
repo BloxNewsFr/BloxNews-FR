@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Le Bulletin Blox #015 – Blox Fruits</title>
+    <link rel="icon" type="image/png" href="../shared/favicon.png">
+    <link rel="shortcut icon" href="../shared/bf_logo.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
+    <style>
+        @font-face { font-family: 'LuckiestGuy Regular'; src: url('../fonts/LuckiestGuy-Regular.ttf') format('truetype'); font-weight: normal; font-style: normal; }
+        :root { --color-text: #333132; --color-border: #ebebeb; --font-stack-body: 'Inter', sans-serif; --color-primary: #ffda00; }
+        * { box-sizing: border-box; }
+        body { margin: 0; font-family: var(--font-stack-body); color: var(--color-text); background-color: #ffffff; line-height: 1.6; }
+        .site-background { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; z-index: -1; pointer-events: none; }
+        .site-background img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        @media (max-width: 768px) { .site-background { display: none; } }
+
+        /* NAVBAR LIQUID GLASS */
+        .site-header { display: flex; align-items: center; justify-content: space-between; padding: 0 55px; position: sticky; top: 0; z-index: 1000; height: 72px; background: rgba(255,255,255,0.18); -webkit-backdrop-filter: blur(40px) saturate(220%) brightness(1.1) contrast(1.05); backdrop-filter: blur(40px) saturate(220%) brightness(1.1) contrast(1.05); border: none; border-bottom: 1px solid rgba(255,255,255,0.20); box-shadow: inset 0 -1px 0 rgba(255,255,255,0.10), 0 8px 40px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06); isolation: isolate; }
+        .site-nav a, .site-header__icons { color: var(--color-text); text-shadow: none; transition: color 0.3s ease, text-shadow 0.3s ease; }
+        .site-header.nav-light-text .site-nav a, .site-header.nav-light-text .site-header__icons { color: #ffffff; text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 0px 0 #000, -1px 0px 0 #000, 0px 1px 0 #000, 0px -1px 0 #000, 2px 2px 0 #000; }
+        .site-header__logo img { height: 42px; width: auto; display: block; filter: none !important; }
+        .site-header.nav-light-text .site-header__logo img { filter: brightness(0) invert(1); }
+        .site-nav { display: flex; gap: 8px; padding: 0; margin: 0; list-style: none; font-weight: 900; }
+        .site-nav a { color: var(--color-text); text-decoration: none; font-weight: 900; font-size: 17px; text-transform: uppercase; font-family: 'LuckiestGuy Regular', cursive; padding: 8px 16px; border-radius: 10px; transition: background 0.2s, color 0.2s; }
+        .site-nav a:hover { background: var(--color-primary); color: #000; }
+        .site-header__icons { display: flex; gap: 12px; color: var(--color-text); cursor: pointer; align-items: center; }
+        .site-header__icons span { padding: 8px; border-radius: 10px; transition: background 0.2s; }
+        .site-header__icons span:hover { background: rgba(0,0,0,0.06); }
+
+        .bulletin-container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
+
+        .blue-banner { background: linear-gradient(135deg, #175ec2, #2980d4, #175ec2); background-size: 200% auto; color: #fff; padding: 16px 60px; font-size: 36px; text-transform: uppercase; letter-spacing: 3px; border-radius: 100px; font-family: 'LuckiestGuy Regular', cursive; box-shadow: 0 8px 32px rgba(23,94,194,0.45), 0 2px 8px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.2); animation: shimmerBanner 3s linear infinite; margin-bottom: 20px; text-align: center; display: block; }
+        @keyframes shimmerBanner { 0%{background-position:0% center} 100%{background-position:200% center} }
+
+        .hero-image-wrapper { width: 100%; margin-bottom: 15px; }
+        .hero-image { width: 100%; height: auto; display: block; border-radius: 20px; border: 3px solid #000; }
+
+        .journal-header { text-align: center; margin-top: 30px; }
+        .journal-title { font-family: 'Georgia', serif; font-size: 52px; font-weight: bold; color: #111; margin: 0 0 10px 0; letter-spacing: -1px; }
+        .journal-subtitle { font-family: 'Georgia', serif; font-style: italic; font-size: 18px; color: #555; margin: 0 0 25px 0; }
+        .journal-meta { font-weight: bold; font-size: 14px; color: #111; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .dashed-line { border-top: 2px dashed #111; margin: 15px 0 35px 0; }
+
+        .wanted-box { background-color: #fce8e6; border: 2px solid #000; border-left: 6px solid #c53929; padding: 25px; margin-bottom: 40px; }
+        .wanted-title { color: #c53929; font-size: 22px; font-weight: 900; margin: 0 0 5px 0; }
+        .wanted-subtitle { font-style: italic; font-size: 13px; color: #555; margin-bottom: 20px; display: block; }
+        .wanted-img { width: 100%; height: auto; border: 3px solid #000; border-radius: 12px; margin-bottom: 20px; }
+        .wanted-text p { margin: 0 0 15px 0; font-size: 14.5px; }
+
+        .summary { background: rgba(88,101,242,0.09); border-left: 4px solid #5865f2; padding: 12px 16px; margin-top: 15px; font-size: 13.5px; font-style: italic; color: #2c3e50; border-radius: 0 6px 6px 0; }
+        .summary b { color: #5865f2; text-transform: uppercase; font-size: 11px; font-style: normal; display: block; margin-bottom: 4px; letter-spacing: 0.5px; }
+
+        .content-columns { display: flex; gap: 30px; margin-bottom: 40px; }
+        .left-col { flex: 1.9; }
+        .right-col { flex: 1.1; background-color: #ececec; padding: 20px; border-radius: 8px; height: fit-content; border: 2px solid #000; }
+
+        h2 { border-bottom: 2px solid #111; padding-bottom: 5px; font-size: 22px; font-weight: 900; margin: 0 0 20px 0; color: #111; }
+        .section-subtext { font-style: italic; font-size: 13.5px; color: #555; margin-bottom: 20px; display: block; margin-top: -15px; }
+
+        .potion-table { width: 100%; border-collapse: collapse; margin: 16px 0 20px; }
+        .potion-table th { background: #111; color: #fff; font-size: 13px; padding: 8px 12px; text-align: left; }
+        .potion-table td { font-size: 13.5px; padding: 8px 12px; border-bottom: 1px solid #ddd; }
+        .potion-table tr:nth-child(even) td { background: #f5f5f5; }
+
+        .side-img { width: 100%; height: auto; border: 3px solid #000; border-radius: 8px; margin: 15px 0; }
+        .side-text p { font-size: 14px; margin-bottom: 12px; }
+
+        .full-section { border-top: 2px solid #111; padding-top: 25px; margin-bottom: 40px; }
+        .full-inner { display: flex; gap: 20px; align-items: flex-start; margin-top: 15px; }
+        .full-text { flex: 1; }
+        .full-text p { font-size: 14.5px; margin-bottom: 12px; }
+        .full-img { width: 280px; flex-shrink: 0; border: 3px solid #000; border-radius: 8px; }
+
+        .bottom-note { font-style: italic; text-align: center; font-size: 14px; color: #444; padding: 16px 0; border-top: 2px solid #111; margin-bottom: 20px; }
+
+        .social-share { display: flex; justify-content: center; gap: 15px; margin: 30px 0; width: 100%; }
+        .social-share a { display: inline-flex; align-items: center; gap: 7px; padding: 8px 14px; border: 2px solid #000; border-radius: 4px; font-size: 13px; font-weight: 900; text-decoration: none; color: #000; text-transform: uppercase; }
+        .social-share a.tt { background: linear-gradient(135deg, #1d56f2, #f21de4); color: #fff; border-color: #140d73; }
+        .social-share a.ty { background: #ec1717e0; color: #fff; border-color: #a11414; }
+        .social-share a.td { background: #2222d8bc; color: #fff; border-color: #1b1ba0bc; }
+        .tiktok-icon, .youtube-icon, .discord-icon { width: 20px; height: 20px; vertical-align: middle; }
+
+        .back-button-container { text-align: center; margin: 40px 0 50px 0; }
+        .back-button { background: linear-gradient(135deg, #ffda00, #ffc200); color: #000; text-decoration: none; font-weight: 900; padding: 11px 24px; border-radius: 100px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 4px 15px rgba(255,218,0,0.4); border: 2px solid rgba(0,0,0,0.08); display: inline-block; transition: transform 0.1s; }
+        .back-button:hover { transform: scale(1.03); }
+
+        .site-footer { background-color: #f0f0f0; border-top: 1px solid #ccc; padding: 40px 55px; display: flex; gap: 60px; }
+        .footer-col h3 { font-size: 15px; font-weight: 900; text-transform: uppercase; margin: 0 0 14px 0; }
+        .footer-community-links { display: flex; flex-direction: column; gap: 8px; }
+        .footer-community-links a { color: #175ec2; text-decoration: none; font-weight: 700; font-size: 14px; }
+
+        @media (max-width: 768px) { .site-header { padding: 12px 20px; } .site-nav { display: none; } .content-columns { flex-direction: column; } .full-inner { flex-direction: column; } .full-img { width: 100%; } .site-footer { flex-direction: column; gap: 30px; padding: 30px 20px; } }
+    </style>
+</head>
+<body>
+
+<header class="site-header">
+    <div class="site-header__logo"><img src="../BF_news.png" alt="Blox Fruits"></div>
+    <nav><ul class="site-nav">
+        <li><a href="https://www.roblox.com/fr/games/2753915549/Blox-Fruits">Game</a></li>
+        <li><a href="../index.html">News</a></li>
+        <li><a href="../neo_bulletin.html">Leaks</a></li>
+    </ul></nav>
+    <div class="site-header__icons">
+        <span class="material-symbols-outlined">search</span>
+        <span class="material-symbols-outlined">person</span>
+    </div>
+</header>
+
+<main class="bulletin-container">
+
+    <div class="blue-banner">The Blox Bulletin #015</div>
+
+    <div class="hero-image-wrapper">
+        <img src="../015/img/darkblade.png" class="hero-image" alt="The Blox Bulletin 015">
+    </div>
+
+    <div class="journal-header">
+        <h1 class="journal-title">The Blox Bulletin</h1>
+        <p class="journal-subtitle">Prochaine Grande Révélation ! Potions, Parchemins Early-Game, et Plus !</p>
+        <div class="journal-meta">Numéro : 015 | 19 Juillet 2025</div>
+    </div>
+    <div class="dashed-line"></div>
+
+    <!-- À LA UNE -->
+    <div class="wanted-box">
+        <h2 class="wanted-title">Une Tempête se Lève ! La Menace de la Foudre est en Liberté !</h2>
+        <span class="wanted-subtitle">Par Terry Weatherboots</span>
+        <img src="../015/img/LightningMenace.png" alt="La menace de la foudre" class="wanted-img">
+        <div class="wanted-text">
+            <p>Ces dernières semaines, marins et civils ont signalé des schémas de tempêtes de plus en plus violents sur les mers. Avec des <strong>éclairs fendant le ciel</strong>, des tempêtes se formant sans avertissement et une <strong>électricité statique étrange</strong> accrochée dans l'air, beaucoup se demandent si quelque chose d'autre est à l'origine de ces <strong>tempêtes</strong>.</p>
+            <p>Après de nombreuses spéculations, les enquêteurs ont tracé la source de ce phénomène anormal : il s'agit d'un <strong>utilisateur du Fruit Lightning</strong> qui sème le chaos sur les mers. Le suspect a été vu pour la dernière fois en Première Mer, détruisant tout sur son passage dans une rage incontrôlée.</p>
+            <p>Y a-t-il quelqu'un dans toutes les Mers capable de l'arrêter ? Bientôt, tous les événements locaux devront être annulés, et rien ne subsistera dans le sillage de cette destruction !</p>
+            <div class="summary"><b>📌 Résumé :</b>Teaser du rework du Fruit Lightning — un utilisateur déchaîné cause des tempêtes incontrôlables sur les mers.</div>
+        </div>
+    </div>
+
+    <!-- COLONNES -->
+    <div class="content-columns">
+        <div class="left-col">
+            <h2>Les Mélanges Miraculeux Envahissent le Marché</h2>
+            <span class="section-subtext">Par Hagatha Spewdrink</span>
+            <p style="font-size:14.5px;margin-bottom:16px;">Venez découvrir ces <strong>élixirs magiques</strong> ! C'est le slogan du tout nouveau stand d'élixirs de Port Town. Que vous soyez un guerrier aguerri ou un modeste chasseur de trésors, nos <strong>potions artisanales</strong> sont conçues pour vous donner l'avantage dont vous avez besoin.</p>
+            <p style="font-size:14.5px;margin-bottom:8px;font-weight:700;">Voici ce qui est en stock cette semaine :</p>
+            <table class="potion-table">
+                <thead><tr><th>Article</th><th>Effet</th></tr></thead>
+                <tbody>
+                    <tr><td>Élixir Chercheur de Coffres</td><td>Révèle les coffres à travers les murs</td></tr>
+                    <tr><td>Tonique Peau de Lave</td><td>Immunité complète à la lave</td></tr>
+                    <tr><td>Brassage du Provocateur</td><td>Force les ennemis à cibler l'utilisateur</td></tr>
+                    <tr><td>Élixir du Guerrier</td><td>Augmente les dégâts contre ennemis et boss</td></tr>
+                    <tr><td>Élixir d'Expérience</td><td>Augmente toute l'EXP gagnée</td></tr>
+                    <tr><td>Fiole de la Fortune</td><td>Augmente l'argent gagné de toute source</td></tr>
+                    <tr><td>Kebab de Poisson (Nourriture)</td><td>Restaure la vie progressivement, hors PvP</td></tr>
+                </tbody>
+            </table>
+            <p style="font-size:13.5px;color:#444;font-style:italic;margin-bottom:14px;">Nous ne partageons <strong>aucune</strong> recette ni technique de brassage. Nos secrets restent scellés ! Soutenez les petits commerces !</p>
+            <img src="../015/img/PotionShop.png" alt="Le stand de potions" style="width:100%;border:3px solid #000;border-radius:10px;">
+            <div class="summary"><b>📌 Résumé :</b>Système de potions confirmé — 7 types avec des effets variés, craftables via ingrédients sauvages.</div>
+        </div>
+        <div class="right-col">
+            <h2 style="font-size:18px;border-bottom:2px solid #111;padding-bottom:10px;">Les Vagues du Changement ! Le Dragon Sage Part en Vacances</h2>
+            <span class="section-subtext" style="margin-top:5px;">Par Suizei Gatorlurch</span>
+            <img src="../015/img/SageVacation.png" class="side-img" alt="Le Dragon Sage en vacances">
+            <div class="side-text">
+                <p>Pendant des années, la Deuxième Mer servait de zone tampon stable, <strong>jusqu'à maintenant</strong>. Les Événements Marins s'infiltrent : requins, piranhas, eaux agitées. La Sea 2 n'est plus un havre.</p>
+                <p>Le <strong>Dragon Sage</strong> a été aperçu en vadrouille hors de son domaine ! On l'a vu sur des îles early-game comme Green Zone ou Snow Mountain. Des aventuriers chanceux lui ont obtenu des <strong>parchemins de bas niveau</strong> applicables sans upgrade — et maintenant aussi sur les <strong>Cannes à Pêche</strong> !</p>
+            </div>
+            <div class="summary"><b>📌 Résumé :</b>Dragon Sage distribue des parchemins early-game. Parchemins applicables aux cannes à pêche. Sea 2 devient dangereuse.</div>
+        </div>
+    </div>
+
+    <!-- FRUIT SKINS -->
+    <div class="full-section">
+        <h2>La Palette des Skins de Fruits S'Élargit !</h2>
+        <span class="section-subtext">Par Suizei Gatorlurch</span>
+        <div class="full-inner">
+            <div class="full-text">
+                <p>Suite au teaser de notre dernier bulletin sur les <strong>Skins de Fruits</strong>, nous avons constaté un enthousiasme massif dans la communauté ! Alors, nous nous sommes mis au travail.</p>
+                <p>Nous avons passé une commande directe à notre dévoué Peintre de Fruits, lui demandant d'<strong>élargir la gamme</strong>. Après des semaines de nuits blanches et de tests de teinture, le <strong>premier lot</strong> était enfin prêt.</p>
+                <p>Vous pouvez désormais vous attendre à une <strong>plus grande variété de fruits à recevoir des skins à durée limitée</strong> dans l'Expansion Estivale !</p>
+            </div>
+            <img src="../015/img/FruitSkinPalette.png" alt="Palette de skins de fruits" class="full-img">
+        </div>
+        <div class="summary"><b>📌 Résumé :</b>Plus de fruits concernés par les skins colorés pendant l'Expansion Estivale.</div>
+    </div>
+
+    <div class="bottom-note">Vous entendez ça ? Le Bulletin Final avant la première mise à jour approche. Restez à l'écoute !</div>
+
+    <div class="social-share">
+        <a href="https://discord.gg/a6S6eugPn" class="td"><img src="../shared/discord.png" class="discord-icon" alt="Discord"> Discord</a>
+        <a href="https://tiktok.com/@dc_neolixx" class="tt"><img src="../shared/tiktok.png" class="tiktok-icon" alt="TikTok"> TikTok</a>
+        <a href="https://www.youtube.com/@Dc_neolixx" class="ty"><img src="../shared/youtube.png" class="youtube-icon" alt="Youtube"> Youtube</a>
+    </div>
+    <div class="back-button-container">
+        <a href="../index.html" class="back-button">← Retour aux Actualités</a>
+    </div>
+</main>
+
+<footer class="site-footer">
+    <div class="footer-col">
+        <h3>Rejoindre la Communauté</h3>
+        <p>Restez connecté !</p>
+        <div class="footer-community-links">
+            <a href="#">🎮 Discord</a><a href="#">🐦 Twitter / X</a><a href="#">▶️ YouTube</a>
+        </div>
+    </div>
+</footer>
+
+<script>
+    window.addEventListener('scroll', () => {
+        const header = document.querySelector('.site-header');
+        const darkZones = document.querySelectorAll('.blue-banner, .hero-image');
+        let isOverDarkZone = false;
+        const headerCenter = header.getBoundingClientRect().top + (header.offsetHeight / 2);
+        darkZones.forEach(zone => {
+            const rect = zone.getBoundingClientRect();
+            if (headerCenter >= rect.top && headerCenter <= rect.bottom) isOverDarkZone = true;
+        });
+        header.classList.toggle('nav-light-text', isOverDarkZone);
+    });
+    window.dispatchEvent(new Event('scroll'));
+</script>
+</body>
+</html>
