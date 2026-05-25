@@ -12,7 +12,28 @@
         :root { --color-text: #333132; --color-border: #ebebeb; --font-stack-body: 'Inter', sans-serif; --color-primary: #ffda00; }
         * { box-sizing: border-box; }
         body { margin: 0; font-family: var(--font-stack-body); color: var(--color-text); background: #ffffffb7; line-height: 1.6; }
-        .site-header { display: flex; align-items: center; justify-content: space-between; padding: 0 55px; background: rgba(255,255,255,0.92); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-top: none; border-bottom: 0px solid rgba(82, 255, 79, 0.6); position: sticky; top: 0; z-index: 1000; height: 72px; box-shadow: 0 4px 30px rgba(0,0,0,0.08); }
+                .site-header {
+    display: flex; 
+    align-items: center; 
+    justify-content: space-between; 
+    padding: 0 55px;
+    position: sticky; 
+    top: 0; 
+    z-index: 1000; 
+    height: 72px;
+    
+    /* Effet Liquid Glass */
+    background: rgba(255, 255, 255, 0.15); /* Transparence du fond */
+    backdrop-filter: blur(20px);           /* Le flou "glass" */
+    -webkit-backdrop-filter: blur(20px);  /* Compatibilité Safari */
+    
+    /* Bordures subtiles pour le relief */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    
+    /* Animation douce */
+    transition: background 0.3s ease, backdrop-filter 0.3s ease;
+}
         .site-header__logo img { height: 42px; width: auto; display: block; filter: hue-rotate(50deg) saturate(1); }
         .site-nav { display: flex; gap: 8px; padding: 0; margin: 0; list-style: none; font-weight: 900;}
         .site-nav a { color: var(--color-text); text-decoration: none; font-weight: 900; font-size: 17px; text-transform: uppercase; font-family: 'LuckiestGuy Regular', cursive; padding: 8px 16px; border-radius: 10px; transition: background 0.2s, color 0.2s; }
