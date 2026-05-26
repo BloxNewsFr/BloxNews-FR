@@ -353,7 +353,7 @@
         .comment-item__discord-tag svg { width: 10px; height: 10px; }
         .comment-item__username { font-weight: 700; font-size: 13px; color: #111; }
         .comment-item__time { font-size: 11px; color: #bbb; margin-left: auto; white-space: nowrap; }
-        .comment-item__text { font-size: 14px; color: #333; line-height: 1.6; margin-bottom: 9px; overflow-wrap: break-word; word-break: break-word; }
+        .comment-item__text { font-size: 14px; color: #333; line-height: 1.6; margin-bottom: 9px; overflow-wrap: anywhere; word-break: break-word; hyphens: auto; }
         .comment-item__actions { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
         .comment-btn {
             display: inline-flex; align-items: center; gap: 4px;
@@ -380,7 +380,7 @@
             padding: 10px 13px; border: 1px solid #eee;
         }
         .comment-reply__header { display: flex; align-items: center; gap: 7px; margin-bottom: 5px; }
-        .comment-reply__text { font-size: 13px; color: #444; line-height: 1.5; overflow-wrap: break-word; word-break: break-word; }
+        .comment-reply__text { font-size: 13px; color: #444; line-height: 1.5; overflow-wrap: anywhere; word-break: break-word; hyphens: auto; }
 
         /* ── Boîte de réponse ────────────────────────────── */
         .comment-reply-write { display: none; margin-top: 10px; }
@@ -490,10 +490,11 @@
             .comment-login-banner__sub { font-size: 11px; }
             .comment-discord-btn { width: 100%; text-align: center; padding: 7px 14px; font-size: 11px; }
             .comment-see-more-btn { font-size: 12px; padding: 10px; }
-            .comment-replies { padding-left: 10px; }
+            .comment-replies { padding-left: 6px; }
             .comment-reply { gap: 6px; }
-            .comment-reply__body { padding: 8px 10px; }
+            .comment-reply__body { padding: 8px 10px; min-width: 0; }
             .comment-reply__text { font-size: 12px; }
+            .comment-reply__header { flex-wrap: wrap; gap: 3px; }
             .comment-reply-write { gap: 6px; }
             .comment-reply-input { font-size: 12px; padding: 7px 9px; }
             .comment-reply-submit { font-size: 11px; padding: 5px 11px; }
