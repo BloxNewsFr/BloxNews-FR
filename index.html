@@ -32,8 +32,7 @@
         .site-background img {
             width: 100%;
             height: 100%;
-            object-fit: cover;
-            object-position: center top;
+            object-fit: cover; 
             display: block;
         }
 
@@ -42,7 +41,6 @@
         }
 
         /* ── NAVBAR ── */
-        /* ── NAVBAR FIXÉE ── */
         .site-header {
             display: flex; 
             align-items: center; 
@@ -57,35 +55,24 @@
             -webkit-backdrop-filter: blur(20px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.2);
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            transition: background 0.3s ease, backdrop-filter 0.3s ease;
         }
 
         /* Le logo ne change plus jamais de couleur */
         .site-header__logo img { 
-            height: 42px; 
-            width: auto; 
-            display: block; 
-            filter: none !important; /* Force le maintien de l'apparence originale */
+            height: 42px; width: auto; display: block; filter: none !important; 
         }
 
-        .site-nav { display: flex; gap: 8px; list-style: none; font-weight: 900; }
-        .site-nav a { 
-            text-decoration: none; 
-            font-size: 17px; 
-            text-transform: uppercase; 
-            font-family: 'LuckiestGuy Regular', cursive; 
-            padding: 8px 16px; 
-            border-radius: 10px; 
-            color: var(--color-text); /* Couleur par défaut */
-            transition: color 0.3s ease;
+        .site-nav { display: flex; gap: 8px; padding: 0; margin: 0; list-style: none; font-weight: 900; position: relative; z-index: 1; }
+        .site-nav a, .site-header__icons {
+            color: var(--color-text); text-shadow: none; transition: color 0.3s ease, text-shadow 0.3s ease;
         }
 
-        /* Seul le texte du menu devient blanc quand nécessaire */
         .site-header.nav-light-text .site-nav a,
         .site-header.nav-light-text .site-header__icons {
             color: #ffffff;
             text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 0px 0 #000, -1px 0px 0 #000, 0px 1px 0 #000, 0px -1px 0 #000, 2px 2px 0 #000;
-        }   
-
+        }
 
         .site-nav a { text-decoration: none; font-size: 17px; text-transform: uppercase; font-family: 'LuckiestGuy Regular', cursive; padding: 8px 16px; border-radius: 10px; }
         .site-nav a:hover { background: var(--color-primary); color: #000; }
@@ -93,10 +80,16 @@
         .site-header__icons span { padding: 8px; border-radius: 10px; transition: background 0.2s; }
         .site-header__icons span:hover { background: rgba(0,0,0,0.06); }
         
+        /* Bouton Hamburger Mobile (Caché sur PC) */
+        .mobile-menu-btn { display: none; }
+
+        /* MENU DÉROULANT MOBILE (CACHÉ SUR PC) */
+        .mobile-nav-dropdown { display: none; }
+        
         /* MAIN */
         .main-content { max-width: 1240px; margin: 0 auto; padding: 40px 24px 80px; }
         
-        /* L'ANCIEN DESIGN PAGINATION PC (TOP) */
+        /* PAGINATION PC (HAUT) */
         .pagination-bar { display: flex; flex-direction: column; align-items: center; gap: 16px; margin-bottom: 36px; }
         .page-title { font-size: 38px; font-weight: 900; color: #fff; text-shadow: 0 2px 20px rgba(0,0,0,0.4); letter-spacing: -0.5px; }
         .blue-banner { display: inline-block; background: linear-gradient(135deg, #175ec2, #2980d4, #175ec2); background-size: 200% auto; color: #fff; padding: 16px 60px; font-size: 36px; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; border-radius: 100px; font-family: 'LuckiestGuy Regular', cursive; box-shadow: 0 8px 32px rgba(23,94,194,0.45), 0 2px 8px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.2); animation: shimmerBanner 3s linear infinite; }
@@ -110,7 +103,7 @@
         
         /* GRID & CARDS */
         .news-grid { display: flex; flex-wrap: wrap; gap: 28px; justify-content: center; }
-        .news-card { width: 360px; max-width: 100%; border-radius: 24px; overflow: hidden; position: relative; cursor: pointer; background: #fff; box-shadow: 0 10px 40px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.35s ease; display: flex; flex-direction: column; animation: fadeInUp 0.4s ease both; }
+        .news-card { width: 360px; max-width: 100%; border-radius: 24px; overflow: hidden; position: relative; cursor: pointer; background: #fff; box-shadow: 0 10px 40px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08); transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.35s ease; display: flex; flex-direction: column; animation: fadeInUp 0.4s ease both; }
         .news-card:hover { transform: translateY(-12px) scale(1.02); box-shadow: 0 30px 80px rgba(23,94,194,0.25), 0 10px 30px rgba(0,0,0,0.15), 0 0 0 2px rgba(23,94,194,0.3); }
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
         .news-card__image-wrapper { width: 100%; padding-top: 58%; position: relative; overflow: hidden; background: #1a1a3e; }
@@ -118,451 +111,172 @@
         .news-card:hover .news-card__image { transform: scale(1.08); }
         .news-card__image-wrapper::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 30%, rgba(0,0,0,0.15) 60%, rgba(0,0,0,0.5) 100%); pointer-events: none; }
         .news-card__badge { position: absolute; top: 14px; left: 14px; background: var(--color-primary); color: #000; font-weight: 900; font-size: 13px; padding: 5px 12px; border-radius: 100px; font-family: 'LuckiestGuy Regular', cursive; letter-spacing: 1px; z-index: 2; border: 2px solid rgba(255,255,255,0.6); }
-        .news-card__new { position: absolute; top: 14px; right: 14px; background: linear-gradient(135deg, #ff4d4d, #ff0000); color: #fff; font-weight: 900; font-size: 11px; padding: 4px 10px; border-radius: 100px; font-family: 'Inter', sans-serif; letter-spacing: 1px; text-transform: uppercase; z-index: 2; }
+        .news-card__new { position: absolute; top: 14px; right: 14px; background: linear-gradient(135deg, #ff4d4d, #ff0000); color: #fff; font-weight: 900; font-size: 11px; padding: 4px 10px; border-radius: 100px; font-family: 'Inter', sans-serif; letter-spacing: 1px; text-transform: uppercase; z-index: 2; animation: pulseBadge 2s ease-in-out infinite; }
+        @keyframes pulseBadge { 0%,100% { transform: scale(1); } 50% { transform: scale(1.08); } }
         .news-card__content { padding: 22px 22px 20px; display: flex; flex-direction: column; flex-grow: 1; background: #fff; }
         .news-card__eyebrow { font-size: 11px; font-weight: 700; color: var(--color-accent); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px; }
         .news-card__title { font-size: 20px; font-weight: 900; color: #111; line-height: 1.25; margin-bottom: 16px; font-family: 'LuckiestGuy Regular', cursive; letter-spacing: 0.5px; }
-        .news-card__button { margin-top: auto; align-self: flex-start; background: linear-gradient(135deg, #ffda00, #ffc200); color: #000; text-decoration: none; font-weight: 900; padding: 11px 24px; border-radius: 100px; font-size: 13px; text-transform: uppercase; transition: all 0.25s ease; border: 2px solid rgba(0,0,0,0.08); position: relative; overflow: hidden; }
+        .news-card__button { margin-top: auto; align-self: flex-start; background: linear-gradient(135deg, #ffda00, #ffc200); color: #000; text-decoration: none; font-weight: 900; padding: 11px 24px; border-radius: 100px; font-size: 13px; text-transform: uppercase; transition: all 0.25s ease; box-shadow: 0 4px 15px rgba(255,218,0,0.4); border: 2px solid rgba(0,0,0,0.08); position: relative; overflow: hidden; }
+        .news-card__button::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent); transition: left 0.4s ease; }
+        .news-card:hover .news-card__button::before { left: 100%; }
+        .news-card:hover .news-card__button { background: linear-gradient(135deg, #ffe833, #ffda00); box-shadow: 0 6px 25px rgba(255,218,0,0.6); transform: translateX(3px); }
         .news-card__bar { height: 4px; background: linear-gradient(90deg, var(--color-accent), #5b9bd5, var(--color-primary)); background-size: 200% auto; animation: barSlide 3s linear infinite; }
         @keyframes barSlide { 0% { background-position: 0% center; } 100% { background-position: 200% center; } }
         
-        /* L'ANCIEN DESIGN PAGINATION PC (BAS) */
+        /* PAGINATION PC (BAS) */
         .pagination-bottom { display: flex; justify-content: center; align-items: center; gap: 16px; margin-top: 50px; }
         .pagination-bottom button { background: rgba(255,255,255,0.95); border: none; border-radius: 50%; width: 48px; height: 48px; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: 900; box-shadow: 0 4px 15px rgba(0,0,0,0.15); transition: all 0.2s ease; color: #111; }
         .pagination-bottom button:hover:not(:disabled) { background: var(--color-primary); transform: scale(1.12); box-shadow: 0 6px 20px rgba(255,218,0,0.5); }
         .pagination-bottom button:disabled { background: rgba(255,255,255,0.3); color: rgba(255,255,255,0.4); cursor: not-allowed; box-shadow: none; }
 
-        /* PAGINATION MOBILE (PILULE FLOTTANTE INTÉGRÉE) */
-        .mobile-pagination-pill { display: none; } /* Cachée sur PC */
+        /* PILULE MOBILE (CACHÉE SUR PC) */
+        .mobile-pagination-pill { display: none; }
 
-        @media (max-width: 768px) {
+        /* ── RESPONSIVE MOBILE ── */
+        @media (max-width: 768px) { 
             .site-header { padding: 0 20px; height: auto; min-height: 60px; } 
             .site-nav { display: none; } 
+            .mobile-menu-btn { display: block; }
             .news-grid { gap: 20px; } 
             .news-card { width: 100%; border-radius: 20px; } 
-            .blue-banner { font-size: 24px; padding: 12px 30px; }
+            .blue-banner { font-size: 24px; padding: 12px 30px; } 
             .page-title { font-size: 28px; }
             
             /* Cacher la pagination PC */
             .pagination-controls, .pagination-bottom { display: none !important; }
 
-            /* Afficher la pilule mobile */
+            /* MENU DÉROULANT MOBILE */
+            .mobile-nav-dropdown {
+                display: flex; flex-direction: column; gap: 12px;
+                position: fixed; top: 60px; right: -280px; width: 250px;
+                background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+                padding: 24px; border-radius: 0 0 0 20px; box-shadow: -5px 10px 30px rgba(0,0,0,0.1);
+                transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 999; border: 1px solid rgba(0,0,0,0.05); border-right: none;
+            }
+            .mobile-nav-dropdown.is-open { right: 0; }
+            .mobile-nav-dropdown a {
+                text-decoration: none; font-family: 'LuckiestGuy Regular', cursive; font-size: 18px;
+                color: #111; text-align: center; padding: 12px; border-radius: 100px; border: 2px solid #e8e8f0;
+                text-transform: uppercase; transition: all 0.2s;
+            }
+            .mobile-nav-dropdown a.active {
+                background: #175ec2; color: #fff; border-color: transparent;
+            }
+
+            /* PILULE FLOTTANTE MOBILE */
             .mobile-pagination-pill {
                 display: flex !important;
-                position: fixed;
-                bottom: 24px;
-                left: 50%;
-                transform: translateX(-50%);
-                z-index: 9999;
-                background: rgba(255, 255, 255, 0.2);
-                backdrop-filter: blur(15px);
-                -webkit-backdrop-filter: blur(15px);
-                border: 1px solid rgba(255, 255, 255, 0.3);
-                padding: 4px 16px;
-                border-radius: 50px;
-                box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-                gap: 15px;
-                align-items: center;
+                position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); z-index: 9999;
+                background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+                border: 1px solid rgba(255, 255, 255, 0.3); padding: 4px 16px; border-radius: 50px;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.1); gap: 15px; align-items: center;
                 transition: background 0.3s, border-color 0.3s;
             }
+            .mobile-pagination-pill button { background: transparent; border: none; color: #fff; font-size: 22px; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: color 0.3s ease, background 0.2s ease; }
+            .mobile-pagination-pill button:hover:not(:disabled) { background: rgba(255,255,255,0.2); }
+            .mobile-pagination-pill button:disabled { opacity: 0.3; cursor: not-allowed; }
+            .mobile-pagination-pill .page-info { color: #fff; font-weight: 900; font-size: 14px; min-width: 50px; text-align: center; font-family: 'Inter', sans-serif; transition: color 0.3s ease; }
 
-            .mobile-pagination-pill button {
-                background: transparent;
-                border: none;
-                color: #fff;
-                font-size: 22px;
-                width: 40px;
-                height: 40px;
-                border-radius: 50%;
-                cursor: pointer;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                transition: color 0.3s ease, background 0.2s ease;
-            }
-
-            .mobile-pagination-pill button:hover:not(:disabled) {
-                background: rgba(255,255,255,0.2);
-            }
-
-            .mobile-pagination-pill button:disabled {
-                opacity: 0.3;
-                cursor: not-allowed;
-            }
-
-            .mobile-pagination-pill .page-info {
-                color: #fff;
-                font-weight: 900;
-                font-size: 14px;
-                min-width: 50px;
-                text-align: center;
-                font-family: 'Inter', sans-serif;
-                transition: color 0.3s ease;
-            }
-
-            /* Classe ajoutée en JS quand le fond est clair */
-            .mobile-pagination-pill.is-light {
-                background: rgba(0, 0, 0, 0.1);
-                border-color: rgba(0, 0, 0, 0.2);
-            }
-            .mobile-pagination-pill.is-light button,
-            .mobile-pagination-pill.is-light .page-info {
-                color: #000 !important;
-            }
+            /* Pilule fond clair (Adaptation automatique) */
+            .mobile-pagination-pill.is-light { background: rgba(0, 0, 0, 0.1); border-color: rgba(0, 0, 0, 0.2); }
+            .mobile-pagination-pill.is-light button, .mobile-pagination-pill.is-light .page-info { color: #000 !important; }
         }
 
-        /* SPECIAL CARDS (GLITCH, HALLOWEEN, VALENTINE) - conservés intacts */
+        /* ── SPECIAL CARDS : GLITCH, HALLOWEEN, VALENTINE (TON CODE ORIGINAL) ── */
         .news-card.glitch-card, .news-card.valentine-card { isolation: isolate; }
         .news-card.glitch-card .news-card__image-wrapper, .news-card.glitch-card .news-card__content, .news-card.glitch-card .news-card__bar, .news-card.halloween-card .news-card__image-wrapper, .news-card.halloween-card .news-card__content, .news-card.halloween-card .news-card__bar, .news-card.valentine-card .news-card__image-wrapper, .news-card.valentine-card .news-card__content, .news-card.valentine-card .news-card__bar { position: relative; z-index: 2; }
+        
+        /* 012: glitch terminal */
         .news-card.glitch-card { background: #020402; border: 2px solid #00ff41; box-shadow: 0 0 24px rgba(0,255,65,0.7), 0 0 60px rgba(0,255,65,0.22), 0 18px 46px rgba(0,0,0,0.55); animation: fadeInUp 0.4s ease both, glitch-card-surge 2.8s steps(1) infinite; }
         .news-card.glitch-card::before { content: ""; position: absolute; inset: 0; z-index: 8; pointer-events: none; background: repeating-linear-gradient(0deg, rgba(0,255,65,0.16) 0 1px, transparent 1px 4px), linear-gradient(90deg, transparent 0 42%, rgba(255,0,88,0.16) 43% 45%, transparent 46% 67%, rgba(0,140,255,0.16) 68% 70%, transparent 71%); mix-blend-mode: screen; animation: glitch-scan 4s linear infinite; }
-        .news-card.glitch-card::after { content: "SYSTEM BREACH"; position: absolute; left: 0; right: 0; top: 46%; z-index: 9; color: rgba(0,255,65,0.7); font-family: 'Share Tech Mono', monospace; font-size: 12px; font-weight: 900; text-align: center; text-shadow: 2px 0 #ff0058, -2px 0 #00a2ff, 0 0 14px #00ff41; transform: skewX(-12deg); pointer-events: none; animation: glitch-warning 1.4s steps(2) infinite; }
+        .news-card.glitch-card::after { content: "SYSTEM BREACH"; position: absolute; left: 0; right: 0; top: 46%; z-index: 9; color: rgba(0,255,65,0.7); font-family: 'Share Tech Mono', monospace; font-size: 12px; font-weight: 900; letter-spacing: 0; text-align: center; text-shadow: 2px 0 #ff0058, -2px 0 #00a2ff, 0 0 14px #00ff41; transform: skewX(-12deg); pointer-events: none; animation: glitch-warning 1.4s steps(2) infinite; }
         .news-card.glitch-card .news-card__image { filter: sepia(1) hue-rotate(82deg) saturate(420%) contrast(150%) brightness(0.86); transform: scale(1.12); animation: glitch-image-break 1.55s steps(1) infinite; }
+        .news-card.glitch-card:hover .news-card__image { transform: scale(1.18); }
         .news-card.glitch-card .news-card__image-wrapper { background: #001100; }
-        .news-card.glitch-card .news-card__badge, .news-card.glitch-card .news-card__new { background: #000; color: #00ff41; border-color: #00ff41; font-family: 'Share Tech Mono', monospace; }
-        .news-card.glitch-card .news-card__new { color: #ff355d; border-color: #ff355d; }
+        .news-card.glitch-card .news-card__image-wrapper::after { background: radial-gradient(circle at 50% 35%, transparent 0 30%, rgba(0,0,0,0.38) 62%, rgba(0,0,0,0.88) 100%); }
+        .news-card.glitch-card .news-card__badge, .news-card.glitch-card .news-card__new { background: #000; color: #00ff41; border-color: #00ff41; box-shadow: 0 0 18px rgba(0,255,65,0.85); font-family: 'Share Tech Mono', monospace; letter-spacing: 0; }
+        .news-card.glitch-card .news-card__new { color: #ff355d; border-color: #ff355d; animation: glitch-label-blink 1.2s steps(1) infinite; }
         .news-card.glitch-card .news-card__content { background: linear-gradient(180deg, #031006, #000); border-top: 1px solid rgba(0,255,65,0.6); }
-        .news-card.glitch-card .news-card__eyebrow, .news-card.glitch-card .news-card__title { color: #00ff41; font-family: 'Share Tech Mono', monospace; text-shadow: 2px 0 #ff0058, -2px 0 #00a2ff, 0 0 14px #00ff41; }
-        .news-card.glitch-card .news-card__button { background: #000; color: #00ff41; border-color: #00ff41; border-radius: 10px; font-family: 'Share Tech Mono', monospace; }
+        .news-card.glitch-card .news-card__eyebrow, .news-card.glitch-card .news-card__title { color: #00ff41; font-family: 'Share Tech Mono', monospace; letter-spacing: 0; text-shadow: 2px 0 #ff0058, -2px 0 #00a2ff, 0 0 14px #00ff41; animation: glitch-text-break 0.28s steps(2) infinite alternate; }
+        .news-card.glitch-card .news-card__button { background: #000; color: #00ff41; border-color: #00ff41; border-radius: 10px; box-shadow: 0 0 18px rgba(0,255,65,0.62); font-family: 'Share Tech Mono', monospace; letter-spacing: 0; }
+        .news-card.glitch-card:hover .news-card__button { background: #00ff41; color: #000; box-shadow: 0 0 28px #00ff41; }
         .news-card.glitch-card .news-card__bar { background: linear-gradient(90deg, #00ff41, #ff0058, #00a2ff, #00ff41); }
 
-        /* ══ HALLOWEEN 017 ══ */
-        .news-card.halloween-card {
-            border-radius: 24px; overflow: clip;
-            background: linear-gradient(165deg,#08000f 0%,#14002a 45%,#050010 100%);
-            border: 2px solid rgba(160,55,255,0.78);
-            box-shadow: 0 0 0 1px rgba(255,255,255,0.06) inset,
-                0 0 38px rgba(145,0,255,0.9), 0 0 85px rgba(105,0,210,0.44), 0 30px 80px rgba(0,0,0,0.75);
-            animation: fadeInUp 0.4s ease both, hw-border-pulse 3s ease-in-out infinite;
-        }
-        /* Feu violet derrière — couche principale */
-        .news-card.halloween-card::before {
-            content:""; position:absolute;
-            left:-40px; right:-40px; bottom:-65px; height:140px; top:auto;
-            z-index:-1; pointer-events:none; border-radius:0 0 60% 60%;
-            background:
-                radial-gradient(ellipse 62% 82% at 18% 100%, rgba(190,0,255,1)      0%,transparent 55%),
-                radial-gradient(ellipse 58% 72% at 82% 100%, rgba(130,0,235,0.92)   0%,transparent 52%),
-                radial-gradient(ellipse 42% 68% at 50% 100%, rgba(225,105,255,0.88) 0%,transparent 50%),
-                radial-gradient(ellipse 28% 52% at 28%  88%, rgba(165,0,255,0.72)   0%,transparent 46%),
-                radial-gradient(ellipse 28% 52% at 72%  88%, rgba(205,65,255,0.72)  0%,transparent 46%),
-                radial-gradient(ellipse 18% 36% at  8%  96%, rgba(100,0,205,0.62)   0%,transparent 43%),
-                radial-gradient(ellipse 18% 36% at 92%  96%, rgba(155,0,255,0.62)   0%,transparent 43%);
-            filter: blur(22px) saturate(2.2);
-            animation: hw-fire-main 2s ease-in-out infinite;
-        }
-        /* Feu violet — couche haute */
-        .news-card.halloween-card::after {
-            content:""; position:absolute;
-            left:-26px; right:-26px; bottom:-32px; height:85px; top:auto;
-            z-index:-1; pointer-events:none; border-radius:0 0 52% 52%;
-            background:
-                radial-gradient(ellipse 36% 62% at  8% 100%, rgba(215,85,255,0.92)  0%,transparent 50%),
-                radial-gradient(ellipse 30% 57% at 92% 100%, rgba(175,32,255,0.88)  0%,transparent 48%),
-                radial-gradient(ellipse 48% 72% at 50% 100%, rgba(245,148,255,0.72) 0%,transparent 54%);
-            filter: blur(15px) saturate(1.9);
-            animation: hw-fire-top 2.6s ease-in-out infinite reverse;
-        }
-        .news-card.halloween-card .news-card__image-wrapper {
-            background:#05000d; border-radius:22px 22px 0 0;
-            box-shadow: inset 0 -2px 0 rgba(180,80,255,0.82); overflow:hidden;
-        }
-        .news-card.halloween-card .news-card__image-wrapper::after {
-            z-index:4; border-radius:22px 22px 0 0;
-            background:
-                radial-gradient(circle at 50% 50%, transparent 0 16%, rgba(0,0,0,0.46) 60%, rgba(0,0,0,0.9) 100%),
-                radial-gradient(circle at 50% 4%,  rgba(170,60,255,0.3) 0 32%, transparent 64%);
-        }
-        .news-card.halloween-card .news-card__image {
-            filter: sepia(0.1) hue-rotate(258deg) saturate(280%) contrast(148%) brightness(0.65);
-            transform: scale(1.1); transition: filter 0.4s ease, transform 0.5s ease;
-        }
-        .news-card.halloween-card:hover .news-card__image {
-            filter: sepia(0.06) hue-rotate(262deg) saturate(370%) contrast(162%) brightness(0.9);
-            transform: scale(1.19) rotate(-0.5deg);
-        }
-        .news-card.halloween-card:hover {
-            box-shadow: 0 0 0 1px rgba(255,255,255,0.08) inset,
-                0 0 58px rgba(170,0,255,1), 0 0 125px rgba(115,0,225,0.62), 0 32px 90px rgba(0,0,0,0.82);
-        }
-        .news-card.halloween-card .news-card__badge,
-        .news-card.halloween-card .news-card__new {
-            background: rgba(6,0,14,0.93); color:#d090ff;
-            border:1px solid rgba(178,82,255,0.72);
-            box-shadow: 0 0 22px rgba(158,0,255,0.92), inset 0 0 10px rgba(142,0,255,0.13);
-            backdrop-filter: blur(8px);
-        }
-        .news-card.halloween-card .news-card__content {
-            background:
-                radial-gradient(circle at 86% 10%, rgba(150,0,255,0.19), transparent 36%),
-                radial-gradient(circle at 12% 85%, rgba(110,0,212,0.12), transparent 32%),
-                linear-gradient(180deg,#0b0016,#050009);
-            border-top:1px solid rgba(162,58,255,0.65);
-            position:relative; z-index:1; border-radius:0 0 22px 22px;
-        }
-        .news-card.halloween-card .news-card__content::before {
-            content:"🔮"; position:absolute; right:16px; top:12px;
-            font-size:28px; line-height:1; pointer-events:none;
-            filter: drop-shadow(0 0 14px rgba(200,100,255,1));
-            animation: hw-orb-float 3.2s ease-in-out infinite;
-        }
-        .news-card.halloween-card .news-card__content::after {
-            content:"🕷️"; position:absolute; left:15px; bottom:14px;
-            font-size:18px; opacity:0.4; pointer-events:none;
-        }
-        .news-card.halloween-card .news-card__eyebrow {
-            color:#b878ff; text-shadow:0 0 12px rgba(185,80,255,0.85); letter-spacing:1px;
-        }
-        .news-card.halloween-card .news-card__title {
-            color:#ddb8ff;
-            text-shadow: 0 0 22px rgba(190,80,255,1), 0 0 55px rgba(140,0,255,0.7),
-                2px 0 rgba(110,0,210,0.5), -2px 0 rgba(230,130,255,0.4);
-            animation: hw-title-haunt 5s ease-in-out infinite;
-        }
-        .news-card.halloween-card .news-card__button {
-            background:linear-gradient(135deg,#180030,#6600cc 52%,#380060);
-            color:#cc88ff; border:1px solid rgba(165,70,255,0.62); border-radius:100px;
-            box-shadow:0 0 22px rgba(140,0,255,0.7), inset 0 1px 0 rgba(210,140,255,0.25);
-            overflow:hidden;
-        }
-        .news-card.halloween-card .news-card__button::before {
-            background:linear-gradient(90deg,transparent,rgba(210,140,255,0.55),transparent);
-            animation: hw-btn-shine 2.6s ease-in-out infinite;
-        }
-        .news-card.halloween-card:hover .news-card__button {
-            background:linear-gradient(135deg,#9900ff,#6600cc 50%,#440088); color:#fff;
-            box-shadow:0 0 44px rgba(165,0,255,1), 0 0 92px rgba(122,0,212,0.56);
-        }
-        .news-card.halloween-card .news-card__bar {
-            background:linear-gradient(90deg,#4400aa,#cc00ff,#8800ee,#5500bb,#4400aa);
-            background-size:300% auto; animation:barSlide 2s linear infinite;
-            height:5px; border-radius:0 0 22px 22px;
-        }
-        /* Particules Halloween */
+        /* 017 ── HALLOWEEN */
+        .news-card.halloween-card { border-radius: 24px; overflow: clip; background: linear-gradient(165deg,#08000f 0%,#14002a 45%,#050010 100%); border: 2px solid rgba(160,55,255,0.78); box-shadow: 0 0 0 1px rgba(255,255,255,0.06) inset, 0 0 38px rgba(145,0,255,0.9), 0 0 85px rgba(105,0,210,0.44), 0 30px 80px rgba(0,0,0,0.75); animation: fadeInUp 0.4s ease both, hw-border-pulse 3s ease-in-out infinite; }
+        .news-card.halloween-card::before { content: ""; position: absolute; left:-40px; right:-40px; bottom:-65px; top:auto; height: 140px; z-index: -1; pointer-events: none; border-radius: 0 0 60% 60%; background: radial-gradient(ellipse 62% 82% at 18% 100%, rgba(190,0,255,1) 0%, transparent 55%), radial-gradient(ellipse 58% 72% at 82% 100%, rgba(130,0,235,0.92) 0%, transparent 52%), radial-gradient(ellipse 42% 68% at 50% 100%, rgba(225,105,255,0.88)0%, transparent 50%), radial-gradient(ellipse 28% 52% at 28% 88%, rgba(165,0,255,0.72) 0%, transparent 46%), radial-gradient(ellipse 28% 52% at 72% 88%, rgba(205,65,255,0.72) 0%, transparent 46%), radial-gradient(ellipse 18% 36% at 8% 96%, rgba(100,0,205,0.62) 0%, transparent 43%), radial-gradient(ellipse 18% 36% at 92% 96%, rgba(155,0,255,0.62) 0%, transparent 43%); filter: blur(22px) saturate(2.2); animation: hw-fire-main 2s ease-in-out infinite; }
+        .news-card.halloween-card::after { content: ""; position: absolute; left:-26px; right:-26px; bottom:-32px; top:auto; height: 85px; z-index: -1; pointer-events: none; border-radius: 0 0 52% 52%; background: radial-gradient(ellipse 36% 62% at 8% 100%, rgba(215,85,255,0.92) 0%, transparent 50%), radial-gradient(ellipse 30% 57% at 92% 100%, rgba(175,32,255,0.88) 0%, transparent 48%), radial-gradient(ellipse 48% 72% at 50% 100%, rgba(245,148,255,0.72) 0%, transparent 54%); filter: blur(15px) saturate(1.9); animation: hw-fire-top 2.6s ease-in-out infinite reverse; }
+        .news-card.halloween-card .news-card__image-wrapper { background: #05000d; border-radius: 22px 22px 0 0; box-shadow: inset 0 -2px 0 rgba(180,80,255,0.82); overflow: hidden; }
+        .news-card.halloween-card .news-card__image-wrapper::after { z-index: 4; border-radius: 22px 22px 0 0; background: radial-gradient(circle at 50% 50%, transparent 0 16%, rgba(0,0,0,0.46) 60%, rgba(0,0,0,0.9) 100%), radial-gradient(circle at 50% 4%, rgba(170,60,255,0.3) 0 32%, transparent 64%); }
+        .news-card.halloween-card .news-card__image { filter: sepia(0.1) hue-rotate(258deg) saturate(280%) contrast(148%) brightness(0.65); transform: scale(1.1); transition: filter 0.4s ease, transform 0.5s ease; }
+        .news-card.halloween-card:hover .news-card__image { filter: sepia(0.06) hue-rotate(262deg) saturate(370%) contrast(162%) brightness(0.9); transform: scale(1.19) rotate(-0.5deg); }
+        .news-card.halloween-card:hover { box-shadow: 0 0 0 1px rgba(255,255,255,0.08) inset, 0 0 58px rgba(170,0,255,1), 0 0 125px rgba(115,0,225,0.62), 0 32px 90px rgba(0,0,0,0.82); }
+        .news-card.halloween-card .news-card__badge, .news-card.halloween-card .news-card__new { background: rgba(6,0,14,0.93); color: #d090ff; border: 1px solid rgba(178,82,255,0.72); box-shadow: 0 0 22px rgba(158,0,255,0.92), inset 0 0 10px rgba(142,0,255,0.13); backdrop-filter: blur(8px); }
+        .news-card.halloween-card .news-card__content { background: radial-gradient(circle at 86% 10%, rgba(150,0,255,0.19), transparent 36%), radial-gradient(circle at 12% 85%, rgba(110,0,212,0.12), transparent 32%), linear-gradient(180deg,#0b0016,#050009); border-top: 1px solid rgba(162,58,255,0.65); position: relative; z-index: 1; border-radius: 0 0 22px 22px; }
+        .news-card.halloween-card .news-card__content::before { content: "🔮"; position: absolute; right:16px; top:12px; font-size: 28px; line-height:1; pointer-events:none; filter: drop-shadow(0 0 14px rgba(200,100,255,1)); animation: hw-orb-float 3.2s ease-in-out infinite; }
+        .news-card.halloween-card .news-card__content::after { content: "🕷️"; position: absolute; left:15px; bottom:14px; font-size:18px; opacity:0.4; pointer-events:none; }
+        .news-card.halloween-card .news-card__eyebrow { color: #b878ff; text-shadow: 0 0 12px rgba(185,80,255,0.85); letter-spacing: 1px; }
+        .news-card.halloween-card .news-card__title { color: #ddb8ff; text-shadow: 0 0 22px rgba(190,80,255,1), 0 0 55px rgba(140,0,255,.7), 2px 0 rgba(110,0,210,0.5), -2px 0 rgba(230,130,255,0.4); animation: hw-title-haunt 5s ease-in-out infinite; }
+        .news-card.halloween-card .news-card__button { background: linear-gradient(135deg,#180030,#6600cc 52%,#380060); color: #cc88ff; border: 1px solid rgba(165,70,255,0.62); border-radius: 100px; box-shadow: 0 0 22px rgba(140,0,255,0.7), inset 0 1px 0 rgba(210,140,255,0.25); overflow: hidden; }
+        .news-card.halloween-card .news-card__button::before { background: linear-gradient(90deg,transparent,rgba(210,140,255,0.55),transparent); animation: hw-btn-shine 2.6s ease-in-out infinite; }
+        .news-card.halloween-card:hover .news-card__button { background: linear-gradient(135deg,#9900ff,#6600cc 50%,#440088); color: #fff; box-shadow: 0 0 44px rgba(165,0,255,1), 0 0 92px rgba(122,0,212,0.56); }
+        .news-card.halloween-card .news-card__bar { background: linear-gradient(90deg,#4400aa,#cc00ff,#8800ee,#5500bb,#4400aa); background-size: 300% auto; animation: barSlide 2s linear infinite; height: 5px; border-radius: 0 0 22px 22px; }
+        
         .hw-deco { position:absolute; inset:0; z-index:15; pointer-events:none; overflow:visible; border-radius:24px; }
-        .hw-bat  { position:absolute; top:var(--bt,-10px); left:var(--bx); font-size:18px; opacity:0;
-                   filter:drop-shadow(0 0 6px rgba(190,80,255,0.9));
-                   animation:hw-bat-fly 6s var(--bd) ease-in-out infinite; }
-        .hw-bat::before  { content:"🦇"; }
-        .hw-skull { position:absolute; right:14px; top:40%; font-size:22px; opacity:0;
-                    filter:drop-shadow(0 0 10px rgba(165,0,255,1));
-                    animation:hw-skull-pop 8s ease-in-out infinite; }
+        .hw-bat { position:absolute; top:var(--bt,-10px); left:var(--bx); font-size:18px; opacity:0; filter:drop-shadow(0 0 6px rgba(190,80,255,0.9)); animation:hw-bat-fly 6s var(--bd) ease-in-out infinite; }
+        .hw-bat::before { content:"🦇"; }
+        .hw-skull { position:absolute; right:14px; top:40%; font-size:22px; opacity:0; filter:drop-shadow(0 0 10px rgba(165,0,255,1)); animation:hw-skull-pop 8s ease-in-out infinite; }
         .hw-skull::before { content:"💀"; }
 
-        /* ══ SAINT-VALENTIN 019 ══ */
-        .news-card.valentine-card {
-            border-radius:24px; overflow:clip;
-            background:linear-gradient(155deg,#1a0008 0%,#400015 40%,#180008 100%);
-            border:2px solid rgba(255,55,95,0.72);
-            box-shadow: 0 0 0 1px rgba(255,145,175,0.15) inset,
-                0 0 35px rgba(255,38,88,0.78), 0 0 78px rgba(202,0,58,0.36), 0 28px 80px rgba(82,0,28,0.66);
-            /* BOUM-BOUM physique — double systole */
-            animation:fadeInUp 0.4s ease both, val-heartbeat 1.05s ease-in-out infinite;
-            transform-origin:center center;
-        }
-        /* Halo rose — intégré en box-shadow sur la carte, pas de ::before débordant */
-        .news-card.valentine-card::before {
-            content:""; position:absolute; inset:0; z-index:1; pointer-events:none;
-            border-radius:24px;
-            background:radial-gradient(ellipse at 50% 95%, rgba(255,28,78,0.22) 0%, transparent 65%);
-            animation:val-halo-pulse 1.05s ease-in-out infinite;
-        }
-        /* Reflet soie diagonal */
-        .news-card.valentine-card::after {
-            content:""; position:absolute; inset:0; z-index:1; pointer-events:none; border-radius:24px;
-            background:linear-gradient(130deg,transparent 0 44%,rgba(255,178,198,0.22) 46% 48%,transparent 50%);
-            animation:val-silk-sweep 4s ease-in-out infinite;
-        }
-        .news-card.valentine-card .news-card__image-wrapper {
-            background:#200008; border-radius:22px 22px 0 0;
-            box-shadow:inset 0 -2px 0 rgba(255,58,98,0.72); overflow:hidden;
-        }
-        .news-card.valentine-card .news-card__image-wrapper::after {
-            z-index:4; border-radius:22px 22px 0 0;
-            background:
-                radial-gradient(circle at 50% 50%, transparent 0 20%, rgba(58,0,18,0.4) 62%, rgba(28,0,8,0.88) 100%),
-                linear-gradient(180deg,rgba(255,78,108,0.12),rgba(182,0,48,0.3));
-            animation:val-vignette-beat 1.05s ease-in-out infinite;
-        }
-        .news-card.valentine-card .news-card__image {
-            filter:sepia(0.2) hue-rotate(320deg) saturate(200%) contrast(120%) brightness(0.78);
-            transform:scale(1.07); transition:filter 0.4s ease, transform 0.5s ease;
-        }
-        .news-card.valentine-card:hover .news-card__image {
-            filter:sepia(0.1) hue-rotate(325deg) saturate(260%) contrast(130%) brightness(1.05);
-            transform:scale(1.16) rotate(0.5deg);
-        }
-        .news-card.valentine-card .news-card__badge,
-        .news-card.valentine-card .news-card__new {
-            background:rgba(30,0,12,0.92); color:#ff90b0;
-            border:1px solid rgba(255,58,98,0.62);
-            box-shadow:0 0 18px rgba(255,28,78,0.87), inset 0 0 8px rgba(255,0,48,0.1);
-            backdrop-filter:blur(8px); z-index:6;
-        }
-        .news-card.valentine-card .news-card__content {
-            background:
-                radial-gradient(circle at 85% 10%, rgba(255,28,78,0.17), transparent 32%),
-                radial-gradient(circle at 10% 85%, rgba(202,0,52,0.1),   transparent 30%),
-                linear-gradient(180deg,#1e000a,#100005);
-            border-top:1px solid rgba(255,48,88,0.62);
-            position:relative; z-index:1; border-radius:0 0 22px 22px;
-        }
-        /* Cœur battant dans le contenu */
-        .news-card.valentine-card .news-card__content::before {
-            content:"❤️"; position:absolute; right:14px; top:10px;
-            font-size:32px; line-height:1; pointer-events:none;
-            filter:drop-shadow(0 0 16px rgba(255,28,78,1));
-            animation:val-heart-icon-beat 1.05s ease-in-out infinite;
-        }
-        .news-card.valentine-card .news-card__content::after {
-            content:"💋"; position:absolute; left:14px; bottom:12px;
-            font-size:20px; opacity:0.44; pointer-events:none;
-        }
-        .news-card.valentine-card .news-card__eyebrow { color:#ff6080; text-transform:none; font-style:italic; }
-        .news-card.valentine-card .news-card__title {
-            color:#ffccd8;
-            text-shadow:0 0 20px rgba(255,58,88,0.92), 0 0 50px rgba(222,0,52,0.52), 0 1px 0 rgba(100,0,28,0.82);
-        }
-        .news-card.valentine-card .news-card__button {
-            background:linear-gradient(135deg,#800020,#cc0040 52%,#900030);
-            color:#ffccd8; border:1px solid rgba(255,58,98,0.58); border-radius:100px;
-            box-shadow:0 0 22px rgba(220,0,52,0.67), inset 0 1px 0 rgba(255,128,158,0.25); overflow:hidden;
-        }
-        .news-card.valentine-card .news-card__button::before {
-            background:linear-gradient(90deg,transparent,rgba(255,178,198,0.52),transparent);
-            animation:val-btn-shine 2.8s ease-in-out infinite;
-        }
-        .news-card.valentine-card .news-card__button::after {
-            content:"♥"; position:absolute; right:16px; top:50%; font-size:14px;
-            color:rgba(255,158,178,0.92); transform:translateY(-50%) scale(0.7); opacity:0;
-            transition:opacity 0.22s, transform 0.22s;
-        }
-        .news-card.valentine-card:hover .news-card__button {
-            background:linear-gradient(135deg,#ff2060,#ff0045 52%,#dd0038); color:#fff;
-            box-shadow:0 0 40px rgba(255,18,68,1), 0 0 82px rgba(202,0,48,0.52); padding-right:36px;
-        }
+        /* 019 ── SAINT-VALENTIN */
+        .news-card.valentine-card { border-radius: 24px; overflow: visible; background: linear-gradient(155deg,#1a0008 0%,#400015 40%,#180008 100%); border: 2px solid rgba(255,55,95,0.72); box-shadow: 0 0 0 1px rgba(255,145,175,0.15) inset, 0 0 35px rgba(255,38,88,0.78), 0 0 78px rgba(202,0,58,0.36), 0 28px 80px rgba(82,0,28,0.66); animation: fadeInUp 0.4s ease both, val-heartbeat 1.05s ease-in-out infinite; transform-origin: center center; }
+        .news-card.valentine-card::before { content: ""; position: absolute; inset:-18px; z-index:-1; border-radius: 36px; pointer-events:none; background: radial-gradient(ellipse at 50% 62%, rgba(255,28,78,0.42) 0%, rgba(202,0,48,0.22) 40%, transparent 70%); filter: blur(18px); animation: val-halo-pulse 1.05s ease-in-out infinite; }
+        .news-card.valentine-card::after { content: ""; position: absolute; inset:0; z-index:1; pointer-events:none; border-radius: 24px; background: linear-gradient(130deg,transparent 0 44%,rgba(255,178,198,0.22) 46% 48%,transparent 50%); animation: val-silk-sweep 4s ease-in-out infinite; }
+        .news-card.valentine-card .news-card__image-wrapper { background: #200008; border-radius: 22px 22px 0 0; box-shadow: inset 0 -2px 0 rgba(255,58,98,0.72); overflow: hidden; }
+        .news-card.valentine-card .news-card__image-wrapper::after { z-index:4; border-radius:22px 22px 0 0; background: radial-gradient(circle at 50% 50%, transparent 0 20%, rgba(58,0,18,0.4) 62%, rgba(28,0,8,0.88) 100%), linear-gradient(180deg,rgba(255,78,108,0.12),rgba(182,0,48,0.3)); animation: val-vignette-beat 1.05s ease-in-out infinite; }
+        .news-card.valentine-card .news-card__image { filter: sepia(0.2) hue-rotate(320deg) saturate(200%) contrast(120%) brightness(0.78); transform: scale(1.07); transition: filter 0.4s ease, transform 0.5s ease; }
+        .news-card.valentine-card:hover .news-card__image { filter: sepia(0.1) hue-rotate(325deg) saturate(260%) contrast(130%) brightness(1.05); transform: scale(1.16) rotate(0.5deg); }
+        .news-card.valentine-card .news-card__badge, .news-card.valentine-card .news-card__new { background: rgba(30,0,12,0.92); color: #ff90b0; border: 1px solid rgba(255,58,98,0.62); box-shadow: 0 0 18px rgba(255,28,78,0.87), inset 0 0 8px rgba(255,0,48,0.1); backdrop-filter: blur(8px); z-index: 6; }
+        .news-card.valentine-card .news-card__content { background: radial-gradient(circle at 85% 10%, rgba(255,28,78,0.17), transparent 32%), radial-gradient(circle at 10% 85%, rgba(202,0,52,0.1), transparent 30%), linear-gradient(180deg,#1e000a,#100005); border-top: 1px solid rgba(255,48,88,0.62); position: relative; z-index:1; border-radius: 0 0 22px 22px; }
+        .news-card.valentine-card .news-card__content::before { content: "❤️"; position: absolute; right:14px; top:10px; font-size: 32px; line-height:1; pointer-events:none; filter: drop-shadow(0 0 16px rgba(255,28,78,1)); animation: val-heart-icon-beat 1.05s ease-in-out infinite; }
+        .news-card.valentine-card .news-card__content::after { content: "💋"; position: absolute; left:14px; bottom:12px; font-size:20px; opacity:0.44; pointer-events:none; }
+        .news-card.valentine-card .news-card__eyebrow { color: #ff6080; text-transform:none; font-style:italic; text-shadow: 0 0 10px rgba(255,48,78,0.62); }
+        .news-card.valentine-card .news-card__title { color: #ffccd8; text-shadow: 0 0 20px rgba(255,58,88,0.92), 0 0 50px rgba(222,0,52,0.52), 0 1px 0 rgba(100,0,28,0.82); }
+        .news-card.valentine-card .news-card__button { background: linear-gradient(135deg,#800020,#cc0040 52%,#900030); color: #ffccd8; border: 1px solid rgba(255,58,98,0.58); border-radius: 100px; box-shadow: 0 0 22px rgba(220,0,52,0.67), inset 0 1px 0 rgba(255,128,158,0.25); overflow: hidden; }
+        .news-card.valentine-card .news-card__button::before { background: linear-gradient(90deg,transparent,rgba(255,178,198,0.52),transparent); animation: val-btn-shine 2.8s ease-in-out infinite; }
+        .news-card.valentine-card .news-card__button::after { content: "♥"; position: absolute; right:16px; top:50%; font-size:14px; color:rgba(255,158,178,0.92); transform: translateY(-50%) scale(0.7); opacity:0; transition: opacity 0.22s, transform 0.22s; }
+        .news-card.valentine-card:hover .news-card__button { background: linear-gradient(135deg,#ff2060,#ff0045 52%,#dd0038); color: #fff; box-shadow: 0 0 40px rgba(255,18,68,1), 0 0 82px rgba(202,0,48,0.52); padding-right: 36px; }
         .news-card.valentine-card:hover .news-card__button::after { opacity:1; transform:translateY(-50%) scale(1); color:#fff; }
-        .news-card.valentine-card .news-card__bar {
-            background:linear-gradient(90deg,#cc0030,#ff3060,#ffb0c0,#ff3060,#cc0030);
-            background-size:300% auto; animation:barSlide 3s linear infinite;
-            height:5px; border-radius:0 0 22px 22px;
-        }
-        /* Particules Valentine */
+        .news-card.valentine-card .news-card__bar { background: linear-gradient(90deg,#cc0030,#ff3060,#ffb0c0,#ff3060,#cc0030); background-size: 300% auto; animation: barSlide 3s linear infinite; height: 5px; border-radius: 0 0 22px 22px; }
+        
         .val-deco { position:absolute; inset:0; z-index:14; pointer-events:none; overflow:hidden; border-radius:24px; }
-        .val-heart { position:absolute; bottom:-20px; left:var(--hx); font-size:var(--hs,1.1em); opacity:0;
-                     filter:drop-shadow(0 0 5px rgba(255,38,78,0.78));
-                     animation:val-heart-rise 4.5s var(--hd) ease-in-out infinite; }
-        .val-heart::before           { content:"❤️"; }
+        .val-heart { position:absolute; bottom:-20px; left:var(--hx); font-size:var(--hs,1.1em); opacity:0; filter:drop-shadow(0 0 5px rgba(255,38,78,0.78)); animation:val-heart-rise 4.5s var(--hd) ease-in-out infinite; }
+        .val-heart::before { content:"❤️"; }
         .val-heart:nth-child(3n)::before { content:"💕"; }
         .val-heart:nth-child(5n)::before { content:"💗"; }
 
-        /* ══ KEYFRAMES GLITCH (restaurés complets) ══ */
-        @keyframes glitch-card-surge {
-            0%,100%{box-shadow:0 0 24px rgba(0,255,65,.7),0 0 60px rgba(0,255,65,.22),0 18px 46px rgba(0,0,0,.55)}
-            18%{box-shadow:0 0 34px rgba(255,0,88,.82),0 0 70px rgba(0,255,65,.26),0 18px 46px rgba(0,0,0,.55)}
-            19%{box-shadow:0 0 28px rgba(0,162,255,.82),0 0 70px rgba(0,255,65,.26),0 18px 46px rgba(0,0,0,.55)}
-            48%{border-color:#ff0058}49%{border-color:#00ff41}
-        }
+        /* KEYFRAMES GLOBAUX POUR LES CARTES SPÉCIALES */
+        @keyframes glitch-card-surge { 0%,100%{box-shadow:0 0 24px rgba(0,255,65,.7),0 0 60px rgba(0,255,65,.22),0 18px 46px rgba(0,0,0,.55)} 18%{box-shadow:0 0 34px rgba(255,0,88,.82),0 0 70px rgba(0,255,65,.26),0 18px 46px rgba(0,0,0,.55)} 19%{box-shadow:0 0 28px rgba(0,162,255,.82),0 0 70px rgba(0,255,65,.26),0 18px 46px rgba(0,0,0,.55)} 48%{border-color:#ff0058}49%{border-color:#00ff41} }
         @keyframes glitch-scan{0%{background-position:0 0,0 0}100%{background-position:0 220px,120px 0}}
-        @keyframes glitch-warning{
-            0%,70%,100%{opacity:0;transform:translateX(0) skewX(-12deg)}
-            72%{opacity:1;transform:translateX(-14px) skewX(-12deg)}
-            74%{opacity:.45;transform:translateX(12px) skewX(12deg)}
-            76%{opacity:1;transform:translateX(0) skewX(-12deg)}
-        }
-        @keyframes glitch-image-break{
-            0%,14%,20%,63%,100%{transform:scale(1.12);filter:sepia(1) hue-rotate(82deg) saturate(420%) contrast(150%) brightness(.86)}
-            15%{transform:translateX(8px) skewX(-8deg) scale(1.18);filter:invert(1) hue-rotate(180deg) contrast(220%)}
-            17%{transform:translateX(-8px) skewX(8deg) scale(1.16);filter:sepia(1) hue-rotate(120deg) saturate(520%) contrast(220%)}
-            64%{transform:translateY(-5px) scale(1.2);filter:brightness(2.4) contrast(260%)}
-            66%{transform:translateY(3px) scale(1.1)}
-        }
+        @keyframes glitch-warning{ 0%,70%,100%{opacity:0;transform:translateX(0) skewX(-12deg)} 72%{opacity:1;transform:translateX(-14px) skewX(-12deg)} 74%{opacity:.45;transform:translateX(12px) skewX(12deg)} 76%{opacity:1;transform:translateX(0) skewX(-12deg)} }
+        @keyframes glitch-image-break{ 0%,14%,20%,63%,100%{transform:scale(1.12);filter:sepia(1) hue-rotate(82deg) saturate(420%) contrast(150%) brightness(.86)} 15%{transform:translateX(8px) skewX(-8deg) scale(1.18);filter:invert(1) hue-rotate(180deg) contrast(220%)} 17%{transform:translateX(-8px) skewX(8deg) scale(1.16);filter:sepia(1) hue-rotate(120deg) saturate(520%) contrast(220%)} 64%{transform:translateY(-5px) scale(1.2);filter:brightness(2.4) contrast(260%)} 66%{transform:translateY(3px) scale(1.1)} }
         @keyframes glitch-label-blink{0%,55%,100%{opacity:1}56%,62%{opacity:0}63%,66%{opacity:1}}
-        @keyframes glitch-text-break{
-            0%{transform:translate(0,0);text-shadow:2px 0 #ff0058,-2px 0 #00a2ff,0 0 14px #00ff41}
-            50%{transform:translate(1px,-1px);text-shadow:-3px 0 #ff0058,3px 0 #00a2ff,0 0 18px #00ff41}
-            100%{transform:translate(-1px,1px)}
-        }
-        /* ══ KEYFRAMES HALLOWEEN ══ */
-        @keyframes hw-border-pulse{
-            0%,100%{box-shadow:0 0 0 1px rgba(255,255,255,.06) inset,0 0 38px rgba(145,0,255,.9),0 0 85px rgba(105,0,210,.44),0 30px 80px rgba(0,0,0,.75);border-color:rgba(160,55,255,.78)}
-            50%    {box-shadow:0 0 0 1px rgba(255,255,255,.09) inset,0 0 58px rgba(175,0,255,1),  0 0 125px rgba(135,0,245,.62),0 30px 92px rgba(0,0,0,.82);border-color:rgba(205,82,255,1)}
-        }
-        @keyframes hw-fire-main{
-            0%  {transform:translateY(0)     scaleX(1)    scaleY(1);   filter:blur(22px) saturate(2.2) hue-rotate(0deg)}
-            25% {transform:translateY(-20px) scaleX(1.12) scaleY(1.28);filter:blur(19px) saturate(2.5) hue-rotate(16deg)}
-            50% {transform:translateY(-9px)  scaleX(.9)   scaleY(1.42);filter:blur(24px) saturate(1.9) hue-rotate(-12deg)}
-            75% {transform:translateY(-24px) scaleX(1.09) scaleY(1.2); filter:blur(18px) saturate(2.6) hue-rotate(22deg)}
-            100%{transform:translateY(0)     scaleX(1)    scaleY(1);   filter:blur(22px) saturate(2.2) hue-rotate(0deg)}
-        }
-        @keyframes hw-fire-top{
-            0%  {transform:translateY(0)     scaleX(1)    scaleY(1);   opacity:.88}
-            33% {transform:translateY(-16px) scaleX(1.14) scaleY(1.34);opacity:1}
-            66% {transform:translateY(-6px)  scaleX(.86)  scaleY(1.16);opacity:.72}
-            100%{transform:translateY(0)     scaleX(1)    scaleY(1);   opacity:.88}
-        }
-        @keyframes hw-orb-float{
-            0%,100%{transform:translateY(0) rotate(-8deg);  filter:drop-shadow(0 0 14px rgba(200,100,255,1))}
-            50%    {transform:translateY(-7px) rotate(8deg);filter:drop-shadow(0 0 26px rgba(222,132,255,1)) drop-shadow(0 0 42px rgba(162,0,255,.72))}
-        }
-        @keyframes hw-title-haunt{
-            0%,100%{text-shadow:0 0 22px rgba(190,80,255,1),0 0 55px rgba(140,0,255,.7), 2px 0 rgba(110,0,210,.5),-2px 0 rgba(230,130,255,.4)}
-            50%    {text-shadow:0 0 36px rgba(222,112,255,1),0 0 82px rgba(172,0,255,.88),-3px 0 rgba(78,0,182,.62),3px 0 rgba(255,162,255,.52)}
-        }
+        @keyframes glitch-text-break{ 0%{transform:translate(0,0);text-shadow:2px 0 #ff0058,-2px 0 #00a2ff,0 0 14px #00ff41} 50%{transform:translate(1px,-1px);text-shadow:-3px 0 #ff0058,3px 0 #00a2ff,0 0 18px #00ff41} 100%{transform:translate(-1px,1px)} }
+        @keyframes hw-border-pulse{ 0%,100%{box-shadow:0 0 0 1px rgba(255,255,255,.06) inset,0 0 38px rgba(145,0,255,.9),0 0 85px rgba(105,0,210,.44),0 30px 80px rgba(0,0,0,.75);border-color:rgba(160,55,255,.78)} 50% {box-shadow:0 0 0 1px rgba(255,255,255,.09) inset,0 0 58px rgba(175,0,255,1), 0 0 125px rgba(135,0,245,.62),0 30px 92px rgba(0,0,0,.82);border-color:rgba(205,82,255,1)} }
+        @keyframes hw-fire-main{ 0% {transform:translateY(0) scaleX(1) scaleY(1); filter:blur(22px) saturate(2.2) hue-rotate(0deg)} 25% {transform:translateY(-20px) scaleX(1.12) scaleY(1.28);filter:blur(19px) saturate(2.5) hue-rotate(16deg)} 50% {transform:translateY(-9px) scaleX(.9) scaleY(1.42);filter:blur(24px) saturate(1.9) hue-rotate(-12deg)} 75% {transform:translateY(-24px) scaleX(1.09) scaleY(1.2); filter:blur(18px) saturate(2.6) hue-rotate(22deg)} 100%{transform:translateY(0) scaleX(1) scaleY(1); filter:blur(22px) saturate(2.2) hue-rotate(0deg)} }
+        @keyframes hw-fire-top{ 0% {transform:translateY(0) scaleX(1) scaleY(1); opacity:.88} 33% {transform:translateY(-16px) scaleX(1.14) scaleY(1.34);opacity:1} 66% {transform:translateY(-6px) scaleX(.86) scaleY(1.16);opacity:.72} 100%{transform:translateY(0) scaleX(1) scaleY(1); opacity:.88} }
+        @keyframes hw-orb-float{ 0%,100%{transform:translateY(0) rotate(-8deg); filter:drop-shadow(0 0 14px rgba(200,100,255,1))} 50% {transform:translateY(-7px) rotate(8deg);filter:drop-shadow(0 0 26px rgba(222,132,255,1)) drop-shadow(0 0 42px rgba(162,0,255,.72))} }
+        @keyframes hw-title-haunt{ 0%,100%{text-shadow:0 0 22px rgba(190,80,255,1),0 0 55px rgba(140,0,255,.7),2px 0 rgba(110,0,210,.5),-2px 0 rgba(230,130,255,.4)} 50% {text-shadow:0 0 36px rgba(222,112,255,1),0 0 82px rgba(172,0,255,.88),-3px 0 rgba(78,0,182,.62),3px 0 rgba(255,162,255,.52)} }
         @keyframes hw-btn-shine{0%,60%,100%{opacity:0;transform:translateX(-120%)}74%{opacity:.9;transform:translateX(122%)}}
-        @keyframes hw-bat-fly{
-            0%  {opacity:0;transform:translate(0,0) scale(.7) rotate(-5deg)}
-            8%  {opacity:.9}
-            50% {opacity:.85;transform:translate(32px,-36vh) scale(1.12) rotate(15deg)}
-            92% {opacity:.28}
-            100%{opacity:0;transform:translate(-22px,-102vh) scale(.8) rotate(-22deg)}
-        }
-        @keyframes hw-skull-pop{
-            0%,55%,100%{opacity:0;transform:translateX(22px) scale(.7)}
-            62%{opacity:1;transform:translateX(0) scale(1.12)}
-            74%{opacity:1;transform:translateX(-4px) scale(1)}
-            88%{opacity:0;transform:translateX(-22px) scale(.7)}
-        }
-        /* ══ KEYFRAMES VALENTINE ══ */
-        @keyframes val-heartbeat{
-            0%  {transform:scale(1)}
-            8%  {transform:scale(1.034)}
-            16% {transform:scale(.994)}
-            24% {transform:scale(1.022)}
-            36% {transform:scale(1)}
-            100%{transform:scale(1)}
-        }
-        @keyframes val-halo-pulse{
-            0%,36%,100%{opacity:.5}
-            8%  {opacity:1}
-            24% {opacity:.88}
-        }
-        @keyframes val-vignette-beat{
-            0%,36%,100%{opacity:.82}
-            8%  {opacity:1;filter:saturate(1.5) brightness(1.16)}
-            24% {opacity:.94;filter:saturate(1.28) brightness(1.08)}
-        }
-        @keyframes val-heart-icon-beat{
-            0%,36%,100%{transform:scale(1);   filter:drop-shadow(0 0 16px rgba(255,28,78,1))}
-            8%         {transform:scale(1.38); filter:drop-shadow(0 0 30px rgba(255,28,78,1)) drop-shadow(0 0 52px rgba(202,0,48,.82))}
-            16%        {transform:scale(.94)}
-            24%        {transform:scale(1.22); filter:drop-shadow(0 0 22px rgba(255,28,78,1))}
-        }
-        @keyframes val-silk-sweep{
-            0%  {background-position:-150% 0;opacity:.6}
-            50% {opacity:1}
-            100%{background-position:252% 0;opacity:.6}
-        }
-        @keyframes val-heart-rise{
-            0%  {opacity:0;transform:translateY(0)    scale(.7) rotate(-10deg)}
-            10% {opacity:.9}
-            55% {opacity:.8;transform:translateY(-46vh) scale(1.12) rotate(8deg)}
-            90% {opacity:.2}
-            100%{opacity:0;transform:translateY(-96vh) scale(.8) rotate(-5deg)}
-        }
+        @keyframes hw-bat-fly{ 0% {opacity:0;transform:translate(0,0) scale(.7) rotate(-5deg)} 8% {opacity:.9} 50% {opacity:.85;transform:translate(32px,-36vh) scale(1.12) rotate(15deg)} 92% {opacity:.28} 100%{opacity:0;transform:translate(-22px,-102vh) scale(.8) rotate(-22deg)} }
+        @keyframes hw-skull-pop{ 0%,55%,100%{opacity:0;transform:translateX(22px) scale(.7)} 62%{opacity:1;transform:translateX(0) scale(1.12)} 74%{opacity:1;transform:translateX(-4px) scale(1)} 88%{opacity:0;transform:translateX(-22px) scale(.7)} }
+        @keyframes val-heartbeat{ 0% {transform:scale(1)} 8% {transform:scale(1.034)} 16% {transform:scale(.994)} 24% {transform:scale(1.022)} 36% {transform:scale(1)} 100%{transform:scale(1)} }
+        @keyframes val-halo-pulse{ 0%,36%,100%{opacity:.5;transform:scale(1)} 8% {opacity:1; transform:scale(1.05)} 24% {opacity:.88;transform:scale(1.028)} }
+        @keyframes val-vignette-beat{ 0%,36%,100%{opacity:.82} 8% {opacity:1;filter:saturate(1.5) brightness(1.16)} 24% {opacity:.94;filter:saturate(1.28) brightness(1.08)} }
+        @keyframes val-heart-icon-beat{ 0%,36%,100%{transform:scale(1); filter:drop-shadow(0 0 16px rgba(255,28,78,1))} 8% {transform:scale(1.38); filter:drop-shadow(0 0 30px rgba(255,28,78,1)) drop-shadow(0 0 52px rgba(202,0,48,.82))} 16% {transform:scale(.94)} 24% {transform:scale(1.22); filter:drop-shadow(0 0 22px rgba(255,28,78,1))} }
+        @keyframes val-silk-sweep{ 0% {background-position:-150% 0;opacity:.6} 50% {opacity:1} 100%{background-position:252% 0;opacity:.6} }
+        @keyframes val-heart-rise{ 0% {opacity:0;transform:translateY(0) scale(.7) rotate(-10deg)} 10% {opacity:.9} 55% {opacity:.8;transform:translateY(-46vh) scale(1.12) rotate(8deg)} 90% {opacity:.2} 100%{opacity:0;transform:translateY(-96vh) scale(.8) rotate(-5deg)} }
         @keyframes val-btn-shine{0%,62%,100%{opacity:0;transform:translateX(-120%)}76%{opacity:.88;transform:translateX(122%)}}
-    
-        
     </style>
 </head>
 <body>
@@ -586,8 +300,15 @@
         <div class="site-header__icons">
             <span class="material-symbols-outlined">search</span>
             <span class="material-symbols-outlined">person</span>
+            <span class="material-symbols-outlined mobile-menu-btn" id="menuToggle">menu</span>
         </div>
     </header>
+
+    <div class="mobile-nav-dropdown" id="mobileNav">
+        <a href="https://www.roblox.com/fr/games/2753915549/Blox-Fruits">Game</a>
+        <a href="./index.html" class="active" style="background:#175ec2; color:#fff; border-color:transparent;">News</a>
+        <a href="./neo_bulletin.html">Leaks</a>
+    </div>
 
     <main class="main-content">
         <div class="pagination-bar">
@@ -640,6 +361,7 @@
         const PER_PAGE = 6;
         let currentPage = 1;
         const totalPages = Math.ceil(bulletins.length / PER_PAGE);
+        
         const specialCards = {
             "012": { className: "glitch-card", badge: "#012", status: "HACK", eyebrow: "Terminal compromis", title: "BULLETIN #012", button: "Accéder au terminal" },
             "017": { className: "halloween-card", badge: "#017", status: "HALLOWEEN", eyebrow: "Halloween Event", title: "BULLETIN #017", button: "Ouvrir la porte" },
@@ -657,11 +379,9 @@
                 const isNew = globalIndex >= bulletins.length - NEW_THRESHOLD;
                 const statusLabel = special.status || (isNew ? "Nouveau" : "");
                 
-                // Décorations spéciales
+                // INJECTION DES ANIMATIONS SPÉCIALES
                 let deco = "";
-                if (b.num === "012") {
-                    deco = `<div class="glitch-overlay"></div>`;
-                } else if (b.num === "017") {
+                if (b.num === "017") {
                     deco = `<div class="hw-deco" aria-hidden="true"><span class="hw-bat" style="--bx:10%;--bd:-0.2s;--bt:-12px"></span><span class="hw-bat" style="--bx:60%;--bd:-2.4s;--bt:-8px"></span><span class="hw-bat" style="--bx:34%;--bd:-1.2s;--bt:-10px"></span><span class="hw-skull"></span></div>`;
                 } else if (b.num === "019") {
                     deco = `<div class="val-deco" aria-hidden="true"><span class="val-heart" style="--hx:8%;--hd:-0.1s;--hs:1em"></span><span class="val-heart" style="--hx:28%;--hd:-1.7s;--hs:1.4em"></span><span class="val-heart" style="--hx:52%;--hd:-0.8s;--hs:.85em"></span><span class="val-heart" style="--hx:72%;--hd:-2.3s;--hs:1.2em"></span><span class="val-heart" style="--hx:88%;--hd:-0.5s;--hs:.96em"></span></div>`;
@@ -683,12 +403,13 @@
                 </article>`;
             }).join("");
 
-            // Mise à jour de l'UI
+            // Mise à jour du texte
             const info = `${currentPage} / ${totalPages}`;
             document.getElementById("page-info-top").textContent = info;
             document.getElementById("page-info-bot").textContent = info;
             document.getElementById("page-info-mobile").textContent = info;
 
+            // Désactivation des boutons
             document.getElementById("prev-top").disabled = currentPage === 1;
             document.getElementById("next-top").disabled = currentPage === totalPages;
             document.getElementById("prev-bot").disabled = currentPage === 1;
@@ -705,7 +426,17 @@
         
         renderPage();
 
-        // ── NAVBAR SCROLL ──
+        // ── MENU HAMBURGER MOBILE ──
+        const menuBtn = document.getElementById('menuToggle');
+        const mobileNav = document.getElementById('mobileNav');
+        if (menuBtn && mobileNav) {
+            menuBtn.addEventListener('click', () => {
+                mobileNav.classList.toggle('is-open');
+                menuBtn.textContent = mobileNav.classList.contains('is-open') ? 'close' : 'menu';
+            });
+        }
+
+        // ── NAVBAR SCROLL TEXTE BLANC ──
         window.addEventListener('scroll', () => {
             const header = document.querySelector('.site-header');
             const darkZones = document.querySelectorAll('.blue-banner');
@@ -718,7 +449,7 @@
             header.classList.toggle('nav-light-text', isOverDarkZone);
         });
 
-        // ── PAGINATION MOBILE ──
+        // ── COULEUR PILULE FLOTTANTE MOBILE ──
         function updateMobilePaginationColor() {
             const pill = document.querySelector('.mobile-pagination-pill');
             if (!pill || window.innerWidth > 768) return;
