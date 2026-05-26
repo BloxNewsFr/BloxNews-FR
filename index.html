@@ -40,7 +40,7 @@
             .site-background { display: none; }
         }
 
-        /* ── NAVBAR ── */
+        /* ── NAVBAR LIQUID GLASS ── */
         .site-header {
             display: flex; 
             align-items: center; 
@@ -50,12 +50,19 @@
             top: 0; 
             z-index: 1000; 
             height: 72px;
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-            transition: background 0.3s ease, backdrop-filter 0.3s ease;
+            background-color: rgba(255, 255, 255, 0.08);
+            background-image: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.05) 50%, transparent 100%);
+            background-size: 200% 100%;
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            transition: background 0.5s cubic-bezier(0.4, 0, 0.2, 1), backdrop-filter 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: navbarSheen 6s ease-in-out infinite;
+        }
+        @keyframes navbarSheen {
+            0%, 100% { background-position: 200% 0; }
+            50% { background-position: 0% 0; }
         }
 
         /* Le logo ne change plus jamais de couleur */
@@ -65,13 +72,14 @@
 
         .site-nav { display: flex; gap: 8px; padding: 0; margin: 0; list-style: none; font-weight: 900; position: relative; z-index: 1; }
         .site-nav a, .site-header__icons {
-            color: var(--color-text); text-shadow: none; transition: color 0.3s ease, text-shadow 0.3s ease;
+            color: var(--color-text);
+            transition: color 0.55s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .site-header.nav-light-text .site-nav a,
         .site-header.nav-light-text .site-header__icons {
-            color: #ffffff;
-            text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 0px 0 #000, -1px 0px 0 #000, 0px 1px 0 #000, 0px -1px 0 #000, 2px 2px 0 #000;
+            color: #fff;
+            text-shadow: 0 1px 6px rgba(0,0,0,0.55);
         }
 
         .site-nav a { text-decoration: none; font-size: 17px; text-transform: uppercase; font-family: 'LuckiestGuy Regular', cursive; padding: 8px 16px; border-radius: 10px; }
@@ -165,23 +173,41 @@
             .mobile-nav-dropdown a.nav-news { color: #1a73e8; }
             .mobile-nav-dropdown a.nav-leaks { color: #d93025; }
 
-            /* PILULE FLOTTANTE MOBILE */
+            /* PILULE FLOTTANTE MOBILE LIQUID GLASS */
             .mobile-pagination-pill {
                 display: flex !important;
-                position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); z-index: 9999;
-                background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-                border: 1px solid rgba(255, 255, 255, 0.3); padding: 4px 16px; border-radius: 50px;
-                box-shadow: 0 4px 15px rgba(0,0,0,0.1); gap: 15px; align-items: center;
-                transition: background 0.3s, border-color 0.3s;
+                position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%); z-index: 9999;
+                background: rgba(255, 255, 255, 0.1);
+                backdrop-filter: blur(22px) saturate(160%);
+                -webkit-backdrop-filter: blur(22px) saturate(160%);
+                border: 1px solid rgba(255, 255, 255, 0.15);
+                padding: 6px 22px; border-radius: 100px;
+                box-shadow: 0 8px 32px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.12);
+                gap: 18px; align-items: center;
+                transition: background 0.4s cubic-bezier(0.4,0,0.2,1), border-color 0.4s cubic-bezier(0.4,0,0.2,1);
             }
-            .mobile-pagination-pill button { background: transparent; border: none; color: #fff; font-size: 22px; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: color 0.3s ease, background 0.2s ease; }
-            .mobile-pagination-pill button:hover:not(:disabled) { background: rgba(255,255,255,0.2); }
-            .mobile-pagination-pill button:disabled { opacity: 0.3; cursor: not-allowed; }
-            .mobile-pagination-pill .page-info { color: #fff; font-weight: 900; font-size: 14px; min-width: 50px; text-align: center; font-family: 'Inter', sans-serif; transition: color 0.3s ease; }
+            .mobile-pagination-pill button {
+                background: transparent; border: none; color: #fff; font-size: 20px;
+                width: 38px; height: 38px; border-radius: 50%; cursor: pointer;
+                display: flex; align-items: center; justify-content: center;
+                transition: all 0.25s ease; flex-shrink: 0;
+            }
+            .mobile-pagination-pill button:hover:not(:disabled) { background: rgba(255,255,255,0.15); }
+            .mobile-pagination-pill button:disabled { opacity: 0.25; cursor: default; }
+            .mobile-pagination-pill .page-info {
+                color: #fff; font-weight: 900; font-size: 15px; min-width: 48px;
+                text-align: center; font-family: 'Inter', sans-serif;
+                transition: color 0.4s cubic-bezier(0.4,0,0.2,1);
+            }
 
-            /* Pilule fond clair (Adaptation automatique) */
-            .mobile-pagination-pill.is-light { background: rgba(0, 0, 0, 0.1); border-color: rgba(0, 0, 0, 0.2); }
-            .mobile-pagination-pill.is-light button, .mobile-pagination-pill.is-light .page-info { color: #000 !important; }
+            /* Pilule fond clair */
+            .mobile-pagination-pill.is-light {
+                background: rgba(0, 0, 0, 0.05);
+                border-color: rgba(0, 0, 0, 0.08);
+                box-shadow: 0 8px 32px rgba(0,0,0,0.04), inset 0 1px 0 rgba(255,255,255,0.3);
+            }
+            .mobile-pagination-pill.is-light button,
+            .mobile-pagination-pill.is-light .page-info { color: #000 !important; }
         }
 
         /* ── SPECIAL CARDS : GLITCH, HALLOWEEN, VALENTINE (TON CODE ORIGINAL) ── */

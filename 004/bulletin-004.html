@@ -66,17 +66,23 @@
     height: 72px;
     
     /* Effet Liquid Glass */
-    background: rgba(255, 255, 255, 0.15); /* Transparence du fond */
-    backdrop-filter: blur(20px);           /* Le flou "glass" */
-    -webkit-backdrop-filter: blur(20px);  /* Compatibilité Safari */
+    background-color: rgba(255, 255, 255, 0.08); background-image: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.05) 50%, transparent 100%); background-size: 200% 100%;
+    backdrop-filter: blur(24px) saturate(180%);           /* Le flou "glass" */
+    -webkit-backdrop-filter: blur(24px) saturate(180%);  /* Compatibilité Safari */
     
     /* Bordures subtiles pour le relief */
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255,255,255,0.2);
     
     /* Animation douce */
-    transition: background 0.3s ease, backdrop-filter 0.3s ease;
+    transition: background 0.5s cubic-bezier(0.4, 0, 0.2, 1), backdrop-filter 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: navbarSheen 6s ease-in-out infinite;
 }
+
+        @keyframes navbarSheen {
+            0%, 100% { background-position: 200% 0; }
+            50% { background-position: 0% 0; }
+        }
 
         /* ── MAGIE DU BLEND MODE ICI ── */
         .site-nav { display: flex; gap: 8px; padding: 0; margin: 0; list-style: none; font-weight: 900; }
@@ -84,26 +90,20 @@
         /* 1. On applique le contour noir uniquement aux textes et icônes */
 /* État normal : Aucun contour */
 .site-nav a, .site-header__icons {
-    color: var(--color-text); /* Couleur par défaut */
-    text-shadow: none;        /* Pas de bordure */
-    transition: color 0.3s ease, text-shadow 0.3s ease;
+    color: var(--color-text);
+    transition: color 0.55s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* État "zone sombre" (via la classe nav-light-text du script) */
 .site-header.nav-light-text .site-nav a,
 .site-header.nav-light-text .site-header__icons {
-    color: #ffffff; /* Texte en blanc */
-    
-    /* Contour épais façon sticker (8 couches d'ombres pour l'épaisseur) */
-    text-shadow: 
-         1px  1px 0 #000, -1px -1px 0 #000,  1px -1px 0 #000, -1px  1px 0 #000,
-         1px  0px 0 #000, -1px  0px 0 #000,  0px  1px 0 #000,  0px -1px 0 #000,
-         2px  2px 0 #000; /* Ombre supplémentaire pour renforcer l'épaisseur */
+    color: #fff;
+    text-shadow: 0 1px 6px rgba(0,0,0,0.55);
 }
 
 /* On garde la transition douce */
 .site-nav a, .site-header__icons {
-    transition: color 0.3s ease, text-shadow 0.3s ease;
+    transition: color 0.55s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* On s'assure que le logo ne bouge pas */
