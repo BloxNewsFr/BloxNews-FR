@@ -7,6 +7,8 @@
     <link rel="icon" type="image/png" href="./shared/favicon.png">
     <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
     <style>
         @font-face { font-family: 'LuckiestGuy Regular'; src: url('./fonts/LuckiestGuy-Regular.ttf') format('truetype'); }
         :root { --color-text: #1a1a2e; --color-border: #e8e8f0; --color-primary: #ffda00; --color-accent: #175ec2; }
@@ -1123,21 +1125,73 @@
        ────────────────────────────────────────────────────────────────────── */
     const MODERATORS = ["fn_n0klip", "neolixx", "bryanbg"];
 
-    /* ─── PERSISTANCE localStorage ─────────────────────────────────────────── */
-    function loadDB() {
-        try { const r = localStorage.getItem("bloxleaks_comments"); return r ? JSON.parse(r) : []; }
+    /* ─── FIREBASE INIT ──────────────────────────────────────────────────── */
+    firebase.initializeApp({
+        apiKey: "AIzaSyBkJsHWyoiEeqmEktUlgcED-8mBPnar_0w",
+        authDomain: "blox-bulletin-comments.firebaseapp.com",
+        databaseURL: "https://blox-bulletin-comments-default-rtdb.europe-west1.firebasedatabase.app",
+        projectId: "blox-bulletin-comments",
+        storageBucket: "blox-bulletin-comments.firebasestorage.app",
+        messagingSenderId: "774633429491",
+        appId: "1:774633429491:web:d1f534a0df346fbea79a86",
+        measurementId: "G-DKKQK7N4DQ"
+    });
+    const FB_DB = firebase.database();
+    const FB_REF = FB_DB.ref('comments');
+
+    /* ─── PERSISTANCE mixte — Firebase (partagé) + localStorage (fallback + likes) ── */
+    function loadLocal() {
+        try { return JSON.parse(localStorage.getItem("bloxleaks_comments")) || []; }
         catch(e) { return []; }
     }
-    function saveDB() {
+    function saveLocal() {
         try { localStorage.setItem("bloxleaks_comments", JSON.stringify(COMMENTS_DB)); }
         catch(e) {}
     }
+    function saveDB() {
+        saveLocal();
+        const clean = COMMENTS_DB.map(c => ({
+            ...c, likedByMe: false,
+            replies: (c.replies||[]).map(r => ({...r, likedByMe: false}))
+        }));
+        FB_REF.set(clean);
+    }
 
     /* ─── BASE DE DONNÉES ─────────────────────────────────────────────────── */
-    const COMMENTS_DB = loadDB(); // vide au départ, rempli par de vrais humains
-
+    const COMMENTS_DB = []; // rempli par Firebase + localStorage likedByMe
     const MAX_SHOWN   = 4;
     let   currentUser = null; // { username, avatar } — rempli par discordLogin()
+
+    /* ─── Écoute Firebase temps réel ────────────────────────────────────── */
+    FB_REF.on('value', (snap) => {
+        const val = snap.val();
+        // Firebase vide → ne pas écraser les données locales
+        if (!val || !Array.isArray(val) || val.length === 0) {
+            if (COMMENTS_DB.length > 0) saveDB();
+            return;
+        }
+        // Préserver likedByMe local
+        const likes = {};
+        COMMENTS_DB.forEach(c => {
+            likes[c.id] = c.likedByMe;
+            (c.replies||[]).forEach(r => { likes[`${c.id}_r${r.id}`] = r.likedByMe; });
+        });
+        COMMENTS_DB.length = 0;
+        val.forEach(c => {
+            c.likedByMe = !!likes[c.id];
+            (c.replies||[]).forEach(r => { r.likedByMe = !!likes[`${c.id}_r${r.id}`]; });
+            COMMENTS_DB.push(c);
+        });
+        saveLocal();
+        if (document.getElementById("commentBody")?.classList.contains("is-open")) renderList();
+        if (document.getElementById("commentsModal")?.classList.contains("is-active")) renderModal();
+    });
+
+    // Chargement initial instantané depuis localStorage (avant Firebase)
+    (function initLocal() {
+        const legacy = loadLocal();
+        if (legacy.length > 0) COMMENTS_DB.push(...legacy);
+    })();
 
     /* ─── Droits de suppression ──────────────────────────────────────────── */
     function canDelete(c)    {
@@ -1177,10 +1231,10 @@
                 </div>
                 <div class="comment-reply__text">${r.text}</div>
                 <div class="comment-item__actions" style="margin-top:7px">
-                    <button class="comment-btn ${r.likedByMe?"comment-btn--liked":""}" onclick="likeReply(${cid},${r.id},this)">
+                    <button class="comment-btn ${r.likedByMe?"comment-btn--liked":""}" onclick="likeReply('${cid}','${r.id}',this)">
                         ${r.likedByMe?"❤️":"🤍"} <span class="comment-btn__like-count">${r.likes}</span>
                     </button>
-                    ${canDeleteReply(r) ? `<button class="comment-btn comment-btn--delete" onclick="deleteReply(${cid},${r.id})">🗑 Suppr.</button>` : ""}
+                    ${canDeleteReply(r) ? `<button class="comment-btn comment-btn--delete" onclick="deleteReply('${cid}','${r.id}')">🗑 Suppr.</button>` : ""}
                 </div>
             </div>
         </div>`;
@@ -1199,17 +1253,17 @@
                 </div>
                 <div class="comment-item__text">${c.text}</div>
                 <div class="comment-item__actions">
-                    <button class="comment-btn ${c.likedByMe?"comment-btn--liked":""}" onclick="likeComment(${c.id},this)">
+                    <button class="comment-btn ${c.likedByMe?"comment-btn--liked":""}" onclick="likeComment('${c.id}',this)">
                         ${c.likedByMe?"❤️":"🤍"} <span class="comment-btn__like-count">${c.likes}</span>
                     </button>
                     ${currentUser ? `<button class="comment-btn" onclick="toggleReplyBox('${pfx}rw-${c.id}')">↩ Répondre</button>` : ""}
-                    ${canDelete(c) ? `<button class="comment-btn comment-btn--delete" onclick="deleteComment(${c.id})">🗑 Suppr.</button>` : ""}
+                    ${canDelete(c) ? `<button class="comment-btn comment-btn--delete" onclick="deleteComment('${c.id}')">🗑 Suppr.</button>` : ""}
                 </div>
                 ${replies ? `<div class="comment-replies">${replies}</div>` : ""}
                 <div class="comment-reply-write" id="${pfx}rw-${c.id}">
                     ${avatarHTML(currentUser, 30)}
                     <textarea class="comment-reply-input" placeholder="Ta réponse…" rows="1" oninput="autoResize(this)"></textarea>
-                    <button class="comment-reply-submit" onclick="postReply(${c.id},'${pfx}rw-${c.id}')">Poster</button>
+                    <button class="comment-reply-submit" onclick="postReply('${c.id}','${pfx}rw-${c.id}')">Poster</button>
                 </div>
             </div>
         </div>`;
@@ -1262,12 +1316,14 @@
         renderList(); // rerend pour afficher boutons Suppr. si modérateur
     }
 
+    function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+
     /* ─── Poster un commentaire ────────────────────────────────────────── */
     function postComment() {
         if (!currentUser) return;
         const inp = document.getElementById("commentInput");
         const txt = inp.value.trim(); if (!txt) return;
-        COMMENTS_DB.unshift({ id: Date.now(), username: currentUser.username,
+        COMMENTS_DB.unshift({ id: uid(), username: currentUser.username,
             avatar: currentUser.avatar, text: txt, time: "à l'instant",
             likes: 0, likedByMe: false, replies: [] });
         saveDB();
@@ -1318,6 +1374,7 @@
                 if (em && em.nodeType === 3) em.textContent = (c.likedByMe ? "❤️" : "🤍") + " ";
             }
         });
+        saveDB();
     }
     function likeReply(cid, rid, btn) {
         const c = COMMENTS_DB.find(x => x.id === cid); if (!c) return;
@@ -1326,6 +1383,7 @@
         if (r.likedByMe) { spawnLikeParticles(btn); animateLikeBtn(btn); }
         btn.classList.toggle("comment-btn--liked", r.likedByMe);
         btn.innerHTML = `${r.likedByMe?"❤️":"🤍"} <span class="comment-btn__like-count">${r.likes}</span>`;
+        saveDB();
     }
 
     /* ─── Suppression — modal custom (pas d'alert) ─────────────────────── */
@@ -1374,7 +1432,7 @@
         const inp = box?.querySelector("textarea");
         const txt = inp?.value.trim(); if (!txt) return;
         const c = COMMENTS_DB.find(x => x.id === cid); if (!c) return;
-        c.replies.push({ id: Date.now(), username: currentUser.username,
+        c.replies.push({ id: uid(), username: currentUser.username,
             avatar: currentUser.avatar, text: txt, time: "à l'instant",
             likes: 0, likedByMe: false });
         saveDB();
