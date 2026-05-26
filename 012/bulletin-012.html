@@ -135,7 +135,7 @@
         .site-nav { display: flex; gap: 8px; padding: 0; margin: 0; list-style: none; font-weight: 900; }
         .site-nav a { color: var(--green); text-decoration: none; font-weight: 900; font-size: 17px; text-transform: uppercase; font-family: 'LuckiestGuy Regular', cursive; text-shadow: 0 0 8px var(--green); padding: 8px 16px; border-radius: 10px; transition: background 0.2s, color 0.2s; }
         .site-header__icons { display: flex; gap: 12px; color: var(--color-text); cursor: pointer; align-items: center; }
-        .site-nav a.nav-news { color: #1a73e8; } .site-nav a.nav-leaks { color: #d93025; } .site-nav a:hover { background: rgb(21, 138, 21); color: #296a34; }
+        .site-nav a:hover { background: rgb(21, 138, 21); color: #296a34; }
         .site-header__icons span { padding: 8px; border-radius: 10px; transition: background 0.2s; }
                 .site-header__icons span:hover { background: rgb(21, 138, 21); }
         .mobile-menu-btn { display: none; }
@@ -148,11 +148,17 @@
         
         /* ── CONTENEUR ── */
         .bulletin-container {
-            max-width: 900px;
+            max-width: 1100px;
             margin: 40px auto;
-            padding: 0 20px;
+            padding: 0 24px;
             position: relative;
             z-index: 1;
+        }
+
+        .hero-image { animation: fadeInUp 0.5s ease both; }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(24px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         /* ── BANDEAU BLEU (hacké en vert) ── */
@@ -171,7 +177,7 @@
             box-shadow: 0 0 20px var(--green);
         }
 
-        .hero-image { width: 100%; height: auto; display: block; border-radius: 20px; border: 3px solid var(--green); margin-bottom: 15px; box-shadow: 0 0 20px var(--green); }
+        .hero-image { width: 100%; height: auto; display: block; border-radius: 16px; border: 2px solid var(--green); margin-bottom: 15px; box-shadow: 0 0 30px rgba(0,255,65,0.35), 0 8px 32px rgba(0,0,0,0.3); }
         .publish-date { font-size: 15px; font-weight: bold; color: var(--green); margin-bottom: 25px; text-shadow: 0 0 6px var(--green); }
 
         /* ── EN-TÊTE GLITCHÉ ── */
@@ -223,26 +229,27 @@
         /* ── ARTICLE HACKÉ (fond blanc visible, texte noir) ── */
         .hacked-box {
             background: rgba(255,255,255,0.96);
-            border: 3px solid var(--green);
-            border-radius: 6px;
+            border: 2px solid var(--green);
+            border-radius: 14px;
             padding: 25px;
             margin-bottom: 30px;
             color: #111;
             font-family: 'Share Tech Mono', monospace;
-            box-shadow: 0 0 20px rgba(0,255,65,0.4);
+            box-shadow: 0 0 25px rgba(0,255,65,0.35), 0 8px 30px rgba(0,0,0,0.2);
         }
-        .hacked-box h2 { font-size: 20px; font-weight: 900; color: #111; margin: 0 0 6px 0; border-bottom: 2px solid #000; padding-bottom: 6px; font-family: 'Share Tech Mono', monospace; }
+        .hacked-box h2 { font-size: 20px; font-weight: 900; color: #111; margin: 0 0 6px 0; border-bottom: 2px solid var(--green); padding-bottom: 6px; font-family: 'Share Tech Mono', monospace; }
         .hacked-box .byline { font-style: italic; font-size: 12px; color: #555; display: block; margin-bottom: 14px; }
-        .hacked-box img { width: 100%; height: auto; border: 3px solid #000; border-radius: 6px; margin-bottom: 14px; }
+        .hacked-box img { width: 100%; height: auto; border: 2px solid #000; border-radius: 12px; margin-bottom: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
         .hacked-box video,
         .glitch-section video {
             width: 100%;
             height: auto;
             display: block;
             background: #000;
-            border: 3px solid #000;
-            border-radius: 6px;
+            border: 2px solid #000;
+            border-radius: 12px;
             margin: 0 0 14px 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
         .hacked-box p { font-size: 14px; margin: 0 0 10px 0; line-height: 1.5; }
         .hacked-box .emphasis { font-weight: 900; color: #000; }
@@ -255,33 +262,34 @@
         /* ── SECTION POTION (toute petite, texte bizarre) ── */
         .glitch-section {
             background: rgba(255,255,255,0.96);
-            border: 3px solid var(--green);
-            border-radius: 6px;
-            padding: 20px;
+            border: 2px solid var(--green);
+            border-radius: 14px;
+            padding: 24px;
             margin-bottom: 30px;
             color: #111;
             font-family: 'Share Tech Mono', monospace;
-            box-shadow: 0 0 20px rgba(0,255,65,0.4);
+            box-shadow: 0 0 25px rgba(0,255,65,0.35), 0 8px 30px rgba(0,0,0,0.2);
         }
-        .glitch-section h2 { font-size: 22px; font-weight: 900; border-bottom: 2px solid #000; padding-bottom: 6px; margin: 0 0 6px 0; }
+        .glitch-section h2 { font-size: 22px; font-weight: 900; border-bottom: 2px solid var(--green); padding-bottom: 6px; margin: 0 0 6px 0; }
         .glitch-section .byline { font-style: italic; font-size: 12px; color: #555; display: block; margin-bottom: 14px; }
         .glitch-section p { font-size: 14px; margin: 0 0 10px 0; }
 
         /* ── INVENTAIRE / DERNIÈRE SECTION ── */
         .inventory-section {
             background: rgba(255,255,255,0.96);
-            border: 3px solid var(--green);
-            border-radius: 6px;
-            padding: 20px;
+            border: 2px solid var(--green);
+            border-radius: 14px;
+            padding: 24px;
             margin-bottom: 30px;
             display: flex;
-            gap: 20px;
+            gap: 24px;
             align-items: flex-start;
             font-family: 'Share Tech Mono', monospace;
             color: #111;
+            box-shadow: 0 0 25px rgba(0,255,65,0.35), 0 8px 30px rgba(0,0,0,0.2);
         }
-        .inventory-section img { width: 280px; flex-shrink: 0; border: 3px solid #000; border-radius: 6px; }
-        .inventory-section h2 { font-size: 18px; font-weight: 900; margin: 0 0 6px 0; border-bottom: 2px solid #000; padding-bottom: 6px; }
+        .inventory-section img { width: 280px; flex-shrink: 0; border: 2px solid #000; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        .inventory-section h2 { font-size: 18px; font-weight: 900; margin: 0 0 6px 0; border-bottom: 2px solid var(--green); padding-bottom: 6px; }
         .inventory-section .byline { font-style: italic; font-size: 12px; color: #555; display: block; margin-bottom: 12px; }
         .inventory-section p { font-size: 13.5px; margin: 0 0 10px 0; }
 
@@ -297,42 +305,72 @@
             font-style: italic;
             text-shadow: 0 0 8px var(--green);
             margin-bottom: 30px;
+            border-radius: 0 0 14px 14px;
         }
 
         /* BOUTON RETOUR */
         .back-button-container { text-align: center; margin: 30px 0 50px 0; position: relative; z-index: 1; }
-        
 
-                .back-button {
-            align-self: flex-start; 
+        .back-button {
+            align-self: flex-start;
             background-color: var(--green);
-            color: #000; text-decoration: none; 
-            font-weight: 900; padding: 11px 24px; 
-            border-radius: 100px; font-size: 13px; 
-            text-transform: uppercase; 
-            letter-spacing: 0.5px; 
-            transition: all 0.25s ease; 
-            box-shadow: 0 4px 15px rgba(255,218,0,0.4); 
-            border: 2px solid rgba(0,0,0,0.08); 
-            position: relative; overflow: hidden; 
+            color: #000;
+            text-decoration: none;
+            font-weight: 900;
+            padding: 11px 24px;
+            border-radius: 100px;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 15px rgba(0,255,65,0.4);
+            border: 2px solid rgba(0,255,65,0.3);
             display: inline-block;
-            transition: transform 0.1s;
-            font-family: 'Share Tech Mono', 
-            monospace; box-shadow: 0 0 15px var(--green);
-            animation: glitch-label-blink 1.2s steps(1) infinite;
-                        box-shadow: 0 0 24px rgba(0,255,65,0.7), 0 0 60px rgba(0,255,65,0.22), 0 18px 46px rgba(0,0,0,0.55);
-            animation: fadeInUp 0.4s ease both, glitch-card-surge 2.8s steps(1) infinite;
+            font-family: 'Share Tech Mono', monospace;
+            animation: fadeInUp 0.4s ease both;
+        }
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0,255,65,0.6);
         }
 
+        /* SOCIAL SHARE */
+        .social-share {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin: 30px 0;
+            width: 100%;
+        }
+        .social-share a {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 18px;
+            border-radius: 100px;
+            font-size: 13px;
+            font-weight: 900;
+            text-decoration: none;
+            text-transform: uppercase;
+            transition: all 0.25s ease;
+            border: none;
+        }
+        .social-share a:hover { transform: translateY(-3px); }
+        .social-share a.td { background: #5865F2; color: #fff; box-shadow: 0 4px 15px rgba(88,101,242,0.4); }
+        .social-share a.tt { background: linear-gradient(135deg, #1d56f2, #f21de4); color: #fff; box-shadow: 0 4px 15px rgba(29,86,242,0.4); }
+        .social-share a.ty { background: #ec1717e0; color: #fff; box-shadow: 0 4px 15px rgba(236,23,23,0.4); }
+        .social-share a img { width: 18px; height: 18px; vertical-align: middle; }
 
         /* FOOTER */
         .site-footer { background: rgba(0,0,0,0.9); border-top: 2px solid var(--green); padding: 40px 55px; display: flex; gap: 60px; position: relative; z-index: 1; }
-        .footer-col h3 { font-size: 15px; font-weight: 900; text-transform: uppercase; margin: 0 0 14px 0; color: var(--green); }
+        .footer-col h3 { font-size: 15px; font-weight: 900; text-transform: uppercase; margin: 0 0 14px 0; color: var(--green); text-shadow: 0 0 8px var(--green); }
         .footer-col ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
-        .footer-col ul li a { color: var(--green); text-decoration: none; font-size: 14px; }
+        .footer-col ul li a { color: var(--green); text-decoration: none; font-size: 14px; transition: color 0.2s; }
+        .footer-col ul li a:hover { color: #fff; }
         .footer-col p { font-size: 13px; color: var(--green); margin: 0 0 10px 0; }
         .footer-community-links { display: flex; flex-direction: column; gap: 8px; }
-        .footer-community-links a { color: var(--green); text-decoration: none; font-weight: 700; font-size: 14px; }
+        .footer-community-links a { color: var(--green); text-decoration: none; font-weight: 700; font-size: 14px; transition: color 0.2s; }
+        .footer-community-links a:hover { color: #fff; }
 
         @media (max-width: 768px) {
             .site-header { padding: 12px 20px; }
@@ -488,6 +526,19 @@ TODAY I FRANK GOLD SAMA WILL PUBLISH LEAK OF GAME BLOX FRUIT!!!!<span class="cur
     <!-- FOOTER HACKÉ -->
     <div class="hacked-footer">
         J'ESSAIERAI AU PROCHAIN BULLETIN AVEC PLUS D'EXPOS SECRETS SI MON POPS NE ME REDONNE PAS MON POUVOIR.... HAHAHAHA LES CHIENS
+    </div>
+
+    <!-- SOCIAL SHARE -->
+    <div class="social-share">
+        <a href="https://discord.gg/a6S6eugPn" class="td">
+            <img src="../shared/discord.png" class="discord-icon" alt="Discord"> Discord
+        </a>
+        <a href="https://tiktok.com/@dc_neolixx" class="tt">
+            <img src="../shared/tiktok.png" class="tiktok-icon" alt="TikTok"> TikTok
+        </a>
+        <a href="https://www.youtube.com/@Dc_neolixx" class="ty">
+            <img src="../shared/youtube.png" class="youtube-icon" alt="Youtube"> Youtube
+        </a>
     </div>
 
     <!-- BOUTON RETOUR -->

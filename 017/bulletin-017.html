@@ -5,236 +5,361 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Le Bulletin Blox #017 – Blox Fruits</title>
     <link rel="icon" href="../shared/bf_logo.png" type="image/png">
-    <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Inter:wght@300;400;500;600;700;900&family=Creepster&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
     <style>
         @font-face { font-family: 'LuckiestGuy Regular'; src: url('../fonts/LuckiestGuy-Regular.ttf') format('truetype'); }
-        :root { --color-text: #333132; --color-border: #ebebeb; --font-stack-body: 'Inter', sans-serif; --color-primary: #ffda00; }
+        :root {
+            --orange: #ff6a00;
+            --dark-orange: #cc5500;
+            --blood: #c0392b;
+            --dark-purple: #6a0dad;
+            --pumpkin: #ff8c00;
+        }
         * { box-sizing: border-box; }
-        body { margin: 0; font-family: var(--font-stack-body); color: var(--color-text); background: #ffffffb7; line-height: 1.6; }
-                .site-header {
-    display: flex; 
-    align-items: center; 
-    justify-content: space-between; 
-    padding: 0 55px;
-    position: sticky; 
-    top: 0; 
-    z-index: 1000; 
-    height: 72px;
-    
-    /* Effet Liquid Glass */
-    background: rgba(255, 255, 255, 0.15); /* Transparence du fond */
-    backdrop-filter: blur(20px);           /* Le flou "glass" */
-    -webkit-backdrop-filter: blur(20px);  /* Compatibilité Safari */
-    
-    /* Bordures subtiles pour le relief */
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-    
-    /* Animation douce */
-    transition: background 0.3s ease, backdrop-filter 0.3s ease;
-}
-        .site-header__logo img { height: 42px; width: auto; display: block; filter: hue-rotate(50deg) saturate(1); }
-        .site-nav { display: flex; gap: 8px; padding: 0; margin: 0; list-style: none; font-weight: 900;}
-        .site-nav a { color: var(--color-text); text-decoration: none; font-weight: 900; font-size: 17px; text-transform: uppercase; font-family: 'LuckiestGuy Regular', cursive; padding: 8px 16px; border-radius: 10px; transition: background 0.2s, color 0.2s; }
-        .site-nav a.nav-news { color: #1a73e8; } .site-nav a.nav-leaks { color: #d93025; } .site-nav a:hover { background: rgba(181, 76, 229, 0.666); color: #000000; }
-        .site-header__icons { display: flex; gap: 12px; color: var(--color-text); cursor: pointer; align-items: center; }
-        .site-header__icons span { padding: 8px; border-radius: 10px; transition: background 0.2s; }
-        .site-header__icons span:hover { background: rgba(181, 76, 229, 0.666); }
-        .mobile-menu-btn { display: none; }
-        .mobile-nav-dropdown { display: none; }
-        
-        .bulletin-container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
-
-
-        /* ── BANDEAU DARK ── */
-        .dark-banner {
-            background: linear-gradient(135deg, #0a0a0a, #1a0a2e, #0a0a0a);
-            color: #cc88ff;
-            text-align: center;
-            padding: 18px 14px;
-            font-size: 33px;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            border-radius: 4px;
-            margin-bottom: 25px;
-            font-family: 'LuckiestGuy Regular', cursive;
-            border: 2px solid #7722cc;
-            box-shadow: 0 0 30px rgba(120, 0, 200, 0.6), inset 0 0 30px rgba(80, 0, 150, 0.2);
-            text-shadow: 0 0 15px #aa44ff, 0 0 30px #8800cc;
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            color: #e0d0ff;
+            background: #0d0d0d;
+            line-height: 1.6;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
         }
 
-        /* ── HERO DARK avec AURA FUMÉE ── */
+        /* ── NAVBAR LIQUID GLASS SOMBRE ── */
+        .site-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 55px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            height: 72px;
+            background: rgba(13, 13, 13, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 106, 0, 0.2);
+            box-shadow: 0 4px 30px rgba(255, 106, 0, 0.1);
+            transition: background 0.3s ease, backdrop-filter 0.3s ease;
+        }
+        .site-header__logo img { height: 42px; width: auto; display: block; filter: hue-rotate(320deg) saturate(1.5); }
+        .site-nav { display: flex; gap: 8px; padding: 0; margin: 0; list-style: none; font-weight: 900; }
+        .site-nav a {
+            color: #e0d0ff;
+            text-decoration: none;
+            font-weight: 900;
+            font-size: 17px;
+            text-transform: uppercase;
+            font-family: 'LuckiestGuy Regular', cursive;
+            padding: 8px 16px;
+            border-radius: 10px;
+            transition: all 0.2s;
+        }
+        .site-nav a:hover { background: var(--orange); color: #000; }
+        .site-header__icons { display: flex; gap: 12px; color: #e0d0ff; cursor: pointer; align-items: center; }
+        .site-header__icons span { padding: 8px; border-radius: 10px; transition: background 0.2s; color: #e0d0ff; }
+        .site-header__icons span:hover { background: var(--orange); color: #000; }
+        .site-header.nav-light-text .site-nav a,
+        .site-header.nav-light-text .site-header__icons { color: #fff; }
+        .mobile-menu-btn { display: none; }
+        .mobile-nav-dropdown { display: none; }
+
+        .bulletin-container { max-width: 1100px; margin: 40px auto; padding: 0 24px; }
+
+        /* ── BANDEAU HALLOWEEN FLICKER ── */
+        .halloween-banner {
+            background: linear-gradient(135deg, #1a0505, #3a0a0a, #0d0d0d, #2a0a00);
+            color: var(--pumpkin);
+            text-align: center;
+            padding: 20px 14px;
+            font-size: 34px;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            border-radius: 14px;
+            margin-bottom: 25px;
+            font-family: 'Creepster', cursive;
+            border: 2px solid var(--orange);
+            box-shadow: 0 0 40px rgba(255, 106, 0, 0.5), inset 0 0 40px rgba(200, 50, 0, 0.15);
+            text-shadow: 0 0 20px var(--orange), 0 0 40px var(--blood);
+            animation: flicker 3s infinite;
+            position: relative;
+        }
+        .halloween-banner::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, var(--orange), transparent, var(--blood), transparent);
+            z-index: -1;
+            opacity: 0.4;
+            animation: bannerGlow 4s ease-in-out infinite;
+        }
+        @keyframes flicker {
+            0%, 100% { opacity: 1; }
+            5% { opacity: 0.8; text-shadow: 0 0 10px var(--orange); }
+            10% { opacity: 1; }
+            15% { opacity: 0.6; text-shadow: 0 0 5px var(--blood); }
+            20% { opacity: 1; }
+            50% { opacity: 0.9; }
+            55% { opacity: 0.7; }
+            60% { opacity: 1; }
+        }
+        @keyframes bannerGlow {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.7; }
+        }
+
+        /* ── HERO AVEC EMBERS ── */
         .hero-dark-wrapper {
             position: relative;
             width: 100%;
             margin-bottom: 20px;
-            border-radius: 20px;
+            border-radius: 16px;
             overflow: hidden;
-            border: 3px solid #5500aa;
-            box-shadow: 0 0 40px rgba(100, 0, 180, 0.8), 0 0 80px rgba(60, 0, 120, 0.4);
+            border: 2px solid var(--orange);
+            box-shadow: 0 0 40px rgba(255, 106, 0, 0.5), 0 0 80px rgba(200, 50, 0, 0.2);
+            animation: fadeInUp 0.5s ease both;
         }
         .hero-dark-wrapper img {
             width: 100%;
             height: auto;
             display: block;
-            filter: brightness(0.85) saturate(1.2) contrast(1.1);
+            filter: brightness(0.8) saturate(1.3) contrast(1.15);
         }
-
-        /* CANVAS SMOKE */
-        #smokeCanvas {
+        #emberCanvas {
             position: absolute;
             top: 0; left: 0;
             width: 100%; height: 100%;
             pointer-events: none;
             mix-blend-mode: screen;
         }
-
-        /* PULSE VIGNETTE */
         .hero-dark-wrapper::after {
             content: '';
             position: absolute;
             inset: 0;
-            background: radial-gradient(ellipse at center, transparent 40%, rgba(60, 0, 120, 0.7) 100%);
+            background: radial-gradient(ellipse at center, transparent 30%, rgba(50, 0, 0, 0.8) 100%);
             pointer-events: none;
             animation: pulseVignette 4s ease-in-out infinite;
         }
         @keyframes pulseVignette {
-            0%, 100% { opacity: 0.7; }
+            0%, 100% { opacity: 0.6; }
             50% { opacity: 1; }
         }
 
-        /* ── EN-TÊTE DARK ── */
+        /* ── EN-TÊTE ── */
         .journal-header { text-align: center; margin-top: 30px; }
         .journal-title {
-            font-family: 'Georgia', serif;
-            font-size: 52px;
-            font-weight: bold;
-            color: #111;
+            font-family: 'Creepster', cursive;
+            font-size: 44px;
+            color: var(--pumpkin);
             margin: 0 0 10px 0;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            text-shadow: 0 0 20px var(--orange), 2px 2px 0 #000;
+            letter-spacing: 2px;
         }
-        .journal-subtitle { font-family: 'Georgia', serif; font-style: italic; font-size: 18px; color: #555; margin: 0 0 25px 0; }
-        .journal-meta { font-weight: bold; font-size: 14px; color: #111; margin-bottom: 12px; text-transform: uppercase; }
-        .dashed-line { border-top: 2px dashed #111; margin: 15px 0 35px 0; }
-        .publish-date { font-size: 15px; font-weight: bold; color: #222; margin-bottom: 5px; }
+        .journal-subtitle { font-family: 'Inter', sans-serif; font-style: italic; font-size: 16px; color: #b08080; margin: 0 0 25px 0; }
+        .journal-meta { font-weight: bold; font-size: 14px; color: var(--blood); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; }
+        .dashed-line { border-top: 1px dashed rgba(255, 106, 0, 0.3); margin: 20px 0 35px 0; }
+        .publish-date { font-size: 15px; font-weight: bold; color: var(--orange); margin-bottom: 5px; text-shadow: 0 0 8px rgba(255, 106, 0, 0.4); }
 
-        /* ── ARTICLES ── */
-        .front-box { background: #fce8e6; border: 2px solid #000; border-left: 6px solid #c53929; padding: 25px; margin-bottom: 35px; }
-        .front-box h2 { color: #c53929; font-size: 22px; font-weight: 900; margin: 0 0 4px 0; border: none; }
-        .front-box .byline { font-style: italic; font-size: 13px; color: #555; display: block; margin-bottom: 14px; }
-        .front-box img { width: 100%; height: auto; border: 3px solid #000; border-radius: 8px; margin-bottom: 16px; }
-        .front-box p { font-size: 14.5px; margin: 0 0 12px 0; }
+        /* ── ARTICLES (Dark Glass Cards) ── */
+        .front-box {
+            background: rgba(20, 10, 20, 0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 106, 0, 0.2);
+            border-left: 4px solid var(--blood);
+            padding: 24px;
+            margin-bottom: 35px;
+            border-radius: 16px;
+            box-shadow: 0 4px 25px rgba(255, 106, 0, 0.08);
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.5s ease both;
+        }
+        .front-box:hover { box-shadow: 0 8px 40px rgba(255, 106, 0, 0.2); transform: translateY(-2px); }
+        .front-box h2 { color: var(--pumpkin); font-size: 22px; font-weight: 900; margin: 0 0 4px 0; border: none; font-family: 'LuckiestGuy Regular', cursive; letter-spacing: 0.5px; }
+        .front-box .byline { font-style: italic; font-size: 13px; color: #b08888; display: block; margin-bottom: 14px; }
+        .front-box img {
+            width: 100%; height: auto;
+            border: 2px solid rgba(255, 106, 0, 0.3);
+            border-radius: 12px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+        }
+        .front-box p { font-size: 14.5px; margin: 0 0 12px 0; color: #d0c0c0; }
         .content-columns { display: flex; gap: 30px; margin-bottom: 35px; }
         .left-col { flex: 1.7; }
-        .right-col { flex: 1.3; background: #f2f2f2; padding: 20px; border-radius: 8px; border: 1px solid #ccc; height: fit-content; }
-        h2 { border-bottom: 2px solid #111; padding-bottom: 5px; font-size: 22px; font-weight: 900; margin: 0 0 6px 0; color: #111; }
-        .section-subtext { font-style: italic; font-size: 13.5px; color: #555; margin-bottom: 16px; display: block; }
-        .col-img { width: 100%; height: auto; border: 3px solid #000; border-radius: 8px; margin-bottom: 16px; }
-        .col-text p { font-size: 14.5px; margin: 0 0 12px 0; }
-        .right-col h2 { font-size: 20px; line-height: 1.3; }
-        .right-col img { width: 100%; height: auto; border: 3px solid #000; border-radius: 6px; margin-bottom: 14px; }
-        .right-col p { font-size: 13.5px; margin: 0 0 12px 0; }
-        .grey-box { background: #f2f2f2; border: 1px solid #ccc; border-radius: 6px; padding: 25px; margin-bottom: 30px; }
-        .grey-box h2 { font-size: 22px; font-weight: 900; color: #111; margin: 0 0 4px 0; border-bottom: 2px solid #111; padding-bottom: 6px; }
-        .grey-box .byline { font-style: italic; font-size: 13px; color: #555; display: block; margin-bottom: 14px; }
-        .grey-box img { width: 100%; height: auto; border: 3px solid #000; border-radius: 8px; margin-bottom: 16px; }
-        .grey-box p { font-size: 14.5px; margin: 0 0 12px 0; }
-        .grey-inner { display: flex; gap: 20px; align-items: flex-start; }
-        .grey-inner img { width: 260px; flex-shrink: 0; border: 3px solid #000; border-radius: 8px; }
-        .grey-inner-text p { font-size: 14.5px; margin: 0 0 12px 0; }
-        .summary { background: rgba(88,101,242,0.09); border-left: 4px solid #5865f2; padding: 12px 16px; margin-top: 15px; font-size: 13.5px; font-style: italic; color: #2c3e50; border-radius: 0 6px 6px 0; }
-        .summary b { color: #5865f2; text-transform: uppercase; font-size: 11px; font-style: normal; display: block; margin-bottom: 4px; }
-        .stay-tuned { font-style: italic; font-size: 14px; color: #444; text-align: center; padding: 16px 0; border-top: 2px solid #111; margin-top: 10px; }
-        .social-share {  
-    display: flex;         /* Utilise Flexbox */
-    justify-content: center; /* Centre horizontalement */
-    gap: 15px;             /* Espace entre les boutons */
-    margin: 30px 0;        /* Espace haut/bas */
-    width: 100%;           /* S'assure qu'il prend toute la largeur */
-}
-
-/* On enlève les contraintes qui bloquaient le centrage */
-.social-share a { 
-    display: inline-flex; 
-    align-items: center; 
-    gap: 7px; 
-    padding: 8px 14px; 
-    border: 2px solid #000; 
-    border-radius: 4px; 
-    font-size: 13px; 
-    font-weight: 900; 
-    text-decoration: none; 
-    color: #000; 
-    text-transform: uppercase; 
-}
-        .social-share a.fb { background: #3b5998; color: #fff; border-color: #3b5998; }
-        .social-share a.tw { background: linear-gradient(135deg, #1dddf2, #f21de4); color: #fff; border-color: #1da1f2; }
-        .social-share a.pi { background: #e60023; color: #fff; border-color: #e60023; }
-        .back-button-container { text-align: center; margin: 30px 0 50px 0; }
-
-        /* Taille et alignement du logo TikTok */
-.tiktok-icon {
-    width: 20px;       /* Ajuste la taille ici (ex: 20px, 24px) */
-    height: 20px;      /* Garde la même valeur pour un carré parfait */
-    vertical-align: middle;
-}
-
-/* Style du bouton TikTok pour qu'il corresponde aux autres */
-.social-share a.tt { 
-background: linear-gradient(135deg, #1d56f2, #f21de4); 
-color: #fff; 
-border-color: #140d73 ;  /* Couleur TikTok */
-}
-
-.youtube-icon {
-    width: 20px;       /* Ajuste la taille ici (ex: 20px, 24px) */
-    height: 20px;      /* Garde la même valeur pour un carré parfait */
-    vertical-align: middle;
-}
-
-/* Style du bouton TikTok pour qu'il corresponde aux autres */
-.social-share a.ty { 
-background: #ec1717e0; 
-color: #fff; 
-border-color: #a11414; ;  /* Couleur TikTok */
-}
-
-.discord-icon {
-    width: 20px;       /* Ajuste la taille ici (ex: 20px, 24px) */
-    height: 20px;      /* Garde la même valeur pour un carré parfait */
-    vertical-align: middle;
-}
-
-/* Style du bouton TikTok pour qu'il corresponde aux autres */
-.social-share a.td { 
-background: #2222d8bc; 
-color: #fff; 
-border-color: #1b1ba0bc; ;  /* Couleur TikTok */
-}
-        .back-button {
-            align-self: flex-start; 
-            background: linear-gradient(135deg, #ea00ff, #b700ff); 
-            color: #000; text-decoration: none; 
-            font-weight: 900; padding: 11px 24px; 
-            border-radius: 100px; font-size: 13px; 
-            text-transform: uppercase; 
-            letter-spacing: 0.5px; 
-            transition: all 0.25s ease; 
-            box-shadow: 0 4px 15px rgba(221, 0, 255, 0.4); 
-            border: 2px solid rgba(0,0,0,0.08); 
-            position: relative; overflow: hidden; 
-            display: inline-block;
-            transition: transform 0.1s;
+        .right-col {
+            flex: 1.1;
+            background: rgba(20, 10, 20, 0.85);
+            backdrop-filter: blur(10px);
+            padding: 24px;
+            border-radius: 16px;
+            height: fit-content;
+            box-shadow: 0 4px 25px rgba(255, 106, 0, 0.08);
+            border: 1px solid rgba(255, 106, 0, 0.2);
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.5s ease both;
         }
-        .site-footer { background: #f0f0f0; border-top: 1px solid #ccc; padding: 40px 55px; display: flex; gap: 60px; }
-        .footer-col h3 { font-size: 15px; font-weight: 900; text-transform: uppercase; margin: 0 0 14px 0; }
+        .right-col:hover { box-shadow: 0 8px 40px rgba(255, 106, 0, 0.2); transform: translateY(-2px); }
+        h2 {
+            border-bottom: 2px solid var(--orange);
+            padding-bottom: 5px;
+            font-size: 22px;
+            font-weight: 900;
+            margin: 0 0 6px 0;
+            color: var(--pumpkin);
+            font-family: 'LuckiestGuy Regular', cursive;
+            letter-spacing: 0.5px;
+        }
+        .section-subtext { font-style: italic; font-size: 13.5px; color: #b08888; margin-bottom: 16px; display: block; }
+        .col-img {
+            width: 100%; height: auto;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+            border: 1px solid rgba(255, 106, 0, 0.15);
+        }
+        .col-text p { font-size: 14.5px; margin: 0 0 12px 0; color: #d0c0c0; }
+        .right-col h2 { font-size: 20px; line-height: 1.3; }
+        .right-col img {
+            width: 100%; height: auto;
+            border: 2px solid rgba(255, 106, 0, 0.3);
+            border-radius: 12px;
+            margin-bottom: 14px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+        }
+        .right-col p { font-size: 13.5px; margin: 0 0 12px 0; color: #d0c0c0; }
+        .summary {
+            background: rgba(255, 106, 0, 0.06);
+            border-left: 4px solid var(--orange);
+            padding: 16px 20px;
+            margin-top: 15px;
+            font-size: 13.5px;
+            font-style: italic;
+            color: #c0a0a0;
+            border-radius: 12px;
+        }
+        .summary b { color: var(--pumpkin); text-transform: uppercase; font-size: 11px; font-style: normal; display: block; margin-bottom: 4px; }
+        .stay-tuned {
+            font-style: italic;
+            font-size: 16px;
+            color: var(--pumpkin);
+            text-align: center;
+            padding: 20px 0;
+            border-top: 2px solid rgba(255, 106, 0, 0.3);
+            margin-top: 10px;
+            font-family: 'Creepster', cursive;
+            letter-spacing: 1px;
+            text-shadow: 0 0 15px rgba(255, 106, 0, 0.3);
+            animation: flicker 4s infinite;
+        }
+
+        /* ── SOCIAL SHARE HALLOWEEN ── */
+        .social-share {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin: 30px 0;
+            width: 100%;
+        }
+        .social-share a {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 18px;
+            border-radius: 100px;
+            font-size: 13px;
+            font-weight: 900;
+            text-decoration: none;
+            text-transform: uppercase;
+            transition: all 0.25s ease;
+            border: none;
+        }
+        .social-share a:hover { transform: translateY(-3px); }
+        .social-share a.td { background: #5865F2; color: #fff; box-shadow: 0 4px 15px rgba(88,101,242,0.4); }
+        .social-share a.tt { background: linear-gradient(135deg, #1d56f2, #f21de4); color: #fff; box-shadow: 0 4px 15px rgba(29,86,242,0.4); }
+        .social-share a.ty { background: #ec1717e0; color: #fff; box-shadow: 0 4px 15px rgba(236,23,23,0.4); }
+        .social-share a img { width: 18px; height: 18px; vertical-align: middle; }
+
+        .back-button-container { text-align: center; margin: 30px 0 50px 0; }
+        .back-button {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--orange), var(--blood), #4a0000);
+            color: #fff;
+            text-decoration: none;
+            font-weight: 900;
+            padding: 12px 26px;
+            border-radius: 100px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(255, 106, 0, 0.4);
+            border: 2px solid rgba(255, 106, 0, 0.3);
+            font-family: 'LuckiestGuy Regular', cursive;
+        }
+        .back-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 35px rgba(255, 106, 0, 0.7);
+        }
+
+        /* ── FOOTER HALLOWEEN ── */
+        .site-footer {
+            background: rgba(13, 13, 13, 0.95);
+            border-top: 2px solid rgba(255, 106, 0, 0.3);
+            padding: 40px 55px;
+            display: flex;
+            gap: 60px;
+            position: relative;
+            z-index: 1;
+        }
+        .footer-col h3 { font-size: 15px; font-weight: 900; text-transform: uppercase; margin: 0 0 14px 0; color: var(--orange); font-family: 'LuckiestGuy Regular', cursive; }
         .footer-col ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
-        .footer-col ul li a { color: #333; text-decoration: none; font-size: 14px; }
-        .footer-col p { font-size: 13px; color: #555; margin: 0 0 10px 0; }
+        .footer-col ul li a { color: #b08080; text-decoration: none; font-size: 14px; transition: color 0.2s; }
+        .footer-col ul li a:hover { color: var(--orange); }
+        .footer-col p { font-size: 13px; color: #b08080; margin: 0 0 10px 0; }
         .footer-community-links { display: flex; flex-direction: column; gap: 8px; }
-        .footer-community-links a { color: #175ec2; text-decoration: none; font-weight: 700; font-size: 14px; }
-        @media (max-width: 768px) { .site-header { padding: 12px 20px; } .site-nav { display: none; } .content-columns { flex-direction: column; } .grey-inner { flex-direction: column; } .grey-inner img { width: 100%; } .mobile-menu-btn { display: block; } .mobile-nav-dropdown { display: flex; flex-direction: column; gap: 12px; position: fixed; top: 60px; right: -280px; width: 250px; background: rgba(20,0,40,0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding: 24px; border-radius: 0 0 0 20px; box-shadow: -5px 10px 30px rgba(0,0,0,0.3); transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 999; border: 1px solid rgba(181, 76, 229, 0.3); border-right: none; } .mobile-nav-dropdown.is-open { right: 0; } .mobile-nav-dropdown a { text-decoration: none; font-family: 'LuckiestGuy Regular', cursive; font-size: 18px; color: #cc88ff; text-align: center; padding: 12px; border-radius: 100px; border: 2px solid rgba(181, 76, 229, 0.3); text-transform: uppercase; transition: all 0.2s; } .mobile-nav-dropdown a.active { background: rgba(181, 76, 229, 0.666); color: #fff; border-color: transparent; } .mobile-nav-dropdown a.nav-news { color: #1a73e8; } .mobile-nav-dropdown a.nav-leaks { color: #d93025; } .mobile-nav-dropdown a:hover { background: rgba(181, 76, 229, 0.666); color: #fff; border-color: transparent; } .site-footer { flex-direction: column; gap: 30px; padding: 30px 20px; } }
+        .footer-community-links a { color: var(--orange); text-decoration: none; font-weight: 700; font-size: 14px; transition: all 0.2s; }
+        .footer-community-links a:hover { color: var(--pumpkin); text-shadow: 0 0 10px var(--orange); }
+
+        /* ── ANIMATIONS ── */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(24px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 768px) {
+            .site-header { padding: 12px 20px; }
+            .site-nav { display: none; }
+            .content-columns { flex-direction: column; }
+            .mobile-menu-btn { display: block; }
+            .mobile-nav-dropdown {
+                display: flex; flex-direction: column; gap: 12px;
+                position: fixed; top: 60px; right: -280px; width: 250px;
+                background: rgba(13, 13, 13, 0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+                padding: 24px; border-radius: 0 0 0 20px; box-shadow: -5px 10px 30px rgba(0,0,0,0.5);
+                transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 999;
+                border: 1px solid rgba(255, 106, 0, 0.3); border-right: none;
+            }
+            .mobile-nav-dropdown.is-open { right: 0; }
+            .mobile-nav-dropdown a {
+                text-decoration: none; font-family: 'LuckiestGuy Regular', cursive; font-size: 18px;
+                color: var(--pumpkin); text-align: center; padding: 12px; border-radius: 100px;
+                border: 2px solid rgba(255, 106, 0, 0.3); text-transform: uppercase; transition: all 0.2s;
+            }
+            .mobile-nav-dropdown a.active {
+                background: var(--orange); color: #000; border-color: transparent;
+            }
+            .mobile-nav-dropdown a.nav-news { color: #1a73e8; }
+            .mobile-nav-dropdown a.nav-leaks { color: #d93025; }
+            .mobile-nav-dropdown a:hover {
+                background: var(--orange); color: #000; border-color: transparent;
+            }
+            .site-footer { flex-direction: column; gap: 30px; padding: 30px 20px; }
+        }
     </style>
 </head>
 <body>
@@ -259,12 +384,12 @@ border-color: #1b1ba0bc; ;  /* Couleur TikTok */
 
 <main class="bulletin-container">
 
-    <div class="dark-banner">The Blox Bulletin #017</div>
+    <div class="halloween-banner">☠ THE BLOX BULLETIN #017 ☠</div>
 
-    <!-- HERO AVEC AURA FUMÉE ANIMÉE -->
+    <!-- HERO AVEC EMBERS ANIMÉS -->
     <div class="hero-dark-wrapper" id="heroWrapper">
         <img src="../017/img/halloween.png" alt="The Blox Bulletin 017">
-        <canvas id="smokeCanvas"></canvas>
+        <canvas id="emberCanvas"></canvas>
     </div>
 
     <div class="publish-date">Octobre 2025</div>
@@ -367,9 +492,9 @@ border-color: #1b1ba0bc; ;  /* Couleur TikTok */
         </div>
     </div>
 </footer>
-<!-- SMOKE ANIMATION -->
+<!-- EMBER ANIMATION -->
 <script>
-const canvas = document.getElementById('smokeCanvas');
+const canvas = document.getElementById('emberCanvas');
 const wrapper = document.getElementById('heroWrapper');
 const ctx = canvas.getContext('2d');
 
@@ -380,57 +505,62 @@ function resize() {
 resize();
 window.addEventListener('resize', resize);
 
-const particles = [];
+const embers = [];
 
-class SmokeParticle {
+class Ember {
     constructor() { this.reset(); }
     reset() {
         this.x = Math.random() * canvas.width;
-        this.y = canvas.height + 20;
-        this.radius = Math.random() * 60 + 30;
-        this.opacity = Math.random() * 0.25 + 0.05;
-        this.speed = Math.random() * 0.6 + 0.2;
-        this.drift = (Math.random() - 0.5) * 0.4;
-        // Couleurs sombres : violet, bleu nuit, noir
+        this.y = canvas.height + 10;
+        this.radius = Math.random() * 4 + 2;
+        this.opacity = Math.random() * 0.8 + 0.2;
+        this.speed = Math.random() * 1.2 + 0.4;
+        this.drift = (Math.random() - 0.5) * 0.6;
+        this.wobble = Math.random() * Math.PI * 2;
+        this.wobbleSpeed = Math.random() * 0.03 + 0.01;
+        this.wobbleAmp = Math.random() * 20 + 10;
         const colors = [
-            [80, 0, 160],
-            [40, 0, 100],
-            [100, 20, 180],
-            [20, 0, 60],
-            [60, 0, 120],
+            [255, 106, 0],
+            [255, 140, 0],
+            [255, 60, 0],
+            [200, 50, 0],
+            [255, 200, 50],
+            [180, 40, 0],
         ];
         this.color = colors[Math.floor(Math.random() * colors.length)];
-        this.grow = Math.random() * 0.3 + 0.1;
+        this.life = 1;
+        this.decay = Math.random() * 0.008 + 0.004;
     }
     update() {
         this.y -= this.speed;
-        this.x += this.drift;
-        this.radius += this.grow;
-        this.opacity -= 0.0015;
-        if (this.opacity <= 0 || this.y < -this.radius) this.reset();
+        this.wobble += this.wobbleSpeed;
+        this.x += this.drift + Math.sin(this.wobble) * 0.3;
+        this.life -= this.decay;
+        if (this.life <= 0 || this.y < -20) this.reset();
     }
     draw() {
-        const [r,g,b] = this.color;
-        const grad = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.radius);
-        grad.addColorStop(0, `rgba(${r},${g},${b},${this.opacity})`);
-        grad.addColorStop(1, `rgba(${r},${g},${b},0)`);
+        const [r, g, b] = this.color;
+        const alpha = this.opacity * this.life;
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        ctx.fillStyle = grad;
+        ctx.fillStyle = `rgba(${r},${g},${b},${alpha})`;
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(this.x + 1, this.y + 1, this.radius * 0.5, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255,255,200,${alpha * 0.4})`;
         ctx.fill();
     }
 }
 
-// Initialiser les particules
-for (let i = 0; i < 35; i++) {
-    const p = new SmokeParticle();
-    p.y = Math.random() * canvas.height; // positions initiales réparties
-    particles.push(p);
+for (let i = 0; i < 50; i++) {
+    const e = new Ember();
+    e.y = Math.random() * canvas.height;
+    embers.push(e);
 }
 
 function animate() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    particles.forEach(p => { p.update(); p.draw(); });
+    embers.forEach(e => { e.update(); e.draw(); });
     requestAnimationFrame(animate);
 }
 animate();
@@ -446,7 +576,7 @@ animate();
 
     window.addEventListener('scroll', () => {
         const header = document.querySelector('.site-header');
-        const darkZones = document.querySelectorAll('.blue-banner, .hero-image');
+        const darkZones = document.querySelectorAll('.halloween-banner, .hero-dark-wrapper');
         
         let isOverDarkZone = false;
         const headerCenter = header.getBoundingClientRect().top + (header.offsetHeight / 2);

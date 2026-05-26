@@ -7,7 +7,7 @@
 
     <link rel="icon" type="image/png" href="./shared/favicon.png">
     <link rel="shortcut icon" href="../shared/bf_logo.png" type="image/png">
-    <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
 
     <style>
@@ -26,13 +26,7 @@
         }
 
         * { box-sizing: border-box; }
-        body {
-            margin: 0;
-            font-family: var(--font-stack-body);
-            color: var(--color-text);
-            background-color: #ffffff;
-            line-height: 1.6;
-        }
+        body { margin: 0; font-family: var(--font-stack-body); color: var(--color-text); background-color: #f5f6fa; line-height: 1.6; }
 
         /* ── CONFIGURATION PARFAITE DU FOND VIA PICTURE ── */
         .site-background {
@@ -125,7 +119,7 @@
         .site-header__logo img { height: 42px; width: auto; display: block; }
         .site-nav { display: flex; gap: 8px; padding: 0; margin: 0; list-style: none; font-weight: 900;}
         .site-nav a { color: var(--color-text); text-decoration: none; font-weight: 900; font-size: 17px; text-transform: uppercase; font-family: 'LuckiestGuy Regular', cursive; padding: 8px 16px; border-radius: 10px; transition: background 0.2s, color 0.2s; }
-        .site-nav a.nav-news { color: #1a73e8; } .site-nav a.nav-leaks { color: #d93025; } .site-nav a:hover { background: var(--color-primary); color: #000; }
+        .site-nav a:hover { background: var(--color-primary); color: #000; }
         .site-header__icons { display: flex; gap: 12px; color: var(--color-text); cursor: pointer; align-items: center; }
         .site-header__icons span { padding: 8px; border-radius: 10px; transition: background 0.2s; }
         .site-header__icons span:hover { background: rgba(0,0,0,0.06); }
@@ -134,14 +128,12 @@
         
 
         /* ── CONTENEUR PRINCIPAL ── */
-        .bulletin-container {
-            max-width: 900px;
-            margin: 40px auto;
-            padding: 0 20px;
-        }
+        .bulletin-container { max-width: 1100px; margin: 40px auto; padding: 0 24px; }
 
         /* ── BANDEAU BLEU ── */
-.blue-banner { 
+@keyframes shimmerBanner { 0%{background-position:0% center} 100%{background-position:200% center} }
+
+        .blue-banner { 
     display: center; 
     background: linear-gradient(135deg, #175ec2, #2980d4, #175ec2); background-size: 200% auto; 
     color: #fff; padding: 16px 60px; font-size: 36px; 
@@ -155,13 +147,14 @@
 
         /* ── IMAGE HERO ── */
         .hero-image-wrapper { width: 100%; margin-bottom: 15px; }
-        .hero-image { width: 100%; height: auto; display: block; border-radius: 20px; border: 3px solid #000000; }
+        .fade-in { animation: fadeInUp 0.5s ease both; }
+        .hero-image { width: 100%; height: auto; display: block; border-radius: 20px; box-shadow: 0 8px 30px rgba(0,0,0,0.1); }
         .publish-date { font-size: 15px; font-weight: bold; color: #222222; margin-bottom: 25px; }
 
         /* ── EN-TÊTE JOURNAL ── */
         .journal-header { text-align: center; margin-top: 30px; }
-        .journal-title { font-family: 'Georgia', serif; font-size: 52px; font-weight: bold; color: #111111; margin: 0 0 10px 0; letter-spacing: -1px; }
-        .journal-subtitle { font-family: 'Georgia', serif; font-style: italic; font-size: 18px; color: #555555; margin: 0 0 25px 0; }
+        .journal-title { font-family: 'LuckiestGuy Regular', cursive; font-size: 38px; font-weight: bold; color: #111111; margin: 0 0 10px 0; letter-spacing: -1px; }
+        .journal-subtitle { font-family: 'Inter', sans-serif; font-style: italic; font-size: 18px; color: #555555; margin: 0 0 25px 0; }
         .journal-meta { font-weight: bold; font-size: 14px; color: #111111; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
         .dashed-line { border-top: 2px dashed #111111; margin: 15px 0 0 0; }
 
@@ -335,72 +328,31 @@
         }
 
         /* ── BOUTONS PARTAGE ── */
-        .social-share {  
-    display: flex;         /* Utilise Flexbox */
-    justify-content: center; /* Centre horizontalement */
-    gap: 15px;             /* Espace entre les boutons */
-    margin: 30px 0;        /* Espace haut/bas */
-    width: 100%;           /* S'assure qu'il prend toute la largeur */
-}
-
-/* On enlève les contraintes qui bloquaient le centrage */
-.social-share a { 
-    display: inline-flex; 
-    align-items: center; 
-    gap: 7px; 
-    padding: 8px 14px; 
-    border: 2px solid #000; 
-    border-radius: 4px; 
-    font-size: 13px; 
-    font-weight: 900; 
-    text-decoration: none; 
-    color: #000; 
-    text-transform: uppercase; 
-}
-        .social-share a.fb { background: #3b5998; color: #fff; border-color: #3b5998; }
-        .social-share a.tw { background: linear-gradient(135deg, #1dddf2, #f21de4); color: #fff; border-color: #1da1f2; }
-        .social-share a.pi { background: #e60023; color: #fff; border-color: #e60023; }
-        .back-button-container { text-align: center; margin: 30px 0 50px 0; }
-
-        /* Taille et alignement du logo TikTok */
-.tiktok-icon {
-    width: 20px;       /* Ajuste la taille ici (ex: 20px, 24px) */
-    height: 20px;      /* Garde la même valeur pour un carré parfait */
-    vertical-align: middle;
-}
-
-/* Style du bouton TikTok pour qu'il corresponde aux autres */
-.social-share a.tt { 
-background: linear-gradient(135deg, #1d56f2, #f21de4); 
-color: #fff; 
-border-color: #140d73 ;  /* Couleur TikTok */
-}
-
-.youtube-icon {
-    width: 20px;       /* Ajuste la taille ici (ex: 20px, 24px) */
-    height: 20px;      /* Garde la même valeur pour un carré parfait */
-    vertical-align: middle;
-}
-
-/* Style du bouton TikTok pour qu'il corresponde aux autres */
-.social-share a.ty { 
-background: #ec1717e0; 
-color: #fff; 
-border-color: #a11414; ;  /* Couleur TikTok */
-}
-
-.discord-icon {
-    width: 20px;       /* Ajuste la taille ici (ex: 20px, 24px) */
-    height: 20px;      /* Garde la même valeur pour un carré parfait */
-    vertical-align: middle;
-}
-
-/* Style du bouton TikTok pour qu'il corresponde aux autres */
-.social-share a.td { 
-background: #2222d8bc; 
-color: #fff; 
-border-color: #1b1ba0bc; ;  /* Couleur TikTok */
-}
+        .social-share {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin: 30px 0;
+            width: 100%;
+        }
+        .social-share a {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 18px;
+            border-radius: 100px;
+            font-size: 13px;
+            font-weight: 900;
+            text-decoration: none;
+            text-transform: uppercase;
+            transition: all 0.25s ease;
+            border: none;
+        }
+        .social-share a:hover { transform: translateY(-3px); }
+        .social-share a.td { background: #5865F2; color: #fff; box-shadow: 0 4px 15px rgba(88,101,242,0.4); }
+        .social-share a.tt { background: linear-gradient(135deg, #1d56f2, #f21de4); color: #fff; box-shadow: 0 4px 15px rgba(29,86,242,0.4); }
+        .social-share a.ty { background: #ec1717e0; color: #fff; box-shadow: 0 4px 15px rgba(236,23,23,0.4); }
+        .social-share a img { width: 18px; height: 18px; vertical-align: middle; }
 
         /* ── BOUTON RETOUR ── */
         .back-button-container { text-align: center; margin: 30px 0 50px 0; }
@@ -419,7 +371,7 @@ border-color: #1b1ba0bc; ;  /* Couleur TikTok */
             display: inline-block;
             transition: transform 0.1s;
         }
-        .back-button:hover { transform: scale(1.03); }
+        .back-button:hover { transform: scale(1.05); box-shadow: 0 6px 20px rgba(255,218,0,0.5); }
 
         /* ── FOOTER ── */
         .site-footer {
@@ -435,7 +387,7 @@ border-color: #1b1ba0bc; ;  /* Couleur TikTok */
         .footer-col ul li a:hover { text-decoration: underline; }
         .footer-col p { font-size: 13px; color: #555; margin: 0 0 10px 0; }
         .footer-community-links { display: flex; flex-direction: column; gap: 8px; }
-        .footer-community-links a { color: #175ec2; text-decoration: none; font-weight: 700; font-size: 14px; }
+        .footer-community-links a { color: #175ec2; text-decoration: none; font-weight: 700; font-size: 14px; transition: color 0.2s; } .footer-community-links a:hover { color: #0d47a1; }
 
         @media (max-width: 768px) {
             .site-header { padding: 12px 20px; }
@@ -444,7 +396,9 @@ border-color: #1b1ba0bc; ;  /* Couleur TikTok */
             .fruit-card { border-right: none; border-bottom: 2px solid #000; }
             .fruit-card:last-child { border-bottom: none; }
             .site-footer { flex-direction: column; gap: 30px; padding: 30px 20px; }
-            .blue-banner { font-size: 24px; padding: 12px 30px; }
+            @keyframes shimmerBanner { 0%{background-position:0% center} 100%{background-position:200% center} }
+
+        .blue-banner { font-size: 24px; padding: 12px 30px; }
             .mobile-menu-btn { display: block; }
             .mobile-nav-dropdown {
                 display: flex; flex-direction: column; gap: 12px;
