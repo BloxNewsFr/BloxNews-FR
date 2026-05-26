@@ -336,7 +336,7 @@
         /* ── Commentaire ─────────────────────────────────── */
         .comment-item { display: flex; gap: 11px; animation: fadeInUp 0.28s ease both; }
         .comment-item__body {
-            flex: 1; background: #f9f9fb; border-radius: 16px;
+            flex: 1; min-width: 0; background: #f9f9fb; border-radius: 16px;
             padding: 13px 15px 11px; position: relative;
             border: 1px solid #efefef;
             transition: border-color 0.2s, box-shadow 0.2s;
@@ -353,7 +353,7 @@
         .comment-item__discord-tag svg { width: 10px; height: 10px; }
         .comment-item__username { font-weight: 700; font-size: 13px; color: #111; }
         .comment-item__time { font-size: 11px; color: #bbb; margin-left: auto; white-space: nowrap; }
-        .comment-item__text { font-size: 14px; color: #333; line-height: 1.6; margin-bottom: 9px; }
+        .comment-item__text { font-size: 14px; color: #333; line-height: 1.6; margin-bottom: 9px; overflow-wrap: break-word; word-break: break-word; }
         .comment-item__actions { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
         .comment-btn {
             display: inline-flex; align-items: center; gap: 4px;
@@ -376,11 +376,11 @@
         }
         .comment-reply { display: flex; gap: 9px; }
         .comment-reply__body {
-            flex: 1; background: #fff; border-radius: 12px;
+            flex: 1; min-width: 0; background: #fff; border-radius: 12px;
             padding: 10px 13px; border: 1px solid #eee;
         }
         .comment-reply__header { display: flex; align-items: center; gap: 7px; margin-bottom: 5px; }
-        .comment-reply__text { font-size: 13px; color: #444; line-height: 1.5; }
+        .comment-reply__text { font-size: 13px; color: #444; line-height: 1.5; overflow-wrap: break-word; word-break: break-word; }
 
         /* ── Boîte de réponse ────────────────────────────── */
         .comment-reply-write { display: none; margin-top: 10px; }
