@@ -75,7 +75,7 @@
         }
 
         .site-nav a { text-decoration: none; font-size: 17px; text-transform: uppercase; font-family: 'LuckiestGuy Regular', cursive; padding: 8px 16px; border-radius: 10px; }
-        .site-nav a:hover { background: var(--color-primary); color: #000; }
+        .site-nav a.nav-news { color: #1a73e8; } .site-nav a.nav-leaks { color: #d93025; } .site-nav a:hover { background: var(--color-primary); color: #000; }
         .site-header__icons { display: flex; gap: 12px; cursor: pointer; align-items: center; position: relative; z-index: 1; }
         .site-header__icons span { padding: 8px; border-radius: 10px; transition: background 0.2s; }
         .site-header__icons span:hover { background: rgba(0,0,0,0.06); }
@@ -162,6 +162,8 @@
             .mobile-nav-dropdown a.active {
                 background: #175ec2; color: #fff; border-color: transparent;
             }
+            .mobile-nav-dropdown a.nav-news { color: #1a73e8; }
+            .mobile-nav-dropdown a.nav-leaks { color: #d93025; }
 
             /* PILULE FLOTTANTE MOBILE */
             .mobile-pagination-pill {
@@ -293,21 +295,19 @@
         <nav>
             <ul class="site-nav">
                 <li><a href="https://www.roblox.com/fr/games/2753915549/Blox-Fruits">Game</a></li>
-                <li><a href="./index.html">News</a></li>
-                <li><a href="./neo_bulletin.html">Leaks</a></li>
+                <li><a href="./index.html" class="nav-news">News</a></li>
+                <li><a href="./neo_bulletin.html" class="nav-leaks">Leaks</a></li>
             </ul>
         </nav>
         <div class="site-header__icons">
-            <span class="material-symbols-outlined">search</span>
-            <span class="material-symbols-outlined">person</span>
             <span class="material-symbols-outlined mobile-menu-btn" id="menuToggle">menu</span>
         </div>
     </header>
 
     <div class="mobile-nav-dropdown" id="mobileNav">
         <a href="https://www.roblox.com/fr/games/2753915549/Blox-Fruits">Game</a>
-        <a href="./index.html" class="active" style="background:#175ec2; color:#fff; border-color:transparent;">News</a>
-        <a href="./neo_bulletin.html">Leaks</a>
+        <a href="./index.html" class="nav-news active" style="background:#175ec2; color:#fff; border-color:transparent;">News</a>
+        <a href="./neo_bulletin.html" class="nav-leaks">Leaks</a>
     </div>
 
     <main class="main-content">

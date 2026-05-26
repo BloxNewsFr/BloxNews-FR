@@ -127,10 +127,12 @@
         .site-header__logo img { height: 42px; width: auto; display: block; }
         .site-nav { display: flex; gap: 8px; padding: 0; margin: 0; list-style: none; font-weight: 900;}
         .site-nav a { color: var(--color-text); text-decoration: none; font-weight: 900; font-size: 17px; text-transform: uppercase; font-family: 'LuckiestGuy Regular', cursive; padding: 8px 16px; border-radius: 10px; transition: background 0.2s, color 0.2s; }
-        .site-nav a:hover { background: var(--color-primary); color: #000; }
+        .site-nav a.nav-news { color: #1a73e8; } .site-nav a.nav-leaks { color: #d93025; } .site-nav a:hover { background: var(--color-primary); color: #000; }
         .site-header__icons { display: flex; gap: 12px; color: var(--color-text); cursor: pointer; align-items: center; }
         .site-header__icons span { padding: 8px; border-radius: 10px; transition: background 0.2s; }
         .site-header__icons span:hover { background: rgba(0,0,0,0.06); }
+        .mobile-menu-btn { display: none; }
+        .mobile-nav-dropdown { display: none; }
         
 
         /* CONTENEUR DU BULLETIN */
@@ -335,6 +337,26 @@ border-color: #1b1ba0bc; ;  /* Couleur TikTok */
             .content-columns, .dev-thought-box { flex-direction: column; }
             .dev-thought-box img { width: 100%; max-width: 150px; margin: 0 auto; }
             .blue-banner { font-size: 24px; padding: 12px 30px; }
+            .mobile-menu-btn { display: block; }
+            .mobile-nav-dropdown {
+                display: flex; flex-direction: column; gap: 12px;
+                position: fixed; top: 60px; right: -280px; width: 250px;
+                background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+                padding: 24px; border-radius: 0 0 0 20px; box-shadow: -5px 10px 30px rgba(0,0,0,0.1);
+                transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 999; border: 1px solid rgba(0,0,0,0.05); border-right: none;
+            }
+            .mobile-nav-dropdown.is-open { right: 0; }
+            .mobile-nav-dropdown a {
+                text-decoration: none; font-family: 'LuckiestGuy Regular', cursive; font-size: 18px;
+                color: #111; text-align: center; padding: 12px; border-radius: 100px; border: 2px solid #e8e8f0;
+                text-transform: uppercase; transition: all 0.2s;
+            }
+            .mobile-nav-dropdown a.active {
+                background: #175ec2; color: #fff; border-color: transparent;
+            }
+            .mobile-nav-dropdown a.nav-news { color: #1a73e8; } .mobile-nav-dropdown a.nav-leaks { color: #d93025; } .mobile-nav-dropdown a:hover {
+                background: var(--color-primary); color: #000; border-color: transparent;
+            }
         }
     </style>
 </head>
@@ -348,16 +370,21 @@ border-color: #1b1ba0bc; ;  /* Couleur TikTok */
         <nav>
             <ul class="site-nav">
                 <li><a href="https://www.roblox.com/fr/games/2753915549/Blox-Fruits">Game</a></li>
-                <li><a href="../index.html">News</a></li>
-                <li><a href="./neo_bulletin.html">Leaks</a></li>
+                <li><a href="../index.html" class="nav-news">News</a></li>
+                <li><a href="../neo_bulletin.html" class="nav-leaks">Leaks</a></li>
 
             </ul>
         </nav>
         <div class="site-header__icons">
-            <span class="material-symbols-outlined">search</span>
-            <span class="material-symbols-outlined">person</span>
+            <span class="material-symbols-outlined mobile-menu-btn" id="menuToggle">menu</span>
         </div>
     </header>
+
+    <div class="mobile-nav-dropdown" id="mobileNav">
+        <a href="https://www.roblox.com/fr/games/2753915549/Blox-Fruits">Game</a>
+        <a href="../index.html" class="nav-news">News</a>
+        <a href="../neo_bulletin.html" class="nav-leaks">Leaks</a>
+    </div>
 
     <!-- COEUR DE LA PAGE DU BULLETIN -->
     <main class="bulletin-container">
@@ -558,6 +585,15 @@ border-color: #1b1ba0bc; ;  /* Couleur TikTok */
     </div>
 </footer>
 <script>
+    const menuBtn = document.getElementById('menuToggle');
+    const mobileNav = document.getElementById('mobileNav');
+    if (menuBtn && mobileNav) {
+        menuBtn.addEventListener('click', () => {
+            mobileNav.classList.toggle('is-open');
+            menuBtn.textContent = mobileNav.classList.contains('is-open') ? 'close' : 'menu';
+        });
+    }
+
     window.addEventListener('scroll', () => {
         const header = document.querySelector('.site-header');
         const darkZones = document.querySelectorAll('.blue-banner, .hero-image');
