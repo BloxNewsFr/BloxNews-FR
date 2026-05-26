@@ -209,6 +209,302 @@
             .bulletin-meta { text-align: left; }
             .secret-bulletin::before { font-size: 45px; top: 5px; right: 5px; }
         }
+
+        /* ══════════════════════════════════════════════
+           SYSTÈME DE COMMENTAIRES — BLOX LEAKS  v2
+        ══════════════════════════════════════════════ */
+        .comment-section { margin-top: 28px; font-family: 'Inter', sans-serif; }
+
+        /* ── Toggle bar ─────────────────────────────────── */
+        .comment-toggle-bar {
+            display: flex; align-items: center; gap: 14px;
+            cursor: pointer; user-select: none;
+            padding: 15px 22px;
+            background: #fff;
+            border-radius: 18px;
+            border: 1.5px solid #f0f0f0;
+            box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+            transition: all 0.25s ease;
+        }
+        .comment-toggle-bar:hover {
+            border-color: rgba(255,26,26,0.35);
+            box-shadow: 0 6px 28px rgba(255,26,26,0.12);
+        }
+        .comment-toggle-bar__icon {
+            width: 38px; height: 38px; border-radius: 12px;
+            background: linear-gradient(135deg, #ff1a1a, #ff6060);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 17px; flex-shrink: 0;
+            box-shadow: 0 4px 14px rgba(255,26,26,0.38);
+        }
+        .comment-toggle-bar__label {
+            font-weight: 800; font-size: 15px; color: #111; letter-spacing: 0.3px;
+        }
+        .comment-toggle-bar__count {
+            background: #ff1a1a; color: #fff;
+            font-size: 11px; font-weight: 700;
+            padding: 3px 9px; border-radius: 100px;
+            box-shadow: 0 2px 8px rgba(255,26,26,0.4);
+        }
+        .comment-toggle-bar__arrow {
+            margin-left: auto; color: #ccc; font-size: 12px;
+            transition: transform 0.3s ease; font-weight: 900;
+        }
+        .comment-toggle-bar.is-open { border-radius: 18px 18px 0 0; border-bottom-color: transparent; }
+        .comment-toggle-bar.is-open .comment-toggle-bar__arrow { transform: rotate(180deg); }
+
+        /* ── Corps ───────────────────────────────────────── */
+        .comment-body {
+            display: none;
+            background: #fff;
+            border-radius: 0 0 18px 18px;
+            border: 1.5px solid rgba(255,26,26,0.18);
+            border-top: none;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.07);
+            padding: 24px 24px 20px;
+        }
+        .comment-body.is-open { display: block; }
+
+        /* ── Bannière Discord ────────────────────────────── */
+        .comment-login-banner {
+            display: flex; align-items: center; gap: 16px;
+            background: linear-gradient(135deg, #5865F2, #4752C4 80%);
+            border-radius: 14px; padding: 14px 18px; margin-bottom: 22px;
+            box-shadow: 0 6px 22px rgba(88,101,242,0.3);
+        }
+        .comment-login-banner__icon { font-size: 26px; flex-shrink: 0; }
+        .comment-login-banner__text { flex: 1; }
+        .comment-login-banner__title { color: #fff; font-weight: 800; font-size: 14px; margin-bottom: 2px; }
+        .comment-login-banner__sub   { color: rgba(255,255,255,0.65); font-size: 12px; line-height: 1.4; }
+        .comment-discord-btn {
+            background: #fff; color: #5865F2; font-weight: 800; font-size: 12px;
+            border: none; border-radius: 100px; padding: 9px 18px;
+            cursor: pointer; white-space: nowrap; transition: all 0.2s ease;
+            font-family: 'Inter', sans-serif; letter-spacing: 0.2px;
+        }
+        .comment-discord-btn:hover { background: #eef0ff; transform: scale(1.04); }
+
+        /* ── Zone de saisie ──────────────────────────────── */
+        .comment-write-box {
+            display: flex; gap: 12px; align-items: flex-start; margin-bottom: 24px;
+        }
+        .comment-write-box.is-hidden { display: none; }
+        .comment-avatar {
+            width: 38px; height: 38px; border-radius: 50%; object-fit: cover; flex-shrink: 0;
+            box-shadow: 0 0 0 2px rgba(255,26,26,0.25);
+        }
+        .comment-avatar--placeholder {
+            width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-weight: 800; font-size: 15px;
+            box-shadow: 0 0 0 2px rgba(255,26,26,0.2);
+        }
+        .comment-input-wrap { flex: 1; position: relative; }
+        .comment-input {
+            width: 100%; border: 1.5px solid #eee; border-radius: 14px;
+            padding: 11px 80px 11px 16px; font-size: 14px; font-family: 'Inter', sans-serif;
+            color: #111; background: #f9f9fb; resize: none; outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+            min-height: 46px; max-height: 160px; line-height: 1.5;
+        }
+        .comment-input:focus {
+            border-color: #ff1a1a; background: #fff;
+            box-shadow: 0 0 0 3px rgba(255,26,26,0.08);
+        }
+        .comment-submit {
+            position: absolute; right: 8px; bottom: 8px;
+            background: linear-gradient(135deg, #ff1a1a, #cc0000);
+            color: #fff; border: none; border-radius: 100px;
+            padding: 6px 15px; font-size: 12px; font-weight: 700; cursor: pointer;
+            font-family: 'Inter', sans-serif; transition: all 0.2s ease;
+            box-shadow: 0 3px 10px rgba(255,26,26,0.35); letter-spacing: 0.2px;
+        }
+        .comment-submit:hover { transform: scale(1.06); box-shadow: 0 5px 16px rgba(255,26,26,0.5); }
+
+        /* ── Liste ───────────────────────────────────────── */
+        .comment-list { display: flex; flex-direction: column; gap: 14px; }
+
+        /* ── Commentaire ─────────────────────────────────── */
+        .comment-item { display: flex; gap: 11px; animation: fadeInUp 0.28s ease both; }
+        .comment-item__body {
+            flex: 1; background: #f9f9fb; border-radius: 16px;
+            padding: 13px 15px 11px; position: relative;
+            border: 1px solid #efefef;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .comment-item__body:hover { border-color: rgba(255,26,26,0.15); box-shadow: 0 4px 18px rgba(0,0,0,0.05); }
+        .comment-item__header {
+            display: flex; align-items: center; gap: 8px; margin-bottom: 7px;
+        }
+        .comment-item__discord-tag {
+            display: inline-flex; align-items: center; gap: 3px;
+            background: rgba(88,101,242,0.1); border-radius: 6px;
+            padding: 1px 6px; font-size: 10px; font-weight: 700; color: #5865F2;
+        }
+        .comment-item__discord-tag svg { width: 10px; height: 10px; }
+        .comment-item__username { font-weight: 700; font-size: 13px; color: #111; }
+        .comment-item__time { font-size: 11px; color: #bbb; margin-left: auto; white-space: nowrap; }
+        .comment-item__text { font-size: 14px; color: #333; line-height: 1.6; margin-bottom: 9px; }
+        .comment-item__actions { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+        .comment-btn {
+            display: inline-flex; align-items: center; gap: 4px;
+            background: none; border: 1px solid transparent; cursor: pointer;
+            padding: 4px 10px; border-radius: 100px;
+            font-size: 12px; font-weight: 600; color: #999;
+            transition: all 0.18s ease; font-family: 'Inter', sans-serif;
+        }
+        .comment-btn:hover { background: rgba(255,26,26,0.07); color: #ff1a1a; border-color: rgba(255,26,26,0.15); }
+        .comment-btn--liked { color: #ff1a1a; background: rgba(255,26,26,0.08); border-color: rgba(255,26,26,0.2); }
+        .comment-btn--delete { color: #ddd; }
+        .comment-btn--delete:hover { background: rgba(220,0,0,0.07); color: #cc2222; border-color: rgba(200,0,0,0.15); }
+        .comment-btn__like-count { font-weight: 700; min-width: 14px; }
+
+        /* ── Réponses ────────────────────────────────────── */
+        .comment-replies {
+            margin-top: 11px; padding-top: 11px;
+            border-top: 1px solid #eee;
+            display: flex; flex-direction: column; gap: 10px;
+        }
+        .comment-reply { display: flex; gap: 9px; }
+        .comment-reply__body {
+            flex: 1; background: #fff; border-radius: 12px;
+            padding: 10px 13px; border: 1px solid #eee;
+        }
+        .comment-reply__header { display: flex; align-items: center; gap: 7px; margin-bottom: 5px; }
+        .comment-reply__text { font-size: 13px; color: #444; line-height: 1.5; }
+
+        /* ── Boîte de réponse ────────────────────────────── */
+        .comment-reply-write { display: none; margin-top: 10px; }
+        .comment-reply-write.is-open { display: flex; gap: 9px; align-items: flex-start; }
+        .comment-reply-input {
+            flex: 1; border: 1.5px solid #eee; border-radius: 12px;
+            padding: 9px 14px; font-size: 13px; font-family: 'Inter', sans-serif;
+            outline: none; background: #fff; resize: none;
+            transition: border-color 0.2s;
+        }
+        .comment-reply-input:focus { border-color: #ff1a1a; }
+        .comment-reply-submit {
+            background: #ff1a1a; color: #fff; border: none; border-radius: 100px;
+            padding: 8px 14px; font-size: 12px; font-weight: 700; cursor: pointer;
+            font-family: 'Inter', sans-serif; align-self: flex-end; white-space: nowrap;
+            transition: all 0.18s; box-shadow: 0 3px 10px rgba(255,26,26,0.3);
+        }
+        .comment-reply-submit:hover { background: #cc0000; transform: scale(1.04); }
+
+        /* ── Bouton voir plus ────────────────────────────── */
+        .comment-see-more-btn {
+            margin-top: 18px; width: 100%;
+            background: none; border: 1.5px dashed #e0e0e0; border-radius: 12px;
+            padding: 12px; font-weight: 700; font-size: 13px; color: #bbb;
+            cursor: pointer; font-family: 'Inter', sans-serif;
+            transition: all 0.22s ease; letter-spacing: 0.2px;
+        }
+        .comment-see-more-btn:hover {
+            border-color: #ff1a1a; color: #ff1a1a;
+            background: rgba(255,26,26,0.03);
+        }
+        .comment-see-more-btn.is-hidden { display: none; }
+
+        /* ── Séparateur ──────────────────────────────────── */
+        .comment-divider {
+            display: flex; align-items: center; gap: 10px;
+            color: #ddd; font-size: 10px; font-weight: 700; letter-spacing: 1.2px;
+            text-transform: uppercase; margin: 6px 0 2px;
+        }
+        .comment-divider::before, .comment-divider::after {
+            content: ""; flex: 1; height: 1px; background: #f0f0f0;
+        }
+
+        /* ── Modal TOUS LES COMMENTAIRES ─────────────────── */
+        /* ⚠️ position:fixed — doit rester en dehors de tout container transformé */
+        #commentsModal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 9999; display: flex; align-items: center; justify-content: center;
+            background: rgba(10,10,20,0.72); backdrop-filter: blur(10px);
+            opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+        }
+        #commentsModal.is-active { opacity: 1; pointer-events: auto; }
+        .comments-modal {
+            background: #fff; border-radius: 22px;
+            width: 90%; max-width: 640px; max-height: 82vh;
+            display: flex; flex-direction: column;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.1);
+            transform: translateY(20px) scale(0.97);
+            transition: transform 0.32s cubic-bezier(0.34,1.56,0.64,1);
+            overflow: hidden;
+        }
+        #commentsModal.is-active .comments-modal { transform: translateY(0) scale(1); }
+        .comments-modal__header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 20px 24px; border-bottom: 1px solid #f2f2f2; flex-shrink: 0;
+            background: linear-gradient(135deg, #fff9f9, #fff);
+        }
+        .comments-modal__title {
+            font-family: 'LuckiestGuy Regular', cursive; font-size: 19px; color: #111;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .comments-modal__close {
+            width: 32px; height: 32px; border-radius: 50%; border: none;
+            background: #f5f5f5; color: #999; font-size: 16px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.18s; line-height: 1;
+        }
+        .comments-modal__close:hover { background: #ff1a1a; color: #fff; }
+        .comments-modal__body {
+            flex: 1; overflow-y: auto; padding: 20px 24px;
+            display: flex; flex-direction: column; gap: 14px;
+        }
+        .comments-modal__body::-webkit-scrollbar { width: 5px; }
+        .comments-modal__body::-webkit-scrollbar-track { background: transparent; }
+        .comments-modal__body::-webkit-scrollbar-thumb { background: #e0e0e0; border-radius: 3px; }
+        .comments-modal__body::-webkit-scrollbar-thumb:hover { background: #ff1a1a; }
+
+        @media (max-width: 600px) {
+            .comment-body { padding: 18px 14px; }
+            .comments-modal { width: 96%; max-height: 90vh; }
+            .comments-modal__body { padding: 14px; }
+            .comment-login-banner { flex-wrap: wrap; gap: 12px; }
+            .comment-discord-btn { width: 100%; text-align: center; }
+        }
+
+            .comments-modal { width: 96%; max-height: 88vh; }
+            .comments-modal__body { padding: 16px; }
+            .comment-login-banner { flex-wrap: wrap; }
+        }
+
+
+        /* ── Animation like TikTok ─────────────────────── */
+        @keyframes likeHeartPop {
+            0%   { transform: scale(1); }
+            15%  { transform: scale(1.6)  rotate(-12deg); }
+            30%  { transform: scale(0.88) rotate(6deg); }
+            45%  { transform: scale(1.38) rotate(-4deg); }
+            65%  { transform: scale(1.05) rotate(1deg); }
+            100% { transform: scale(1)    rotate(0deg); }
+        }
+        @keyframes likeParticle {
+            0%   { transform: translate(0,0) scale(1); opacity: 1; }
+            100% { transform: translate(var(--px), var(--py)) scale(0); opacity: 0; }
+        }
+        @keyframes likeRipple {
+            0%   { transform: scale(0.4); opacity: 0.75; }
+            100% { transform: scale(3);   opacity: 0; }
+        }
+        .like-animate {
+            animation: likeHeartPop 0.55s cubic-bezier(0.34,1.56,0.64,1) both !important;
+        }
+        .like-particle {
+            position: absolute; width: 6px; height: 6px;
+            border-radius: 50%; pointer-events: none;
+            animation: likeParticle 0.55s ease-out both;
+        }
+        .like-ripple {
+            position: absolute; width: 28px; height: 28px;
+            border-radius: 50%; border: 2px solid rgba(255,26,26,0.55);
+            pointer-events: none; left: -14px; top: -14px;
+            animation: likeRipple 0.5s ease-out both;
+        }
+
     </style>
 </head>
 <body>
@@ -274,7 +570,66 @@
                     <p>Le <span class="highlight">nouveau fruit</span> commence à prendre forme. Les mers s'agitent, et de nouvelles structures massives ont été aperçues au loin. Préparez vos fruits, car le marché noir risque de s'enflammer.</p>
                     <p>Passez à la prochaine section pour décrypter les données récupérées par nos espions. Restez sur vos gardes.</p>
                 </div>
+
+            <!-- ══════════════════════════════════════════════
+                 SYSTÈME DE COMMENTAIRES
+            ══════════════════════════════════════════════ -->
+            <div class="comment-section" id="commentSection">
+
+                <!-- Barre toggle -->
+                <div class="comment-toggle-bar" id="commentToggle" onclick="toggleComments()">
+                    <div class="comment-toggle-bar__icon">💬</div>
+                    <span class="comment-toggle-bar__label">Commentaires</span>
+                    <span class="comment-toggle-bar__count" id="commentCountBadge">0</span>
+                    <span class="comment-toggle-bar__arrow">▾</span>
+                </div>
+
+                <!-- Corps -->
+                <div class="comment-body" id="commentBody">
+
+                    <!-- Bannière Discord login -->
+                    <div class="comment-login-banner" id="discordBanner">
+                        <span class="comment-login-banner__icon">🎮</span>
+                        <div class="comment-login-banner__text">
+                            <div class="comment-login-banner__title">Connecte-toi pour commenter</div>
+                            <div class="comment-login-banner__sub">Ton pseudo et ton avatar Discord seront utilisés</div>
+                        </div>
+                        <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                             🔌 POINT D'INTÉGRATION DISCORD OAUTH
+                             Remplace onclick par ton vrai handler OAuth.
+                             Appelle ensuite : discordLogin({ username, avatar })
+                        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+                        <button class="comment-discord-btn"
+                            onclick="discordLogin({ username: 'Utilisateur_45', avatar: null })">
+                            Se connecter
+                        </button>
+                    </div>
+
+                    <!-- Zone de saisie (visible si connecté) -->
+                    <div class="comment-write-box is-hidden" id="commentWriteBox">
+                        <div class="comment-avatar--placeholder" id="userAvatarBox">?</div>
+                        <div class="comment-input-wrap">
+                            <textarea class="comment-input" id="commentInput"
+                                placeholder="Écris un commentaire…" rows="1"
+                                oninput="autoResize(this)"></textarea>
+                            <button class="comment-submit" onclick="postComment()">Poster</button>
+                        </div>
+                    </div>
+
+                    <!-- Séparateur -->
+                    <div class="comment-divider">Top commentaires</div>
+
+                    <!-- Top 4 commentaires -->
+                    <div class="comment-list" id="commentList"></div>
+
+                    <!-- Voir plus -->
+                    <button class="comment-see-more-btn" id="seeMoreBtn" onclick="openAllComments()">
+                        Voir tous les commentaires →
+                    </button>
+
+                </div>
             </div>
+
         </section>
 
         <!--🍎 FRUITS & REWORKS-->
@@ -695,6 +1050,318 @@
                 });
             }
         });
+    </script>
+
+
+    <!-- ── Modal TOUS LES COMMENTAIRES — hors du main pour éviter le clip fixed ── -->
+    <div id="commentsModal" onclick="closeAllComments(event)">
+        <div class="comments-modal">
+            <div class="comments-modal__header">
+                <div class="comments-modal__title">
+                    💬 Tous les commentaires
+                    <span class="comment-toggle-bar__count" id="modalCountBadge">6</span>
+                </div>
+                <button class="comments-modal__close" onclick="closeAllComments()">✕</button>
+            </div>
+            <div class="comments-modal__body" id="modalCommentList"></div>
+        </div>
+    </div>
+
+    <!-- LOGIQUE COMMENTAIRES -->
+    <script>
+    const DISCORD_ICON = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 127.14 96.36" style="width:11px;height:11px;vertical-align:middle"><path fill="#5865F2" d="M107.7 8.07A105.15 105.15 0 0081.47 0a72.06 72.06 0 00-3.36 6.83 97.68 97.68 0 00-29.11 0A72.37 72.37 0 0045.64 0a105.89 105.89 0 00-26.25 8.09C2.79 32.65-1.71 56.6.54 80.21a105.73 105.73 0 0032.17 16.15 77.7 77.7 0 006.89-11.11 68.42 68.42 0 01-10.85-5.18c.91-.66 1.8-1.34 2.66-2a75.57 75.57 0 0064.32 0c.87.71 1.76 1.39 2.66 2a68.68 68.68 0 01-10.87 5.19 77 77 0 006.89 11.1 105.25 105.25 0 0032.19-16.14c2.64-27.38-4.51-51.11-18.9-72.15zM42.45 65.69C36.18 65.69 31 60 31 53s5-12.74 11.43-12.74S54 46 53.89 53s-5.1 12.69-11.44 12.69zm42.24 0C78.41 65.69 73.25 60 73.25 53s5-12.74 11.44-12.74S96.23 46 96.12 53s-5.12 12.69-11.43 12.69z"/></svg>`;
+
+    /* ─── MODÉRATEURS ─────────────────────────────────────────────────────────
+       Ces 3 pseudos Discord peuvent supprimer N'IMPORTE QUEL commentaire.
+       Les autres utilisateurs ne peuvent supprimer QUE leurs propres commentaires.
+       ────────────────────────────────────────────────────────────────────── */
+    const MODERATORS = ["BloxLeaks_Admin", "LeakMaster", "DevTeam"];
+    // ↑ Remplace par les vrais pseudos Discord de tes 3 modérateurs
+
+    /* ─── PERSISTANCE localStorage ─────────────────────────────────────────── */
+    function loadDB() {
+        try { const r = localStorage.getItem("bloxleaks_comments"); return r ? JSON.parse(r) : []; }
+        catch(e) { return []; }
+    }
+    function saveDB() {
+        try { localStorage.setItem("bloxleaks_comments", JSON.stringify(COMMENTS_DB)); }
+        catch(e) {}
+    }
+
+    /* ─── BASE DE DONNÉES ─────────────────────────────────────────────────── */
+    const COMMENTS_DB = loadDB(); // vide au départ, rempli par de vrais humains
+
+    const MAX_SHOWN   = 4;
+    let   currentUser = null; // { username, avatar } — rempli par discordLogin()
+
+    /* ─── Droits de suppression ──────────────────────────────────────────── */
+    function canDelete(c)    {
+        if (!currentUser) return false;
+        return MODERATORS.includes(currentUser.username) || c.username === currentUser.username;
+    }
+    function canDeleteReply(r) {
+        if (!currentUser) return false;
+        return MODERATORS.includes(currentUser.username) || r.username === currentUser.username;
+    }
+
+    /* ─── Helpers avatar & Discord tag ─────────────────────────────────── */
+    const COLORS = ["#ff1a1a","#5865F2","#00c278","#ff9500","#a200ff","#0099ff","#ff6b00"];
+    function userColor(name) { return COLORS[name.charCodeAt(0) % COLORS.length]; }
+
+    function avatarHTML(u, size=38) {
+        const s = `width:${size}px;height:${size}px;font-size:${Math.round(size*0.42)}px;`;
+        if (u && u.avatar)
+            return `<img src="${u.avatar}" class="comment-avatar" style="${s}" alt="">`;
+        const letter = (u ? u.username : "?")[0].toUpperCase();
+        const bg     = userColor(u ? u.username : "?");
+        return `<div class="comment-avatar--placeholder" style="${s}background:${bg}">${letter}</div>`;
+    }
+    function discordTag() {
+        return `<span class="comment-item__discord-tag">${DISCORD_ICON} Discord</span>`;
+    }
+
+    /* ─── Rendu réponse ─────────────────────────────────────────────────── */
+    function renderReply(r, cid, pfx) {
+        return `<div class="comment-reply" id="${pfx}reply-${r.id}">
+            ${avatarHTML(r, 30)}
+            <div class="comment-reply__body">
+                <div class="comment-reply__header">
+                    ${discordTag()}
+                    <span class="comment-item__username">${r.username}</span>
+                    <span class="comment-item__time">${r.time}</span>
+                </div>
+                <div class="comment-reply__text">${r.text}</div>
+                <div class="comment-item__actions" style="margin-top:7px">
+                    <button class="comment-btn ${r.likedByMe?"comment-btn--liked":""}" onclick="likeReply(${cid},${r.id},this)">
+                        ${r.likedByMe?"❤️":"🤍"} <span class="comment-btn__like-count">${r.likes}</span>
+                    </button>
+                    ${canDeleteReply(r) ? `<button class="comment-btn comment-btn--delete" onclick="deleteReply(${cid},${r.id})">🗑 Suppr.</button>` : ""}
+                </div>
+            </div>
+        </div>`;
+    }
+
+    /* ─── Rendu commentaire ─────────────────────────────────────────────── */
+    function renderComment(c, pfx="") {
+        const replies = (c.replies||[]).map(r => renderReply(r, c.id, pfx)).join("");
+        return `<div class="comment-item" id="${pfx}comment-${c.id}">
+            ${avatarHTML(c)}
+            <div class="comment-item__body">
+                <div class="comment-item__header">
+                    ${discordTag()}
+                    <span class="comment-item__username">${c.username}</span>
+                    <span class="comment-item__time">${c.time}</span>
+                </div>
+                <div class="comment-item__text">${c.text}</div>
+                <div class="comment-item__actions">
+                    <button class="comment-btn ${c.likedByMe?"comment-btn--liked":""}" onclick="likeComment(${c.id},this)">
+                        ${c.likedByMe?"❤️":"🤍"} <span class="comment-btn__like-count">${c.likes}</span>
+                    </button>
+                    ${currentUser ? `<button class="comment-btn" onclick="toggleReplyBox('${pfx}rw-${c.id}')">↩ Répondre</button>` : ""}
+                    ${canDelete(c) ? `<button class="comment-btn comment-btn--delete" onclick="deleteComment(${c.id})">🗑 Suppr.</button>` : ""}
+                </div>
+                ${replies ? `<div class="comment-replies">${replies}</div>` : ""}
+                <div class="comment-reply-write" id="${pfx}rw-${c.id}">
+                    ${avatarHTML(currentUser, 30)}
+                    <textarea class="comment-reply-input" placeholder="Ta réponse…" rows="1" oninput="autoResize(this)"></textarea>
+                    <button class="comment-reply-submit" onclick="postReply(${c.id},'${pfx}rw-${c.id}')">Poster</button>
+                </div>
+            </div>
+        </div>`;
+    }
+
+    /* ─── Tri & rendu des listes ────────────────────────────────────────── */
+    function sorted() { return [...COMMENTS_DB].sort((a,b) => b.likes - a.likes); }
+
+    function renderList() {
+        const top  = sorted().slice(0, MAX_SHOWN);
+        const list = document.getElementById("commentList");
+        if (top.length === 0) {
+            list.innerHTML = `<div style="text-align:center;padding:32px 0;color:#ccc;font-size:14px;font-weight:600;">
+                <div style="font-size:36px;margin-bottom:10px">💬</div>
+                Soyez le premier à commenter !
+            </div>`;
+        } else {
+            list.innerHTML = top.map(c => renderComment(c,"")).join("");
+        }
+        const n = COMMENTS_DB.length;
+        document.getElementById("commentCountBadge").textContent = n;
+        const mb = document.getElementById("modalCountBadge");
+        if (mb) mb.textContent = n;
+        document.getElementById("seeMoreBtn").classList.toggle("is-hidden", n <= MAX_SHOWN);
+    }
+
+    function renderModal() {
+        document.getElementById("modalCommentList").innerHTML =
+            sorted().map(c => renderComment(c,"m")).join("");
+    }
+
+    /* ─── Toggle affichage ────────────────────────────────────────────── */
+    function toggleComments() {
+        const body = document.getElementById("commentBody");
+        const tog  = document.getElementById("commentToggle");
+        const open = body.classList.toggle("is-open");
+        tog.classList.toggle("is-open", open);
+        if (open) renderList();
+    }
+
+    /* ─── Login Discord ──────────────────────────────────────────────────
+       🔌 TON AMI APPELLE CETTE FONCTION après OAuth Discord
+       Signature : discordLogin({ username: string, avatar: string|null })  */
+    function discordLogin(user) {
+        currentUser = user;
+        document.getElementById("discordBanner").style.display = "none";
+        const box = document.getElementById("commentWriteBox");
+        box.classList.remove("is-hidden");
+        document.getElementById("userAvatarBox").outerHTML = avatarHTML(user);
+        renderList(); // rerend pour afficher boutons Suppr. si modérateur
+    }
+
+    /* ─── Poster un commentaire ────────────────────────────────────────── */
+    function postComment() {
+        if (!currentUser) return;
+        const inp = document.getElementById("commentInput");
+        const txt = inp.value.trim(); if (!txt) return;
+        COMMENTS_DB.unshift({ id: Date.now(), username: currentUser.username,
+            avatar: currentUser.avatar, text: txt, time: "à l'instant",
+            likes: 0, likedByMe: false, replies: [] });
+        saveDB();
+        inp.value = ""; inp.style.height = "";
+        renderList();
+        if (document.getElementById("commentsModal").classList.contains("is-active")) renderModal();
+    }
+
+    /* ─── Animation Like TikTok ────────────────────────────────────────── */
+    function spawnLikeParticles(btn) {
+        const rect = btn.getBoundingClientRect();
+        const cx = rect.left + rect.width  / 2;
+        const cy = rect.top  + rect.height / 2;
+        const container = document.createElement("div");
+        container.style.cssText = `position:fixed;left:${cx}px;top:${cy}px;width:0;height:0;pointer-events:none;z-index:99999;overflow:visible;`;
+        document.body.appendChild(container);
+        const ripple = document.createElement("div"); ripple.className = "like-ripple";
+        container.appendChild(ripple);
+        const count = 7;
+        for (let i = 0; i < count; i++) {
+            const p     = document.createElement("div"); p.className = "like-particle";
+            const angle = (i / count) * Math.PI * 2;
+            const dist  = 22 + Math.random() * 16;
+            p.style.setProperty("--px", Math.cos(angle) * dist + "px");
+            p.style.setProperty("--py", Math.sin(angle) * dist + "px");
+            p.style.left = "-3px"; p.style.top = "-3px";
+            p.style.background = ["#ff1a1a","#ff6060","#ffaaaa","#ff3366"][i % 4];
+            p.style.animationDelay = (i * 0.03) + "s";
+            container.appendChild(p);
+        }
+        setTimeout(() => container.remove(), 700);
+    }
+    function animateLikeBtn(btn) {
+        btn.classList.remove("like-animate"); void btn.offsetWidth;
+        btn.classList.add("like-animate");
+        btn.addEventListener("animationend", () => btn.classList.remove("like-animate"), { once: true });
+    }
+
+    function likeComment(id, btn) {
+        const c = COMMENTS_DB.find(x => x.id === id); if (!c) return;
+        c.likedByMe = !c.likedByMe; c.likes += c.likedByMe ? 1 : -1;
+        if (c.likedByMe) { spawnLikeParticles(btn); animateLikeBtn(btn); }
+        document.querySelectorAll(`[id$="comment-${id}"]`).forEach(el => {
+            const lb = el.querySelector(".comment-btn__like-count"); if (lb) lb.textContent = c.likes;
+            const hb = el.querySelector(".comment-btn"); if (hb) {
+                hb.classList.toggle("comment-btn--liked", c.likedByMe);
+                const em = hb.childNodes[0];
+                if (em && em.nodeType === 3) em.textContent = (c.likedByMe ? "❤️" : "🤍") + " ";
+            }
+        });
+    }
+    function likeReply(cid, rid, btn) {
+        const c = COMMENTS_DB.find(x => x.id === cid); if (!c) return;
+        const r = c.replies.find(x => x.id === rid); if (!r) return;
+        r.likedByMe = !r.likedByMe; r.likes += r.likedByMe ? 1 : -1;
+        if (r.likedByMe) { spawnLikeParticles(btn); animateLikeBtn(btn); }
+        btn.classList.toggle("comment-btn--liked", r.likedByMe);
+        btn.innerHTML = `${r.likedByMe?"❤️":"🤍"} <span class="comment-btn__like-count">${r.likes}</span>`;
+    }
+
+    /* ─── Suppression — modal custom (pas d'alert) ─────────────────────── */
+    let _pendingDelete = null;
+
+    function deleteComment(id) {
+        _pendingDelete = () => {
+            const i = COMMENTS_DB.findIndex(x => x.id === id);
+            if (i !== -1) { COMMENTS_DB.splice(i, 1); saveDB(); }
+            renderList(); renderModal();
+        };
+        openDeleteModal();
+    }
+    function deleteReply(cid, rid) {
+        _pendingDelete = () => {
+            const c = COMMENTS_DB.find(x => x.id === cid); if (!c) return;
+            const i = c.replies.findIndex(x => x.id === rid);
+            if (i !== -1) { c.replies.splice(i, 1); saveDB(); }
+            renderList(); renderModal();
+        };
+        openDeleteModal();
+    }
+    function openDeleteModal() {
+        document.getElementById("deleteModal").classList.add("is-active");
+        document.body.style.overflow = "hidden";
+    }
+    function closeDeleteModal() {
+        document.getElementById("deleteModal").classList.remove("is-active");
+        document.body.style.overflow = "";
+        _pendingDelete = null;
+    }
+    function confirmDelete() {
+        if (_pendingDelete) _pendingDelete();
+        closeDeleteModal();
+    }
+
+    /* ─── Répondre ──────────────────────────────────────────────────────── */
+    function toggleReplyBox(id) {
+        const box = document.getElementById(id); if (!box) return;
+        box.classList.toggle("is-open");
+        if (box.classList.contains("is-open")) box.querySelector("textarea")?.focus();
+    }
+    function postReply(cid, boxId) {
+        if (!currentUser) return;
+        const box = document.getElementById(boxId);
+        const inp = box?.querySelector("textarea");
+        const txt = inp?.value.trim(); if (!txt) return;
+        const c = COMMENTS_DB.find(x => x.id === cid); if (!c) return;
+        c.replies.push({ id: Date.now(), username: currentUser.username,
+            avatar: currentUser.avatar, text: txt, time: "à l'instant",
+            likes: 0, likedByMe: false });
+        saveDB();
+        if (inp) { inp.value = ""; inp.style.height = ""; }
+        box?.classList.remove("is-open");
+        renderList();
+        if (document.getElementById("commentsModal").classList.contains("is-active")) renderModal();
+    }
+
+    /* ─── Modal "Voir tous" ─────────────────────────────────────────────── */
+    function openAllComments() {
+        renderModal();
+        document.getElementById("commentsModal").classList.add("is-active");
+        document.body.style.overflow = "hidden";
+    }
+    function closeAllComments(e) {
+        if (e && e.currentTarget !== e.target) return;
+        document.getElementById("commentsModal").classList.remove("is-active");
+        document.body.style.overflow = "";
+    }
+
+    /* ─── Auto-resize textarea ──────────────────────────────────────────── */
+    function autoResize(el) {
+        el.style.height = "auto";
+        el.style.height = Math.min(el.scrollHeight, 150) + "px";
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        document.getElementById("commentInput")?.addEventListener("keydown", e => {
+            if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); postComment(); }
+        });
+    });
     </script>
 </body>
 </html>
