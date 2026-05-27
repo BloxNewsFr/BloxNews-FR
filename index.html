@@ -79,7 +79,8 @@
         .site-header.nav-light-text .site-nav a,
         .site-header.nav-light-text .site-header__icons {
             color: #fff;
-            text-shadow: 0 1px 6px rgba(0,0,0,0.55);
+            -webkit-text-stroke: 1.2px rgba(0,0,0,0.7);
+            text-shadow: 0 2px 8px rgba(0,0,0,0.35);
         }
 
         .site-nav a { text-decoration: none; font-size: 17px; text-transform: uppercase; font-family: 'LuckiestGuy Regular', cursive; padding: 8px 16px; border-radius: 10px; }
@@ -209,6 +210,35 @@
             .mobile-pagination-pill.is-light button,
             .mobile-pagination-pill.is-light .page-info { color: #000 !important; }
         }
+
+
+            /* ── Switcher News↔Leaks dans la pilule ─────── */
+            .mobile-pagination-pill .pill-switcher {
+                display: flex; align-items: center; gap: 0;
+                background: rgba(255,255,255,0.12); border-radius: 100px;
+                padding: 3px; border: 1px solid rgba(255,255,255,0.18);
+            }
+            .mobile-pagination-pill .pill-switcher a {
+                text-decoration: none; font-family: 'LuckiestGuy Regular', cursive;
+                font-size: 12px; color: rgba(255,255,255,0.65); padding: 5px 13px;
+                border-radius: 100px; transition: all 0.25s ease; white-space: nowrap;
+                letter-spacing: 0.3px;
+            }
+            .mobile-pagination-pill .pill-switcher a.active {
+                background: rgba(255,255,255,0.95); color: #111;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            }
+            .mobile-pagination-pill .pill-divider {
+                width: 1px; height: 22px; background: rgba(255,255,255,0.2); margin: 0 4px;
+            }
+            /* Pilule fond clair : adapter le switcher */
+            .mobile-pagination-pill.is-light .pill-switcher {
+                background: rgba(0,0,0,0.06); border-color: rgba(0,0,0,0.1);
+            }
+            .mobile-pagination-pill.is-light .pill-switcher a { color: rgba(0,0,0,0.45); }
+            .mobile-pagination-pill.is-light .pill-switcher a.active {
+                background: rgba(0,0,0,0.85); color: #fff;
+            }
 
         /* ── SPECIAL CARDS : GLITCH, HALLOWEEN, VALENTINE (TON CODE ORIGINAL) ── */
         .news-card.glitch-card, .news-card.valentine-card { isolation: isolate; }
@@ -389,6 +419,66 @@
         @keyframes val-silk-sweep{ 0% {background-position:-150% 0;opacity:.6} 50% {opacity:1} 100%{background-position:252% 0;opacity:.6} }
         @keyframes val-heart-rise{ 0% {opacity:0;transform:translateY(0) scale(.7) rotate(-10deg)} 10% {opacity:.9} 55% {opacity:.8;transform:translateY(-46vh) scale(1.12) rotate(8deg)} 90% {opacity:.2} 100%{opacity:0;transform:translateY(-96vh) scale(.8) rotate(-5deg)} }
         @keyframes val-btn-shine{0%,62%,100%{opacity:0;transform:translateX(-120%)}76%{opacity:.88;transform:translateX(122%)}}
+
+        /* ── Transition glissement News ↔ Leaks (mobile uniquement) ── */
+        @media (max-width: 768px) {
+            /* Empêche le scrollbar horizontal pendant le slide */
+            html { overflow-x: hidden; }
+
+            @keyframes slideOutLeft {
+                0%   { transform: translateX(0);     opacity: 1; }
+                100% { transform: translateX(-100vw); opacity: 0; }
+            }
+            @keyframes slideOutRight {
+                0%   { transform: translateX(0);     opacity: 1; }
+                100% { transform: translateX(100vw);  opacity: 0; }
+            }
+            @keyframes slideInFromRight {
+                0%   { transform: translateX(100vw); opacity: 0; }
+                100% { transform: translateX(0);     opacity: 1; }
+            }
+            @keyframes slideInFromLeft {
+                0%   { transform: translateX(-100vw); opacity: 0; }
+                100% { transform: translateX(0);      opacity: 1; }
+            }
+            body.slide-out-left  {
+                animation: slideOutLeft  0.30s cubic-bezier(0.4,0,1,1) forwards;
+                pointer-events: none;
+            }
+            body.slide-out-right {
+                animation: slideOutRight 0.30s cubic-bezier(0.4,0,1,1) forwards;
+                pointer-events: none;
+            }
+            body.slide-in-right {
+                animation: slideInFromRight 0.36s cubic-bezier(0,0,0.2,1);
+            }
+            body.slide-in-left {
+                animation: slideInFromLeft  0.36s cubic-bezier(0,0,0.2,1);
+            }
+        }
+
+            /* ── Switcher News↔Leaks dans la pilule ─────── */
+            .mobile-pagination-pill .pill-switcher {
+                display: flex; align-items: center; gap: 0;
+                background: rgba(255,255,255,0.12); border-radius: 100px;
+                padding: 3px; border: 1px solid rgba(255,255,255,0.18);
+            }
+            .mobile-pagination-pill .pill-switcher a {
+                text-decoration: none; font-family: 'LuckiestGuy Regular', cursive;
+                font-size: 12px; color: rgba(255,255,255,0.65); padding: 5px 13px;
+                border-radius: 100px; transition: all 0.25s ease; white-space: nowrap;
+            }
+            .mobile-pagination-pill .pill-switcher a.active {
+                background: rgba(255,255,255,0.95); color: #111;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            }
+            .mobile-pagination-pill .pill-divider {
+                width: 1px; height: 22px; background: rgba(255,255,255,0.2); margin: 0 4px;
+            }
+            .mobile-pagination-pill.is-light .pill-switcher { background: rgba(0,0,0,0.06); border-color: rgba(0,0,0,0.1); }
+            .mobile-pagination-pill.is-light .pill-switcher a { color: rgba(0,0,0,0.45); }
+            .mobile-pagination-pill.is-light .pill-switcher a.active { background: rgba(0,0,0,0.85); color: #fff; }
+
     </style>
 </head>
 <body>
@@ -439,6 +529,11 @@
         </div>
 
         <div class="mobile-pagination-pill" id="pagination-mobile">
+            <div class="pill-switcher">
+                <a href="./index.html" class="active">News</a>
+                <a href="./neo_bulletin.html">Leaks</a>
+            </div>
+            <div class="pill-divider"></div>
             <button id="prev-mobile" onclick="changePage(-1)">←</button>
             <span class="page-info" id="page-info-mobile">1 / 4</span>
             <button id="next-mobile" onclick="changePage(1)">→</button>
@@ -579,6 +674,42 @@
         }
         window.addEventListener('scroll', updateMobilePaginationColor);
         window.addEventListener('resize', updateMobilePaginationColor);
+
+        // ── Switcher News ↔ Leaks + animation glissement mobile ──
+        (function() {
+            function cleanBodySlide() {
+                document.body.classList.remove('slide-in-left', 'slide-in-right', 'slide-out-left', 'slide-out-right');
+                document.body.style.transform = '';
+            }
+
+            // Entrée : arrive depuis neo_bulletin
+            var inDir = sessionStorage.getItem('blox_slide_dir');
+            if (inDir === 'to-news') {
+                document.body.style.transform = 'translateX(-100vw)';
+                void document.body.offsetWidth;
+                document.body.classList.add('slide-in-left');
+                sessionStorage.removeItem('blox_slide_dir');
+            }
+            document.body.addEventListener('animationend', cleanBodySlide);
+
+            // Clic sur un lien du switcher
+            document.querySelectorAll('.pill-switcher a').forEach(function(link) {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    if (this.classList.contains('active')) return;
+                    var href = this.href;
+                    var isMobile = window.innerWidth <= 768;
+
+                    if (isMobile) {
+                        sessionStorage.setItem('blox_slide_dir', 'to-leaks');
+                        document.body.classList.add('slide-out-left');
+                        setTimeout(function() { window.location.href = href; }, 300);
+                    } else {
+                        window.location.href = href;
+                    }
+                });
+            });
+        })();
 
     </script>
 </body>

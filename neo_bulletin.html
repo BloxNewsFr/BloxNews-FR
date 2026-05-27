@@ -65,7 +65,7 @@
         .mobile-menu-btn { display: none; }
 
         /* ── MAIN ── */
-        .main-content { max-width: 1240px; margin: 0 auto; padding: 40px 24px 80px; }
+        .main-content { max-width: 1240px; margin: 0 auto; padding: 40px 24px 120px; }
 
         /* ── BANNIÈRE TITLE ── */
         .header-section { display: flex; flex-direction: column; align-items: center; margin-bottom: 30px; }
@@ -89,16 +89,24 @@
         @keyframes shimmerBanner { 0% { background-position: 0% center; } 100% { background-position: 200% center; } }
 
         /* ── ONGLETS DE NAVIGATION (PC) ── */
-        .desktop-tabs { display: flex; justify-content: center; gap: 15px; margin-bottom: 40px; flex-wrap: wrap; }
+        .desktop-tabs { display: flex; justify-content: center; gap: 15px; margin-bottom: 40px; position: relative; }
+        .tab-indicator {
+            position: absolute; bottom: 0; left: 0; height: 100%; z-index: 0;
+            background: var(--cat-hex, #111); border-radius: 100px; opacity: 0;
+            transition: left 0.45s cubic-bezier(0.34,1.56,0.64,1), width 0.45s cubic-bezier(0.34,1.56,0.64,1), background 0.3s ease, opacity 0.3s ease;
+            pointer-events: none;
+        }
         .leaks-tab {
+            position: relative; z-index: 1;
             background: #fff; color: #111; border: 2px solid #e8e8f0; padding: 12px 24px; border-radius: 100px;
-            font-family: 'LuckiestGuy Regular', cursive; font-size: 16px; cursor: pointer; transition: all 0.25s ease;
+            font-family: 'LuckiestGuy Regular', cursive; font-size: 16px; cursor: pointer; transition: color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
             box-shadow: 0 4px 10px rgba(0,0,0,0.05); text-transform: uppercase; letter-spacing: 1px; outline: none;
         }
         .leaks-tab:hover { transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0,0,0,0.1); }
         .leaks-tab.active {
-            background: var(--cat-hex, #111); color: #fff; border-color: transparent;
-            box-shadow: 0 6px 20px rgba(var(--cat-rgb, 0,0,0), 0.4); transform: translateY(-3px);
+            color: #fff; border-color: transparent;
+            background: var(--cat-hex, #cc0000);
+            box-shadow: 0 6px 20px rgba(var(--cat-rgb, 204,0,0), 0.4); transform: translateY(-3px);
         }
 
         /* ── MENU DÉROULANT (MOBILE) ── */
@@ -660,6 +668,97 @@
         .social-share a img { width: 18px; height: 18px; vertical-align: middle; }
 
 
+
+        /* ── Pilule mobile flottante (Neo Bulletin) ──── */
+        .mobile-switcher-pill { display: none; }
+        @media (max-width: 768px) {
+            .mobile-switcher-pill {
+                display: flex !important;
+                position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%);
+                z-index: 9999; align-items: center; gap: 0;
+                background: rgba(255,255,255,0.1);
+                backdrop-filter: blur(22px) saturate(160%);
+                -webkit-backdrop-filter: blur(22px) saturate(160%);
+                border: 1px solid rgba(255,255,255,0.18);
+                border-radius: 100px; padding: 5px;
+                box-shadow: 0 8px 32px rgba(0,0,0,0.14),
+                            inset 0 1px 0 rgba(255,255,255,0.12);
+            }
+            .mobile-switcher-pill a {
+                text-decoration: none; font-family: 'LuckiestGuy Regular', cursive;
+                font-size: 13px; color: rgba(255,255,255,0.6); padding: 8px 20px;
+                border-radius: 100px; transition: all 0.25s ease; white-space: nowrap;
+                letter-spacing: 0.3px;
+            }
+            .mobile-switcher-pill a.active {
+                background: rgba(255,255,255,0.92); color: #111;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.18);
+            }
+        }
+
+
+        /* ── Transition glissement News ↔ Leaks (mobile uniquement) ── */
+        @media (max-width: 768px) {
+            /* Empêche le scrollbar horizontal pendant le slide */
+            html { overflow-x: hidden; }
+
+            @keyframes slideOutLeft {
+                0%   { transform: translateX(0);     opacity: 1; }
+                100% { transform: translateX(-100vw); opacity: 0; }
+            }
+            @keyframes slideOutRight {
+                0%   { transform: translateX(0);     opacity: 1; }
+                100% { transform: translateX(100vw);  opacity: 0; }
+            }
+            @keyframes slideInFromRight {
+                0%   { transform: translateX(100vw); opacity: 0; }
+                100% { transform: translateX(0);     opacity: 1; }
+            }
+            @keyframes slideInFromLeft {
+                0%   { transform: translateX(-100vw); opacity: 0; }
+                100% { transform: translateX(0);      opacity: 1; }
+            }
+            body.slide-out-left  {
+                animation: slideOutLeft  0.30s cubic-bezier(0.4,0,1,1) forwards;
+                pointer-events: none;
+            }
+            body.slide-out-right {
+                animation: slideOutRight 0.30s cubic-bezier(0.4,0,1,1) forwards;
+                pointer-events: none;
+            }
+            body.slide-in-right {
+                animation: slideInFromRight 0.36s cubic-bezier(0,0,0.2,1);
+            }
+            body.slide-in-left {
+                animation: slideInFromLeft  0.36s cubic-bezier(0,0,0.2,1);
+            }
+        }
+
+        /* ── Pilule switcher mobile (Neo Bulletin) ───────── */
+        .mobile-switcher-pill { display: none; }
+        @media (max-width: 768px) {
+            .mobile-switcher-pill {
+                display: flex !important; position: fixed; bottom: 28px;
+                left: 50%; transform: translateX(-50%); z-index: 9998;
+                align-items: center; gap: 0;
+                background: rgba(255,255,255,0.12);
+                backdrop-filter: blur(22px) saturate(160%);
+                -webkit-backdrop-filter: blur(22px) saturate(160%);
+                border: 1px solid rgba(255,255,255,0.2);
+                border-radius: 100px; padding: 4px;
+                box-shadow: 0 8px 32px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.15);
+            }
+            .mobile-switcher-pill a {
+                text-decoration: none; font-family: 'LuckiestGuy Regular', cursive;
+                font-size: 13px; color: rgba(255,255,255,0.58); padding: 8px 20px;
+                border-radius: 100px; transition: all 0.25s ease; white-space: nowrap;
+            }
+            .mobile-switcher-pill a.active {
+                background: rgba(255,255,255,0.92); color: #111;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.18);
+            }
+        }
+
     </style>
 </head>
 <body>
@@ -708,7 +807,8 @@
             <div class="leaks-banner">Blox Leaks</div>
         </div>
 
-        <div class="desktop-tabs">
+        <div class="desktop-tabs" id="desktopTabs">
+            <div class="tab-indicator" id="tabIndicator"></div>
             <button class="leaks-tab active" data-target="cat-actus" style="--cat-hex: #cc0000; --cat-rgb: 204, 0, 0;">ACTUS</button>
             <button class="leaks-tab" data-target="cat-fruit" style="--cat-hex: #ff0055; --cat-rgb: 255, 0, 85;">FRUITS</button>
             <button class="leaks-tab" data-target="cat-vfx" style="--cat-hex: #a200ff; --cat-rgb: 162, 0, 255;">VFX</button>
@@ -791,6 +891,7 @@
                 </div>
             </div>
 
+            </div><!-- /secret-bulletin -->
         </section>
 
         <!--🍎 FRUITS & REWORKS-->
@@ -1128,6 +1229,19 @@
     </div>
 
     <script>
+        function updateTabIndicator() {
+            const activeTab = document.querySelector('.desktop-tabs .leaks-tab.active');
+            const indicator = document.getElementById('tabIndicator');
+            if (!activeTab || !indicator) return;
+            const container = document.getElementById('desktopTabs');
+            const containerRect = container.getBoundingClientRect();
+            const tabRect = activeTab.getBoundingClientRect();
+            indicator.style.left = (tabRect.left - containerRect.left) + 'px';
+            indicator.style.width = tabRect.width + 'px';
+            indicator.style.setProperty('background', getComputedStyle(activeTab).getPropertyValue('--cat-hex'));
+            indicator.style.setProperty('opacity', '1');
+        }
+
         document.addEventListener("DOMContentLoaded", () => {
             const tabs = document.querySelectorAll('.leaks-tab');
             const sections = document.querySelectorAll('.category-section');
@@ -1173,8 +1287,11 @@
 
                     // Retour fluide en haut de la page
                     window.scrollTo({ top: 0, behavior: 'smooth' });
+                    updateTabIndicator();
                 });
             });
+            updateTabIndicator();
+            window.addEventListener('resize', updateTabIndicator);
 
             // ── 3. SYSTÈME DE LA BULLE MODALE DUPLIQUE (VIDÉO & IMAGE) ──
             const modal = document.getElementById('videoModal');
@@ -1710,6 +1827,49 @@
             if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); postComment(); }
         });
     });
+
+
+    // ── Switcher News ↔ Leaks + animation glissement mobile ──
+    (function() {
+        function cleanBodySlide() {
+            document.body.classList.remove('slide-in-left', 'slide-in-right', 'slide-out-left', 'slide-out-right');
+            document.body.style.transform = '';
+        }
+
+        // Entrée : arrive depuis index.html
+        var inDir = sessionStorage.getItem('blox_slide_dir');
+        if (inDir === 'to-leaks') {
+            document.body.style.transform = 'translateX(100vw)';
+            void document.body.offsetWidth;
+            document.body.classList.add('slide-in-right');
+            sessionStorage.removeItem('blox_slide_dir');
+        }
+        document.body.addEventListener('animationend', cleanBodySlide);
+
+        // Sortie : clic sur n'importe quel lien de la pilule
+        document.querySelectorAll('.mobile-switcher-pill a').forEach(function(link) {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (this.classList.contains('active')) return;
+                var href = this.href;
+                if (window.innerWidth <= 768) {
+                    sessionStorage.setItem('blox_slide_dir', 'to-news');
+                    document.body.classList.add('slide-out-right');
+                    setTimeout(function() { window.location.href = href; }, 300);
+                } else {
+                    window.location.href = href;
+                }
+            });
+        });
+    })();
+
     </script>
+
+    <!-- Pilule switcher mobile -->
+    <div class="mobile-switcher-pill" aria-label="Navigation">
+        <a href="./index.html">News</a>
+        <a href="./neo_bulletin.html" class="active">Leaks</a>
+    </div>
+
 </body>
 </html>
