@@ -479,6 +479,74 @@
             .mobile-pagination-pill.is-light .pill-switcher a { color: rgba(0,0,0,0.45); }
             .mobile-pagination-pill.is-light .pill-switcher a.active { background: rgba(0,0,0,0.85); color: #fff; }
 
+        /* ── SEARCH OVERLAY ── */
+        .search-overlay {
+            position: fixed; inset: 0;
+            background: linear-gradient(135deg, rgba(5,5,15,0.88), rgba(15,10,25,0.82));
+            backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+            z-index: 99999; display: flex; flex-direction: column;
+            align-items: center; padding-top: 120px;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .search-overlay.is-active { opacity: 1; pointer-events: auto; }
+        .search-container {
+            width: 92%; max-width: 560px;
+            transform: translateY(-24px) scale(0.94);
+            transition: transform 0.45s cubic-bezier(0.34,1.56,0.64,1);
+        }
+        .search-overlay.is-active .search-container { transform: translateY(0) scale(1); }
+        .search-bar {
+            display: flex; align-items: center; gap: 8px;
+            background: rgba(255,255,255,0.97); backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px; padding: 4px 4px 4px 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.06);
+            transition: box-shadow 0.25s;
+        }
+        .search-bar:focus-within { box-shadow: 0 8px 48px rgba(0,0,0,0.4), 0 0 0 2px rgba(255,255,255,0.1); }
+        .search-bar input {
+            flex: 1; border: none; outline: none; font-size: 17px;
+            font-family: 'Inter', sans-serif; color: #111;
+            background: transparent; padding: 14px 0; letter-spacing: 0.1px;
+        }
+        .search-bar input::placeholder { color: #aaa; }
+        .search-go-btn {
+            padding: 10px 22px; border-radius: 12px; border: none;
+            background: linear-gradient(135deg, #111, #333);
+            color: #fff; font-weight: 800; font-size: 13px;
+            cursor: pointer; font-family: 'Inter', sans-serif;
+            transition: all 0.25s ease; letter-spacing: 0.3px;
+            text-transform: uppercase; flex-shrink: 0;
+        }
+        .search-go-btn:hover { transform: scale(1.04); background: linear-gradient(135deg, #222, #444); box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+        .search-nav-btn {
+            width: 36px; height: 36px; border-radius: 10px; border: none;
+            background: #f2f2f6; color: #555; cursor: pointer;
+            font-size: 16px; display: flex; align-items: center;
+            justify-content: center; transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        .search-nav-btn:hover { background: #e0e0e6; color: #111; }
+        .search-nav-btn:disabled { opacity: 0.3; cursor: default; }
+        .search-close-btn {
+            width: 36px; height: 36px; border-radius: 10px; border: none;
+            background: transparent; color: #999; cursor: pointer;
+            font-size: 20px; display: flex; align-items: center;
+            justify-content: center; transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        .search-close-btn:hover { background: rgba(0,0,0,0.05); color: #111; }
+        .search-stats { margin-top: 12px; color: rgba(255,255,255,0.5); font-size: 14px; text-align: center; min-height: 20px; font-family: 'Inter', sans-serif; }
+        mark.search-hl {
+            background: linear-gradient(120deg, #fce83a 0%, #ffd700 100%);
+            color: #000; border-radius: 4px; padding: 1px 2px;
+        }
+        mark.search-hl.active {
+            background: linear-gradient(120deg, #ff6b35 0%, #ff4500 100%);
+            color: #fff; box-shadow: 0 0 12px rgba(255,70,0,0.5);
+        }
+        @media (max-width: 768px) { .search-overlay { padding-top: 80px; } }
     </style>
 </head>
 <body>
@@ -500,6 +568,8 @@
             </ul>
         </nav>
         <div class="site-header__icons">
+            <span class="material-symbols-outlined" onclick="openSearch()">search</span>
+            <span class="material-symbols-outlined">person</span>
             <span class="material-symbols-outlined mobile-menu-btn" id="menuToggle">menu</span>
         </div>
     </header>
@@ -711,6 +781,117 @@
             });
         })();
 
+        // ── SEARCH ──
+        let searchMatches = [];
+        let searchCurrent = -1;
+        function openSearch() {
+            document.getElementById('searchOverlay').classList.add('is-active');
+            const inp = document.getElementById('searchInput');
+            inp.value = '';
+            document.getElementById('searchStats').textContent = '';
+            searchMatches = []; searchCurrent = -1;
+            removeHighlights();
+            setTimeout(() => inp.focus(), 200);
+        }
+        function closeSearch(keepHl) {
+            document.getElementById('searchOverlay').classList.remove('is-active');
+            if (!keepHl) removeHighlights();
+            if (!keepHl) { searchMatches = []; searchCurrent = -1; }
+        }
+        function removeHighlights() {
+            document.querySelectorAll('mark.search-hl').forEach(m => {
+                const p = m.parentNode;
+                p.replaceChild(document.createTextNode(m.textContent), m);
+                p.normalize();
+            });
+        }
+        function executeSearch() {
+            const q = document.getElementById('searchInput').value.trim().toLowerCase();
+            removeHighlights();
+            searchMatches = []; searchCurrent = -1;
+            document.getElementById('searchPrevBtn').disabled = true;
+            document.getElementById('searchNextBtn').disabled = true;
+            const stats = document.getElementById('searchStats');
+            stats.textContent = '';
+            if (!q) return;
+            const root = document.querySelector('.main-content') || document.body;
+            const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+                acceptNode: n => {
+                    const p = n.parentNode;
+                    if (!p || p.nodeName === 'SCRIPT' || p.nodeName === 'STYLE') return NodeFilter.FILTER_REJECT;
+                    if (p.closest('.search-overlay, .material-symbols-outlined, .mobile-menu-btn')) return NodeFilter.FILTER_REJECT;
+                    return NodeFilter.FILTER_ACCEPT;
+                }
+            });
+            const nodes = []; let n;
+            while (n = walker.nextNode()) nodes.push(n);
+            nodes.forEach(textNode => {
+                const text = textNode.textContent;
+                const lower = text.toLowerCase();
+                let idx = lower.indexOf(q);
+                if (idx === -1) return;
+                const frag = document.createDocumentFragment();
+                let last = 0;
+                while (idx !== -1) {
+                    if (idx > last) frag.appendChild(document.createTextNode(text.slice(last, idx)));
+                    const mark = document.createElement('mark');
+                    mark.className = 'search-hl';
+                    mark.textContent = text.slice(idx, idx + q.length);
+                    frag.appendChild(mark);
+                    searchMatches.push(mark);
+                    last = idx + q.length;
+                    idx = lower.indexOf(q, last);
+                }
+                if (last < text.length) frag.appendChild(document.createTextNode(text.slice(last)));
+                textNode.parentNode.replaceChild(frag, textNode);
+            });
+            const c = searchMatches.length;
+            if (c > 0) {
+                searchCurrent = 0;
+                searchMatches[0].classList.add('active');
+                searchMatches[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                stats.textContent = c + ' résultat' + (c > 1 ? 's' : '');
+                document.getElementById('searchPrevBtn').disabled = false;
+                document.getElementById('searchNextBtn').disabled = false;
+                closeSearch(true);
+            } else {
+                stats.textContent = 'Aucun résultat';
+            }
+        }
+        function nextMatch() {
+            if (searchMatches.length === 0) return;
+            searchMatches[searchCurrent]?.classList.remove('active');
+            searchCurrent = (searchCurrent + 1) % searchMatches.length;
+            searchMatches[searchCurrent].classList.add('active');
+            searchMatches[searchCurrent].scrollIntoView({ behavior: 'smooth', block: 'center' });
+            document.getElementById('searchStats').textContent = (searchCurrent+1) + '/' + searchMatches.length;
+        }
+        function prevMatch() {
+            if (searchMatches.length === 0) return;
+            searchMatches[searchCurrent]?.classList.remove('active');
+            searchCurrent = (searchCurrent - 1 + searchMatches.length) % searchMatches.length;
+            searchMatches[searchCurrent].classList.add('active');
+            searchMatches[searchCurrent].scrollIntoView({ behavior: 'smooth', block: 'center' });
+            document.getElementById('searchStats').textContent = (searchCurrent+1) + '/' + searchMatches.length;
+        }
+        document.addEventListener("keydown", e => {
+            if (e.key === "Escape" && document.getElementById('searchOverlay')?.classList.contains('is-active')) closeSearch();
+        });
     </script>
+
+    <!-- ── SEARCH OVERLAY ── -->
+    <div id="searchOverlay" class="search-overlay" onclick="if(event.target===this)closeSearch()">
+        <div class="search-container">
+            <div class="search-bar">
+                <span class="material-symbols-outlined" style="font-size:22px;color:#999;flex-shrink:0">search</span>
+                <input id="searchInput" type="text" placeholder="Rechercher…" autofocus onkeydown="if(event.key==='Escape')closeSearch();if(event.key==='Enter'){event.preventDefault();executeSearch()}">
+                <button class="search-go-btn" onclick="executeSearch()">Chercher</button>
+                <button class="search-nav-btn" onclick="prevMatch()" id="searchPrevBtn">▲</button>
+                <button class="search-nav-btn" onclick="nextMatch()" id="searchNextBtn">▼</button>
+                <button class="search-close-btn" onclick="closeSearch()">✕</button>
+            </div>
+            <div id="searchStats" class="search-stats"></div>
+        </div>
+    </div>
 </body>
 </html>
