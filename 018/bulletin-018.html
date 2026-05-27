@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>DC Bulletin #018 – Blox Fruits</title>
+
+    <link rel="icon" type="image/png" href="./shared/favicon.png">
+    <link rel="shortcut icon" href="../shared/bf_logo.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
+
+    <style>
+        @font-face {
+            font-family: 'LuckiestGuy Regular';
+            src: url('../fonts/LuckiestGuy-Regular.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        :root {
+            --color-text: #333132;
+            --color-border: #ebebeb;
+            --font-stack-body: 'Inter', sans-serif;
+            --color-primary: #ffda00;
+        }
+
+        * { box-sizing: border-box; }
+        body { margin: 0; font-family: var(--font-stack-body); color: var(--color-text); background-color: #fff; line-height: 1.6; }
+
+        .site-header {
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            padding: 0 55px;
+            position: sticky; 
+            top: 0; 
+            z-index: 1000; 
+            height: 72px;
+            background-color: rgba(255, 255, 255, 0.08); 
+            background-image: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.05) 50%, transparent 100%); 
+            background-size: 200% 100%;
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255,255,255,0.2);
+            transition: background 0.5s cubic-bezier(0.4, 0, 0.2, 1), backdrop-filter 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: navbarSheen 6s ease-in-out infinite;
+        }
+
+        @keyframes navbarSheen {
+            0%, 100% { background-position: 200% 0; }
+            50% { background-position: 0% 0; }
+        }
+
+        .site-header__logo img { 
+            height: 42px; width: auto; display: block; 
+            filter: none !important;
+        }
+
+        .site-nav { display: flex; gap: 8px; padding: 0; margin: 0; list-style: none; font-weight: 900; }
+        
+        .site-nav a, .site-header__icons {
+            color: var(--color-text);
+            transition: color 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .site-header.nav-light-text .site-nav a,
+        .site-header.nav-light-text .site-header__icons {
+            color: #fff;
+            -webkit-text-stroke: 1.2px rgba(0,0,0,0.7);
+            text-shadow: 0 2px 8px rgba(0,0,0,0.35);
+        }
+
+        .site-nav a { 
+            text-decoration: none; font-weight: 900; font-size: 17px; 
+            text-transform: uppercase; font-family: 'LuckiestGuy Regular', cursive; 
+            padding: 8px 16px; border-radius: 10px; transition: background 0.2s, color 0.2s; 
+        }
+        .site-nav a:hover { background: var(--color-primary); color: #000; }
+        .site-header__icons { display: flex; gap: 12px; color: var(--color-text); cursor: pointer; align-items: center; }
+        .site-header__icons span { padding: 8px; border-radius: 10px; transition: background 0.2s; }
+        .site-header__icons span:hover { background: rgba(0,0,0,0.06); }
+        .mobile-menu-btn { display: none; }
+        .mobile-nav-dropdown { display: none; }
+
+        .main-content { max-width: 1100px; margin: 40px auto; padding: 0 24px; }
+
+        @keyframes shimmerBanner { 0%{background-position:0% center} 100%{background-position:200% center} }
+
+        .blue-banner { 
+            display: block; 
+            background: linear-gradient(135deg, #4facfe, #00f2fe, #4facfe); background-size: 200% auto; 
+            color: #fff; padding: 16px 60px; font-size: 36px; 
+            text-transform: uppercase; letter-spacing: 3px; 
+            border-radius: 100px; font-family: 'LuckiestGuy Regular', cursive; 
+            box-shadow: 0 8px 32px rgba(79,172,254,0.5), 0 2px 8px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.35); 
+            animation: shimmerBanner 3s linear infinite; margin-bottom: 20px; 
+            text-align: center;
+        }
+
+        .hero-image-wrapper { width: 100%; margin-bottom: 15px; }
+        .hero-image { width: 100%; height: auto; display: block; border-radius: 20px; box-shadow: 0 8px 30px rgba(0,0,0,0.1); }
+
+        .journal-header { text-align: center; margin-top: 30px; }
+        .journal-title { font-family: 'LuckiestGuy Regular', cursive; font-size: 38px; font-weight: bold; color: #111111; margin: 0 0 10px 0; letter-spacing: -1px; }
+        .journal-subtitle { font-family: 'Inter', sans-serif; font-style: italic; font-size: 18px; color: #555555; margin: 0 0 25px 0; }
+        .journal-meta { font-weight: bold; font-size: 14px; color: #111111; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .dashed-line { border-top: 1px dashed #ccc; margin: 20px 0 35px 0; }
+
+        .breaking-news-bar {
+            background-color: #d93025;
+            color: #ffffff;
+            font-family: 'LuckiestGuy Regular', cursive;
+            font-size: 28px;
+            padding: 12px 20px;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 6px 20px rgba(217, 48, 37, 0.35);
+            border: 2px solid #b52219;
+            animation: pulse-red 2s infinite;
+        }
+
+        @keyframes pulse-red {
+            0% { box-shadow: 0 0 0 0 rgba(217, 48, 37, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(217, 48, 37, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(217, 48, 37, 0); }
+        }
+
+        .announcement-box { 
+            background-color: #fdf2f2; 
+            border: 1px solid #f5e1e1; 
+            border-left: 4px solid #d93025; 
+            padding: 24px; 
+            margin-bottom: 40px; 
+            border-radius: 16px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06); 
+        }
+        .announcement-title { color: #d93025; font-size: 24px; font-weight: 900; margin: 0 0 5px 0; font-family: 'LuckiestGuy Regular', cursive; letter-spacing: 0.5px; text-transform: uppercase; }
+        .announcement-subtitle { font-style: italic; font-size: 13px; color: #555555; margin-bottom: 20px; display: block; }
+        .announcement-img { width: 100%; height: auto; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+        .announcement-text p { margin: 0 0 15px 0; font-size: 15px; }
+
+        .summary {
+            background: rgba(88, 101, 242, 0.09);
+            border-left: 4px solid #5865f2;
+            padding: 12px 16px;
+            margin-top: 15px;
+            font-size: 13.5px;
+            font-style: italic;
+            color: #2c3e50;
+            border-radius: 0 6px 6px 0;
+        }
+        .summary b {
+            color: #5865f2;
+            text-transform: uppercase;
+            font-size: 11px;
+            font-style: normal;
+            display: block;
+            margin-bottom: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        .content-columns { display: flex; gap: 30px; margin-bottom: 40px; }
+        .left-col { flex: 1.8; }
+        .right-col { flex: 1.2; background-color: #fff; padding: 24px; border-radius: 16px; height: fit-content; box-shadow: 0 4px 20px rgba(0,0,0,0.06); border: 1px solid #e8e8f0; }
+
+        h2 { border-bottom: 2px solid #111111; padding-bottom: 5px; font-size: 22px; font-weight: 900; margin: 0 0 20px 0; color: #111111; }
+        .section-subtext { font-style: italic; font-size: 13.5px; color: #555555; margin-bottom: 20px; display: block; margin-top: -15px; }
+
+        .column-img { width: 100%; height: auto; border-radius: 12px; margin: 10px 0 15px 0; box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+
+        .balancing-section { border-top: 2px solid #111; padding-top: 25px; margin-bottom: 40px; }
+        .balancing-inner { display: flex; gap: 20px; align-items: flex-start; margin-top: 15px; }
+        .balancing-text { flex: 1; }
+        .balancing-text p { font-size: 14.5px; margin-bottom: 12px; }
+        .balancing-img { width: 300px; flex-shrink: 0; height: auto; border: 3px solid #000; border-radius: 8px; }
+
+        .break-notice-box {
+            background-color: #fff;
+            border: 2px dashed #111;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            margin: 30px 0;
+            font-style: italic;
+            font-weight: 600;
+        }
+
+        .social-share {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin: 30px 0;
+            width: 100%;
+        }
+        .social-share a {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 18px;
+            border-radius: 100px;
+            font-size: 13px;
+            font-weight: 900;
+            text-decoration: none;
+            text-transform: uppercase;
+            transition: all 0.25s ease;
+            border: none;
+        }
+        .social-share a:hover { transform: translateY(-3px); }
+        .social-share a.td { background: #5865F2; color: #fff; box-shadow: 0 4px 15px rgba(88,101,242,0.4); }
+        .social-share a.tt { background: linear-gradient(135deg, #1d56f2, #f21de4); color: #fff; box-shadow: 0 4px 15px rgba(29,86,242,0.4); }
+        .social-share a.ty { background: #ec1717e0; color: #fff; box-shadow: 0 4px 15px rgba(236,23,23,0.4); }
+
+        .back-button-container { text-align: center; margin: 40px 0 50px 0; }
+        .back-button {
+            background: linear-gradient(135deg, #ffda00, #ffc200); 
+            color: #000; text-decoration: none; 
+            font-weight: 900; padding: 11px 24px; 
+            border-radius: 100px; font-size: 13px; 
+            text-transform: uppercase; 
+            letter-spacing: 0.5px; 
+            box-shadow: 0 4px 15px rgba(255,218,0,0.4); 
+            border: 2px solid rgba(0,0,0,0.08); 
+            display: inline-block;
+            transition: transform 0.1s;
+        }
+        .back-button:hover { transform: scale(1.05); box-shadow: 0 6px 20px rgba(255,218,0,0.5); }
+
+        /* ── SEARCH OVERLAY ── */
+        .search-overlay {
+            position: fixed; inset: 0;
+            background: linear-gradient(135deg, rgba(5,5,15,0.88), rgba(15,10,25,0.82));
+            backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+            z-index: 99999; display: flex; flex-direction: column;
+            align-items: center; padding-top: 120px;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .search-overlay.is-active { opacity: 1; pointer-events: auto; }
+        .search-container {
+            width: 92%; max-width: 560px;
+            transform: translateY(-24px) scale(0.94);
+            transition: transform 0.45s cubic-bezier(0.34,1.56,0.64,1);
+        }
+        .search-overlay.is-active .search-container { transform: translateY(0) scale(1); }
+        .search-bar {
+            display: flex; align-items: center; gap: 8px;
+            background: rgba(255,255,255,0.97); backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px; padding: 4px 4px 4px 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.06);
+            transition: box-shadow 0.25s;
+        }
+        .search-bar:focus-within { box-shadow: 0 8px 48px rgba(0,0,0,0.4), 0 0 0 2px rgba(255,255,255,0.1); }
+        .search-bar input {
+            flex: 1; border: none; outline: none; font-size: 17px;
+            font-family: 'Inter', sans-serif; color: #111;
+            background: transparent; padding: 14px 0; letter-spacing: 0.1px;
+        }
+        .search-bar input::placeholder { color: #aaa; }
+        .search-go-btn {
+            padding: 10px 22px; border-radius: 12px; border: none;
+            background: linear-gradient(135deg, #111, #333);
+            color: #fff; font-weight: 800; font-size: 13px;
+            cursor: pointer; font-family: 'Inter', sans-serif;
+            transition: all 0.25s ease; letter-spacing: 0.3px;
+            text-transform: uppercase; flex-shrink: 0;
+        }
+        .search-go-btn:hover { transform: scale(1.04); background: linear-gradient(135deg, #222, #444); box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+        .search-nav-btn {
+            width: 36px; height: 36px; border-radius: 10px; border: none;
+            background: #f2f2f6; color: #555; cursor: pointer;
+            font-size: 16px; display: flex; align-items: center;
+            justify-content: center; transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        .search-nav-btn:hover { background: #e0e0e6; color: #111; }
+        .search-nav-btn:disabled { opacity: 0.3; cursor: default; }
+        .search-close-btn {
+            width: 36px; height: 36px; border-radius: 10px; border: none;
+            background: transparent; color: #999; cursor: pointer;
+            font-size: 20px; display: flex; align-items: center;
+            justify-content: center; transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        .search-close-btn:hover { background: rgba(0,0,0,0.05); color: #111; }
+        .search-stats { margin-top: 12px; color: rgba(255,255,255,0.5); font-size: 14px; text-align: center; min-height: 20px; font-family: 'Inter', sans-serif; }
+        mark.search-hl {
+            background: linear-gradient(120deg, #fce83a 0%, #ffd700 100%);
+            color: #000; border-radius: 4px; padding: 1px 2px;
+        }
+        mark.search-hl.active {
+            background: linear-gradient(120deg, #ff6b35 0%, #ff4500 100%);
+            color: #fff; box-shadow: 0 0 12px rgba(255,70,0,0.5);
+        }
+        @media (max-width: 768px) {
+            .search-overlay { padding-top: 60px; }
+            .search-bar { gap: 4px; padding: 4px 4px 4px 14px; }
+            .search-bar .search-icon { display: none; }
+            .search-bar input { font-size: 15px; padding: 10px 0; }
+            .search-go-btn { padding: 8px 12px; font-size: 11px; }
+            .search-nav-btn { width: 32px; height: 32px; font-size: 14px; }
+            .search-close-btn { width: 32px; height: 32px; font-size: 17px; }
+        }
+
+        #frost-ambient {
+            position: fixed; inset: 0; pointer-events: none; z-index: 1; overflow: hidden;
+        }
+        .frost-vignette {
+            position: absolute; inset: 0;
+            background:
+                radial-gradient(ellipse at 50% 0%, rgba(200,235,255,0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 100%, rgba(200,235,255,0.03) 0%, transparent 40%);
+            pointer-events: none;
+        }
+        .snow {
+            position: absolute; top: -10px;
+            width: var(--sw); height: var(--sw);
+            left: var(--sx);
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.9), rgba(200,235,255,0.3));
+            filter: blur(0.5px);
+            animation: snowFall var(--sdur) linear var(--sdelay) infinite;
+        }
+        @keyframes snowFall {
+            0% { transform: translateY(-10px) translateX(0); opacity: 0; }
+            10% { opacity: 0.7; }
+            90% { opacity: 0.4; }
+            100% { transform: translateY(calc(100vh + 10px)) translateX(var(--sdrift)); opacity: 0; }
+        }
+        .frost-sparkle {
+            position: absolute;
+            width: var(--p size); height: var(--psize);
+            top: var(--py);
+            left: var(--px);
+            background: rgba(255,255,255,0.6);
+            clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+            animation: sparklePulse var(--pdur) ease-in-out var(--pdelay) infinite;
+        }
+        @keyframes sparklePulse {
+            0%,100% { opacity: 0; transform: scale(0.3); }
+            50% { opacity: 0.8; transform: scale(1); }
+        }
+
+        @media (max-width: 768px) {
+            .site-header { padding: 12px 20px; }
+            .site-nav { display: none; }
+            .mobile-menu-btn { display: block; }
+            .mobile-nav-dropdown {
+                display: flex; flex-direction: column; gap: 12px;
+                position: fixed; top: 60px; right: -280px; width: 250px;
+                background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+                padding: 24px; border-radius: 0 0 0 20px; box-shadow: -5px 10px 30px rgba(0,0,0,0.1);
+                transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 999; border: 1px solid rgba(0,0,0,0.05); border-right: none;
+            }
+            .mobile-nav-dropdown.is-open { right: 0; }
+            .mobile-nav-dropdown a {
+                text-decoration: none; font-family: 'LuckiestGuy Regular', cursive; font-size: 18px;
+                color: #111; text-align: center; padding: 12px; border-radius: 100px; border: 2px solid #e8e8f0;
+                text-transform: uppercase; transition: all 0.2s;
+            }
+            .mobile-nav-dropdown a.active { background: #175ec2; color: #fff; border-color: transparent; }
+            .mobile-nav-dropdown a.nav-news { color: #1a73e8; }
+            .mobile-nav-dropdown a.nav-leaks { color: #d93025; }
+            .content-columns { flex-direction: column; }
+            .balancing-inner { flex-direction: column; }
+            .balancing-img { width: 100%; }
+            .blue-banner { font-size: 24px; padding: 12px 30px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="frost-ambient"></div>
+
+    <header class="site-header">
+        <div class="site-header__logo">
+            <img src="../BF_news.png" alt="Blox Fruits">
+        </div>
+        <nav>
+            <ul class="site-nav">
+                <li><a href="https://www.roblox.com/fr/games/2753915549/Blox-Fruits">Game</a></li>
+                <li><a href="../index.html">News</a></li>
+                <li><a href="../neo_bulletin.html">Leaks</a></li>
+            </ul>
+        </nav>
+        <div class="site-header__icons">
+            <span class="material-symbols-outlined" onclick="openSearch()">search</span>
+            <span class="material-symbols-outlined">person</span>
+            <span class="material-symbols-outlined mobile-menu-btn" id="menuToggle">menu</span>
+        </div>
+    </header>
+
+    <div class="mobile-nav-dropdown" id="mobileNav">
+        <a href="https://www.roblox.com/fr/games/2753915549/Blox-Fruits">Game</a>
+        <a href="../index.html" class="nav-news">News</a>
+        <a href="../neo_bulletin.html" class="nav-leaks">Leaks</a>
+    </div>
+
+    <main class="main-content">
+
+        <div class="blue-banner">The Blox Bulletin #018</div>
+
+        <div class="hero-image-wrapper">
+            <img src="../018/img/MysteryMan.png" class="hero-image" alt="The Blox Bulletin 018">
+        </div>
+
+        <div class="journal-header">
+            <h1 class="journal-title">The Blox Bulletin</h1>
+            <p class="journal-subtitle">Incident à Hot & Cold : Le Sommet Scientifique attaqué !</p>
+            <div class="journal-meta">Numéro : 018 | 1 Août 2025</div>
+        </div>
+
+        <div class="dashed-line"></div>
+
+        <div class="breaking-news-bar">BREAKING NEWS!</div>
+
+        <div class="announcement-box">
+            <h2 class="announcement-title">Une explosion a secoué Hot & Cold</h2>
+            <span class="announcement-subtitle">Reportage de l'équipe d'actualité</span>
+            <img src="../018/img/FairExplosion.png" alt="Explosion à Hot & Cold" class="announcement-img">
+            <div class="announcement-text">
+                <p>Une soudaine explosion a secoué le centre de recherche de <strong>Chaud et Froid (Hot & Cold)</strong> plus tôt dans la journée, faisant trembler la Seconde Mer et envoyant un panache de fumée à l'horizon. L'explosion s'est produite lors du Sommet Scientifique annuel de l'île, un événement dirigé par le scientifique en chef Lucien, où des chercheurs et des inventeurs se réunissent pour présenter leurs avancées les plus pointues.</p>
+                <p>À l'extérieur du Sommet, des manifestants s'étaient rassemblés plus tôt dans la journée, exigeant que les chercheurs cessent d'expérimenter sur l'énergie à base de fruits après des années d'éveils imprévisibles. La tension est montée dans la foule lorsque des témoins ont repéré un scientifique solitaire, identifié uniquement sous le nom de <strong>"Zero"</strong>, forçant son chemin dans l'installation. Certains témoins ont rapporté avoir vu Zero serrer un ensemble de notes, y compris ce qui ressemblait à des codes d'accès de portes de sécurité et un croquis d'un fruit puissant. Quelques instants après l'entrée de Zero dans le complexe, l'île entière a tremblé alors qu'un éclair aveuglant enveloppait les lieux du Sommet en pleine lumière.</p>
+                <p>Une violente éruption a ravagé l'installation, blessant des dizaines de personnes et dispersant des morceaux de métal à travers l'île. Dans les heures qui ont suivi l'incident, Lucien a finalement publié une brève déclaration confirmant que l'intrus, Zero, était responsable de l'incident. Après avoir absorbé un ingrédient clé qui avait été utilisé pour démontrer une machine lors du Sommet, Zero a fui les lieux.</p>
+                
+                <div class="summary">
+                    <b>Résumé :</b> Une violente explosion a détruit le laboratoire Hot & Cold lors du Sommet Scientifique. Le coupable, un individu nommé "Zero", a volé un ingrédient clé avant de s'enfuir.
+                </div>
+            </div>
+        </div>
+
+        <div class="content-columns">
+            <div class="left-col">
+                <h2>Découverte d'une machine mystérieuse !</h2>
+                <span class="section-subtext">Par Claire Duney, Journaliste d'Investigation</span>
+                
+                <img src="../018/img/Blueprints.png" class="column-img" alt="Plans mystérieux">
+                
+                <p>Des équipes explorant les abords du complexe de Chaud et Froid détruit ont commencé à récupérer le peu qui a survécu à l'explosion. Parmi les débris, les chercheurs ont découvert un <strong>plan (blueprint)</strong> pour un appareil complexe à canaux multiples, apparemment conçu pour un processus basé sur la fusion ; une technologie bien plus avancée que tout ce qui a été présenté lors du Sommet.</p>
+                <p>Les premières ébauches du design suggèrent que l'appareil n'était qu'un composant d'un système beaucoup plus vaste, laissant entendre que cette machine n'est que la première pièce d'un complot à plus grande échelle.</p>
+                
+                <div class="summary">
+                    <b>Résumé :</b> Les enquêteurs ont trouvé les plans d'une machine de fusion inconnue et très avancée, suggérant un projet mystérieux bien plus vaste.
+                </div>
+            </div>
+
+            <div class="right-col">
+                <h2 style="font-size: 18px; border-bottom: 2px solid #111; padding-bottom: 10px;">Transferts virtuels ?</h2>
+                <span class="section-subtext" style="margin-top: 5px;">Par Claire Duney</span>
+                
+                <img src="../018/img/VirtualWorld.png" class="column-img" alt="Le Disque Dur de Lucien">
+                
+                <p>Fait encore plus inquiétant, un disque dur calciné a été récupéré plus profondément dans les décombres. Après une décompilation partielle, les analystes ont récupéré des fichiers sur des "procédures de téléchargement de sujets" et des <strong>"environnements de transfert virtuels"</strong>, suggérant que Lucien avait expérimenté des transferts vers des mondes simulés.</p>
+                <p>Bien que l'extérieur de l'installation ait été détruit, les enquêteurs ont fait une découverte surprenante : tout l'intérieur est resté parfaitement intact. Selon l'équipe de Lucien, un protocole de défense dormant s'est déclenché dans les dernières secondes avant l'explosion, conçu pour préserver les projets les plus critiques de l'installation.</p>
+                
+                <div class="summary">
+                    <b>Résumé :</b> Des données récupérées pointent vers des expériences sur des mondes virtuels, et l'intérieur du labo a été sauvé in extremis par un protocole de défense secret.
+                </div>
+            </div>
+        </div>
+
+        <div class="balancing-section">
+            <h2>Mystérieux... Sanctuaire !</h2>
+            <span class="section-subtext">Par le Dr. Tywin Rocke</span>
+            <div class="balancing-inner">
+                <div class="balancing-text">
+                    <p>Alors que les enquêteurs continuent d'interroger les survivants de l'explosion du Sommet Scientifique, un détail curieux a émergé. Nous avons appris que tous les scientifiques ont reçu un petit bibelot (Trinket) à leur arrivée, offert par nul autre que Lucien lui-même. Ces objets prenaient la forme de petits <strong>accessoires</strong>, comprenant des bagues, des pendentifs et des bracelets à breloques.</p>
+                    <p><em>"Nous n'avons jamais reçu de cadeaux lors des précédents Sommets Scientifiques. Je suis heureux que nous en ayons eu cette année, car sans cet accessoire, je n'aurais pas survécu à cette explosion !"</em> déclare l'un des participants.</p>
+                    <p>Plusieurs scientifiques ont rapporté quelque chose d'extraordinaire. Ceux qui se trouvaient près de l'explosion ont décrit avoir vu leurs accessoires se mettre soudainement à briller, émettant de faibles impulsions de lumière, avant de ressentir des poussées inattendues de clarté, de force, ou même <strong>une explosion d'énergie</strong> qui leur a permis de s'enfuir en sécurité après avoir subi les dégâts de l'explosion. Alors que ces accessoires étaient considérés comme des souvenirs inoffensifs, de nombreux participants leur attribuent désormais le mérite de les avoir aidés à rester stables et concentrés au milieu du désastre.</p>
+                    
+                    <div class="summary">
+                        <b>Résumé :</b> Les scientifiques ont survécu grâce à de mystérieux accessoires (Trinkets) offerts par Lucien, qui se sont mis à briller et leur ont accordé une force et une énergie inattendues pendant l'explosion.
+                    </div>
+                </div>
+                <img src="../018/img/TrinketSwag.png" class="balancing-img" alt="Les Trinkets mystérieux">
+            </div>
+        </div>
+
+        <div class="break-notice-box">
+            Nous surveillons activement l'évolution de la situation et recherchons les responsables de ce chaos. Restez à l'écoute pour plus de nouvelles bientôt !
+        </div>
+
+        <div class="social-share">
+            <a href="https://discord.gg/a6S6eugPn" target="_blank" class="td" rel="noopener">
+                <svg width="18" height="18" viewBox="0 0 127.14 96.36" fill="currentColor" style="flex-shrink:0"><path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36a77.7,77.7,0,0,0,6.89-11.11,68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,56.61,122.09,32.7,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91.08,65.69,84.69,65.69Z"/></svg>
+                Discord
+            </a>
+            <a href="https://tiktok.com/@dc_neolixx" target="_blank" class="tt" rel="noopener">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
+                TikTok
+            </a>
+            <a href="https://www.youtube.com/@Dc_neolixx" target="_blank" class="ty" rel="noopener">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                YouTube
+            </a>
+        </div>
+
+        <div class="back-button-container">
+            <a href="../index.html" class="back-button">← Retour aux Actualités</a>
+        </div>
+
+    </main>
+
+    <!-- ── SEARCH OVERLAY ── -->
+    <div id="searchOverlay" class="search-overlay" onclick="if(event.target===this)closeSearch()">
+        <div class="search-container">
+            <div class="search-bar">
+                <span class="material-symbols-outlined search-icon" style="font-size:22px;color:#999;flex-shrink:0">search</span>
+                <input id="searchInput" type="text" placeholder="Rechercher…" autofocus onkeydown="if(event.key==='Escape')closeSearch();if(event.key==='Enter'){event.preventDefault();executeSearch()}">
+                <button class="search-go-btn" onclick="executeSearch()">Chercher</button>
+                <button class="search-nav-btn" onclick="prevMatch()" id="searchPrevBtn">▲</button>
+                <button class="search-nav-btn" onclick="nextMatch()" id="searchNextBtn">▼</button>
+                <button class="search-close-btn" onclick="closeSearch()">✕</button>
+            </div>
+            <div id="searchStats" class="search-stats"></div>
+        </div>
+    </div>
+
+    <script>
+        // ── MENU HAMBURGER MOBILE ──
+        document.addEventListener("DOMContentLoaded", () => {
+            const menuBtn = document.getElementById('menuToggle');
+            const mobileNav = document.getElementById('mobileNav');
+            if (menuBtn && mobileNav) {
+                menuBtn.addEventListener('click', () => {
+                    mobileNav.classList.toggle('is-open');
+                    menuBtn.textContent = mobileNav.classList.contains('is-open') ? 'close' : 'menu';
+                });
+            }
+        });
+
+        // ── NAVBAR SCROLL TEXTE BLANC ──
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('.site-header');
+            const darkZones = document.querySelectorAll('.blue-banner');
+            let isOverDarkZone = false;
+            const headerRect = header.getBoundingClientRect();
+            darkZones.forEach(zone => {
+                const rect = zone.getBoundingClientRect();
+                if (rect.top < headerRect.bottom && rect.bottom > headerRect.top) isOverDarkZone = true;
+            });
+            header.classList.toggle('nav-light-text', isOverDarkZone);
+        });
+
+        // ── SEARCH ──
+        let searchMatches = [];
+        let searchCurrent = -1;
+        function openSearch() {
+            document.getElementById('searchOverlay').classList.add('is-active');
+            const inp = document.getElementById('searchInput');
+            inp.value = '';
+            document.getElementById('searchStats').textContent = '';
+            searchMatches = []; searchCurrent = -1;
+            removeHighlights();
+            setTimeout(() => inp.focus(), 200);
+        }
+        function closeSearch(keepHl) {
+            document.getElementById('searchOverlay').classList.remove('is-active');
+            if (!keepHl) removeHighlights();
+            if (!keepHl) { searchMatches = []; searchCurrent = -1; }
+        }
+        function removeHighlights() {
+            document.querySelectorAll('mark.search-hl').forEach(m => {
+                const p = m.parentNode;
+                p.replaceChild(document.createTextNode(m.textContent), m);
+                p.normalize();
+            });
+        }
+        function executeSearch() {
+            const q = document.getElementById('searchInput').value.trim().toLowerCase();
+            removeHighlights();
+            searchMatches = []; searchCurrent = -1;
+            document.getElementById('searchPrevBtn').disabled = true;
+            document.getElementById('searchNextBtn').disabled = true;
+            const stats = document.getElementById('searchStats');
+            stats.textContent = '';
+            if (!q) return;
+            const root = document.querySelector('.main-content') || document.body;
+            const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+                acceptNode: n => {
+                    const p = n.parentNode;
+                    if (!p || p.nodeName === 'SCRIPT' || p.nodeName === 'STYLE') return NodeFilter.FILTER_REJECT;
+                    if (p.closest('.search-overlay, .material-symbols-outlined, .mobile-menu-btn')) return NodeFilter.FILTER_REJECT;
+                    return NodeFilter.FILTER_ACCEPT;
+                }
+            });
+            const nodes = []; let n;
+            while (n = walker.nextNode()) nodes.push(n);
+            nodes.forEach(textNode => {
+                const text = textNode.textContent;
+                const lower = text.toLowerCase();
+                let idx = lower.indexOf(q);
+                if (idx === -1) return;
+                const frag = document.createDocumentFragment();
+                let last = 0;
+                while (idx !== -1) {
+                    if (idx > last) frag.appendChild(document.createTextNode(text.slice(last, idx)));
+                    const mark = document.createElement('mark');
+                    mark.className = 'search-hl';
+                    mark.textContent = text.slice(idx, idx + q.length);
+                    frag.appendChild(mark);
+                    searchMatches.push(mark);
+                    last = idx + q.length;
+                    idx = lower.indexOf(q, last);
+                }
+                if (last < text.length) frag.appendChild(document.createTextNode(text.slice(last)));
+                textNode.parentNode.replaceChild(frag, textNode);
+            });
+            const c = searchMatches.length;
+            if (c > 0) {
+                searchCurrent = 0;
+                searchMatches[0].classList.add('active');
+                searchMatches[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                stats.textContent = c + ' résultat' + (c > 1 ? 's' : '');
+                document.getElementById('searchPrevBtn').disabled = false;
+                document.getElementById('searchNextBtn').disabled = false;
+                closeSearch(true);
+            } else {
+                stats.textContent = 'Aucun résultat';
+            }
+        }
+        function nextMatch() {
+            if (searchMatches.length === 0) return;
+            searchMatches[searchCurrent]?.classList.remove('active');
+            searchCurrent = (searchCurrent + 1) % searchMatches.length;
+            searchMatches[searchCurrent].classList.add('active');
+            searchMatches[searchCurrent].scrollIntoView({ behavior: 'smooth', block: 'center' });
+            document.getElementById('searchStats').textContent = (searchCurrent+1) + '/' + searchMatches.length;
+        }
+        function prevMatch() {
+            if (searchMatches.length === 0) return;
+            searchMatches[searchCurrent]?.classList.remove('active');
+            searchCurrent = (searchCurrent - 1 + searchMatches.length) % searchMatches.length;
+            searchMatches[searchCurrent].classList.add('active');
+            searchMatches[searchCurrent].scrollIntoView({ behavior: 'smooth', block: 'center' });
+            document.getElementById('searchStats').textContent = (searchCurrent+1) + '/' + searchMatches.length;
+        }
+        document.addEventListener("keydown", e => {
+            if (e.key === "Escape" && document.getElementById('searchOverlay')?.classList.contains('is-active')) closeSearch();
+        });
+
+        // ── FROST EFFECT ──
+        (function(){
+            const c = document.getElementById('frost-ambient');
+            if(!c) return;
+
+            const v = document.createElement('div');
+            v.className = 'frost-vignette';
+            c.appendChild(v);
+
+            const snowCount = 30;
+            for(let i=0;i<snowCount;i++){
+                const p = document.createElement('div');
+                p.className = 'snow';
+                const sw = 2 + Math.random() * 6;
+                p.style.setProperty('--sw', sw + 'px');
+                p.style.setProperty('--sx', Math.random() * 100 + '%');
+                p.style.setProperty('--sdur', (6 + Math.random() * 10) + 's');
+                p.style.setProperty('--sdelay', Math.random() * 12 + 's');
+                p.style.setProperty('--sdrift', (-20 + Math.random() * 40) + 'px');
+                c.appendChild(p);
+            }
+
+            const sparkleCount = 8;
+            for(let i=0;i<sparkleCount;i++){
+                const p = document.createElement('div');
+                p.className = 'frost-sparkle';
+                const ps = 3 + Math.random() * 6;
+                p.style.setProperty('--psize', ps + 'px');
+                p.style.setProperty('--px', Math.random() * 100 + '%');
+                p.style.setProperty('--py', Math.random() * 100 + '%');
+                p.style.setProperty('--pdur', (2 + Math.random() * 3) + 's');
+                p.style.setProperty('--pdelay', Math.random() * 5 + 's');
+                c.appendChild(p);
+            }
+        })();
+    </script>
+
+</body>
+</html>

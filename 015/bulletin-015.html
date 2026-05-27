@@ -61,7 +61,7 @@
 
         .bulletin-container { max-width: 1100px; margin: 40px auto; padding: 0 24px; }
 
-        .blue-banner { background: linear-gradient(135deg, #175ec2, #2980d4, #175ec2); background-size: 200% auto; color: #fff; padding: 16px 60px; font-size: 36px; text-transform: uppercase; letter-spacing: 3px; border-radius: 100px; font-family: 'LuckiestGuy Regular', cursive; box-shadow: 0 8px 32px rgba(23,94,194,0.45), 0 2px 8px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.2); animation: shimmerBanner 3s linear infinite; margin-bottom: 20px; text-align: center; display: block; }
+        .blue-banner { background: linear-gradient(135deg, #0f9b0f, #39ff14, #0f9b0f); background-size: 200% auto; color: #fff; padding: 16px 60px; font-size: 36px; text-transform: uppercase; letter-spacing: 3px; border-radius: 100px; font-family: 'LuckiestGuy Regular', cursive; box-shadow: 0 8px 32px rgba(15,155,15,0.5), 0 2px 8px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.25); animation: shimmerBanner 3s linear infinite; margin-bottom: 20px; text-align: center; display: block; }
         @keyframes shimmerBanner { 0%{background-position:0% center} 100%{background-position:200% center} }
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -211,6 +211,33 @@
             font-family: 'Inter', sans-serif; font-weight: 500;
             letter-spacing: 0.3px; text-align: center;
         }
+        #fire-ambient {
+            position: fixed; inset: 0; pointer-events: none; z-index: 1; overflow: hidden;
+        }
+        .fire-glow {
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 200px;
+            background: linear-gradient(0deg, rgba(57,255,20,0.08) 0%, rgba(0,200,0,0.03) 40%, transparent 100%);
+            animation: firePulse 3s ease-in-out infinite;
+        }
+        @keyframes firePulse {
+            0%,100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+        .ember {
+            position: absolute; bottom: 0;
+            width: var(--esize); height: var(--esize);
+            left: var(--ex);
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(200,255,100,0.9), rgba(57,255,20,0.2));
+            box-shadow: 0 0 8px rgba(57,255,20,0.5);
+            animation: emberFloat var(--edur) ease-out var(--edelay) infinite;
+        }
+        @keyframes emberFloat {
+            0% { transform: translateY(0) scale(0.5); opacity: 0; }
+            10% { opacity: 1; transform: translateY(-10px) scale(1); }
+            100% { transform: translateY(calc(-50vh - var(--erise))) translateX(var(--edrift)) scale(0.1); opacity: 0; }
+        }
+
         mark.search-hl {
             background: linear-gradient(135deg, #fce83a, #ffd700);
             color: #000; border-radius: 3px; padding: 1px 4px;
@@ -234,6 +261,8 @@
 </style>
 </head>
 <body>
+
+<div id="fire-ambient"></div>
 
 <header class="site-header">
     <div class="site-header__logo"><img src="../BF_news.png" alt="Blox Fruits"></div>
@@ -488,6 +517,29 @@
     </div>
 </div>
 
+<script>
+    (function(){
+        const c = document.getElementById('fire-ambient');
+        if(!c) return;
+
+        const glow = document.createElement('div');
+        glow.className = 'fire-glow';
+        c.appendChild(glow);
+
+        const emberCount = 25;
+        for(let i=0;i<emberCount;i++){
+            const p = document.createElement('div');
+            p.className = 'ember';
+            p.style.setProperty('--esize', (2 + Math.random() * 5) + 'px');
+            p.style.setProperty('--ex', Math.random() * 100 + '%');
+            p.style.setProperty('--edur', (3 + Math.random() * 5) + 's');
+            p.style.setProperty('--edelay', Math.random() * 8 + 's');
+            p.style.setProperty('--erise', (100 + Math.random() * 300) + 'px');
+            p.style.setProperty('--edrift', (-40 + Math.random() * 80) + 'px');
+            c.appendChild(p);
+        }
+    })();
+</script>
 
 </body>
 </html>

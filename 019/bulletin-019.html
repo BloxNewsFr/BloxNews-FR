@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>DC Bulletin #019 – Blox Fruits ✦ Valentine's Special</title>
+
+    <link rel="icon" type="image/png" href="../shared/favicon.png">
+    <link rel="shortcut icon" href="../shared/bf_logo.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Inter:wght@300;400;500;600;700;900&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
+
+    <style>
+        @font-face {
+            font-family: 'LuckiestGuy Regular';
+            src: url('../fonts/LuckiestGuy-Regular.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        :root {
+            --color-text: #2d0a1e;
+            --color-border: #f0d0d8;
+            --font-stack-body: 'Inter', sans-serif;
+            --color-primary: #ffda00;
+            --rose: #c2185b;
+            --rose-light: #f8e0e8;
+            --gold: #d4a017;
+            --blush: #fff5f7;
+            --crimson: #8b0000;
+            --pink-glow: #ff1493;
+        }
+
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: var(--font-stack-body);
+            color: var(--color-text);
+            background: linear-gradient(170deg, #1a0a0f 0%, #2d0a1e 30%, #3d1025 60%, #1a0a0f 100%);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .site-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 55px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            height: 72px;
+            background-color: rgba(255, 255, 255, 0.08);
+            background-image: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.05) 50%, transparent 100%);
+            background-size: 200% 100%;
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255,255,255,0.2);
+            transition: background 0.5s cubic-bezier(0.4, 0, 0.2, 1), backdrop-filter 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: navbarSheen 6s ease-in-out infinite;
+        }
+
+        @keyframes navbarSheen {
+            0%, 100% { background-position: 200% 0; }
+            50% { background-position: 0% 0; }
+        }
+
+        .site-header__logo img {
+            height: 42px; width: auto; display: block;
+            filter: none !important;
+        }
+
+        .site-nav { display: flex; gap: 8px; padding: 0; margin: 0; list-style: none; font-weight: 900; }
+
+        .site-nav a, .site-header__icons {
+            color: var(--color-text);
+            transition: color 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .site-header.nav-light-text .site-nav a,
+        .site-header.nav-light-text .site-header__icons {
+            color: #fff;
+            -webkit-text-stroke: 1.2px rgba(0,0,0,0.7);
+            text-shadow: 0 2px 8px rgba(0,0,0,0.35);
+        }
+
+        .site-nav a {
+            text-decoration: none; font-weight: 900; font-size: 17px;
+            text-transform: uppercase; font-family: 'LuckiestGuy Regular', cursive;
+            padding: 8px 16px; border-radius: 10px; transition: background 0.2s, color 0.2s;
+        }
+        .site-nav a:hover { background: var(--color-primary); color: #000; }
+        .site-header__icons { display: flex; gap: 12px; color: var(--color-text); cursor: pointer; align-items: center; }
+        .site-header__icons span { padding: 8px; border-radius: 10px; transition: background 0.2s; }
+        .site-header__icons span:hover { background: rgba(0,0,0,0.06); }
+        .mobile-menu-btn { display: none; }
+        .mobile-nav-dropdown { display: none; }
+
+        .main-content { max-width: 1100px; margin: 40px auto; padding: 0 24px; }
+
+        .valentine-banner {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            background: linear-gradient(135deg, #8b0000, #c2185b, #d4a017, #c2185b, #8b0000);
+            background-size: 300% auto;
+            color: #fff;
+            padding: 18px 40px;
+            font-size: 38px;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            border-radius: 100px;
+            font-family: 'LuckiestGuy Regular', cursive;
+            box-shadow: 0 8px 40px rgba(194,24,91,0.5), 0 2px 8px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.25);
+            animation: shimmerBanner 4s linear infinite;
+            margin-bottom: 24px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        @keyframes shimmerBanner { 0%{background-position:0% center} 100%{background-position:300% center} }
+
+        .valentine-banner .heart-icon {
+            font-size: 32px;
+            display: inline-block;
+            animation: heartBeat 1.2s ease-in-out infinite;
+        }
+
+        @keyframes heartBeat {
+            0%, 100% { transform: scale(1); }
+            15% { transform: scale(1.25); }
+            30% { transform: scale(1); }
+            45% { transform: scale(1.15); }
+            60% { transform: scale(1); }
+        }
+
+        .hero-image-wrapper { width: 100%; margin-bottom: 15px; position: relative; }
+        .hero-image {
+            width: 100%; height: auto; display: block;
+            border-radius: 24px;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.3);
+        }
+
+        .hero-overlay-hearts {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+            border-radius: 24px;
+        }
+
+        .journal-header { text-align: center; margin-top: 30px; }
+        .journal-title {
+            font-family: 'LuckiestGuy Regular', cursive;
+            font-size: 42px;
+            font-weight: bold;
+            color: #ffd700;
+            margin: 0 0 8px 0;
+            letter-spacing: 2px;
+            text-shadow: 0 0 30px rgba(255,215,0,0.3), 0 2px 4px rgba(0,0,0,0.3);
+        }
+        .journal-subtitle {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 20px;
+            color: #f0a0c0;
+            margin: 0 0 25px 0;
+            text-shadow: 0 1px 8px rgba(0,0,0,0.3);
+        }
+        .journal-meta {
+            font-weight: bold;
+            font-size: 14px;
+            color: #f0c0d0;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 0 1px 4px rgba(0,0,0,0.3);
+        }
+        .dashed-line {
+            border-top: 2px dashed rgba(212,160,23,0.4);
+            margin: 20px 0 35px 0;
+        }
+
+        .section-card {
+            background: linear-gradient(135deg, rgba(255,245,247,0.95), rgba(255,255,255,0.92));
+            border-radius: 20px;
+            padding: 28px;
+            margin-bottom: 28px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 0 0 1px rgba(212,160,23,0.15);
+            border-left: 4px solid #d4a017;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section-card::before {
+            content: '\2665';
+            position: absolute;
+            top: -10px;
+            right: 16px;
+            font-size: 80px;
+            color: rgba(194,24,91,0.06);
+            font-family: serif;
+            line-height: 1;
+            pointer-events: none;
+        }
+
+        .section-card h2 {
+            font-family: 'LuckiestGuy Regular', cursive;
+            font-size: 24px;
+            color: #8b0000;
+            margin: 0 0 6px 0;
+            letter-spacing: 0.5px;
+        }
+
+        .section-card .author {
+            font-size: 14px;
+            font-style: italic;
+            color: #a06070;
+            margin-bottom: 16px;
+            display: block;
+        }
+
+        .section-card img {
+            width: 100%;
+            height: auto;
+            border-radius: 14px;
+            margin: 12px 0;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .section-card p {
+            font-size: 15px;
+            color: #3a1a2a;
+            line-height: 1.75;
+        }
+
+        .section-card p b {
+            color: #c2185b;
+        }
+
+        .summary {
+            background: rgba(194, 24, 91, 0.08);
+            border-left: 4px solid #c2185b;
+            padding: 12px 16px;
+            margin-top: 15px;
+            font-size: 13.5px;
+            font-style: italic;
+            color: #5a2a3a;
+            border-radius: 0 6px 6px 0;
+        }
+        .summary b {
+            color: #c2185b;
+            text-transform: uppercase;
+            font-size: 11px;
+            font-style: normal;
+            display: block;
+            margin-bottom: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        .side-by-side-wrapper {
+            display: flex;
+            gap: 28px;
+            margin-bottom: 28px;
+        }
+
+        .side-article {
+            flex: 1;
+            background: linear-gradient(135deg, rgba(255,245,247,0.95), rgba(255,255,255,0.92));
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 0 0 1px rgba(212,160,23,0.15);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .side-article:nth-child(2) {
+            border-left: 4px solid #8b0000;
+        }
+
+        .side-article:nth-child(2)::before {
+            content: '\2665';
+            position: absolute;
+            bottom: -10px;
+            left: 16px;
+            font-size: 70px;
+            color: rgba(139,0,0,0.05);
+            font-family: serif;
+            line-height: 1;
+            pointer-events: none;
+        }
+
+        .side-article h2 {
+            font-family: 'LuckiestGuy Regular', cursive;
+            font-size: 20px;
+            color: #8b0000;
+            margin: 0 0 6px 0;
+        }
+
+        .side-article .author {
+            font-size: 13px;
+            font-style: italic;
+            color: #a06070;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .side-article img {
+            width: 100%;
+            height: auto;
+            border-radius: 14px;
+            margin: 10px 0;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+        }
+
+        .side-article p {
+            font-size: 14px;
+            color: #3a1a2a;
+            line-height: 1.7;
+        }
+
+        .side-article p b {
+            color: #c2185b;
+        }
+
+        .article-noflex {
+            display: block;
+        }
+
+        .article-noflex img {
+            float: right;
+            width: 48%;
+            max-width: 430px;
+            margin: 6px 0 14px 25px;
+            border-radius: 14px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .article-noflex::after {
+            content: "";
+            display: block;
+            clear: both;
+        }
+
+        .footer-note {
+            text-align: center;
+            font-size: 17px;
+            padding: 30px 20px;
+            margin: 20px 0;
+            color: #f0a0c0;
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            border-top: 2px dashed rgba(212,160,23,0.3);
+            border-bottom: 2px dashed rgba(212,160,23,0.3);
+            text-shadow: 0 1px 8px rgba(0,0,0,0.3);
+        }
+
+        .social-share {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin: 30px 0;
+            width: 100%;
+        }
+        .social-share a {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 18px;
+            border-radius: 100px;
+            font-size: 13px;
+            font-weight: 900;
+            text-decoration: none;
+            text-transform: uppercase;
+            transition: all 0.25s ease;
+            border: none;
+        }
+        .social-share a:hover { transform: translateY(-3px); }
+        .social-share a.td { background: #5865F2; color: #fff; box-shadow: 0 4px 15px rgba(88,101,242,0.4); }
+        .social-share a.tt { background: linear-gradient(135deg, #1d56f2, #f21de4); color: #fff; box-shadow: 0 4px 15px rgba(29,86,242,0.4); }
+        .social-share a.ty { background: #ec1717e0; color: #fff; box-shadow: 0 4px 15px rgba(236,23,23,0.4); }
+
+        .back-button-container { text-align: center; margin: 40px 0 50px 0; }
+        .back-button {
+            background: linear-gradient(135deg, #ffda00, #ffc200);
+            color: #000; text-decoration: none;
+            font-weight: 900; padding: 11px 24px;
+            border-radius: 100px; font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 15px rgba(255,218,0,0.4);
+            border: 2px solid rgba(0,0,0,0.08);
+            display: inline-block;
+            transition: transform 0.1s;
+        }
+        .back-button:hover { transform: scale(1.05); box-shadow: 0 6px 20px rgba(255,218,0,0.5); }
+
+        /* ── SEARCH OVERLAY ── */
+        .search-overlay {
+            position: fixed; inset: 0;
+            background: linear-gradient(135deg, rgba(5,5,15,0.88), rgba(15,10,25,0.82));
+            backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+            z-index: 99999; display: flex; flex-direction: column;
+            align-items: center; padding-top: 120px;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .search-overlay.is-active { opacity: 1; pointer-events: auto; }
+        .search-container {
+            width: 92%; max-width: 560px;
+            transform: translateY(-24px) scale(0.94);
+            transition: transform 0.45s cubic-bezier(0.34,1.56,0.64,1);
+        }
+        .search-overlay.is-active .search-container { transform: translateY(0) scale(1); }
+        .search-bar {
+            display: flex; align-items: center; gap: 8px;
+            background: rgba(255,255,255,0.97); backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px; padding: 4px 4px 4px 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.06);
+            transition: box-shadow 0.25s;
+        }
+        .search-bar:focus-within { box-shadow: 0 8px 48px rgba(0,0,0,0.4), 0 0 0 2px rgba(255,255,255,0.1); }
+        .search-bar input {
+            flex: 1; border: none; outline: none; font-size: 17px;
+            font-family: 'Inter', sans-serif; color: #111;
+            background: transparent; padding: 14px 0; letter-spacing: 0.1px;
+        }
+        .search-bar input::placeholder { color: #aaa; }
+        .search-go-btn {
+            padding: 10px 22px; border-radius: 12px; border: none;
+            background: linear-gradient(135deg, #111, #333);
+            color: #fff; font-weight: 800; font-size: 13px;
+            cursor: pointer; font-family: 'Inter', sans-serif;
+            transition: all 0.25s ease; letter-spacing: 0.3px;
+            text-transform: uppercase; flex-shrink: 0;
+        }
+        .search-go-btn:hover { transform: scale(1.04); background: linear-gradient(135deg, #222, #444); box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+        .search-nav-btn {
+            width: 36px; height: 36px; border-radius: 10px; border: none;
+            background: #f2f2f6; color: #555; cursor: pointer;
+            font-size: 16px; display: flex; align-items: center;
+            justify-content: center; transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        .search-nav-btn:hover { background: #e0e0e6; color: #111; }
+        .search-nav-btn:disabled { opacity: 0.3; cursor: default; }
+        .search-close-btn {
+            width: 36px; height: 36px; border-radius: 10px; border: none;
+            background: transparent; color: #999; cursor: pointer;
+            font-size: 20px; display: flex; align-items: center;
+            justify-content: center; transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        .search-close-btn:hover { background: rgba(0,0,0,0.05); color: #111; }
+        .search-stats { margin-top: 12px; color: rgba(255,255,255,0.5); font-size: 14px; text-align: center; min-height: 20px; font-family: 'Inter', sans-serif; }
+        mark.search-hl {
+            background: linear-gradient(120deg, #fce83a 0%, #ffd700 100%);
+            color: #000; border-radius: 4px; padding: 1px 2px;
+        }
+        mark.search-hl.active {
+            background: linear-gradient(120deg, #ff6b35 0%, #ff4500 100%);
+            color: #fff; box-shadow: 0 0 12px rgba(255,70,0,0.5);
+        }
+
+        @media (max-width: 768px) {
+            .search-overlay { padding-top: 60px; }
+            .search-bar { gap: 4px; padding: 4px 4px 4px 14px; }
+            .search-bar .search-icon { display: none; }
+            .search-bar input { font-size: 15px; padding: 10px 0; }
+            .search-go-btn { padding: 8px 12px; font-size: 11px; }
+            .search-nav-btn { width: 32px; height: 32px; font-size: 14px; }
+            .search-close-btn { width: 32px; height: 32px; font-size: 17px; }
+        }
+
+        @media (max-width: 768px) {
+            .site-header { padding: 12px 20px; }
+            .site-nav { display: none; }
+            .mobile-menu-btn { display: block; }
+            .mobile-nav-dropdown {
+                display: flex; flex-direction: column; gap: 12px;
+                position: fixed; top: 60px; right: -280px; width: 250px;
+                background: rgba(255,245,247,0.97); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+                padding: 24px; border-radius: 0 0 0 20px; box-shadow: -5px 10px 30px rgba(0,0,0,0.1);
+                transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 999; border: 1px solid rgba(0,0,0,0.05); border-right: none;
+            }
+            .mobile-nav-dropdown.is-open { right: 0; }
+            .mobile-nav-dropdown a {
+                text-decoration: none; font-family: 'LuckiestGuy Regular', cursive; font-size: 18px;
+                color: #2d0a1e; text-align: center; padding: 12px; border-radius: 100px; border: 2px solid #f0d0d8;
+                text-transform: uppercase; transition: all 0.2s;
+            }
+            .mobile-nav-dropdown a.active { background: #c2185b; color: #fff; border-color: transparent; }
+            .mobile-nav-dropdown a.nav-news { color: #1a73e8; }
+            .mobile-nav-dropdown a.nav-leaks { color: #d93025; }
+            .side-by-side-wrapper { flex-direction: column; }
+            .valentine-banner { font-size: 22px; padding: 14px 20px; white-space: normal; }
+            .valentine-banner .heart-icon { font-size: 22px; }
+            .article-noflex img { float: none; width: 100%; max-width: 100%; margin: 10px auto; }
+            .journal-title { font-size: 30px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="site-header">
+        <div class="site-header__logo">
+            <img src="../BF_news.png" alt="Blox Fruits">
+        </div>
+        <nav>
+            <ul class="site-nav">
+                <li><a href="https://www.roblox.com/fr/games/2753915549/Blox-Fruits">Game</a></li>
+                <li><a href="../index.html">News</a></li>
+                <li><a href="../neo_bulletin.html">Leaks</a></li>
+            </ul>
+        </nav>
+        <div class="site-header__icons">
+            <span class="material-symbols-outlined" onclick="openSearch()">search</span>
+            <span class="material-symbols-outlined">person</span>
+            <span class="material-symbols-outlined mobile-menu-btn" id="menuToggle">menu</span>
+        </div>
+    </header>
+
+    <div class="mobile-nav-dropdown" id="mobileNav">
+        <a href="https://www.roblox.com/fr/games/2753915549/Blox-Fruits">Game</a>
+        <a href="../index.html" class="nav-news">News</a>
+        <a href="../neo_bulletin.html" class="nav-leaks">Leaks</a>
+    </div>
+
+    <main class="main-content">
+
+        <div class="valentine-banner">
+            <span class="heart-icon">&#10084;</span>
+            The Blox Bulletin #019
+            <span class="heart-icon">&#10084;</span>
+        </div>
+
+        <div class="hero-image-wrapper">
+            <img src="./img/Mygame.png" class="hero-image" alt="The Blox Bulletin 019">
+        </div>
+
+        <div class="journal-header">
+            <h1 class="journal-title">&#10084; The Blox Bulletin &#10084;</h1>
+            <p class="journal-subtitle">Event Saint-Valentin, Livraisons du Cœur et Nouveau Concours</p>
+            <div class="journal-meta">Num&eacute;ro : 019 | 8 F&eacute;vrier 2026</div>
+        </div>
+
+        <div class="dashed-line"></div>
+
+        <div class="section-card">
+            <h2>Roses, Chocolats et l'Amour Partout !</h2>
+            <span class="author">Par Riley O'Valentine</span>
+            <img src="./img/Hearty.png" alt="Valentine's Event">
+            <p>
+                L'amour a cette manie de revenir tout seul, et cette année il est de retour plus fort que jamais !<br><br>
+                Le <b>Valentine's Event</b> est l&agrave;, avec son lot de cœurs, de cadeaux et de <b>récompenses limitées</b>. Les joueurs peuvent gagner des <b>'Hearts'</b> en vainquant des ennemis et des boss de n'importe quel niveau &agrave; travers les mers. Et si vous faites &eacute;quipe avec des potes, vous en gagnez encore plus !<br><br>
+                Mais cette année, ça change. On introduit <b>de nouvelles fa&ccedil;ons d'obtenir des Hearts</b>, que vous pourrez dépenser au <b>Valentine's Stock</b> habituel <b>OU au tout nouveau Valentine's Day Gacha !</b>
+            </p>
+            <div class="summary">
+                <b>R&eacute;sum&eacute; :</b> L'event Saint-Valentin est de retour avec des Hearts &agrave; farmer sur les ennemis et boss de tous niveaux. Nouveaut&eacute; : le <b>Valentine's Day Gacha</b> permet de d&eacute;penser ses Hearts en plus du Stock habituel. Jouer en &eacute;quipe rapporte plus de Hearts !
+            </div>
+        </div>
+
+        <div class="side-by-side-wrapper">
+
+            <div class="side-article">
+                <h2>Une Saison d'Amour Encore Plus Grande</h2>
+                <span class="author">Par Rosie Matchmaker</span>
+                <img src="./img/Rosie.png" alt="Rosie Matchmaker">
+                <p>
+                    …et elle a raison ! Salut, moi c'est Rosie ! Cette p&eacute;riode de l'ann&eacute;e est clairement ma pr&eacute;f&eacute;r&eacute;e !<br><br>
+                    Avec mon pote Cupidon, on est l&agrave; pour <b>r&eacute;pandre l'amour plus fort que jamais cette saison</b>. Avec le retour du <b>Valentine's Stock</b> et le <b>nouveau Valentine's Day Gacha</b>, vous avez encore plus de raisons de farmer des Hearts. Je m'occupe des <b>livraisons de petites douceurs toutes les heures</b>, alors sautez sur un de mes flamants roses et aidez-moi &agrave; distribuer ces cadeaux !<br><br>
+                    Pendant ce temps, <b>Cupidon propose des occasions quotidiennes</b> de gagner encore PLUS de Hearts. Mais... restez sur vos gardes. Plus l'amour est fort cette ann&eacute;e, plus une &eacute;trange pr&eacute;sence de 'haine' r&ocirc;de dans l'ombre. J'ai comme l'impression que <b>quelque chose se prépare</b>, qui attend le moment parfait pour g&acirc;cher la f&ecirc;te...
+                </p>
+                <div class="summary">
+                    <b>R&eacute;sum&eacute; :</b> Rosie et Cupidon g&egrave;rent les livraisons de douceurs et les d&eacute;fis quotidiens pour gagner plus de Hearts. Une menace myst&eacute;rieuse semble planer sur les festivit&eacute;s cette ann&eacute;e&hellip;
+                </div>
+            </div>
+
+            <div class="side-article">
+                <h2>Anomalie Corrompue Rep&eacute;r&eacute;e dans la Nature</h2>
+                <span class="author">Par l'&Eacute;quipe du Bulletin</span>
+                <p>
+                    Des signalements commencent &agrave; affluer depuis Turtle Island : une <b>cr&eacute;ature massive</b> erre sur l'&icirc;le, <b>corrompue par une &eacute;nergie qui ne vient pas de ce monde</b>. Des t&eacute;moins racontent avoir vu des veines cramoisies lumineuses, une force anormale, et une rage qui semble... emprunt&eacute;e, comme si elle &eacute;tait aliment&eacute;e par quelque chose de bien plus grand que la cr&eacute;ature elle-m&ecirc;me. On a aussi retrouv&eacute; sur l'&icirc;le des <b>touffes de fourrure blanche comme la glace, maintenant recouvertes d'une corruption rouge</b>.<br><br>
+                    On exhorte tout le monde &agrave; rester vigilant. La Saint-Valentin est cens&eacute;e &ecirc;tre une p&eacute;riode d'amour et de c&eacute;l&eacute;bration, mais cette cr&eacute;ature pourrait bien profiter des festivit&eacute;s. Selon les rapports, la b&ecirc;te se <b>d&eacute;guiserait parmi les gens ordinaires</b> avant d'enlever ses victimes et de les entra&icirc;ner dans des combats perdus d'avance. On vous recommande de bien choisir vos compagnons jusqu'&agrave; ce que la cr&eacute;ature soit neutralis&eacute;e !
+                </p>
+                <img src="./img/SecretBeast.png" alt="Corrupted Beast">
+                <div class="summary">
+                    <b>R&eacute;sum&eacute; :</b> Une cr&eacute;ature corrompue rode sur Turtle Island, capable de se d&eacute;guiser en joueur normal pour pi&eacute;ger ses victimes dans des combats impossibles. Restez vigilants et choisissez bien vos co&eacute;quipiers !
+                </div>
+            </div>
+
+        </div>
+
+        <div class="section-card">
+            <h2>Concours de Fruit Art 2026</h2>
+            <span class="author">Par l'&Eacute;quipe d'Administration</span>
+            <div class="article-noflex">
+                <img src="./img/FruitContest2026.png" alt="Fruit Contest 2026">
+                <p>
+                    On fait appel &agrave; tous les <b>artistes</b> des mers pour <b>donner vie &agrave; leurs id&eacute;es les plus folles et cr&eacute;atives</b> en designant des <b>nouveaux Blox Fruits</b> que vous aimeriez voir dans le jeu. Tout ça gr&acirc;ce &agrave; notre tout nouveau <b>Fruit Art Contest !</b><br><br>
+                    Si vous tra&icirc;nez ici depuis un moment, vous savez qu'on a d&eacute;j&agrave; ajout&eacute; des fruits gagnants des pr&eacute;c&eacute;dents concours dans le jeu. Cette tradition continue, et <b>les enjeux sont encore plus &eacute;lev&eacute;s.</b> Les gagnants de ce concours peuvent s'attendre &agrave; des <b>prix sp&eacute;ciaux et des robux</b>, en plus de voir leurs id&eacute;es ajout&eacute;es au jeu !<br><br>
+                    <b>Pr&ecirc;t &agrave; participer ?</b> Rendez-vous sur notre <a href="https://discord.gg/bloxfruits" style="color:#c2185b;font-weight:700;">Discord</a> pour savoir comment participer et soumettre vos id&eacute;es !
+                </p>
+                <div class="summary">
+                    <b>R&eacute;sum&eacute; :</b> Concours de Fruit Art 2026 ouvert &agrave; tous les artistes de la communaut&eacute;. Les gagnants remportent des prix sp&eacute;ciaux, des robux et voient leurs fruits ajout&eacute;s au jeu. &Agrave; soumettre sur Discord !
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-note">
+            &#10084; Profitez de la saison de l'amour… mais restez vigilants. Tous les sentiments ne sont pas aussi chaleureux qu'ils en ont l'air en cette Saint-Valentin. &#10084;
+        </div>
+
+        <div class="social-share">
+            <a href="https://discord.gg/a6S6eugPn" target="_blank" class="td" rel="noopener">
+                <svg width="18" height="18" viewBox="0 0 127.14 96.36" fill="currentColor" style="flex-shrink:0"><path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36a77.7,77.7,0,0,0,6.89-11.11,68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,56.61,122.09,32.7,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91.08,65.69,84.69,65.69Z"/></svg>
+                Discord
+            </a>
+            <a href="https://tiktok.com/@dc_neolixx" target="_blank" class="tt" rel="noopener">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
+                TikTok
+            </a>
+            <a href="https://www.youtube.com/@Dc_neolixx" target="_blank" class="ty" rel="noopener">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                YouTube
+            </a>
+        </div>
+
+        <div class="back-button-container">
+            <a href="../index.html" class="back-button">&larr; Retour aux Actualités</a>
+        </div>
+
+    </main>
+
+    <!-- ── SEARCH OVERLAY ── -->
+    <div id="searchOverlay" class="search-overlay" onclick="if(event.target===this)closeSearch()">
+        <div class="search-container">
+            <div class="search-bar">
+                <span class="material-symbols-outlined search-icon" style="font-size:22px;color:#999;flex-shrink:0">search</span>
+                <input id="searchInput" type="text" placeholder="Rechercher…" autofocus onkeydown="if(event.key==='Escape')closeSearch();if(event.key==='Enter'){event.preventDefault();executeSearch()}">
+                <button class="search-go-btn" onclick="executeSearch()">Chercher</button>
+                <button class="search-nav-btn" onclick="prevMatch()" id="searchPrevBtn">&#9650;</button>
+                <button class="search-nav-btn" onclick="nextMatch()" id="searchNextBtn">&#9660;</button>
+                <button class="search-close-btn" onclick="closeSearch()">&#10005;</button>
+            </div>
+            <div id="searchStats" class="search-stats"></div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const menuBtn = document.getElementById('menuToggle');
+            const mobileNav = document.getElementById('mobileNav');
+            if (menuBtn && mobileNav) {
+                menuBtn.addEventListener('click', () => {
+                    mobileNav.classList.toggle('is-open');
+                    menuBtn.textContent = mobileNav.classList.contains('is-open') ? 'close' : 'menu';
+                });
+            }
+        });
+
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('.site-header');
+            const banner = document.querySelector('.valentine-banner');
+            let isOverDarkZone = false;
+            const headerRect = header.getBoundingClientRect();
+            if (banner) {
+                const rect = banner.getBoundingClientRect();
+                if (rect.top < headerRect.bottom && rect.bottom > headerRect.top) isOverDarkZone = true;
+            }
+            header.classList.toggle('nav-light-text', isOverDarkZone);
+        });
+
+        let searchMatches = [];
+        let searchCurrent = -1;
+        function openSearch() {
+            document.getElementById('searchOverlay').classList.add('is-active');
+            const inp = document.getElementById('searchInput');
+            inp.value = '';
+            document.getElementById('searchStats').textContent = '';
+            searchMatches = []; searchCurrent = -1;
+            removeHighlights();
+            setTimeout(() => inp.focus(), 200);
+        }
+        function closeSearch(keepHl) {
+            document.getElementById('searchOverlay').classList.remove('is-active');
+            if (!keepHl) removeHighlights();
+            if (!keepHl) { searchMatches = []; searchCurrent = -1; }
+        }
+        function removeHighlights() {
+            document.querySelectorAll('mark.search-hl').forEach(m => {
+                const p = m.parentNode;
+                p.replaceChild(document.createTextNode(m.textContent), m);
+                p.normalize();
+            });
+        }
+        function executeSearch() {
+            const q = document.getElementById('searchInput').value.trim().toLowerCase();
+            removeHighlights();
+            searchMatches = []; searchCurrent = -1;
+            document.getElementById('searchPrevBtn').disabled = true;
+            document.getElementById('searchNextBtn').disabled = true;
+            const stats = document.getElementById('searchStats');
+            stats.textContent = '';
+            if (!q) return;
+            const root = document.querySelector('.main-content') || document.body;
+            const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+                acceptNode: n => {
+                    const p = n.parentNode;
+                    if (!p || p.nodeName === 'SCRIPT' || p.nodeName === 'STYLE') return NodeFilter.FILTER_REJECT;
+                    if (p.closest('.search-overlay, .material-symbols-outlined, .mobile-menu-btn')) return NodeFilter.FILTER_REJECT;
+                    return NodeFilter.FILTER_ACCEPT;
+                }
+            });
+            const nodes = []; let n;
+            while (n = walker.nextNode()) nodes.push(n);
+            nodes.forEach(textNode => {
+                const text = textNode.textContent;
+                const lower = text.toLowerCase();
+                let idx = lower.indexOf(q);
+                if (idx === -1) return;
+                const frag = document.createDocumentFragment();
+                let last = 0;
+                while (idx !== -1) {
+                    if (idx > last) frag.appendChild(document.createTextNode(text.slice(last, idx)));
+                    const mark = document.createElement('mark');
+                    mark.className = 'search-hl';
+                    mark.textContent = text.slice(idx, idx + q.length);
+                    frag.appendChild(mark);
+                    searchMatches.push(mark);
+                    last = idx + q.length;
+                    idx = lower.indexOf(q, last);
+                }
+                if (last < text.length) frag.appendChild(document.createTextNode(text.slice(last)));
+                textNode.parentNode.replaceChild(frag, textNode);
+            });
+            const c = searchMatches.length;
+            if (c > 0) {
+                searchCurrent = 0;
+                searchMatches[0].classList.add('active');
+                searchMatches[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                stats.textContent = c + ' r\u00e9sultat' + (c > 1 ? 's' : '');
+                document.getElementById('searchPrevBtn').disabled = false;
+                document.getElementById('searchNextBtn').disabled = false;
+                closeSearch(true);
+            } else {
+                stats.textContent = 'Aucun r\u00e9sultat';
+            }
+        }
+        function nextMatch() {
+            if (searchMatches.length === 0) return;
+            searchMatches[searchCurrent]?.classList.remove('active');
+            searchCurrent = (searchCurrent + 1) % searchMatches.length;
+            searchMatches[searchCurrent].classList.add('active');
+            searchMatches[searchCurrent].scrollIntoView({ behavior: 'smooth', block: 'center' });
+            document.getElementById('searchStats').textContent = (searchCurrent+1) + '/' + searchMatches.length;
+        }
+        function prevMatch() {
+            if (searchMatches.length === 0) return;
+            searchMatches[searchCurrent]?.classList.remove('active');
+            searchCurrent = (searchCurrent - 1 + searchMatches.length) % searchMatches.length;
+            searchMatches[searchCurrent].classList.add('active');
+            searchMatches[searchCurrent].scrollIntoView({ behavior: 'smooth', block: 'center' });
+            document.getElementById('searchStats').textContent = (searchCurrent+1) + '/' + searchMatches.length;
+        }
+        document.addEventListener("keydown", e => {
+            if (e.key === "Escape" && document.getElementById('searchOverlay')?.classList.contains('is-active')) closeSearch();
+        });
+    </script>
+
+</body>
+</html>
