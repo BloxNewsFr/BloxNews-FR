@@ -223,13 +223,13 @@
             box-shadow: 0 1px 10px rgba(255,107,53,0.5);
         }
         @media (max-width: 768px) {
-            .search-overlay { padding-top: 80px; }
-            .search-container { width: 94%; }
-            .search-bar { padding: 4px 4px 4px 14px; }
-            .search-bar input { font-size: 15px; padding: 12px 0; }
-            .search-go-btn { padding: 8px 16px; font-size: 12px; }
+            .search-overlay { padding-top: 60px; }
+            .search-bar { gap: 4px; padding: 4px 4px 4px 14px; }
+            .search-bar .search-icon { display: none; }
+            .search-bar input { font-size: 15px; padding: 10px 0; }
+            .search-go-btn { padding: 8px 12px; font-size: 11px; }
             .search-nav-btn { width: 32px; height: 32px; font-size: 14px; }
-            .search-close-btn { width: 34px; height: 34px; font-size: 16px; }
+            .search-close-btn { width: 32px; height: 32px; font-size: 17px; }
         }
 </style>
 </head>
@@ -477,7 +477,7 @@
 <div id="searchOverlay" class="search-overlay" onclick="if(event.target===this)closeSearch()">
     <div class="search-container">
         <div class="search-bar">
-            <span class="material-symbols-outlined" style="font-size:22px;color:#999;flex-shrink:0">search</span>
+            <span class="material-symbols-outlined search-icon" style="font-size:22px;color:#999;flex-shrink:0">search</span>
             <input id="searchInput" type="text" placeholder="Rechercher&#8230;" autofocus onkeydown="if(event.key==='Escape')closeSearch();if(event.key==='Enter'){event.preventDefault();executeSearch()}">
             <button class="search-go-btn" onclick="executeSearch()">Chercher</button>
             <button class="search-nav-btn" onclick="prevMatch()" id="searchPrevBtn">&#9650;</button>
