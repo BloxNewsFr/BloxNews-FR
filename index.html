@@ -542,44 +542,14 @@
             animation: fadeInUp 0.4s ease both;
             content-visibility: auto; contain-intrinsic-size: auto 480px;
         }
-        /* Flammes principales — couche haute (3 langues) */
-        .news-card.fire-card::before {
-            content: "";
+        /* Canvas flammes vertes (rendu JS) */
+        .news-card.fire-card .fire-canvas {
             position: absolute;
-            left: -44px; right: -44px; bottom: -68px; top: auto; height: 160px;
-            z-index: -1; pointer-events: none; border-radius: 0 0 58% 58%;
-            background:
-                /* Noyau brûlant blanc-jaune-vert */
-                radial-gradient(ellipse 18% 38% at 50% 100%, rgba(220,255,140,0.98) 0%, transparent 38%),
-                /* Langue gauche */
-                radial-gradient(ellipse 52% 82% at 16% 100%, rgba(57,255,20,1)     0%, transparent 56%),
-                /* Langue droite */
-                radial-gradient(ellipse 48% 76% at 84% 100%, rgba(20,210,0,0.95)  0%, transparent 54%),
-                /* Corps central */
-                radial-gradient(ellipse 38% 68% at 50% 100%, rgba(150,255,50,0.9)  0%, transparent 52%),
-                /* Sous-langue G */
-                radial-gradient(ellipse 22% 52% at 30% 88%,  rgba(80,255,20,0.82)  0%, transparent 50%),
-                /* Sous-langue D */
-                radial-gradient(ellipse 22% 52% at 70% 88%,  rgba(57,255,20,0.82)  0%, transparent 50%),
-                /* Halo ambiant */
-                radial-gradient(ellipse 68% 28% at 50% 100%, rgba(0,60,0,0.45)     0%, transparent 58%);
-            filter: blur(16px) saturate(2.8);
-            animation: fire-main-dance 1.85s ease-in-out infinite;
-        }
-        /* Flammes hautes — vagues rapides */
-        .news-card.fire-card::after {
-            content: "";
-            position: absolute;
-            left: -22px; right: -22px; bottom: -28px; top: auto; height: 95px;
-            z-index: -1; pointer-events: none; border-radius: 0 0 48% 48%;
-            background:
-                radial-gradient(ellipse 12% 32% at 36% 100%, rgba(240,255,160,0.72) 0%, transparent 34%),
-                radial-gradient(ellipse 10% 28% at 64% 100%, rgba(210,255,120,0.65) 0%, transparent 32%),
-                radial-gradient(ellipse 28% 52% at 14% 100%, rgba(100,255,50,0.9)  0%, transparent 50%),
-                radial-gradient(ellipse 25% 48% at 86% 100%, rgba(57,255,20,0.88)  0%, transparent 48%),
-                radial-gradient(ellipse 38% 58% at 50% 100%, rgba(200,255,80,0.72) 0%, transparent 54%);
-            filter: blur(10px) saturate(2.2);
-            animation: fire-wisp-dance 2.3s ease-in-out infinite reverse;
+            bottom: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            border-radius: 24px;
         }
         .news-card.fire-card .news-card__image-wrapper {
             background: linear-gradient(180deg, #010800 0%, #000500 100%);
@@ -647,14 +617,6 @@
         .news-card.fire-card .news-card__button::before { background: linear-gradient(90deg,transparent,rgba(150,255,80,0.56),transparent); animation: fire-btn-shine 2.4s ease-in-out infinite; }
         .news-card.fire-card:hover .news-card__button { background: linear-gradient(135deg,#00cc00,#39ff14 52%,#009900); color:#000; box-shadow:0 0 46px rgba(57,255,20,1),0 0 95px rgba(20,200,0,0.56); }
         .news-card.fire-card .news-card__bar { background:linear-gradient(90deg,#002200,#39ff14,#c8ff80,#39ff14,#002200); background-size:300% auto; height:5px; border-radius:0 0 22px 22px; }
-        .fire-deco { position:absolute; inset:0; z-index:15; pointer-events:none; overflow:visible; border-radius:24px; }
-        .fire-ember {
-            position:absolute; bottom:0; left:var(--fx);
-            width:var(--fsize,4px); height:var(--fsize,4px); border-radius:50%;
-            background:radial-gradient(circle,rgba(240,255,160,0.98),rgba(57,255,20,0.25));
-            box-shadow:0 0 5px rgba(57,255,20,0.9),0 0 2px rgba(220,255,120,0.95);
-            animation:fire-ember-rise 3.2s var(--fd) ease-out infinite; opacity:0;
-        }
         /* 016 ── EAU — "LIQUID RAIN GLASS" */
         .news-card.water-card {
             isolation: isolate; border-radius: 24px; overflow: clip;
@@ -1129,38 +1091,6 @@
         @keyframes val-silk-sweep{ 0% {background-position:-150% 0;opacity:.6} 50% {opacity:1} 100%{background-position:252% 0;opacity:.6} }
         @keyframes val-heart-rise{ 0% {opacity:0;transform:translateY(0) scale(.7) rotate(-10deg)} 10% {opacity:.9} 55% {opacity:.8;transform:translateY(-46vh) scale(1.12) rotate(8deg)} 90% {opacity:.2} 100%{opacity:0;transform:translateY(-96vh) scale(.8) rotate(-5deg)} }
         @keyframes val-btn-shine{0%,62%,100%{opacity:0;transform:translateX(-120%)}76%{opacity:.88;transform:translateX(122%)}}
-        @keyframes fire-main-dance{
-            0%  {transform:translateY(0)     scaleX(1)     scaleY(1)}
-            22% {transform:translateY(-18px) scaleX(1.1)   scaleY(1.25)}
-            44% {transform:translateY(-8px)  scaleX(0.92)  scaleY(1.38)}
-            66% {transform:translateY(-22px) scaleX(1.08)  scaleY(1.18)}
-            88% {transform:translateY(-5px)  scaleX(0.96)  scaleY(1.08)}
-            100%{transform:translateY(0)     scaleX(1)     scaleY(1)}
-        }
-        @keyframes fire-wisp-dance{
-            0%  {transform:translateY(0)     scaleX(1)    scaleY(1);   opacity:.82}
-            30% {transform:translateY(-14px) scaleX(1.12) scaleY(1.3); opacity:1}
-            60% {transform:translateY(-5px)  scaleX(.88)  scaleY(1.12);opacity:.74}
-            100%{transform:translateY(0)     scaleX(1)    scaleY(1);   opacity:.82}
-        }
-        @keyframes fire-heatwave{
-            0%  {background-position:0 0,0 0}
-            100%{background-position:0 -14px,0 0}
-        }
-        @keyframes fire-title-flicker{
-            0%,100%{text-shadow:0 0 22px rgba(57,255,20,1),0 0 55px rgba(20,200,0,.62),0 1px 0 rgba(0,25,0,.95)}
-            45%    {text-shadow:0 0 35px rgba(57,255,20,1),0 0 80px rgba(20,220,0,.8),0 1px 0 rgba(0,25,0,.95),-2px 0 rgba(100,255,50,.3)}
-        }
-        @keyframes fire-ember-rise{
-            0%  {opacity:0;transform:translateY(0) translateX(0) scale(.7)}
-            10% {opacity:.92}
-            45% {opacity:.72;transform:translateY(calc(-38vh - var(--frise,80px))) translateX(var(--fdrift,20px)) scale(1.1)}
-            100%{opacity:0; transform:translateY(calc(-80vh - var(--frise,80px))) translateX(calc(var(--fdrift,20px)*2)) scale(.25)}
-        }
-        @keyframes fire-border-pulse{
-            0%,100%{box-shadow:0 0 0 1px rgba(57,255,20,.1) inset,0 0 52px rgba(57,255,20,.75),0 0 110px rgba(20,200,0,.38),0 0 200px rgba(0,80,0,.14),0 30px 80px rgba(0,0,0,.82);border-color:rgba(57,255,20,.72)}
-            50%    {box-shadow:0 0 0 1px rgba(57,255,20,.13) inset,0 0 72px rgba(57,255,20,1),  0 0 148px rgba(20,220,0,.55), 0 0 240px rgba(0,100,0,.18),0 30px 92px rgba(0,0,0,.88);border-color:rgba(57,255,20,1)}
-        }
         @keyframes fire-btn-shine{0%,60%,100%{opacity:0;transform:translateX(-120%)}74%{opacity:.88;transform:translateX(124%)}}
         @keyframes water-pool-breathe{
             0%,100%{transform:translateY(0) scaleX(1);opacity:.72}
@@ -1607,9 +1537,189 @@
             }
         }
 
+        // ── GREEN FLAME ENGINE (Card 015) ──
+        let _fireEngines = [];
+
+        class GreenFlameEngine {
+            constructor(canvas) {
+                this.canvas = canvas;
+                this.ctx = canvas.getContext('2d');
+                this.running = false;
+                this.hovering = false;
+                this.raf = null;
+                this.pts = [];
+                this.time = 0;
+                this.resize();
+                this.init();
+                this.setupHover();
+                this.setupObserver();
+            }
+
+            resize() {
+                const rect = this.canvas.parentElement.getBoundingClientRect();
+                const dpr = window.devicePixelRatio || 1;
+                this.w = rect.width;
+                this.h = rect.height;
+                this.dpr = dpr;
+                if (this.w < 1 || this.h < 1) return;
+                this.canvas.width = this.w * dpr;
+                this.canvas.height = this.h * dpr;
+                this.canvas.style.width = this.w + 'px';
+                this.canvas.style.height = this.h + 'px';
+            }
+
+            gauss() {
+                let u = 0, v = 0;
+                while (u === 0) u = Math.random();
+                while (v === 0) v = Math.random();
+                return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+            }
+
+            init() {
+                this.pts = [];
+                for (let i = 0; i < 340; i++) this.pts.push(this.genPt(Math.random()));
+            }
+
+            genPt(life) {
+                const sx = Math.max(0.02, Math.min(0.98, 0.5 + this.gauss() * 0.2));
+                return {
+                    life,
+                    sx,
+                    spd: 0.12 + Math.random() * 0.32,
+                    wp: Math.random() * 6.28,
+                    wf: 1.5 + Math.random() * 3,
+                    wa: 0.004 + Math.random() * 0.015,
+                    sz: 2 + Math.random() * 5,
+                    al: 0.65 + Math.random() * 0.35,
+                };
+            }
+
+            setupHover() {
+                const card = this.canvas.closest('.news-card');
+                if (!card) return;
+                card.addEventListener('mouseenter', () => { this.hovering = true; });
+                card.addEventListener('mouseleave', () => { this.hovering = false; });
+            }
+
+            setupObserver() {
+                this.observer = new IntersectionObserver(entries => {
+                    if (entries[0].isIntersecting) this.start();
+                    else this.stop();
+                }, { threshold: 0.05 });
+                this.observer.observe(this.canvas.parentElement);
+            }
+
+            tick() {
+                if (!this.running) return;
+                if (this.w < 1 || this.h < 1) {
+                    this.raf = requestAnimationFrame(() => this.tick());
+                    return;
+                }
+                this.time += 0.016;
+                this.update();
+                this.ctx.setTransform(1, 0, 0, 1, 0, 0);
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                this.ctx.scale(this.dpr, this.dpr);
+                this.draw();
+                this.raf = requestAnimationFrame(() => this.tick());
+            }
+
+            start() {
+                if (this.running) return;
+                this.running = true;
+                this.tick();
+            }
+
+            stop() {
+                this.running = false;
+                if (this.raf) { cancelAnimationFrame(this.raf); this.raf = null; }
+            }
+
+            destroy() {
+                this.stop();
+                this.observer.disconnect();
+                this.pts = [];
+            }
+
+            update() {
+                const sp = this.hovering ? 1.6 : 1;
+                for (const p of this.pts) {
+                    p.life += 0.007 * p.spd * sp;
+                    if (p.life >= 1) { Object.assign(p, this.genPt(0)); p.life = 0; }
+                }
+            }
+
+            draw() {
+                const { ctx, w, h } = this;
+
+                // 1 — Ambient green glow at base
+                const bg = ctx.createRadialGradient(w * 0.5, h, 0, w * 0.5, h, h * 0.75);
+                bg.addColorStop(0, 'rgba(0,255,80,0.15)');
+                bg.addColorStop(0.4, 'rgba(0,255,30,0.07)');
+                bg.addColorStop(1, 'rgba(0,180,0,0)');
+                ctx.fillStyle = bg;
+                ctx.fillRect(0, 0, w, h);
+
+                // 2 — Dense particle flame (additive)
+                ctx.globalCompositeOperation = 'lighter';
+
+                // Draw from center outward so outer particles sit on top
+                const sorted = [...this.pts].sort((a, b) => Math.abs(a.sx - 0.5) - Math.abs(b.sx - 0.5));
+                for (const p of sorted) this.drawPt(p);
+
+                // 3 — Core hotspot at bottom center
+                const cg = ctx.createRadialGradient(w * 0.5, h, 0, w * 0.5, h, w * 0.22);
+                cg.addColorStop(0, 'rgba(255,255,200,0.30)');
+                cg.addColorStop(0.4, 'rgba(150,255,60,0.12)');
+                cg.addColorStop(1, 'rgba(0,255,0,0)');
+                ctx.fillStyle = cg;
+                ctx.fillRect(0, 0, w, h);
+
+                ctx.globalCompositeOperation = 'source-over';
+            }
+
+            drawPt(p) {
+                const { ctx, w, h } = this;
+                const vy = p.life * 0.55;
+                const y = h * (1 - vy);
+                const drift = (0.5 - p.sx) * p.life * 0.4;
+                const wob = Math.sin(p.life * this.time * p.wf + p.wp) * p.wa;
+                const x = Math.max(0.01, Math.min(0.99, p.sx + drift + wob));
+                const sx = x * w;
+                const sz = p.sz * (1 + p.life * 0.6);
+                const al = Math.sin(p.life * Math.PI) * p.al;
+                const v = p.life;
+
+                let r, g, b;
+                if (v < 0.18) {
+                    const t = v / 0.18;
+                    r = 255; g = 200 + 55 * t; b = 130 + 110 * t;
+                } else if (v < 0.45) {
+                    const t = (v - 0.18) / 0.27;
+                    r = 255 - 80 * t; g = 255; b = 220 - 140 * t;
+                } else if (v < 0.72) {
+                    const t = (v - 0.45) / 0.27;
+                    r = 175 - 150 * t; g = 255; b = 80 - 60 * t;
+                } else {
+                    const t = (v - 0.72) / 0.28;
+                    r = 25 * (1 - t); g = 120 * (1 - t); b = 20 * (1 - t);
+                }
+
+                const grad = ctx.createRadialGradient(sx, y, 0, sx, y, sz);
+                grad.addColorStop(0, `rgba(${r|0},${g|0},${b|0},${al})`);
+                grad.addColorStop(0.5, `rgba(${r*0.7|0},${g*0.7|0},${b*0.7|0},${al*0.4})`);
+                grad.addColorStop(1, 'rgba(0,255,0,0)');
+
+                ctx.fillStyle = grad;
+                ctx.fillRect(sx - sz, y - sz, sz * 2, sz * 2);
+            }
+        }
+
         function renderPage() {
             _waterEngines.forEach(e => e.destroy());
             _waterEngines = [];
+            _fireEngines.forEach(e => e.destroy());
+            _fireEngines = [];
             const grid = document.getElementById("news-grid");
             const start = (currentPage - 1) * PER_PAGE;
             const slice = bulletins.slice(start, start + PER_PAGE);
@@ -1623,7 +1733,7 @@
                 // INJECTION DES ANIMATIONS SPÉCIALES
                 let deco = "";
                 if (b.num === "015") {
-                    deco = `<div class="fire-deco" aria-hidden="true"><span class="fire-ember" style="--fx:8%;--fsize:4px;--fd:-0.3s;--frise:60px;--fdrift:12px"></span><span class="fire-ember" style="--fx:22%;--fsize:6px;--fd:-1.8s;--frise:90px;--fdrift:-18px"></span><span class="fire-ember" style="--fx:38%;--fsize:3px;--fd:-0.9s;--frise:50px;--fdrift:8px"></span><span class="fire-ember" style="--fx:52%;--fsize:5px;--fd:-2.5s;--frise:110px;--fdrift:-22px"></span><span class="fire-ember" style="--fx:68%;--fsize:4px;--fd:-1.2s;--frise:70px;--fdrift:15px"></span><span class="fire-ember" style="--fx:84%;--fsize:6px;--fd:-3.0s;--frise:95px;--fdrift:-10px"></span><span class="fire-ember" style="--fx:94%;--fsize:3px;--fd:-0.6s;--frise:45px;--fdrift:5px"></span></div>`;
+                    deco = `<canvas class="fire-canvas" aria-hidden="true"></canvas>`;
                 } else if (b.num === "016") {
                     deco = `<div class="water-surface" aria-hidden="true"></div><div class="water-deco" aria-hidden="true"></div>`;
                 } else if (b.num === "017") {
@@ -1648,7 +1758,7 @@
                     <div class="news-card__image-wrapper">
                         <img src="${b.img}" class="news-card__image" alt="Bulletin #${b.num}">
                         ${special.className === 'ice-card' ? '<div class="ice-frost-overlay" aria-hidden="true"></div>' : ''}
-                        <div class="news-card__badge">${special.badge || `#${b.num}`}</div>
+                       <div class="news-card__badge">${special.badge || `#${b.num}`}</div>
                         ${statusLabel ? `<div class="news-card__new">${statusLabel}</div>` : ""}
                     </div>
                     <div class="news-card__content">
@@ -1676,6 +1786,11 @@
             try { initCardTilt(); } catch (e) {}
             document.querySelectorAll('.water-deco').forEach(el => {
                 _waterEngines.push(new WaterBubbleEngine(el, 10));
+            });
+            document.querySelectorAll('.fire-canvas').forEach(el => {
+                const eng = new GreenFlameEngine(el);
+                _fireEngines.push(eng);
+                setTimeout(() => eng.start(), 50);
             });
             initWaterHover();
             assignDepth();
