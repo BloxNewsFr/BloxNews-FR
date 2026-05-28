@@ -58,13 +58,7 @@
             border-bottom: 1px solid rgba(255, 255, 255, 0.12);
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.2);
             transition: background 0.5s cubic-bezier(0.4, 0, 0.2, 1), backdrop-filter 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            animation: navbarSheen 6s ease-in-out infinite;
         }
-        @keyframes navbarSheen {
-            0%, 100% { background-position: 200% 0; }
-            50% { background-position: 0% 0; }
-        }
-
         /* Le logo ne change plus jamais de couleur */
         .site-header__logo img { 
             height: 42px; width: auto; display: block; filter: none !important; 
@@ -101,8 +95,7 @@
         /* PAGINATION PC (HAUT) */
         .pagination-bar { display: flex; flex-direction: column; align-items: center; gap: 16px; margin-bottom: 36px; }
         .page-title { font-size: 38px; font-weight: 900; color: #fff; text-shadow: 0 2px 20px rgba(0,0,0,0.4); letter-spacing: -0.5px; }
-        .blue-banner { display: inline-block; background: linear-gradient(135deg, #175ec2, #2980d4, #175ec2); background-size: 200% auto; color: #fff; padding: 16px 60px; font-size: 36px; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; border-radius: 100px; font-family: 'LuckiestGuy Regular', cursive; box-shadow: 0 8px 32px rgba(23,94,194,0.45), 0 2px 8px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.2); animation: shimmerBanner 3s linear infinite; }
-        @keyframes shimmerBanner { 0% { background-position: 0% center; } 100% { background-position: 200% center; } }
+        .blue-banner { display: inline-block; background: linear-gradient(135deg, #175ec2, #2980d4, #175ec2); background-size: 200% auto; color: #fff; padding: 16px 60px; font-size: 36px; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; border-radius: 100px; font-family: 'LuckiestGuy Regular', cursive; box-shadow: 0 8px 32px rgba(23,94,194,0.45), 0 2px 8px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.2); }
         
         .pagination-controls { display: flex; align-items: center; gap: 16px; justify-content: center; width: 100%; }
         .pagination-controls button { background: rgba(255,255,255,0.95); border: none; border-radius: 50%; width: 48px; height: 48px; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: 900; box-shadow: 0 4px 15px rgba(0,0,0,0.15); transition: all 0.2s ease; color: #111; }
@@ -130,7 +123,6 @@
         .news-card:hover .news-card__button::before { left: 100%; }
         .news-card:hover .news-card__button { background: linear-gradient(135deg, #ffe833, #ffda00); box-shadow: 0 6px 25px rgba(255,218,0,0.6); transform: translateX(3px); }
         .news-card__bar { height: 4px; background: linear-gradient(90deg, var(--color-accent), #5b9bd5, var(--color-primary)); background-size: 200% auto; }
-        @keyframes shimmerBanner { 0% { background-position: 0% center; } 100% { background-position: 200% center; } }
         /* PAGINATION PC (BAS) */
         .pagination-bottom { display: flex; justify-content: center; align-items: center; gap: 16px; margin-top: 50px; }
         .pagination-bottom button { background: rgba(255,255,255,0.95); border: none; border-radius: 50%; width: 48px; height: 48px; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: 900; box-shadow: 0 4px 15px rgba(0,0,0,0.15); transition: all 0.2s ease; color: #111; }
@@ -650,6 +642,7 @@
         /* 016 ── EAU — "LIQUID RAIN GLASS" */
         .news-card.water-card {
             isolation: isolate; border-radius: 24px; overflow: clip;
+            filter: url(#water-surface);
             background:
                 radial-gradient(ellipse at 28% 18%, rgba(0,160,255,0.07) 0%, transparent 48%),
                 radial-gradient(ellipse at 72% 82%, rgba(0,100,200,0.05) 0%, transparent 44%),
@@ -770,9 +763,10 @@
         .news-card.water-card .news-card__bar { background:linear-gradient(90deg,#002e50,#00b4ff,#80dcff,#00b4ff,#002e50); background-size:300% auto; height:5px; border-radius:0 0 22px 22px; }
         .water-deco { position:absolute; inset:0; z-index:15; pointer-events:none; overflow:hidden; border-radius:24px; }
 
-        /* Bulles qui rebondissent dans la card */
+        /* Bulles animées en JS (physique rebond) */
         .water-bubble {
             position: absolute;
+            top: 0; left: 0;
             width: var(--bs,10px); height: var(--bs,10px);
             border-radius: 50%;
             background: radial-gradient(circle at 32% 28%,
@@ -784,18 +778,68 @@
                 inset 0 0 0 1px rgba(160,225,255,0.45),
                 0 0 6px rgba(0,175,255,0.35),
                 0 0 14px rgba(0,140,220,0.2);
-            opacity: 0;
-            animation: bubble-bounce var(--bd,12s) var(--bdelay,0s) ease-in-out infinite;
+            will-change: transform, opacity;
+            pointer-events: none;
         }
 
-        @keyframes bubble-bounce {
-            0%   { opacity:0; transform: translate(var(--bx0), var(--by0)) scale(0.6); }
-            5%   { opacity:0.88; }
-            25%  { transform: translate(var(--bx1), var(--by1)) scale(1); }
-            50%  { transform: translate(var(--bx2), var(--by2)) scale(0.95); opacity:0.82; }
-            75%  { transform: translate(var(--bx3), var(--by3)) scale(1.04); }
-            92%  { opacity:0.6; }
-            100% { opacity:0; transform: translate(var(--bx4), var(--by4)) scale(0.7); }
+        /* Surface d'eau visible (vagues + reflets) */
+        .water-surface {
+            position: absolute; inset: 0; z-index: 12;
+            pointer-events: none; border-radius: 24px; overflow: hidden;
+            background:
+                linear-gradient(168deg,
+                    rgba(30,120,210,0.08) 0%,
+                    rgba(0,60,140,0.12) 45%,
+                    rgba(0,20,55,0.18) 100%
+                );
+        }
+        .water-surface::before {
+            content: ''; position: absolute; inset: -20%;
+            background:
+                repeating-linear-gradient(78deg,
+                    transparent 0px,
+                    rgba(100,210,255,0.03) 18px,
+                    transparent 36px,
+                    rgba(60,185,245,0.015) 56px,
+                    transparent 74px
+                ),
+                repeating-linear-gradient(-72deg,
+                    transparent 0px,
+                    rgba(120,220,255,0.02) 22px,
+                    transparent 44px,
+                    rgba(80,195,245,0.01) 66px,
+                    transparent 88px
+                );
+            background-size: 200% 200%;
+            mix-blend-mode: overlay;
+            animation: water-flow 10s ease-in-out infinite alternate;
+            transition: animation-duration 0.6s;
+        }
+        .water-surface::after {
+            content: ''; position: absolute;
+            width: 60%; height: 40%;
+            top: -8%; left: 20%;
+            background: radial-gradient(ellipse, rgba(180,235,255,0.10) 0%, transparent 70%);
+            filter: blur(14px);
+            animation: water-sheen 16s ease-in-out infinite;
+            transition: animation-duration 0.6s, opacity 0.6s;
+        }
+        .news-card.water-card:hover .water-surface::before {
+            animation-duration: 5s;
+        }
+        .news-card.water-card:hover .water-surface::after {
+            animation-duration: 8s;
+            opacity: 0.6;
+        }
+        @keyframes water-flow {
+            0%   { background-position: 0% 0%; }
+            100% { background-position: 100% 60%; }
+        }
+        @keyframes water-sheen {
+            0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.2; }
+            25%  { transform: translate(22%, 12%) scale(1.25); opacity: 0.5; }
+            50%  { transform: translate(-18%, 28%) scale(0.85); opacity: 0.08; }
+            75%  { transform: translate(10%, -8%) scale(1.15); opacity: 0.35; }
         }
 
         /* 018 ── GLACE — "FROZEN CRYSTAL GLASS" — redesign complet */
@@ -1242,6 +1286,15 @@
 </head>
 <body>
 
+    <svg style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true">
+        <filter id="water-surface" x="-10%" y="-10%" width="120%" height="120%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.015 0.025" numOctaves="2" result="waveNoise" seed="3">
+                <animate attributeName="baseFrequency" values="0.015 0.025;0.018 0.029;0.013 0.022;0.016 0.027;0.015 0.025" dur="14s" repeatCount="indefinite" />
+            </feTurbulence>
+            <feDisplacementMap in="SourceGraphic" in2="waveNoise" scale="8" xChannelSelector="R" yChannelSelector="G" />
+        </filter>
+    </svg>
+
     <div class="site-background">
         <picture>
             <source media="(min-width: 769px)" srcset="./shared/fond_bulletinpng.png">
@@ -1337,7 +1390,100 @@
             "019": { className: "valentine-card", badge: "#019", status: "SAINT-VALENTIN", eyebrow: "Saint-Valentin", title: "BULLETIN #019", button: "Lire la lettre" }
         };
 
+        let _waterEngines = [];
+
+        class WaterBubbleEngine {
+            constructor(container, count) {
+                this.container = container;
+                this.bubbles = [];
+                this.running = false;
+                this.rafId = null;
+
+                for (let i = 0; i < count; i++) {
+                    const el = document.createElement('span');
+                    el.className = 'water-bubble';
+                    const size = 4 + Math.random() * 10;
+                    el.style.setProperty('--bs', size + 'px');
+                    container.appendChild(el);
+
+                    const cw = container.clientWidth || 360;
+                    const ch = container.clientHeight || 480;
+                    this.bubbles.push({
+                        el, r: size / 2,
+                        x: Math.random() * (cw - size) + size,
+                        y: Math.random() * (ch - size) + size,
+                        vx: (Math.random() - 0.5) * 2,
+                        vy: (Math.random() - 0.5) * 2 - 0.4,
+                        opacity: 0.35 + Math.random() * 0.65,
+                    });
+                }
+
+                this.observer = new IntersectionObserver(entries => {
+                    if (entries[0].isIntersecting) this.start();
+                    else this.stop();
+                });
+                this.observer.observe(container);
+
+                if (container.offsetParent !== null) this.start();
+            }
+
+            start() {
+                if (this.running) return;
+                this.running = true;
+                this.tick();
+            }
+
+            stop() {
+                this.running = false;
+                if (this.rafId) { cancelAnimationFrame(this.rafId); this.rafId = null; }
+            }
+
+            tick() {
+                if (!this.running) return;
+                const w = this.container.clientWidth;
+                const h = this.container.clientHeight;
+                if (w === 0 || h === 0) {
+                    this.rafId = requestAnimationFrame(() => this.tick());
+                    return;
+                }
+
+                for (const b of this.bubbles) {
+                    b.x += b.vx;
+                    b.y += b.vy;
+
+                    if (b.x - b.r < 0) { b.x = b.r; b.vx *= -0.96; }
+                    if (b.x + b.r > w) { b.x = w - b.r; b.vx *= -0.96; }
+                    if (b.y - b.r < 0) { b.y = b.r; b.vy *= -0.96; }
+                    if (b.y + b.r > h) { b.y = h - b.r; b.vy *= -0.96; }
+
+                    b.vx *= 0.999;
+                    b.vy *= 0.999;
+
+                    const spd = Math.hypot(b.vx, b.vy);
+                    if (spd < 0.4 && spd > 0.001) {
+                        const scale = 0.4 / spd;
+                        b.vx *= scale;
+                        b.vy *= scale;
+                    }
+
+                    b.el.style.transform = `translate(${b.x - b.r}px, ${b.y - b.r}px)`;
+                    b.el.style.opacity = b.opacity;
+                }
+
+                this.rafId = requestAnimationFrame(() => this.tick());
+            }
+
+            destroy() {
+                this.stop();
+                this.observer.disconnect();
+                this.bubbles.forEach(b => b.el.remove());
+                this.bubbles = [];
+            }
+        }
+
         function renderPage() {
+            _waterEngines.forEach(e => e.destroy());
+            _waterEngines = [];
             const grid = document.getElementById("news-grid");
             const start = (currentPage - 1) * PER_PAGE;
             const slice = bulletins.slice(start, start + PER_PAGE);
@@ -1353,15 +1499,7 @@
                 if (b.num === "015") {
                     deco = `<div class="fire-deco" aria-hidden="true"><span class="fire-ember" style="--fx:8%;--fsize:4px;--fd:-0.3s;--frise:60px;--fdrift:12px"></span><span class="fire-ember" style="--fx:22%;--fsize:6px;--fd:-1.8s;--frise:90px;--fdrift:-18px"></span><span class="fire-ember" style="--fx:38%;--fsize:3px;--fd:-0.9s;--frise:50px;--fdrift:8px"></span><span class="fire-ember" style="--fx:52%;--fsize:5px;--fd:-2.5s;--frise:110px;--fdrift:-22px"></span><span class="fire-ember" style="--fx:68%;--fsize:4px;--fd:-1.2s;--frise:70px;--fdrift:15px"></span><span class="fire-ember" style="--fx:84%;--fsize:6px;--fd:-3.0s;--frise:95px;--fdrift:-10px"></span><span class="fire-ember" style="--fx:94%;--fsize:3px;--fd:-0.6s;--frise:45px;--fdrift:5px"></span></div>`;
                 } else if (b.num === "016") {
-                    deco = `<div class="water-deco" aria-hidden="true">
-                        <span class="water-bubble" style="--bs:9px;--bd:12.6s;--bdelay:-0.3s;--bx0:18px;--by0:220px;--bx1:80px;--by1:140px;--bx2:30px;--by2:60px;--bx3:110px;--by3:20px;--bx4:180px;--by4:80px;"></span>
-                        <span class="water-bubble" style="--bs:6px;--bd:10.8s;--bdelay:-1.5s;--bx0:280px;--by0:180px;--bx1:220px;--by1:80px;--bx2:300px;--by2:30px;--bx3:200px;--by3:100px;--bx4:260px;--by4:190px;"></span>
-                        <span class="water-bubble" style="--bs:12px;--bd:15.0s;--bdelay:-2.8s;--bx0:60px;--by0:50px;--bx1:160px;--by1:120px;--bx2:80px;--by2:190px;--bx3:200px;--by3:230px;--bx4:120px;--by4:80px;"></span>
-                        <span class="water-bubble" style="--bs:7px;--bd:14.4s;--bdelay:-0.9s;--bx0:200px;--by0:240px;--bx1:100px;--by1:160px;--bx2:240px;--by2:90px;--bx3:60px;--by3:40px;--bx4:180px;--by4:130px;"></span>
-                        <span class="water-bubble" style="--bs:10px;--bd:11.7s;--bdelay:-3.5s;--bx0:140px;--by0:10px;--bx1:260px;--by1:80px;--bx2:160px;--by2:200px;--bx3:40px;--by3:140px;--bx4:200px;--by4:50px;"></span>
-                        <span class="water-bubble" style="--bs:5px;--bd:13.2s;--bdelay:-1.8s;--bx0:300px;--by0:100px;--bx1:180px;--by1:230px;--bx2:60px;--by2:150px;--bx3:250px;--by3:60px;--bx4:90px;--by4:30px;"></span>
-                        <span class="water-bubble" style="--bs:8px;--bd:15.6s;--bdelay:-4.1s;--bx0:80px;--by0:120px;--bx1:30px;--by1:220px;--bx2:200px;--by2:170px;--bx3:310px;--by3:80px;--bx4:140px;--by4:240px;"></span>
-                    </div>`;
+                    deco = `<div class="water-surface" aria-hidden="true"></div><div class="water-deco" aria-hidden="true"></div>`;
                 } else if (b.num === "017") {
                     deco = `<div class="hw-deco" aria-hidden="true"><span class="hw-bat" style="--bx:10%;--bd:-0.2s;--bt:-12px"></span><span class="hw-bat" style="--bx:60%;--bd:-2.4s;--bt:-8px"></span><span class="hw-bat" style="--bx:34%;--bd:-1.2s;--bt:-10px"></span><span class="hw-skull"></span></div>`;
                 } else if (b.num === "018") {
@@ -1409,7 +1547,11 @@
             document.getElementById("next-bot").disabled = currentPage === totalPages;
             document.getElementById("prev-mobile").disabled = currentPage === 1;
             document.getElementById("next-mobile").disabled = currentPage === totalPages;
-            initCardTilt();
+            try { initCardTilt(); } catch (e) {}
+            document.querySelectorAll('.water-deco').forEach(el => {
+                _waterEngines.push(new WaterBubbleEngine(el, 10));
+            });
+            initWaterHover();
         }
 
         function changePage(dir) {
@@ -1461,7 +1603,11 @@
             }
             pill.classList.toggle('is-light', isLight);
         }
-        window.addEventListener('scroll', updateMobilePaginationColor);
+        let _pagColorRaf = null;
+        window.addEventListener('scroll', () => {
+            if (_pagColorRaf) return;
+            _pagColorRaf = requestAnimationFrame(() => { _pagColorRaf = null; updateMobilePaginationColor(); });
+        }, { passive: true });
         window.addEventListener('resize', updateMobilePaginationColor);
 
         // ── Switcher News ↔ Leaks + animation glissement mobile ──
@@ -1597,6 +1743,35 @@
             if (e.key === "Escape" && document.getElementById('searchOverlay')?.classList.contains('is-active')) closeSearch();
         });
 
+        // ── WATER SURFACE HOVER (amplification des vagues) ──
+        function initWaterHover() {
+            const map = document.querySelector('#water-surface feDisplacementMap');
+            if (!map) return;
+            document.querySelectorAll('.news-card.water-card').forEach(card => {
+                card.addEventListener('mouseenter', () => smoothScale(map, 8, 16, 600));
+                card.addEventListener('mouseleave', () => smoothScale(map, 16, 8, 800));
+            });
+        }
+        function smoothScale(el, from, to, dur) {
+            const start = performance.now();
+            function tick(now) {
+                const t = Math.min((now - start) / dur, 1);
+                const ease = 1 - Math.pow(1 - t, 3);
+                el.setAttribute('scale', String(Math.round(from + (to - from) * ease)));
+                if (t < 1) requestAnimationFrame(tick);
+            }
+            requestAnimationFrame(tick);
+        }
+        function smoothFilterScale(el, from, to, dur) {
+            const start = performance.now();
+            function tick(now) {
+                const t = Math.min((now - start) / dur, 1);
+                const ease = 1 - Math.pow(1 - t, 3);
+                el.setAttribute('scale', String(Math.round(from + (to - from) * ease)));
+                if (t < 1) requestAnimationFrame(tick);
+            }
+            requestAnimationFrame(tick);
+        }
     </script>
 
     <!-- ── SEARCH OVERLAY ── -->
