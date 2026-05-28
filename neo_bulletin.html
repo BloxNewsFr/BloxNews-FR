@@ -89,17 +89,11 @@
         @keyframes shimmerBanner { 0% { background-position: 0% center; } 100% { background-position: 200% center; } }
 
         /* ── ONGLETS DE NAVIGATION (PC) ── */
-        .desktop-tabs { display: flex; justify-content: center; gap: 15px; margin-bottom: 40px; position: relative; }
-        .tab-indicator {
-            position: absolute; bottom: 0; left: 0; height: 100%; z-index: 0;
-            background: var(--cat-hex, #111); border-radius: 100px; opacity: 0;
-            transition: left 0.45s cubic-bezier(0.34,1.56,0.64,1), width 0.45s cubic-bezier(0.34,1.56,0.64,1), background 0.3s ease, opacity 0.3s ease;
-            pointer-events: none;
-        }
+        .desktop-tabs { display: flex; justify-content: center; gap: 15px; margin-bottom: 40px; }
         .leaks-tab {
             position: relative; z-index: 1;
             background: #fff; color: #111; border: 2px solid #e8e8f0; padding: 12px 24px; border-radius: 100px;
-            font-family: 'LuckiestGuy Regular', cursive; font-size: 16px; cursor: pointer; transition: color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+            font-family: 'LuckiestGuy Regular', cursive; font-size: 16px; cursor: pointer; transition: color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease, background 0.25s ease;
             box-shadow: 0 4px 10px rgba(0,0,0,0.05); text-transform: uppercase; letter-spacing: 1px; outline: none;
         }
         .leaks-tab:hover { transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0,0,0,0.1); }
@@ -124,12 +118,9 @@
         .category-section { display: none; }
         .category-section.active-section {
             display: block;
-            animation: slideUpFade 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+            animation: fadeIn 0.35s ease;
         }
-        @keyframes slideUpFade {
-            from { opacity: 0; transform: translateY(40px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
         /* ── BLOC DOSSIER TOP SECRET ── */
         .secret-bulletin {
@@ -809,7 +800,6 @@
         </div>
 
         <div class="desktop-tabs" id="desktopTabs">
-            <div class="tab-indicator" id="tabIndicator"></div>
             <button class="leaks-tab active" data-target="cat-actus" style="--cat-hex: #cc0000; --cat-rgb: 204, 0, 0;">ACTUS</button>
             <button class="leaks-tab" data-target="cat-fruit" style="--cat-hex: #ff0055; --cat-rgb: 255, 0, 85;">FRUITS</button>
             <button class="leaks-tab" data-target="cat-vfx" style="--cat-hex: #a200ff; --cat-rgb: 162, 0, 255;">VFX</button>
@@ -1230,19 +1220,6 @@
     </div>
 
     <script>
-        function updateTabIndicator() {
-            const activeTab = document.querySelector('.desktop-tabs .leaks-tab.active');
-            const indicator = document.getElementById('tabIndicator');
-            if (!activeTab || !indicator) return;
-            const container = document.getElementById('desktopTabs');
-            const containerRect = container.getBoundingClientRect();
-            const tabRect = activeTab.getBoundingClientRect();
-            indicator.style.left = (tabRect.left - containerRect.left) + 'px';
-            indicator.style.width = tabRect.width + 'px';
-            indicator.style.setProperty('background', getComputedStyle(activeTab).getPropertyValue('--cat-hex'));
-            indicator.style.setProperty('opacity', '1');
-        }
-
         document.addEventListener("DOMContentLoaded", () => {
             const tabs = document.querySelectorAll('.leaks-tab');
             const sections = document.querySelectorAll('.category-section');
@@ -1275,7 +1252,6 @@
                     sections.forEach(sec => {
                         sec.classList.remove('active-section');
                         if (sec.id === targetId) {
-                            void sec.offsetWidth; // Force le reflow de l'anim
                             sec.classList.add('active-section');
                         }
                     });
@@ -1288,11 +1264,8 @@
 
                     // Retour fluide en haut de la page
                     window.scrollTo({ top: 0, behavior: 'smooth' });
-                    updateTabIndicator();
                 });
             });
-            updateTabIndicator();
-            window.addEventListener('resize', updateTabIndicator);
 
             // ── 3. SYSTÈME DE LA BULLE MODALE DUPLIQUE (VIDÉO & IMAGE) ──
             const modal = document.getElementById('videoModal');
