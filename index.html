@@ -240,6 +240,137 @@
                 background: rgba(0,0,0,0.85); color: #fff;
             }
 
+
+        /* ════════════════════════════════════════════════════════════
+           SYSTÈME DE PROFONDEUR — Hiérarchie spatiale (Z-layers)
+           L0: fond page | L1: contenu | L2: cards | L3: badges/boutons
+           L4: navbar + pilule flottante
+        ════════════════════════════════════════════════════════════ */
+
+        /* L4 — Navbar : couche la plus haute */
+        .site-header {
+            box-shadow:
+                0 1px 0 rgba(255,255,255,0.22) inset,
+                0 2px 4px rgba(0,0,0,0.05),
+                0 8px 28px rgba(0,0,0,0.18),
+                0 32px 72px rgba(0,0,0,0.08);
+        }
+
+        /* L3.5 — Bannière titre : titre flottant prononcé */
+        .blue-banner {
+            box-shadow:
+                0 2px 0 rgba(255,255,255,0.24) inset,
+                0 4px 8px rgba(23,94,194,0.25),
+                0 12px 36px rgba(23,94,194,0.5),
+                0 28px 80px rgba(0,0,20,0.28),
+                0 60px 120px rgba(0,0,10,0.1);
+            transform: translateY(-4px);
+            text-shadow:
+                0 1px 0 rgba(255,255,255,0.28),
+                0 3px 10px rgba(0,0,0,0.35),
+                0 10px 40px rgba(23,94,194,0.55);
+        }
+
+        /* L3 — Contrôles pagination : éléments interactifs */
+        .pagination-controls button {
+            box-shadow:
+                0 1px 0 rgba(255,255,255,0.92) inset,
+                0 2px 4px rgba(0,0,0,0.1),
+                0 6px 18px rgba(0,0,0,0.18),
+                0 18px 48px rgba(0,0,0,0.08);
+        }
+        .pagination-controls button:hover:not(:disabled) {
+            box-shadow:
+                0 1px 0 rgba(255,255,255,0.92) inset,
+                0 4px 10px rgba(255,218,0,0.35),
+                0 10px 30px rgba(255,218,0,0.45),
+                0 24px 60px rgba(255,218,0,0.18);
+            transform: scale(1.12) translateY(-4px);
+        }
+        .pagination-info {
+            box-shadow:
+                0 2px 8px rgba(0,0,0,0.28),
+                0 8px 28px rgba(0,0,0,0.18),
+                inset 0 1px 0 rgba(255,255,255,0.12);
+        }
+
+        /* L2 — Cards : plan principal flottant */
+        .news-card {
+            box-shadow:
+                0 1px 2px rgba(0,0,0,0.07),
+                0 4px 10px rgba(0,0,0,0.09),
+                0 14px 38px rgba(0,0,0,0.15),
+                0 36px 90px rgba(0,0,0,0.11),
+                0 70px 140px rgba(0,0,0,0.05);
+        }
+        .news-card:hover {
+            transform: translateY(-13px) scale(1.025);
+            box-shadow:
+                0 2px 4px rgba(0,0,0,0.05),
+                0 8px 18px rgba(0,0,0,0.09),
+                0 26px 62px rgba(0,0,0,0.18),
+                0 60px 130px rgba(0,0,0,0.13),
+                0 90px 180px rgba(0,0,0,0.05),
+                0 0 0 2px rgba(23,94,194,0.28);
+        }
+
+        /* Image wrapper — légèrement enfoncé (retrait visuel) */
+        .news-card__image-wrapper {
+            box-shadow: inset 0 -5px 20px rgba(0,0,0,0.22);
+        }
+
+        /* L3 — Badges : plan avant, flottants au-dessus de l'image */
+        .news-card__badge {
+            box-shadow:
+                0 1px 2px rgba(0,0,0,0.18),
+                0 3px 10px rgba(0,0,0,0.22),
+                0 8px 24px rgba(0,0,0,0.12),
+                inset 0 1px 0 rgba(255,255,255,0.65);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .news-card:hover .news-card__badge {
+            transform: translateY(-2px);
+            box-shadow:
+                0 2px 5px rgba(0,0,0,0.22),
+                0 6px 18px rgba(0,0,0,0.28),
+                0 14px 36px rgba(0,0,0,0.12),
+                inset 0 1px 0 rgba(255,255,255,0.65);
+        }
+        .news-card__new { box-shadow: 0 2px 8px rgba(0,0,0,0.2), 0 6px 18px rgba(255,0,0,0.18); }
+
+        /* L1 — Content zone : légèrement en retrait derrière le bouton */
+        .news-card__content {
+            box-shadow: inset 0 5px 16px rgba(0,0,0,0.04);
+        }
+        .news-card__title {
+            text-shadow: 0 1px 3px rgba(0,0,0,0.09), 0 4px 14px rgba(0,0,0,0.04);
+        }
+
+        /* L3 — Bouton CTA : plan avant proche, pop fort */
+        .news-card__button {
+            box-shadow:
+                0 1px 0 rgba(255,255,255,0.32) inset,
+                0 2px 5px rgba(0,0,0,0.14),
+                0 7px 20px rgba(255,218,0,0.38),
+                0 18px 45px rgba(255,218,0,0.14);
+        }
+        .news-card:hover .news-card__button {
+            box-shadow:
+                0 1px 0 rgba(255,255,255,0.32) inset,
+                0 4px 10px rgba(0,0,0,0.12),
+                0 10px 28px rgba(255,218,0,0.55),
+                0 22px 55px rgba(255,218,0,0.18);
+        }
+
+        /* L4 — Pilule mobile : couche flottante */
+        .mobile-pagination-pill {
+            box-shadow:
+                0 2px 5px rgba(0,0,0,0.12),
+                0 8px 28px rgba(0,0,0,0.22),
+                0 28px 68px rgba(0,0,0,0.16),
+                inset 0 1px 0 rgba(255,255,255,0.18);
+        }
+
         /* ── SPECIAL CARDS : GLITCH, HALLOWEEN, VALENTINE (TON CODE ORIGINAL) ── */
         .news-card.glitch-card, .news-card.valentine-card { isolation: isolate; }
         .news-card.glitch-card .news-card__image-wrapper, .news-card.glitch-card .news-card__content, .news-card.glitch-card .news-card__bar, .news-card.halloween-card .news-card__image-wrapper, .news-card.halloween-card .news-card__content, .news-card.halloween-card .news-card__bar, .news-card.valentine-card .news-card__image-wrapper, .news-card.valentine-card .news-card__content, .news-card.valentine-card .news-card__bar { position: relative; z-index: 2; }
@@ -322,12 +453,7 @@
             border-top: 1px solid rgba(255, 106, 0, 0.6);
             position: relative; z-index: 1; border-radius: 0 0 22px 22px;
         }
-        .news-card.halloween-card .news-card__content::before {
-            content: "🎃"; position: absolute; right: 16px; top: 10px;
-            font-size: 28px; line-height: 1; pointer-events: none;
-            filter: drop-shadow(0 0 14px rgba(255, 106, 0, 1));
-            animation: hw-orb-float 3.2s ease-in-out infinite;
-        }
+        .news-card.halloween-card .news-card__content::before { content: none; }
         .news-card.halloween-card .news-card__content::after {
             content: "🕷️"; position: absolute; left: 15px; bottom: 14px;
             font-size: 18px; opacity: 0.4; pointer-events: none;
@@ -397,78 +523,441 @@
         .val-rose::before { content:"🌹"; }
         @keyframes val-rose-float { 0%,100%{transform:translateY(0) rotate(-5deg);opacity:0.6} 50%{transform:translateY(-10px) rotate(5deg);opacity:1} }
 
-        /* 015 ── FEU VERT */
-        .news-card.fire-card { isolation: isolate; border-radius: 24px; background: linear-gradient(165deg,#031000 0%,#0a2a00 40%,#001005 100%); border: 2px solid rgba(57,255,20,0.6); box-shadow: 0 0 0 1px rgba(57,255,20,0.08) inset, 0 0 40px rgba(57,255,20,0.5), 0 0 80px rgba(0,200,0,0.2), 0 30px 80px rgba(0,0,0,0.75); animation: fadeInUp 0.4s ease both, fire-border-pulse 3s ease-in-out infinite; }
-        .news-card.fire-card::before { content: ""; position: absolute; left:-30px; right:-30px; bottom:-55px; top:auto; height:120px; z-index:-1; pointer-events:none; border-radius: 0 0 50% 50%; background: radial-gradient(ellipse 55% 75% at 20% 100%, rgba(57,255,20,0.9) 0%, transparent 52%), radial-gradient(ellipse 50% 70% at 80% 100%, rgba(0,200,0,0.85) 0%, transparent 50%), radial-gradient(ellipse 35% 60% at 50% 100%, rgba(150,255,50,0.7) 0%, transparent 48%); filter: blur(18px) saturate(2); animation: fire-glow-pulse 2.4s ease-in-out infinite; }
-        .news-card.fire-card::after { content: ""; position: absolute; left:-18px; right:-18px; bottom:-26px; top:auto; height:70px; z-index:-1; pointer-events:none; border-radius: 0 0 45% 45%; background: radial-gradient(ellipse 32% 55% at 12% 100%, rgba(100,255,50,0.88) 0%, transparent 48%), radial-gradient(ellipse 28% 50% at 88% 100%, rgba(57,255,20,0.82) 0%, transparent 46%), radial-gradient(ellipse 40% 60% at 50% 100%, rgba(200,255,100,0.65) 0%, transparent 50%); filter: blur(12px) saturate(1.8); animation: fire-glow-top 2.8s ease-in-out infinite reverse; }
-        .news-card.fire-card .news-card__image-wrapper { background: #001a00; border-radius: 22px 22px 0 0; box-shadow: inset 0 -2px 0 rgba(57,255,20,0.7); }
-        .news-card.fire-card .news-card__image-wrapper::after { z-index: 4; border-radius: 22px 22px 0 0; background: radial-gradient(circle at 50% 50%, transparent 0 18%, rgba(0,20,0,0.4) 58%, rgba(0,8,0,0.85) 100%), radial-gradient(circle at 50% 4%, rgba(57,255,20,0.25) 0 28%, transparent 60%); }
-        .news-card.fire-card .news-card__image { transform: scale(1.08); transition: filter 0.4s ease, transform 0.5s ease; }
-        .news-card.fire-card:hover .news-card__image { transform: scale(1.18) rotate(0.3deg); }
-        .news-card.fire-card:hover { box-shadow: 0 0 0 1px rgba(57,255,20,0.1) inset, 0 0 60px rgba(57,255,20,0.8), 0 0 120px rgba(0,200,0,0.4), 0 32px 90px rgba(0,0,0,0.8); }
-        .news-card.fire-card .news-card__badge, .news-card.fire-card .news-card__new { background: rgba(0,15,0,0.93); color: #7aff40; border: 1px solid rgba(57,255,20,0.7); box-shadow: 0 0 22px rgba(57,255,20,0.8), inset 0 0 10px rgba(57,255,20,0.1); backdrop-filter: blur(8px); z-index: 6; }
-        .news-card.fire-card .news-card__content { background: radial-gradient(circle at 85% 10%, rgba(57,255,20,0.15), transparent 32%), radial-gradient(circle at 10% 85%, rgba(0,150,0,0.1), transparent 30%), linear-gradient(180deg,#051a00,#000d00); border-top: 1px solid rgba(57,255,20,0.5); position: relative; z-index: 1; border-radius: 0 0 22px 22px; }
-        .news-card.fire-card .news-card__content::before { content: "🔥"; position: absolute; right:14px; top:10px; font-size:28px; line-height:1; pointer-events:none; filter: drop-shadow(0 0 16px rgba(57,255,20,1)); animation: fire-orb-float 3s ease-in-out infinite; }
-        .news-card.fire-card .news-card__content::after { content: "🌿"; position: absolute; left:14px; bottom:12px; font-size:18px; opacity:0.35; pointer-events:none; }
-        .news-card.fire-card .news-card__eyebrow { color: #7aff40; text-shadow: 0 0 10px rgba(57,255,20,0.8); letter-spacing:1px; }
-        .news-card.fire-card .news-card__title { color: #b0ff80; text-shadow: 0 0 20px rgba(57,255,20,0.9), 0 0 50px rgba(0,200,0,0.5), 0 1px 0 rgba(0,40,0,0.8); }
-        .news-card.fire-card .news-card__button { background: linear-gradient(135deg,#003000,#006600 52%,#003500); color: #7aff40; border: 1px solid rgba(57,255,20,0.6); border-radius: 100px; box-shadow: 0 0 22px rgba(57,255,20,0.6), inset 0 1px 0 rgba(150,255,80,0.25); overflow: hidden; }
-        .news-card.fire-card .news-card__button::before { background: linear-gradient(90deg,transparent,rgba(150,255,80,0.5),transparent); animation: fire-btn-shine 2.6s ease-in-out infinite; }
-        .news-card.fire-card:hover .news-card__button { background: linear-gradient(135deg,#00cc00,#39ff14 52%,#009900); color: #000; box-shadow: 0 0 40px rgba(57,255,20,1), 0 0 80px rgba(0,200,0,0.5); }
-        .news-card.fire-card .news-card__bar { background: linear-gradient(90deg,#006600,#39ff14,#b0ff80,#39ff14,#006600); background-size: 300% auto; animation: barSlide 2.5s linear infinite; height: 5px; border-radius: 0 0 22px 22px; }
+        /* 015 ── FEU VERT "HELLFIRE EMERALD" — redesign complet */
+        .news-card.fire-card {
+            isolation: isolate;
+            border-radius: 24px;
+            overflow: clip;
+            background:
+                radial-gradient(ellipse at 50% 105%, rgba(30,80,0,0.35) 0%, transparent 45%),
+                linear-gradient(170deg, #010800 0%, #021200 40%, #000c00 100%);
+            border: 2px solid rgba(57,255,20,0.72);
+            box-shadow:
+                0 0 0 1px rgba(57,255,20,0.1) inset,
+                0 0 52px rgba(57,255,20,0.75),
+                0 0 110px rgba(20,200,0,0.38),
+                0 0 200px rgba(0,80,0,0.14),
+                0 30px 80px rgba(0,0,0,0.82);
+            animation: fadeInUp 0.4s ease both, fire-border-pulse 2.8s ease-in-out infinite;
+        }
+        /* Flammes principales — couche haute (3 langues) */
+        .news-card.fire-card::before {
+            content: "";
+            position: absolute;
+            left: -44px; right: -44px; bottom: -68px; top: auto; height: 160px;
+            z-index: -1; pointer-events: none; border-radius: 0 0 58% 58%;
+            background:
+                /* Noyau brûlant blanc-jaune-vert */
+                radial-gradient(ellipse 18% 38% at 50% 100%, rgba(220,255,140,0.98) 0%, transparent 38%),
+                /* Langue gauche */
+                radial-gradient(ellipse 52% 82% at 16% 100%, rgba(57,255,20,1)     0%, transparent 56%),
+                /* Langue droite */
+                radial-gradient(ellipse 48% 76% at 84% 100%, rgba(20,210,0,0.95)  0%, transparent 54%),
+                /* Corps central */
+                radial-gradient(ellipse 38% 68% at 50% 100%, rgba(150,255,50,0.9)  0%, transparent 52%),
+                /* Sous-langue G */
+                radial-gradient(ellipse 22% 52% at 30% 88%,  rgba(80,255,20,0.82)  0%, transparent 50%),
+                /* Sous-langue D */
+                radial-gradient(ellipse 22% 52% at 70% 88%,  rgba(57,255,20,0.82)  0%, transparent 50%),
+                /* Halo ambiant */
+                radial-gradient(ellipse 68% 28% at 50% 100%, rgba(0,60,0,0.45)     0%, transparent 58%);
+            filter: blur(16px) saturate(2.8);
+            animation: fire-main-dance 1.85s ease-in-out infinite;
+        }
+        /* Flammes hautes — vagues rapides */
+        .news-card.fire-card::after {
+            content: "";
+            position: absolute;
+            left: -22px; right: -22px; bottom: -28px; top: auto; height: 95px;
+            z-index: -1; pointer-events: none; border-radius: 0 0 48% 48%;
+            background:
+                radial-gradient(ellipse 12% 32% at 36% 100%, rgba(240,255,160,0.72) 0%, transparent 34%),
+                radial-gradient(ellipse 10% 28% at 64% 100%, rgba(210,255,120,0.65) 0%, transparent 32%),
+                radial-gradient(ellipse 28% 52% at 14% 100%, rgba(100,255,50,0.9)  0%, transparent 50%),
+                radial-gradient(ellipse 25% 48% at 86% 100%, rgba(57,255,20,0.88)  0%, transparent 48%),
+                radial-gradient(ellipse 38% 58% at 50% 100%, rgba(200,255,80,0.72) 0%, transparent 54%);
+            filter: blur(10px) saturate(2.2);
+            animation: fire-wisp-dance 2.3s ease-in-out infinite reverse;
+        }
+        .news-card.fire-card .news-card__image-wrapper {
+            background: linear-gradient(180deg, #010800 0%, #000500 100%);
+            border-radius: 22px 22px 0 0;
+            box-shadow: inset 0 -3px 0 rgba(57,255,20,0.85), inset 0 0 32px rgba(0,0,0,0.55);
+            overflow: hidden;
+        }
+        /* Distorsion chaleur sur image */
+        .news-card.fire-card .news-card__image-wrapper::before {
+            content: "";
+            position: absolute; inset: 0; z-index: 3; pointer-events: none;
+            border-radius: 22px 22px 0 0;
+            background:
+                linear-gradient(180deg, rgba(57,255,20,0.10) 0%, transparent 42%),
+                repeating-linear-gradient(180deg, transparent 0 5px, rgba(57,255,20,0.025) 5px 6px);
+            animation: fire-heatwave 0.75s linear infinite;
+        }
+        .news-card.fire-card .news-card__image-wrapper::after {
+            z-index: 4; border-radius: 22px 22px 0 0;
+            background:
+                radial-gradient(circle at 50% 50%, transparent 0 14%, rgba(0,8,0,0.4) 54%, rgba(0,4,0,0.88) 100%),
+                radial-gradient(circle at 50% 2%, rgba(57,255,20,0.32) 0 26%, transparent 58%),
+                linear-gradient(180deg, transparent 38%, rgba(57,255,20,0.1) 100%);
+        }
+        .news-card.fire-card .news-card__image {
+            filter: brightness(0.92) contrast(1.04);
+            transform: scale(1.08); transition: filter 0.4s ease, transform 0.5s ease;
+        }
+        .news-card.fire-card:hover .news-card__image {
+            filter: brightness(1.05) contrast(1.06);
+            transform: scale(1.19) rotate(0.3deg);
+        }
+        .news-card.fire-card:hover {
+            box-shadow:
+                0 0 0 1px rgba(57,255,20,0.12) inset,
+                0 0 72px rgba(57,255,20,1), 0 0 145px rgba(20,200,0,0.58),
+                0 0 250px rgba(0,80,0,0.2), 0 32px 90px rgba(0,0,0,0.88);
+        }
+        .news-card.fire-card .news-card__badge, .news-card.fire-card .news-card__new {
+            background: rgba(0,6,0,0.96); color: #7aff40;
+            border: 1px solid rgba(57,255,20,0.78);
+            box-shadow: 0 0 22px rgba(57,255,20,0.92), inset 0 0 8px rgba(57,255,20,0.12);
+            backdrop-filter: blur(8px); z-index: 6;
+        }
+        .news-card.fire-card .news-card__content {
+            background:
+                radial-gradient(ellipse at 50% 0%, rgba(57,255,20,0.14) 0%, transparent 48%),
+                radial-gradient(ellipse at 85% 90%, rgba(0,140,0,0.07) 0%, transparent 35%),
+                linear-gradient(180deg, #031200 0%, #010800 100%);
+            border-top: 1px solid rgba(57,255,20,0.65);
+            position: relative; z-index: 1; border-radius: 0 0 22px 22px;
+        }
+        .news-card.fire-card .news-card__content::before { content: none; }
+        .news-card.fire-card .news-card__content::after {
+            content: none;
+        }
+        .news-card.fire-card .news-card__eyebrow { color:#7aff40; text-shadow:0 0 10px rgba(57,255,20,0.88); letter-spacing:1px; }
+        .news-card.fire-card .news-card__title {
+            color: #c8ff80;
+            text-shadow: 0 0 22px rgba(57,255,20,1), 0 0 55px rgba(20,200,0,0.62), 0 1px 0 rgba(0,25,0,0.95);
+            animation: fire-title-flicker 3.2s ease-in-out infinite;
+        }
+        .news-card.fire-card .news-card__button {
+            background: linear-gradient(135deg, #010e00, #004000 52%, #010a00);
+            color: #7aff40; border: 1px solid rgba(57,255,20,0.68);
+            border-radius: 100px;
+            box-shadow: 0 0 22px rgba(57,255,20,0.65), inset 0 1px 0 rgba(150,255,80,0.22); overflow:hidden;
+        }
+        .news-card.fire-card .news-card__button::before { background: linear-gradient(90deg,transparent,rgba(150,255,80,0.56),transparent); animation: fire-btn-shine 2.4s ease-in-out infinite; }
+        .news-card.fire-card:hover .news-card__button { background: linear-gradient(135deg,#00cc00,#39ff14 52%,#009900); color:#000; box-shadow:0 0 46px rgba(57,255,20,1),0 0 95px rgba(20,200,0,0.56); }
+        .news-card.fire-card .news-card__bar { background:linear-gradient(90deg,#002200,#39ff14,#c8ff80,#39ff14,#002200); background-size:300% auto; animation:barSlide 2s linear infinite; height:5px; border-radius:0 0 22px 22px; }
         .fire-deco { position:absolute; inset:0; z-index:15; pointer-events:none; overflow:visible; border-radius:24px; }
-        .fire-ember { position:absolute; bottom:0; left:var(--fx); width:var(--fsize); height:var(--fsize); border-radius:50%; background: radial-gradient(circle,rgba(150,255,50,0.9),rgba(57,255,20,0.2)); box-shadow: 0 0 6px rgba(57,255,20,0.6); animation:fire-ember-rise 4s var(--fd) ease-out infinite; opacity:0; }
+        .fire-ember {
+            position:absolute; bottom:0; left:var(--fx);
+            width:var(--fsize,4px); height:var(--fsize,4px); border-radius:50%;
+            background:radial-gradient(circle,rgba(240,255,160,0.98),rgba(57,255,20,0.25));
+            box-shadow:0 0 5px rgba(57,255,20,0.9),0 0 2px rgba(220,255,120,0.95);
+            animation:fire-ember-rise 3.2s var(--fd) ease-out infinite; opacity:0;
+        }
 
-        /* 016 ── EAU QUI COULE */
-        .news-card.water-card { isolation: isolate; border-radius: 24px; background: linear-gradient(165deg,#00101a 0%,#002a40 40%,#000d18 100%); border: 2px solid rgba(0,180,255,0.6); box-shadow: 0 0 0 1px rgba(0,180,255,0.08) inset, 0 0 40px rgba(0,180,255,0.5), 0 0 80px rgba(0,100,200,0.2), 0 30px 80px rgba(0,0,0,0.75); animation: fadeInUp 0.4s ease both, water-border-pulse 4s ease-in-out infinite; }
-        .news-card.water-card::before { content: ""; position: absolute; left:-30px; right:-30px; bottom:-50px; top:auto; height:110px; z-index:-1; pointer-events:none; border-radius: 0 0 40% 40%; background: repeating-linear-gradient(90deg,transparent 0 8px,rgba(0,180,255,0.08) 8px 10px,transparent 10px 18px,rgba(0,140,220,0.06) 18px 20px,transparent 20px 28px), radial-gradient(ellipse 50% 60% at 30% 100%, rgba(0,180,255,0.6) 0%, transparent 55%), radial-gradient(ellipse 45% 55% at 70% 100%, rgba(0,140,220,0.5) 0%, transparent 52%), radial-gradient(ellipse 30% 50% at 50% 100%, rgba(0,200,255,0.4) 0%, transparent 48%); filter: blur(8px) saturate(1.5); animation: water-flow-glow 3.2s ease-in-out infinite; }
-        .news-card.water-card .news-card__image-wrapper { background: #00121c; border-radius: 22px 22px 0 0; box-shadow: inset 0 -2px 0 rgba(0,180,255,0.7); position: relative; }
-        .news-card.water-card .news-card__image-wrapper::before { content: ""; position: absolute; inset:0; z-index:3; pointer-events:none; border-radius: 22px 22px 0 0; background: linear-gradient(135deg,transparent 0 30%,rgba(255,255,255,0.08) 32% 33%,transparent 34% 60%,rgba(180,240,255,0.06) 62% 63%,transparent 64%); background-size: 250% 100%; animation: glass-shimmer 5s ease-in-out infinite; }
-        .news-card.water-card .news-card__image-wrapper::after { z-index: 4; border-radius: 22px 22px 0 0; background: radial-gradient(circle at 50% 50%, transparent 0 18%, rgba(0,10,25,0.35) 58%, rgba(0,5,15,0.78) 100%), radial-gradient(circle at 50% 6%, rgba(0,180,255,0.15) 0 25%, transparent 55%); }
-        .news-card.water-card .news-card__image { transform: scale(1.08); transition: filter 0.4s ease, transform 0.5s ease; }
-        .news-card.water-card:hover .news-card__image { transform: scale(1.18) rotate(-0.3deg); }
-        .news-card.water-card:hover { box-shadow: 0 0 0 1px rgba(0,200,255,0.1) inset, 0 0 60px rgba(0,180,255,0.8), 0 0 120px rgba(0,100,200,0.4), 0 32px 90px rgba(0,0,0,0.8); }
-        .news-card.water-card .news-card__badge, .news-card.water-card .news-card__new { background: rgba(0,10,22,0.93); color: #60d4ff; border: 1px solid rgba(0,180,255,0.7); box-shadow: 0 0 22px rgba(0,180,255,0.8), inset 0 0 10px rgba(0,180,255,0.1); backdrop-filter: blur(8px); z-index: 6; }
-        .news-card.water-card .news-card__content { background: radial-gradient(circle at 85% 10%, rgba(0,180,255,0.12), transparent 32%), radial-gradient(circle at 10% 85%, rgba(0,100,200,0.08), transparent 30%), linear-gradient(180deg,#001f30,#000d16); border-top: 1px solid rgba(0,180,255,0.4); position: relative; z-index: 1; border-radius: 0 0 22px 22px; backdrop-filter: blur(2px); }
-        .news-card.water-card .news-card__content::before { content: "💧"; position: absolute; right:14px; top:10px; font-size:28px; line-height:1; pointer-events:none; filter: drop-shadow(0 0 14px rgba(0,180,255,1)); animation: water-drop-float 4s ease-in-out infinite; }
-        .news-card.water-card .news-card__content::after { content: "🌊"; position: absolute; left:14px; bottom:12px; font-size:18px; opacity:0.35; pointer-events:none; }
-        .news-card.water-card .news-card__eyebrow { color: #60d4ff; text-shadow: 0 0 10px rgba(0,180,255,0.8); letter-spacing:1px; }
-        .news-card.water-card .news-card__title { color: #99e6ff; text-shadow: 0 0 20px rgba(0,180,255,0.9), 0 0 50px rgba(0,120,220,0.5), 0 1px 0 rgba(0,20,40,0.8); }
-        .news-card.water-card .news-card__button { background: linear-gradient(135deg,#002033,#005577 52%,#002a40); color: #60d4ff; border: 1px solid rgba(0,180,255,0.6); border-radius: 100px; box-shadow: 0 0 22px rgba(0,180,255,0.6), inset 0 1px 0 rgba(80,200,255,0.25); overflow: hidden; }
-        .news-card.water-card .news-card__button::before { background: linear-gradient(90deg,transparent,rgba(80,200,255,0.5),transparent); animation: water-btn-shine 3s ease-in-out infinite; }
-        .news-card.water-card:hover .news-card__button { background: linear-gradient(135deg,#0088cc,#00b4ff 52%,#006699); color: #000; box-shadow: 0 0 40px rgba(0,180,255,1), 0 0 80px rgba(0,100,200,0.5); }
-        .news-card.water-card .news-card__bar { background: linear-gradient(90deg,#004466,#00b4ff,#60d4ff,#00b4ff,#004466); background-size: 300% auto; animation: barSlide 3.5s linear infinite; height: 5px; border-radius: 0 0 22px 22px; }
-        .water-deco { position:absolute; inset:0; z-index:15; pointer-events:none; overflow:visible; border-radius:24px; }
-        .water-bubble { position:absolute; bottom:-10px; left:var(--wx); font-size:var(--ws,14px); opacity:0; filter:drop-shadow(0 0 4px rgba(0,180,255,0.6)); animation:water-bubble-rise 5s var(--wd) ease-in-out infinite; }
-        .water-bubble::before { content:"💧"; }
-        .water-bubble:nth-child(3n)::before { content:"🫧"; }
+        /* 016 ── EAU — "LIQUID RAIN GLASS" — redesign complet */
+        .news-card.water-card {
+            isolation: isolate;
+            border-radius: 24px;
+            overflow: clip;
+            background:
+                radial-gradient(ellipse at 28% 18%, rgba(0,160,255,0.07) 0%, transparent 48%),
+                radial-gradient(ellipse at 72% 82%, rgba(0,100,200,0.05) 0%, transparent 44%),
+                linear-gradient(168deg, #00080f 0%, #001525 42%, #000610 100%);
+            border: 2px solid rgba(55,180,255,0.58);
+            box-shadow:
+                0 0 0 1px rgba(100,200,255,0.09) inset,
+                0 0 0 3px rgba(0,120,200,0.04) inset,
+                0 0 42px rgba(0,165,255,0.52),
+                0 0 90px rgba(0,80,180,0.22),
+                0 30px 80px rgba(0,0,0,0.8);
+            animation: fadeInUp 0.4s ease both, water-border-pulse 4s ease-in-out infinite;
+        }
+        /* Reflet eau en dessous */
+        .news-card.water-card::before {
+            content: "";
+            position: absolute;
+            left:-32px; right:-32px; bottom:-48px; top:auto; height:98px;
+            z-index:-1; pointer-events:none; border-radius:0 0 48% 48%;
+            background:
+                radial-gradient(ellipse 58% 68% at 50% 100%, rgba(0,165,255,0.48) 0%, transparent 54%),
+                radial-gradient(ellipse 32% 42% at 20% 100%, rgba(0,100,200,0.35) 0%, transparent 48%),
+                radial-gradient(ellipse 32% 42% at 80% 100%, rgba(0,135,220,0.3)  0%, transparent 46%);
+            filter: blur(20px) saturate(1.9);
+            animation: water-pool-breathe 3.8s ease-in-out infinite;
+        }
+        /* Stries d'eau verticales sur toute la carte */
+        .news-card.water-card::after {
+            content: "";
+            position: absolute; inset: 0; z-index: 8; pointer-events: none; border-radius:24px;
+            background:
+                repeating-linear-gradient(180deg,
+                    transparent 0 3px, rgba(100,210,255,0.055) 3px 4px,
+                    transparent 4px 10px, rgba(70,190,255,0.038) 10px 11px,
+                    transparent 11px 20px, rgba(120,225,255,0.045) 20px 21px,
+                    transparent 21px 32px
+                ),
+                repeating-linear-gradient(90deg,
+                    transparent 0 26px, rgba(130,215,255,0.028) 26px 28px,
+                    transparent 28px 55px
+                );
+            animation: water-streak-drift 2.4s linear infinite;
+        }
+        .news-card.water-card .news-card__image-wrapper {
+            background: linear-gradient(180deg, #000810 0%, #000610 100%);
+            border-radius: 22px 22px 0 0;
+            box-shadow: inset 0 -3px 0 rgba(0,175,255,0.78), inset 0 0 22px rgba(0,0,0,0.32);
+            overflow: hidden; position: relative;
+        }
+        /* Surface vitrée mouillée — gouttes */
+        .news-card.water-card .news-card__image-wrapper::before {
+            content: "";
+            position: absolute; inset: 0; z-index: 3; pointer-events: none; border-radius: 22px 22px 0 0;
+            background:
+                /* Gouttes statiques */
+                radial-gradient(ellipse 5px 8px at 16% 28%, rgba(200,240,255,0.22) 0 50%, transparent 55%),
+                radial-gradient(ellipse 4px 6px at 42% 55%, rgba(180,230,255,0.18) 0 50%, transparent 55%),
+                radial-gradient(ellipse 6px 9px at 68% 20%, rgba(210,245,255,0.2)  0 50%, transparent 55%),
+                radial-gradient(ellipse 4px 7px at 82% 70%, rgba(190,235,255,0.17) 0 50%, transparent 55%),
+                radial-gradient(ellipse 5px 8px at 30% 80%, rgba(200,240,255,0.16) 0 50%, transparent 55%),
+                radial-gradient(ellipse 3px 5px at 90% 42%, rgba(180,228,255,0.14) 0 50%, transparent 55%),
+                /* Reflet latéral */
+                linear-gradient(90deg,rgba(140,220,255,0.05) 0%,transparent 18%,transparent 82%,rgba(140,220,255,0.04) 100%),
+                /* Voile humide haut */
+                linear-gradient(180deg,rgba(150,220,255,0.07) 0%,transparent 32%);
+            animation: water-droplets-sway 4.5s ease-in-out infinite;
+        }
+        .news-card.water-card .news-card__image-wrapper::after {
+            z-index: 4; border-radius: 22px 22px 0 0;
+            background:
+                radial-gradient(circle at 50% 50%, transparent 0 16%, rgba(0,8,18,0.36) 58%, rgba(0,3,12,0.8) 100%),
+                radial-gradient(circle at 50% 5%, rgba(0,165,255,0.18) 0 28%, transparent 60%),
+                linear-gradient(180deg, transparent 55%, rgba(0,140,220,0.08) 100%);
+        }
+        .news-card.water-card .news-card__image {
+            filter: brightness(0.9) contrast(1.04);
+            transform: scale(1.08); transition: filter 0.4s ease, transform 0.5s ease;
+        }
+        .news-card.water-card:hover .news-card__image {
+            filter: brightness(1.06) contrast(1.06);
+            transform: scale(1.18) rotate(-0.3deg);
+        }
+        .news-card.water-card:hover {
+            box-shadow:
+                0 0 0 1px rgba(100,200,255,0.12) inset,
+                0 0 68px rgba(0,180,255,0.92), 0 0 135px rgba(0,100,200,0.48),
+                0 32px 90px rgba(0,0,0,0.85);
+        }
+        .news-card.water-card .news-card__badge, .news-card.water-card .news-card__new {
+            background: rgba(0,6,18,0.95); color: #66d8ff;
+            border: 1px solid rgba(0,180,255,0.74);
+            box-shadow: 0 0 22px rgba(0,180,255,0.88), inset 0 0 8px rgba(0,180,255,0.1);
+            backdrop-filter: blur(10px); z-index: 6;
+        }
+        .news-card.water-card .news-card__content {
+            background:
+                radial-gradient(ellipse at 22% 0%, rgba(0,180,255,0.1) 0%, transparent 42%),
+                radial-gradient(ellipse at 78% 100%, rgba(0,120,200,0.07) 0%, transparent 36%),
+                linear-gradient(180deg, #001320 0%, #000810 100%);
+            border-top: 1px solid rgba(0,180,255,0.48);
+            position: relative; z-index: 1; border-radius: 0 0 22px 22px; backdrop-filter:blur(2px);
+        }
+        .news-card.water-card .news-card__content::before { content: none; }
+        .news-card.water-card .news-card__content::after {
+            content:none;
+        }
+        .news-card.water-card .news-card__eyebrow { color:#66d8ff; text-shadow:0 0 10px rgba(0,180,255,0.82); letter-spacing:1px; }
+        .news-card.water-card .news-card__title {
+            color:#a8eaff;
+            text-shadow:0 0 22px rgba(0,180,255,0.92),0 0 52px rgba(0,120,220,0.52),0 1px 0 rgba(0,12,32,0.95);
+        }
+        .news-card.water-card .news-card__button {
+            background:linear-gradient(135deg,#001222,#002e4a 52%,#001828);
+            color:#66d8ff; border:1px solid rgba(0,180,255,0.68);
+            border-radius:100px;
+            box-shadow:0 0 22px rgba(0,180,255,0.65),inset 0 1px 0 rgba(100,205,255,0.22); overflow:hidden;
+        }
+        .news-card.water-card .news-card__button::before { background:linear-gradient(90deg,transparent,rgba(100,210,255,0.54),transparent); animation:water-btn-shine 3s ease-in-out infinite; }
+        .news-card.water-card:hover .news-card__button { background:linear-gradient(135deg,#0088cc,#00b4ff 52%,#006699); color:#000; box-shadow:0 0 46px rgba(0,180,255,1),0 0 95px rgba(0,100,200,0.54); }
+        .news-card.water-card .news-card__bar { background:linear-gradient(90deg,#002e50,#00b4ff,#80dcff,#00b4ff,#002e50); background-size:300% auto; animation:barSlide 3.5s linear infinite; height:5px; border-radius:0 0 22px 22px; }
+        .water-deco { position:absolute; inset:0; z-index:15; pointer-events:none; overflow:hidden; border-radius:24px; }
 
-        /* 018 ── GLACONS TOMBANT / LIQUID ICE */
-        .news-card.ice-card { isolation: isolate; border-radius: 24px; background: linear-gradient(165deg,#00081a 0%,#001a40 40%,#000618 100%); border: 2px solid rgba(100,200,255,0.6); box-shadow: 0 0 0 1px rgba(100,200,255,0.08) inset, 0 0 40px rgba(100,200,255,0.5), 0 0 80px rgba(50,100,200,0.2), 0 30px 80px rgba(0,0,0,0.75); animation: fadeInUp 0.4s ease both, ice-border-pulse 3.5s ease-in-out infinite; }
-        .news-card.ice-card::before { content: ""; position: absolute; left:-25px; right:-25px; bottom:-45px; top:auto; height:100px; z-index:-1; pointer-events:none; border-radius: 0 0 35% 35%; background: radial-gradient(ellipse 45% 55% at 25% 100%, rgba(100,200,255,0.6) 0%, transparent 50%), radial-gradient(ellipse 40% 50% at 75% 100%, rgba(50,150,220,0.5) 0%, transparent 48%), radial-gradient(ellipse 28% 45% at 50% 100%, rgba(150,220,255,0.4) 0%, transparent 45%); filter: blur(12px) saturate(1.6); animation: ice-glow-pulse 3s ease-in-out infinite; }
-        .news-card.ice-card .news-card__image-wrapper { background: #000a18; border-radius: 22px 22px 0 0; box-shadow: inset 0 -2px 0 rgba(100,200,255,0.7); }
-        .news-card.ice-card .news-card__image-wrapper::before { content: ""; position: absolute; inset:0; z-index:3; pointer-events:none; border-radius: 22px 22px 0 0; background: linear-gradient(135deg,transparent 0 28%,rgba(200,230,255,0.06) 30% 31%,transparent 32% 58%,rgba(150,220,255,0.04) 60% 61%,transparent 62%); background-size: 250% 100%; animation: glass-shimmer 6s ease-in-out infinite; }
-        .news-card.ice-card .news-card__image-wrapper::after { z-index: 4; border-radius: 22px 22px 0 0; background: radial-gradient(circle at 50% 50%, transparent 0 16%, rgba(0,8,20,0.35) 58%, rgba(0,3,10,0.78) 100%), radial-gradient(circle at 50% 4%, rgba(100,200,255,0.15) 0 28%, transparent 58%); }
-        .news-card.ice-card .news-card__image { transform: scale(1.08); transition: filter 0.4s ease, transform 0.5s ease; }
-        .news-card.ice-card:hover .news-card__image { transform: scale(1.18) rotate(0.5deg); }
-        .news-card.ice-card:hover { box-shadow: 0 0 0 1px rgba(150,220,255,0.1) inset, 0 0 60px rgba(100,200,255,0.8), 0 0 120px rgba(50,100,200,0.4), 0 32px 90px rgba(0,0,0,0.8); }
-        .news-card.ice-card .news-card__badge, .news-card.ice-card .news-card__new { background: rgba(0,8,22,0.93); color: #80d4ff; border: 1px solid rgba(100,200,255,0.7); box-shadow: 0 0 22px rgba(100,200,255,0.8), inset 0 0 10px rgba(100,200,255,0.1); backdrop-filter: blur(8px); z-index: 6; }
-        .news-card.ice-card .news-card__content { background: radial-gradient(circle at 85% 10%, rgba(100,200,255,0.12), transparent 32%), radial-gradient(circle at 10% 85%, rgba(50,140,220,0.08), transparent 30%), linear-gradient(180deg,#001528,#000814); border-top: 1px solid rgba(100,200,255,0.4); position: relative; z-index: 1; border-radius: 0 0 22px 22px; backdrop-filter: blur(2px); }
-        .news-card.ice-card .news-card__content::before { content: "❄️"; position: absolute; right:14px; top:10px; font-size:24px; line-height:1; pointer-events:none; filter: drop-shadow(0 0 14px rgba(100,200,255,1)); animation: ice-snow-float 5s ease-in-out infinite; }
-        .news-card.ice-card .news-card__content::after { content: "🧊"; position: absolute; left:14px; bottom:12px; font-size:18px; opacity:0.35; pointer-events:none; }
-        .news-card.ice-card .news-card__eyebrow { color: #80d4ff; text-shadow: 0 0 10px rgba(100,200,255,0.8); letter-spacing:1px; }
-        .news-card.ice-card .news-card__title { color: #b0e6ff; text-shadow: 0 0 20px rgba(100,200,255,0.9), 0 0 50px rgba(50,140,220,0.5), 0 1px 0 rgba(0,10,30,0.8); }
-        .news-card.ice-card .news-card__button { background: linear-gradient(135deg,#001a33,#003366 52%,#001a33); color: #80d4ff; border: 1px solid rgba(100,200,255,0.6); border-radius: 100px; box-shadow: 0 0 22px rgba(100,200,255,0.6), inset 0 1px 0 rgba(150,220,255,0.25); overflow: hidden; }
-        .news-card.ice-card .news-card__button::before { background: linear-gradient(90deg,transparent,rgba(150,220,255,0.5),transparent); animation: ice-btn-shine 3.2s ease-in-out infinite; }
-        .news-card.ice-card:hover .news-card__button { background: linear-gradient(135deg,#0077cc,#55bbff 52%,#0066aa); color: #000; box-shadow: 0 0 40px rgba(100,200,255,1), 0 0 80px rgba(50,140,220,0.5); }
-        .news-card.ice-card .news-card__bar { background: linear-gradient(90deg,#003366,#64c8ff,#b0e6ff,#64c8ff,#003366); background-size: 300% auto; animation: barSlide 4s linear infinite; height: 5px; border-radius: 0 0 22px 22px; }
+        /* Bulles qui rebondissent dans la card */
+        .water-bubble {
+            position: absolute;
+            width: var(--bs,10px); height: var(--bs,10px);
+            border-radius: 50%;
+            background: radial-gradient(circle at 32% 28%,
+                rgba(255,255,255,0.88) 0 18%,
+                rgba(180,235,255,0.55) 20%,
+                rgba(60,175,255,0.22) 55%,
+                rgba(0,140,230,0.08) 100%);
+            box-shadow:
+                inset 0 0 0 1px rgba(160,225,255,0.45),
+                0 0 6px rgba(0,175,255,0.35),
+                0 0 14px rgba(0,140,220,0.2);
+            opacity: 0;
+            animation: bubble-bounce var(--bd,12s) var(--bdelay,0s) ease-in-out infinite;
+        }
+
+        @keyframes bubble-bounce {
+            0%   { opacity:0; transform: translate(var(--bx0), var(--by0)) scale(0.6); }
+            5%   { opacity:0.88; }
+            25%  { transform: translate(var(--bx1), var(--by1)) scale(1); }
+            50%  { transform: translate(var(--bx2), var(--by2)) scale(0.95); opacity:0.82; }
+            75%  { transform: translate(var(--bx3), var(--by3)) scale(1.04); }
+            92%  { opacity:0.6; }
+            100% { opacity:0; transform: translate(var(--bx4), var(--by4)) scale(0.7); }
+        }
+
+        /* 018 ── GLACE — "FROZEN CRYSTAL GLASS" — redesign complet */
+        .news-card.ice-card {
+            isolation: isolate;
+            border-radius: 24px;
+            overflow: clip;
+            background:
+                radial-gradient(ellipse at 50% -5%, rgba(190,235,255,0.12) 0%, transparent 46%),
+                radial-gradient(ellipse at 12% 92%, rgba(100,160,255,0.06) 0%, transparent 42%),
+                radial-gradient(ellipse at 88% 88%, rgba(80,145,225,0.05) 0%, transparent 42%),
+                linear-gradient(168deg, #00030c 0%, #000618 42%, #00030c 100%);
+            border: 2px solid rgba(155,225,255,0.68);
+            box-shadow:
+                0 0 0 1px rgba(210,240,255,0.13) inset,
+                0 0 0 2px rgba(100,180,255,0.05) inset,
+                0 0 48px rgba(110,205,255,0.65),
+                0 0 105px rgba(55,125,215,0.3),
+                0 30px 80px rgba(0,0,0,0.85);
+            animation: fadeInUp 0.4s ease both, ice-border-pulse 3.5s ease-in-out infinite;
+        }
+        /* Lueur gelée en dessous */
+        .news-card.ice-card::before {
+            content: "";
+            position: absolute;
+            left:-28px; right:-28px; bottom:-50px; top:auto; height:112px;
+            z-index:-1; pointer-events:none; border-radius:0 0 40% 40%;
+            background:
+                radial-gradient(ellipse 52% 62% at 50% 100%, rgba(155,225,255,0.52) 0%, transparent 54%),
+                radial-gradient(ellipse 28% 42% at 18% 100%, rgba(100,185,255,0.38) 0%, transparent 48%),
+                radial-gradient(ellipse 28% 42% at 82% 100%, rgba(120,205,255,0.34) 0%, transparent 46%);
+            filter: blur(14px) saturate(1.9);
+            animation: ice-glow-pulse 3s ease-in-out infinite;
+        }
+        /* Givre cristallin sur toute la surface */
+        .news-card.ice-card::after {
+            content: "";
+            position: absolute; inset: 0; z-index: 8; pointer-events: none; border-radius:24px;
+            background:
+                /* Coins givrés */
+                radial-gradient(ellipse 58% 50% at 0% 0%,     rgba(215,245,255,0.1) 0%, transparent 58%),
+                radial-gradient(ellipse 50% 42% at 100% 100%, rgba(195,230,255,0.08) 0%, transparent 52%),
+                radial-gradient(ellipse 38% 32% at 100% 0%,   rgba(200,238,255,0.06) 0%, transparent 48%),
+                radial-gradient(ellipse 32% 28% at 0% 100%,   rgba(185,225,255,0.05) 0%, transparent 45%),
+                /* Réseau cristallin horizontal */
+                repeating-linear-gradient(92deg,
+                    transparent 0 16px, rgba(190,235,255,0.032) 16px 17px,
+                    transparent 17px 35px, rgba(175,225,255,0.022) 35px 36px,
+                    transparent 36px 55px
+                ),
+                /* Réseau cristallin diagonal */
+                repeating-linear-gradient(38deg,
+                    transparent 0 20px, rgba(210,242,255,0.028) 20px 21px,
+                    transparent 21px 42px
+                );
+            animation: ice-frost-breathe 4.5s ease-in-out infinite;
+        }
+        .news-card.ice-card .news-card__image-wrapper {
+            background: linear-gradient(180deg, #000412 0%, #000310 100%);
+            border-radius: 22px 22px 0 0;
+            box-shadow: inset 0 -3px 0 rgba(155,225,255,0.84), inset 0 0 26px rgba(0,0,0,0.45);
+            overflow: hidden; position: relative;
+        }
+        /* Givre sur les bords de l'image */
+        .news-card.ice-card .news-card__image-wrapper::before {
+            content: "";
+            position: absolute; inset: 0; z-index: 3; pointer-events: none; border-radius: 22px 22px 0 0;
+            background:
+                linear-gradient(180deg, rgba(210,245,255,0.2) 0%, rgba(185,235,255,0.07) 15%, transparent 35%),
+                linear-gradient(90deg,  rgba(190,235,255,0.14) 0%, rgba(168,225,255,0.04) 14%, transparent 28%),
+                linear-gradient(270deg, rgba(190,235,255,0.11) 0%, rgba(168,225,255,0.03) 12%, transparent 26%),
+                /* Reflet glacé diagonal */
+                linear-gradient(138deg, transparent 0 26%, rgba(228,248,255,0.08) 28% 29%, transparent 30% 62%, rgba(190,235,255,0.055) 64% 65%, transparent 66%);
+            background-size: 100% 100%, 100% 100%, 100% 100%, 288% 100%;
+            animation: ice-frost-grow 6s ease-in-out infinite, glass-shimmer 8s ease-in-out infinite;
+        }
+        .news-card.ice-card .news-card__image-wrapper::after {
+            z-index: 4; border-radius: 22px 22px 0 0;
+            background:
+                radial-gradient(circle at 50% 50%, transparent 0 13%, rgba(0,4,16,0.4) 56%, rgba(0,2,10,0.84) 100%),
+                radial-gradient(circle at 50% 3%, rgba(155,225,255,0.24) 0 28%, transparent 60%),
+                linear-gradient(180deg, transparent 52%, rgba(100,185,255,0.065) 100%);
+        }
+        .news-card.ice-card .news-card__image {
+            filter: brightness(0.88) contrast(1.05);
+            transform: scale(1.08); transition: filter 0.4s ease, transform 0.5s ease;
+        }
+        .news-card.ice-card:hover .news-card__image {
+            filter: brightness(1.04) contrast(1.06);
+            transform: scale(1.18) rotate(0.5deg);
+        }
+        .news-card.ice-card:hover {
+            box-shadow:
+                0 0 0 1px rgba(210,245,255,0.15) inset,
+                0 0 68px rgba(155,225,255,0.95), 0 0 145px rgba(85,165,245,0.52),
+                0 32px 90px rgba(0,0,0,0.9);
+        }
+        .news-card.ice-card .news-card__badge, .news-card.ice-card .news-card__new {
+            background: rgba(0,4,16,0.96); color: #92dcff;
+            border: 1px solid rgba(155,225,255,0.74);
+            box-shadow: 0 0 22px rgba(110,205,255,0.88), inset 0 0 8px rgba(110,205,255,0.1);
+            backdrop-filter: blur(10px); z-index: 6;
+        }
+        .news-card.ice-card .news-card__content {
+            background:
+                /* Caustic lumineuse glacée */
+                radial-gradient(ellipse at 50% 0%, rgba(155,225,255,0.11) 0%, transparent 46%),
+                radial-gradient(ellipse at 10% 88%, rgba(80,165,245,0.06) 0%, transparent 36%),
+                radial-gradient(ellipse at 90% 80%, rgba(100,185,255,0.05) 0%, transparent 32%),
+                /* Micro-texture givre */
+                repeating-linear-gradient(45deg,
+                    transparent 0 28px, rgba(190,235,255,0.018) 28px 29px, transparent 29px 58px
+                ),
+                linear-gradient(180deg, #000a1c 0%, #000410 100%);
+            border-top: 1px solid rgba(155,225,255,0.48);
+            position: relative; z-index: 1; border-radius: 0 0 22px 22px; backdrop-filter:blur(3px);
+        }
+        .news-card.ice-card .news-card__content::before { content: none; }
+        .news-card.ice-card .news-card__content::after {
+            content:none;
+        }
+        .news-card.ice-card .news-card__eyebrow { color:#92dcff; text-shadow:0 0 10px rgba(155,225,255,0.88); letter-spacing:1px; }
+        .news-card.ice-card .news-card__title {
+            color:#caeeff;
+            text-shadow:0 0 24px rgba(155,225,255,0.98),0 0 58px rgba(85,165,245,0.58),0 1px 0 rgba(0,6,25,0.95);
+        }
+        .news-card.ice-card .news-card__button {
+            background:linear-gradient(135deg,#000a20,#001638 52%,#000a20);
+            color:#92dcff; border:1px solid rgba(155,225,255,0.68);
+            border-radius:100px;
+            box-shadow:0 0 22px rgba(110,205,255,0.68),inset 0 1px 0 rgba(210,245,255,0.24); overflow:hidden;
+        }
+        .news-card.ice-card .news-card__button::before { background:linear-gradient(90deg,transparent,rgba(210,245,255,0.52),transparent); animation:ice-btn-shine 3.2s ease-in-out infinite; }
+        .news-card.ice-card:hover .news-card__button { background:linear-gradient(135deg,#0077cc,#55bbff 52%,#0066aa); color:#000; box-shadow:0 0 46px rgba(155,225,255,1),0 0 95px rgba(85,165,245,0.58); }
+        .news-card.ice-card .news-card__bar { background:linear-gradient(90deg,#001635,#80d8ff,#caeeff,#80d8ff,#001635); background-size:300% auto; animation:barSlide 4s linear infinite; height:5px; border-radius:0 0 22px 22px; }
         .ice-deco { position:absolute; inset:0; z-index:15; pointer-events:none; overflow:visible; border-radius:24px; }
-        .ice-crystal { position:absolute; top:-20px; left:var(--ix); font-size:var(--is,16px); opacity:0; filter:drop-shadow(0 0 6px rgba(100,200,255,0.7)); animation:ice-crystal-fall 6s var(--id) ease-in infinite; }
-        .ice-crystal::before { content:"🧊"; }
-        .ice-crystal:nth-child(4n)::before { content:"❄️"; }
-        .ice-crystal:nth-child(5n)::before { content:"✨"; }
+        .ice-crystal {
+            position:absolute; top:calc(var(--iy,-18px)); left:var(--ix);
+            font-size:var(--is,16px); opacity:0; color:#92dcff;
+            filter:drop-shadow(0 0 6px rgba(155,225,255,0.82));
+            animation:ice-crystal-fall 5.5s var(--id) ease-in infinite;
+        }
+        .ice-crystal::before { content:"❄"; }
+        .ice-crystal:nth-child(3n)::before { content:"✦"; }
+        .ice-crystal:nth-child(5n)::before { content:"❆"; }
 
-        /* KEYFRAMES GLOBAUX POUR LES CARTES SPÉCIALES */
+                /* KEYFRAMES GLOBAUX POUR LES CARTES SPÉCIALES */
         @keyframes glitch-card-surge { 0%,100%{box-shadow:0 0 24px rgba(0,255,65,.7),0 0 60px rgba(0,255,65,.22),0 18px 46px rgba(0,0,0,.55)} 18%{box-shadow:0 0 34px rgba(255,0,88,.82),0 0 70px rgba(0,255,65,.26),0 18px 46px rgba(0,0,0,.55)} 19%{box-shadow:0 0 28px rgba(0,162,255,.82),0 0 70px rgba(0,255,65,.26),0 18px 46px rgba(0,0,0,.55)} 48%{border-color:#ff0058}49%{border-color:#00ff41} }
         @keyframes glitch-scan{0%{background-position:0 0,0 0}100%{background-position:0 220px,120px 0}}
         @keyframes glitch-warning{ 0%,70%,100%{opacity:0;transform:translateX(0) skewX(-12deg)} 72%{opacity:1;transform:translateX(-14px) skewX(-12deg)} 74%{opacity:.45;transform:translateX(12px) skewX(12deg)} 76%{opacity:1;transform:translateX(0) skewX(-12deg)} }
@@ -490,23 +979,160 @@
         @keyframes val-silk-sweep{ 0% {background-position:-150% 0;opacity:.6} 50% {opacity:1} 100%{background-position:252% 0;opacity:.6} }
         @keyframes val-heart-rise{ 0% {opacity:0;transform:translateY(0) scale(.7) rotate(-10deg)} 10% {opacity:.9} 55% {opacity:.8;transform:translateY(-46vh) scale(1.12) rotate(8deg)} 90% {opacity:.2} 100%{opacity:0;transform:translateY(-96vh) scale(.8) rotate(-5deg)} }
         @keyframes val-btn-shine{0%,62%,100%{opacity:0;transform:translateX(-120%)}76%{opacity:.88;transform:translateX(122%)}}
-        @keyframes fire-border-pulse{ 0%,100%{box-shadow:0 0 0 1px rgba(57,255,20,.06) inset,0 0 38px rgba(57,255,20,.7),0 0 75px rgba(0,200,0,.3),0 30px 80px rgba(0,0,0,.75);border-color:rgba(57,255,20,.6)} 50%{box-shadow:0 0 0 1px rgba(57,255,20,.09) inset,0 0 58px rgba(57,255,20,1),0 0 115px rgba(0,220,0,.5),0 30px 92px rgba(0,0,0,.82);border-color:rgba(57,255,20,1)} }
-        @keyframes fire-glow-pulse{ 0%{transform:translateY(0) scaleX(1) scaleY(1);filter:blur(18px) saturate(2)} 50%{transform:translateY(-16px) scaleX(1.08) scaleY(1.25);filter:blur(15px) saturate(2.4)} 100%{transform:translateY(0) scaleX(1) scaleY(1);filter:blur(18px) saturate(2)} }
-        @keyframes fire-glow-top{ 0%{transform:translateY(0) scaleX(1) scaleY(1);opacity:.8} 50%{transform:translateY(-12px) scaleX(1.12) scaleY(1.2);opacity:1} 100%{transform:translateY(0) scaleX(1) scaleY(1);opacity:.8} }
-        @keyframes fire-orb-float{ 0%,100%{transform:translateY(0) rotate(-5deg);filter:drop-shadow(0 0 14px rgba(57,255,20,1))} 50%{transform:translateY(-6px) rotate(5deg);filter:drop-shadow(0 0 24px rgba(57,255,20,1)) drop-shadow(0 0 40px rgba(0,200,0,.6))} }
-        @keyframes fire-btn-shine{0%,60%,100%{opacity:0;transform:translateX(-120%)}74%{opacity:.9;transform:translateX(122%)}}
-        @keyframes fire-ember-rise{ 0%{opacity:0;transform:translateY(0) scale(.7)} 12%{opacity:.9} 50%{opacity:.7;transform:translateY(calc(-35vh - var(--frise,80px))) translateX(var(--fdrift,20px)) scale(1.1)} 100%{opacity:0;transform:translateY(calc(-70vh - var(--frise,80px))) translateX(calc(var(--fdrift,20px)*2)) scale(.3)} }
-        @keyframes water-border-pulse{ 0%,100%{box-shadow:0 0 0 1px rgba(0,180,255,.06) inset,0 0 35px rgba(0,180,255,.6),0 0 70px rgba(0,100,200,.25),0 30px 80px rgba(0,0,0,.75);border-color:rgba(0,180,255,.6)} 50%{box-shadow:0 0 0 1px rgba(0,200,255,.09) inset,0 0 55px rgba(0,180,255,1),0 0 110px rgba(0,120,220,.45),0 30px 92px rgba(0,0,0,.82);border-color:rgba(0,200,255,1)} }
-        @keyframes water-flow-glow{ 0%{transform:translateY(0) scaleX(1);opacity:.7;background-position:0 0} 33%{transform:translateY(-10px) scaleX(1.05);opacity:.9;background-position:20px 0} 66%{transform:translateY(-5px) scaleX(.97);opacity:.8;background-position:-10px 0} 100%{transform:translateY(0) scaleX(1);opacity:.7;background-position:0 0} }
-        @keyframes water-drop-float{ 0%,100%{transform:translateY(0) scale(1);filter:drop-shadow(0 0 14px rgba(0,180,255,1))} 50%{transform:translateY(-8px) scale(1.15);filter:drop-shadow(0 0 26px rgba(0,180,255,1)) drop-shadow(0 0 42px rgba(0,120,220,.6))} }
-        @keyframes water-btn-shine{0%,60%,100%{opacity:0;transform:translateX(-120%)}76%{opacity:.85;transform:translateX(122%)}}
-        @keyframes water-bubble-rise{ 0%{opacity:0;transform:translateY(0) scale(.6) rotate(-8deg)} 10%{opacity:.8} 50%{opacity:.7;transform:translateY(-38vh) scale(1.1) rotate(4deg)} 90%{opacity:.2} 100%{opacity:0;transform:translateY(-80vh) scale(.7) rotate(-6deg)} }
-        @keyframes ice-border-pulse{ 0%,100%{box-shadow:0 0 0 1px rgba(100,200,255,.06) inset,0 0 35px rgba(100,200,255,.6),0 0 70px rgba(50,100,200,.25),0 30px 80px rgba(0,0,0,.75);border-color:rgba(100,200,255,.6)} 50%{box-shadow:0 0 0 1px rgba(150,220,255,.09) inset,0 0 55px rgba(100,200,255,1),0 0 110px rgba(50,140,220,.45),0 30px 92px rgba(0,0,0,.82);border-color:rgba(150,220,255,1)} }
-        @keyframes ice-glow-pulse{ 0%{transform:translateY(0) scaleX(1);filter:blur(12px) saturate(1.6)} 50%{transform:translateY(-12px) scaleX(1.06) scaleY(1.15);filter:blur(10px) saturate(2)} 100%{transform:translateY(0) scaleX(1);filter:blur(12px) saturate(1.6)} }
-        @keyframes ice-snow-float{ 0%,100%{transform:translateY(0) rotate(0);filter:drop-shadow(0 0 14px rgba(100,200,255,1))} 50%{transform:translateY(-9px) rotate(15deg);filter:drop-shadow(0 0 26px rgba(100,200,255,1)) drop-shadow(0 0 40px rgba(50,140,220,.5))} }
-        @keyframes ice-btn-shine{0%,60%,100%{opacity:0;transform:translateX(-120%)}76%{opacity:.85;transform:translateX(122%)}}
-        @keyframes ice-crystal-fall{ 0%{opacity:0;transform:translateY(0) rotate(-8deg) scale(.7)} 8%{opacity:.85} 50%{opacity:.75;transform:translateY(48vh) rotate(12deg) scale(1.1)} 92%{opacity:.15} 100%{opacity:0;transform:translateY(100vh) rotate(-5deg) scale(.5)} }
-        @keyframes glass-shimmer{ 0%{background-position:-200% 0;opacity:.4} 50%{opacity:.9} 100%{background-position:300% 0;opacity:.4} }
+        @keyframes fire-main-dance{
+            0%  {transform:translateY(0)     scaleX(1)     scaleY(1);    filter:blur(16px) saturate(2.8) hue-rotate(0deg)}
+            22% {transform:translateY(-18px) scaleX(1.1)   scaleY(1.25); filter:blur(14px) saturate(3.2) hue-rotate(8deg)}
+            44% {transform:translateY(-8px)  scaleX(0.92)  scaleY(1.38); filter:blur(18px) saturate(2.5) hue-rotate(-6deg)}
+            66% {transform:translateY(-22px) scaleX(1.08)  scaleY(1.18); filter:blur(13px) saturate(3.4) hue-rotate(12deg)}
+            88% {transform:translateY(-5px)  scaleX(0.96)  scaleY(1.08); filter:blur(17px) saturate(2.7) hue-rotate(-3deg)}
+            100%{transform:translateY(0)     scaleX(1)     scaleY(1);    filter:blur(16px) saturate(2.8) hue-rotate(0deg)}
+        }
+        @keyframes fire-wisp-dance{
+            0%  {transform:translateY(0)     scaleX(1)    scaleY(1);   opacity:.82}
+            30% {transform:translateY(-14px) scaleX(1.12) scaleY(1.3); opacity:1}
+            60% {transform:translateY(-5px)  scaleX(.88)  scaleY(1.12);opacity:.74}
+            100%{transform:translateY(0)     scaleX(1)    scaleY(1);   opacity:.82}
+        }
+        @keyframes fire-heatwave{
+            0%  {background-position:0 0,0 0}
+            100%{background-position:0 -14px,0 0}
+        }
+        @keyframes fire-title-flicker{
+            0%,100%{text-shadow:0 0 22px rgba(57,255,20,1),0 0 55px rgba(20,200,0,.62),0 1px 0 rgba(0,25,0,.95)}
+            45%    {text-shadow:0 0 35px rgba(57,255,20,1),0 0 80px rgba(20,220,0,.8),0 1px 0 rgba(0,25,0,.95),-2px 0 rgba(100,255,50,.3)}
+        }
+        @keyframes fire-spark-twinkle{
+            0%,100%{opacity:.4;transform:scale(1)    rotate(0deg)}
+            50%    {opacity:.9;transform:scale(1.3)  rotate(45deg);text-shadow:0 0 14px rgba(57,255,20,1)}
+        }
+        @keyframes fire-ember-rise{
+            0%  {opacity:0;transform:translateY(0) translateX(0) scale(.7)}
+            10% {opacity:.92}
+            45% {opacity:.72;transform:translateY(calc(-38vh - var(--frise,80px))) translateX(var(--fdrift,20px)) scale(1.1)}
+            100%{opacity:0; transform:translateY(calc(-80vh - var(--frise,80px))) translateX(calc(var(--fdrift,20px)*2)) scale(.25)}
+        }
+        @keyframes fire-border-pulse{
+            0%,100%{box-shadow:0 0 0 1px rgba(57,255,20,.1) inset,0 0 52px rgba(57,255,20,.75),0 0 110px rgba(20,200,0,.38),0 0 200px rgba(0,80,0,.14),0 30px 80px rgba(0,0,0,.82);border-color:rgba(57,255,20,.72)}
+            50%    {box-shadow:0 0 0 1px rgba(57,255,20,.13) inset,0 0 72px rgba(57,255,20,1),  0 0 148px rgba(20,220,0,.55), 0 0 240px rgba(0,100,0,.18),0 30px 92px rgba(0,0,0,.88);border-color:rgba(57,255,20,1)}
+        }
+        @keyframes fire-orb-float{
+            0%,100%{transform:translateY(0) rotate(-5deg);  filter:drop-shadow(0 0 18px rgba(57,255,20,1)) hue-rotate(95deg)}
+            50%    {transform:translateY(-7px) rotate(5deg); filter:drop-shadow(0 0 28px rgba(57,255,20,1)) drop-shadow(0 0 45px rgba(20,200,0,.65)) hue-rotate(95deg)}
+        }
+        @keyframes fire-btn-shine{0%,60%,100%{opacity:0;transform:translateX(-120%)}74%{opacity:.88;transform:translateX(124%)}}
+        @keyframes water-pool-breathe{
+            0%,100%{transform:translateY(0) scaleX(1);opacity:.72;filter:blur(20px) saturate(1.9)}
+            50%    {transform:translateY(-8px) scaleX(1.04);opacity:.9;filter:blur(16px) saturate(2.2)}
+        }
+        @keyframes water-streak-drift{
+            0%  {background-position:0 0,0 0}
+            100%{background-position:0 22px,0 0}
+        }
+        @keyframes water-droplets-sway{
+            0%,100%{transform:translateY(0);opacity:.88}
+            50%    {transform:translateY(3px);opacity:1}
+        }
+
+        @keyframes water-border-pulse{
+            0%,100%{box-shadow:0 0 0 1px rgba(100,200,255,.09) inset,0 0 0 3px rgba(0,120,200,.04) inset,0 0 42px rgba(0,165,255,.52),0 0 90px rgba(0,80,180,.22),0 30px 80px rgba(0,0,0,.8);border-color:rgba(55,180,255,.58)}
+            50%    {box-shadow:0 0 0 1px rgba(120,215,255,.12) inset,0 0 0 3px rgba(0,140,215,.06) inset,0 0 62px rgba(0,180,255,1),  0 0 125px rgba(0,100,200,.45),0 30px 92px rgba(0,0,0,.85);border-color:rgba(80,200,255,1)}
+        }
+        @keyframes water-drop-float{
+            0%,100%{transform:translateY(0) scale(1);   filter:drop-shadow(0 0 14px rgba(0,180,255,1))}
+            50%    {transform:translateY(-8px) scale(1.15);filter:drop-shadow(0 0 26px rgba(0,180,255,1)) drop-shadow(0 0 42px rgba(0,120,220,.65))}
+        }
+        @keyframes water-btn-shine{0%,60%,100%{opacity:0;transform:translateX(-120%)}74%{opacity:.84;transform:translateX(124%)}}
+
+        /* ── Givre qui se forme et fond sur la vitre ── */
+        @keyframes frost-grow {
+            0%   { opacity: 0; transform: scale(0.92); filter: blur(0px); }
+            25%  { opacity: 1; transform: scale(1);    filter: blur(0px); }
+            65%  { opacity: 1; transform: scale(1);    filter: blur(0px); }
+            100% { opacity: 0; transform: scale(1.02); filter: blur(1.5px); }
+        }
+        @keyframes frost-drop-melt {
+            0%,30% { transform: scaleY(0); opacity: 0; transform-origin: top center; }
+            50%    { transform: scaleY(1); opacity: 0.8; }
+            85%    { transform: scaleY(1); opacity: 0.5; }
+            100%   { transform: scaleY(1.1) translateY(6px); opacity: 0; }
+        }
+        .news-card.ice-card .ice-frost-overlay {
+            position: absolute; inset: 0; z-index: 5; pointer-events: none;
+            border-radius: 22px 22px 0 0; overflow: hidden;
+        }
+        .news-card.ice-card .ice-frost-overlay::before {
+            content: "";
+            position: absolute; inset: 0;
+            border-radius: 22px 22px 0 0;
+            background:
+                /* Cristaux de givre — coins */
+                radial-gradient(ellipse 85% 65% at 0% 0%,     rgba(220,248,255,0.62) 0%, rgba(195,238,255,0.28) 32%, transparent 56%),
+                radial-gradient(ellipse 70% 55% at 100% 0%,   rgba(210,245,255,0.52) 0%, rgba(185,232,255,0.22) 28%, transparent 52%),
+                radial-gradient(ellipse 55% 45% at 0% 100%,   rgba(200,240,255,0.38) 0%, transparent 50%),
+                radial-gradient(ellipse 48% 38% at 100% 100%, rgba(205,242,255,0.32) 0%, transparent 48%),
+                /* Voile central */
+                radial-gradient(ellipse 60% 40% at 50% 0%,    rgba(235,252,255,0.28) 0%, transparent 55%),
+                /* Réseau dendritique */
+                repeating-linear-gradient(32deg,
+                    transparent 0 12px, rgba(215,245,255,0.14) 12px 13px,
+                    transparent 13px 28px, rgba(205,240,255,0.08) 28px 29px,
+                    transparent 29px 44px
+                ),
+                repeating-linear-gradient(-32deg,
+                    transparent 0 14px, rgba(210,242,255,0.12) 14px 15px,
+                    transparent 15px 30px
+                ),
+                repeating-linear-gradient(90deg,
+                    transparent 0 18px, rgba(220,248,255,0.07) 18px 19px,
+                    transparent 19px 38px
+                );
+            animation: frost-grow 6s ease-in-out infinite;
+        }
+        /* Gouttes qui coulent quand le givre fond */
+        .news-card.ice-card .ice-frost-overlay::after {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 100%;
+            background:
+                radial-gradient(ellipse 3px 22px at 12% 0%, rgba(200,240,255,0.65) 0%, transparent 75%),
+                radial-gradient(ellipse 2px 16px at 28% 0%, rgba(215,245,255,0.5)  0%, transparent 72%),
+                radial-gradient(ellipse 4px 28px at 45% 0%, rgba(200,240,255,0.58) 0%, transparent 78%),
+                radial-gradient(ellipse 2px 14px at 62% 0%, rgba(210,242,255,0.45) 0%, transparent 70%),
+                radial-gradient(ellipse 3px 24px at 78% 0%, rgba(200,240,255,0.55) 0%, transparent 76%),
+                radial-gradient(ellipse 2px 18px at 90% 0%, rgba(215,245,255,0.48) 0%, transparent 73%);
+            animation: frost-drop-melt 6s ease-in-out infinite;
+        }
+
+        @keyframes ice-glow-pulse{
+            0%,100%{transform:translateY(0) scaleX(1);filter:blur(14px) saturate(1.9)}
+            50%    {transform:translateY(-10px) scaleX(1.05) scaleY(1.12);filter:blur(11px) saturate(2.3)}
+        }
+        @keyframes ice-frost-breathe{
+            0%,100%{opacity:.82}
+            50%    {opacity:1;filter:brightness(1.08) saturate(1.15)}
+        }
+        @keyframes ice-frost-grow{
+            0%,100%{opacity:.88;transform:scale(1)}
+            50%    {opacity:1;transform:scale(1.015)}
+        }
+        @keyframes ice-border-pulse{
+            0%,100%{box-shadow:0 0 0 1px rgba(210,240,255,.13) inset,0 0 0 2px rgba(100,180,255,.05) inset,0 0 48px rgba(110,205,255,.65),0 0 105px rgba(55,125,215,.3),0 30px 80px rgba(0,0,0,.85);border-color:rgba(155,225,255,.68)}
+            50%    {box-shadow:0 0 0 1px rgba(225,248,255,.16) inset,0 0 0 2px rgba(120,195,255,.07) inset,0 0 68px rgba(155,225,255,1),0 0 142px rgba(80,155,240,.52),0 30px 92px rgba(0,0,0,.9); border-color:rgba(195,238,255,1)}
+        }
+        @keyframes ice-snow-float{
+            0%,100%{transform:translateY(0) rotate(-6deg); filter:drop-shadow(0 0 18px rgba(155,225,255,1))}
+            50%    {transform:translateY(-9px) rotate(12deg);filter:drop-shadow(0 0 28px rgba(155,225,255,1)) drop-shadow(0 0 44px rgba(85,165,245,.55))}
+        }
+        @keyframes ice-crystal-fall{
+            0%  {opacity:0;transform:translateY(0)    rotate(-10deg) scale(.7)}
+            8%  {opacity:.88}
+            50% {opacity:.72;transform:translateY(52vh) rotate(14deg) scale(1.12)}
+            92% {opacity:.14}
+            100%{opacity:0; transform:translateY(104vh) rotate(-6deg) scale(.4)}
+        }
+        @keyframes ice-btn-shine{0%,60%,100%{opacity:0;transform:translateX(-120%)}76%{opacity:.84;transform:translateX(124%)}}
+        @keyframes glass-shimmer{0%{background-position:-200% 0;opacity:.42}50%{opacity:.88}100%{background-position:300% 0;opacity:.42}}
 
         /* ── Transition glissement News ↔ Leaks (mobile uniquement) ── */
         @media (max-width: 768px) {
@@ -735,10 +1361,10 @@
         
         const specialCards = {
             "012": { className: "glitch-card", badge: "#012", status: "HACK", eyebrow: "Terminal compromis", title: "BULLETIN #012", button: "Accéder au terminal" },
-            "015": { className: "fire-card", badge: "#015", status: "FEU VERT", eyebrow: "Green Fire", title: "BULLETIN #015", button: "Activer le feu" },
-            "016": { className: "water-card", badge: "#016", status: "EAU VIVE", eyebrow: "Flowing Water", title: "BULLETIN #016", button: "Plonger" },
+            "015": { className: "fire-card", badge: "#015", status: "", eyebrow: "The Blox Bulletin", title: "BULLETIN #015", button: "Lire maintenant →" },
+            "016": { className: "water-card", badge: "#016", status: "", eyebrow: "The Blox Bulletin", title: "BULLETIN #016", button: "Lire maintenant →" },
             "017": { className: "halloween-card", badge: "#017", status: "HALLOWEEN", eyebrow: "Halloween Event", title: "BULLETIN #017", button: "Ouvrir la porte" },
-            "018": { className: "ice-card", badge: "#018", status: "GLACE", eyebrow: "Liquid Ice", title: "BULLETIN #018", button: "Geler" },
+            "018": { className: "ice-card", badge: "#018", status: "", eyebrow: "The Blox Bulletin", title: "BULLETIN #018", button: "Lire maintenant →" },
             "019": { className: "valentine-card", badge: "#019", status: "SAINT-VALENTIN", eyebrow: "Saint-Valentin", title: "BULLETIN #019", button: "Lire la lettre" }
         };
 
@@ -758,11 +1384,28 @@
                 if (b.num === "015") {
                     deco = `<div class="fire-deco" aria-hidden="true"><span class="fire-ember" style="--fx:8%;--fsize:4px;--fd:-0.3s;--frise:60px;--fdrift:12px"></span><span class="fire-ember" style="--fx:22%;--fsize:6px;--fd:-1.8s;--frise:90px;--fdrift:-18px"></span><span class="fire-ember" style="--fx:38%;--fsize:3px;--fd:-0.9s;--frise:50px;--fdrift:8px"></span><span class="fire-ember" style="--fx:52%;--fsize:5px;--fd:-2.5s;--frise:110px;--fdrift:-22px"></span><span class="fire-ember" style="--fx:68%;--fsize:4px;--fd:-1.2s;--frise:70px;--fdrift:15px"></span><span class="fire-ember" style="--fx:84%;--fsize:6px;--fd:-3.0s;--frise:95px;--fdrift:-10px"></span><span class="fire-ember" style="--fx:94%;--fsize:3px;--fd:-0.6s;--frise:45px;--fdrift:5px"></span></div>`;
                 } else if (b.num === "016") {
-                    deco = `<div class="water-deco" aria-hidden="true"><span class="water-bubble" style="--wx:6%;--ws:14px;--wd:-0.2s"></span><span class="water-bubble" style="--wx:20%;--ws:18px;--wd:-1.5s"></span><span class="water-bubble" style="--wx:34%;--ws:12px;--wd:-0.8s"></span><span class="water-bubble" style="--wx:48%;--ws:20px;--wd:-2.2s"></span><span class="water-bubble" style="--wx:62%;--ws:14px;--wd:-1.0s"></span><span class="water-bubble" style="--wx:76%;--ws:16px;--wd:-2.8s"></span><span class="water-bubble" style="--wx:90%;--ws:12px;--wd:-0.5s"></span></div>`;
+                    deco = `<div class="water-deco" aria-hidden="true">
+                        <span class="water-bubble" style="--bs:9px;--bd:12.6s;--bdelay:-0.3s;--bx0:18px;--by0:220px;--bx1:80px;--by1:140px;--bx2:30px;--by2:60px;--bx3:110px;--by3:20px;--bx4:180px;--by4:80px;"></span>
+                        <span class="water-bubble" style="--bs:6px;--bd:10.8s;--bdelay:-1.5s;--bx0:280px;--by0:180px;--bx1:220px;--by1:80px;--bx2:300px;--by2:30px;--bx3:200px;--by3:100px;--bx4:260px;--by4:190px;"></span>
+                        <span class="water-bubble" style="--bs:12px;--bd:15.0s;--bdelay:-2.8s;--bx0:60px;--by0:50px;--bx1:160px;--by1:120px;--bx2:80px;--by2:190px;--bx3:200px;--by3:230px;--bx4:120px;--by4:80px;"></span>
+                        <span class="water-bubble" style="--bs:7px;--bd:14.4s;--bdelay:-0.9s;--bx0:200px;--by0:240px;--bx1:100px;--by1:160px;--bx2:240px;--by2:90px;--bx3:60px;--by3:40px;--bx4:180px;--by4:130px;"></span>
+                        <span class="water-bubble" style="--bs:10px;--bd:11.7s;--bdelay:-3.5s;--bx0:140px;--by0:10px;--bx1:260px;--by1:80px;--bx2:160px;--by2:200px;--bx3:40px;--by3:140px;--bx4:200px;--by4:50px;"></span>
+                        <span class="water-bubble" style="--bs:5px;--bd:13.2s;--bdelay:-1.8s;--bx0:300px;--by0:100px;--bx1:180px;--by1:230px;--bx2:60px;--by2:150px;--bx3:250px;--by3:60px;--bx4:90px;--by4:30px;"></span>
+                        <span class="water-bubble" style="--bs:8px;--bd:15.6s;--bdelay:-4.1s;--bx0:80px;--by0:120px;--bx1:30px;--by1:220px;--bx2:200px;--by2:170px;--bx3:310px;--by3:80px;--bx4:140px;--by4:240px;"></span>
+                    </div>`;
                 } else if (b.num === "017") {
                     deco = `<div class="hw-deco" aria-hidden="true"><span class="hw-bat" style="--bx:10%;--bd:-0.2s;--bt:-12px"></span><span class="hw-bat" style="--bx:60%;--bd:-2.4s;--bt:-8px"></span><span class="hw-bat" style="--bx:34%;--bd:-1.2s;--bt:-10px"></span><span class="hw-skull"></span></div>`;
                 } else if (b.num === "018") {
-                    deco = `<div class="ice-deco" aria-hidden="true"><span class="ice-crystal" style="--ix:5%;--is:16px;--id:-0.4s"></span><span class="ice-crystal" style="--ix:18%;--is:20px;--id:-2.0s"></span><span class="ice-crystal" style="--ix:32%;--is:14px;--id:-1.1s"></span><span class="ice-crystal" style="--ix:45%;--is:22px;--id:-3.5s"></span><span class="ice-crystal" style="--ix:58%;--is:16px;--id:-1.8s"></span><span class="ice-crystal" style="--ix:72%;--is:18px;--id:-2.8s"></span><span class="ice-crystal" style="--ix:85%;--is:14px;--id:-0.8s"></span><span class="ice-crystal" style="--ix:95%;--is:20px;--id:-1.5s"></span></div>`;
+                    deco = `<div class="ice-deco" aria-hidden="true">
+                        <span class="ice-crystal" style="--ix:5%;--is:15px;--id:-0.4s"></span>
+                        <span class="ice-crystal" style="--ix:18%;--is:19px;--id:-2.0s"></span>
+                        <span class="ice-crystal" style="--ix:32%;--is:13px;--id:-1.1s"></span>
+                        <span class="ice-crystal" style="--ix:45%;--is:21px;--id:-3.5s"></span>
+                        <span class="ice-crystal" style="--ix:58%;--is:15px;--id:-1.8s"></span>
+                        <span class="ice-crystal" style="--ix:72%;--is:17px;--id:-2.8s"></span>
+                        <span class="ice-crystal" style="--ix:85%;--is:13px;--id:-0.8s"></span>
+                        <span class="ice-crystal" style="--ix:95%;--is:19px;--id:-1.5s"></span>
+                    </div>`;
                 } else if (b.num === "019") {
                     deco = `<div class="val-deco" aria-hidden="true"><span class="val-heart" style="--hx:8%;--hd:-0.1s;--hs:1em"></span><span class="val-heart" style="--hx:28%;--hd:-1.7s;--hs:1.4em"></span><span class="val-heart" style="--hx:52%;--hd:-0.8s;--hs:.85em"></span><span class="val-heart" style="--hx:72%;--hd:-2.3s;--hs:1.2em"></span><span class="val-heart" style="--hx:88%;--hd:-0.5s;--hs:.96em"></span><span class="val-rose"></span></div>`;
                 }
@@ -771,6 +1414,7 @@
                     ${deco}
                     <div class="news-card__image-wrapper">
                         <img src="${b.img}" class="news-card__image" alt="Bulletin #${b.num}">
+                        ${special.className === 'ice-card' ? '<div class="ice-frost-overlay" aria-hidden="true"></div>' : ''}
                         <div class="news-card__badge">${special.badge || `#${b.num}`}</div>
                         ${statusLabel ? `<div class="news-card__new">${statusLabel}</div>` : ""}
                     </div>
