@@ -231,7 +231,9 @@
             .bulletin-header { flex-direction: column; align-items: flex-start; gap: 10px; }
             .bulletin-meta { text-align: left; }
             .secret-bulletin::before { font-size: 45px; top: 5px; right: 5px; }
-            .leaks-banner { font-size: 24px; padding: 12px 30px; }
+            .leaks-banner { font-size: 24px; padding: 12px 30px; margin: 16px 0 8px; }
+            .news-grid { gap: 20px; padding: 0 12px; }
+            .news-card { margin: 0; }
         .mobile-nav-dropdown a.nav-news { color: #1a73e8; } .mobile-nav-dropdown a.nav-leaks { color: #d93025; } }
 
         /* ══════════════════════════════════════════════
@@ -694,7 +696,7 @@
             }
             .mobile-switcher-pill a {
                 text-decoration: none; font-family: 'LuckiestGuy Regular', cursive;
-                font-size: 13px; color: rgba(255,255,255,0.6); padding: 8px 20px;
+                font-size: 13px; color: rgba(255,255,255,0.6); padding: 14px 20px 6px;
                 border-radius: 100px; transition: all 0.25s ease; white-space: nowrap;
                 letter-spacing: 0.3px;
             }
@@ -705,40 +707,31 @@
         }
 
 
-        /* ── Transition glissement News ↔ Leaks (mobile uniquement) ── */
+        @keyframes spin{to{transform:rotate(360deg)}}
+        /* ── Mobile slider News ↔ Leaks ── */
         @media (max-width: 768px) {
-            /* Empêche le scrollbar horizontal pendant le slide */
-            html { overflow-x: hidden; }
-
-            @keyframes slideOutLeft {
-                0%   { transform: translateX(0);     opacity: 1; }
-                100% { transform: translateX(-100vw); opacity: 0; }
+            .main-content {
+                padding: 0;
+                overflow: hidden;
+                position: relative;
+                max-width: 100vw;
             }
-            @keyframes slideOutRight {
-                0%   { transform: translateX(0);     opacity: 1; }
-                100% { transform: translateX(100vw);  opacity: 0; }
+            .slider-track {
+                display: flex;
+                width: 200%;
+                transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+                will-change: transform;
             }
-            @keyframes slideInFromRight {
-                0%   { transform: translateX(100vw); opacity: 0; }
-                100% { transform: translateX(0);     opacity: 1; }
+            .slider-track.is-news {
+                transform: translateX(0%);
             }
-            @keyframes slideInFromLeft {
-                0%   { transform: translateX(-100vw); opacity: 0; }
-                100% { transform: translateX(0);      opacity: 1; }
+            .slider-track.is-leaks {
+                transform: translateX(-50%);
             }
-            body.slide-out-left  {
-                animation: slideOutLeft  0.30s cubic-bezier(0.4,0,1,1) forwards;
-                pointer-events: none;
-            }
-            body.slide-out-right {
-                animation: slideOutRight 0.30s cubic-bezier(0.4,0,1,1) forwards;
-                pointer-events: none;
-            }
-            body.slide-in-right {
-                animation: slideInFromRight 0.36s cubic-bezier(0,0,0.2,1);
-            }
-            body.slide-in-left {
-                animation: slideInFromLeft  0.36s cubic-bezier(0,0,0.2,1);
+            .slider-panel {
+                width: 50%;
+                flex-shrink: 0;
+                padding: 0 16px 20px;
             }
         }
 
@@ -758,7 +751,7 @@
             }
             .mobile-switcher-pill a {
                 text-decoration: none; font-family: 'LuckiestGuy Regular', cursive;
-                font-size: 13px; color: rgba(255,255,255,0.58); padding: 8px 20px;
+                font-size: 13px; color: rgba(255,255,255,0.58); padding: 14px 20px 6px;
                 border-radius: 100px; transition: all 0.25s ease; white-space: nowrap;
             }
             .mobile-switcher-pill a.active {
@@ -1819,37 +1812,64 @@
     });
 
 
-    // ── Switcher News ↔ Leaks + animation glissement mobile ──
+    // ── Mobile slider News ↔ Leaks (slide puis navigation) ──
     (function() {
-        function cleanBodySlide() {
-            document.body.classList.remove('slide-in-left', 'slide-in-right', 'slide-out-left', 'slide-out-right');
-            document.body.style.transform = '';
+        function setup() {
+            try {
+                if (window.innerWidth > 768) return;
+                var main = document.querySelector('.main-content');
+                if (!main || main.querySelector('.slider-track')) return;
+                
+                var track = document.createElement('div');
+                track.className = 'slider-track is-leaks';
+                var local = document.createElement('div');
+                local.className = 'slider-panel';
+                var remote = document.createElement('div');
+                remote.className = 'slider-panel slider-panel--remote';
+                
+                var loadHtml = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;gap:16px;color:#888;text-align:center;padding:32px;">'
+                    + '<div style="width:32px;height:32px;border:3px solid rgba(255,255,255,0.15);border-top-color:#fff;border-radius:50%;animation:spin 0.8s linear infinite;"></div>'
+                    + '<div style="font-size:15px;letter-spacing:0.5px;">Chargement…</div>'
+                    + '</div>';
+                remote.innerHTML = loadHtml;
+                
+                // Panel 1 = News (remote), Panel 2 = Leaks (local)
+                track.appendChild(remote);
+                while (main.firstChild) local.appendChild(main.firstChild);
+                track.appendChild(local);
+                main.appendChild(track);
+            } catch(ex) {}
         }
-
-        // Entrée : arrive depuis index.html
-        var inDir = sessionStorage.getItem('blox_slide_dir');
-        if (inDir === 'to-leaks') {
-            document.body.style.transform = 'translateX(100vw)';
-            void document.body.offsetWidth;
-            document.body.classList.add('slide-in-right');
-            sessionStorage.removeItem('blox_slide_dir');
-        }
-        document.body.addEventListener('animationend', cleanBodySlide);
-
-        // Sortie : clic sur n'importe quel lien de la pilule
-        document.querySelectorAll('.mobile-switcher-pill a').forEach(function(link) {
-            link.addEventListener('click', function(e) {
+        
+        setup();
+        
+        document.addEventListener('click', function(e) {
+            try {
+                var link = e.target.closest('a');
+                if (!link) return;
+                var href = link.getAttribute('href');
+                if (href !== './index.html' && href !== './neo_bulletin.html') return;
                 e.preventDefault();
-                if (this.classList.contains('active')) return;
-                var href = this.href;
-                if (window.innerWidth <= 768) {
-                    sessionStorage.setItem('blox_slide_dir', 'to-news');
-                    document.body.classList.add('slide-out-right');
-                    setTimeout(function() { window.location.href = href; }, 300);
-                } else {
-                    window.location.href = href;
-                }
-            });
+                if (window.innerWidth > 768) { location.href = href; return; }
+                
+                var isLeaks = href === './neo_bulletin.html';
+                var track = document.querySelector('.slider-track');
+                if (!track) { location.href = href; return; }
+                
+                var currentlyLeaks = track.classList.contains('is-leaks');
+                if (isLeaks === currentlyLeaks) return;
+                
+                track.classList.toggle('is-leaks', isLeaks);
+                try { history.replaceState(null, '', isLeaks ? './neo_bulletin.html' : './index.html'); } catch(ex) {}
+                
+                document.querySelectorAll('.mobile-switcher-pill a').forEach(function(a) {
+                    a.classList.toggle('active', a.getAttribute('href') === href);
+                });
+                
+                setTimeout(function() {
+                    location.href = href;
+                }, 380);
+            } catch(ex) {}
         });
     })();
 
@@ -1901,7 +1921,7 @@
         }, { passive: true });
     }
 
-    document.addEventListener('DOMContentLoaded', () => { setTimeout(initDepth, 50); });
+    // document.addEventListener('DOMContentLoaded', () => { setTimeout(initDepth, 50); });
     </script>
 
     <!-- Pilule switcher mobile -->

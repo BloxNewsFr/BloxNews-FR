@@ -153,10 +153,10 @@
             .site-header { padding: 0 20px; height: auto; min-height: 60px; } 
             .site-nav { display: none; } 
             .mobile-menu-btn { display: block; }
-            .news-grid { gap: 20px; } 
+            .news-grid { gap: 20px; padding: 0 12px; } 
             .news-card { width: 100%; border-radius: 20px; } 
-            .blue-banner { font-size: 24px; padding: 12px 30px; } 
-            .page-title { font-size: 28px; }
+            .blue-banner { font-size: 24px; padding: 12px 30px; margin: 12px 0 8px; } 
+            .page-title { font-size: 28px; margin: 16px 0 8px; padding: 0 12px; }
             
             /* Cacher la pagination PC */
             .pagination-controls, .pagination-bottom { display: none !important; }
@@ -227,7 +227,7 @@
             }
             .mobile-pagination-pill .pill-switcher a {
                 text-decoration: none; font-family: 'LuckiestGuy Regular', cursive;
-                font-size: 12px; color: rgba(255,255,255,0.65); padding: 5px 13px;
+                font-size: 12px; color: rgba(255,255,255,0.65); padding: 11px 13px 3px;
                 border-radius: 100px; transition: all 0.25s ease; white-space: nowrap;
                 letter-spacing: 0.3px;
             }
@@ -1287,41 +1287,26 @@
         }
         @keyframes ice-btn-shine{0%,60%,100%{opacity:0;transform:translateX(-120%)}76%{opacity:.84;transform:translateX(124%)}}
         @keyframes glass-shimmer{0%{background-position:-200% 0;opacity:.42}50%{opacity:.88}100%{background-position:300% 0;opacity:.42}}
-
-        /* ── Transition glissement News ↔ Leaks (mobile uniquement) ── */
+        /* ── Mobile slider News ↔ Leaks (track, comme neo_bulletin) ── */
         @media (max-width: 768px) {
-            /* Empêche le scrollbar horizontal pendant le slide */
-            html { overflow-x: hidden; }
-
-            @keyframes slideOutLeft {
-                0%   { transform: translateX(0);     opacity: 1; }
-                100% { transform: translateX(-100vw); opacity: 0; }
+            .main-content {
+                padding: 0;
+                overflow: hidden;
+                position: relative;
+                max-width: 100vw;
             }
-            @keyframes slideOutRight {
-                0%   { transform: translateX(0);     opacity: 1; }
-                100% { transform: translateX(100vw);  opacity: 0; }
+            .slider-track {
+                display: flex;
+                width: 200%;
+                transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+                will-change: transform;
             }
-            @keyframes slideInFromRight {
-                0%   { transform: translateX(100vw); opacity: 0; }
-                100% { transform: translateX(0);     opacity: 1; }
+            .slider-track.is-leaks {
+                transform: translateX(-50%);
             }
-            @keyframes slideInFromLeft {
-                0%   { transform: translateX(-100vw); opacity: 0; }
-                100% { transform: translateX(0);      opacity: 1; }
-            }
-            body.slide-out-left  {
-                animation: slideOutLeft  0.30s cubic-bezier(0.4,0,1,1) forwards;
-                pointer-events: none;
-            }
-            body.slide-out-right {
-                animation: slideOutRight 0.30s cubic-bezier(0.4,0,1,1) forwards;
-                pointer-events: none;
-            }
-            body.slide-in-right {
-                animation: slideInFromRight 0.36s cubic-bezier(0,0,0.2,1);
-            }
-            body.slide-in-left {
-                animation: slideInFromLeft  0.36s cubic-bezier(0,0,0.2,1);
+            .slider-panel {
+                width: 50%;
+                flex-shrink: 0;
             }
         }
 
@@ -1485,8 +1470,8 @@
 
         <div class="mobile-pagination-pill" id="pagination-mobile">
             <div class="pill-switcher">
-                <a href="./index.html" class="active">News</a>
-                <a href="./neo_bulletin.html">Leaks</a>
+                <a href="./index.html" class="active" onclick="return slideTo('./index.html',event)">News</a>
+                <a href="./neo_bulletin.html" onclick="return slideTo('./neo_bulletin.html',event)">Leaks</a>
             </div>
             <div class="pill-divider"></div>
             <button id="prev-mobile" onclick="changePage(-1)">←</button>
@@ -1753,41 +1738,43 @@
         }, { passive: true });
         window.addEventListener('resize', updateMobilePaginationColor);
 
-        // ── Switcher News ↔ Leaks + animation glissement mobile ──
-        (function() {
-            function cleanBodySlide() {
-                document.body.classList.remove('slide-in-left', 'slide-in-right', 'slide-out-left', 'slide-out-right');
-                document.body.style.transform = '';
+        // ── Mobile slider (comme neo_bulletin) ──
+        function slideTo(href, e) {
+            if (window.innerWidth > 768) return true;
+            e.preventDefault();
+            
+            var main = document.querySelector('.main-content');
+            if (!main) { location.href = href; return false; }
+            
+            var track = main.querySelector('.slider-track');
+            if (!track) {
+                track = document.createElement('div');
+                track.className = 'slider-track';
+                var p1 = document.createElement('div');
+                p1.className = 'slider-panel';
+                var p2 = document.createElement('div');
+                p2.className = 'slider-panel';
+                p2.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;min-height:60vh;color:#888;font-size:14px;">Chargement…</div>';
+                var pill = main.querySelector('.mobile-pagination-pill');
+                var kids = [];
+                for (var i = 0; i < main.children.length; i++) kids.push(main.children[i]);
+                kids.forEach(function(c) { if (c !== pill) p1.appendChild(c); });
+                track.appendChild(p1);
+                track.appendChild(p2);
+                main.appendChild(track);
             }
-
-            // Entrée : arrive depuis neo_bulletin
-            var inDir = sessionStorage.getItem('blox_slide_dir');
-            if (inDir === 'to-news') {
-                document.body.style.transform = 'translateX(-100vw)';
-                void document.body.offsetWidth;
-                document.body.classList.add('slide-in-left');
-                sessionStorage.removeItem('blox_slide_dir');
-            }
-            document.body.addEventListener('animationend', cleanBodySlide);
-
-            // Clic sur un lien du switcher
-            document.querySelectorAll('.pill-switcher a').forEach(function(link) {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    if (this.classList.contains('active')) return;
-                    var href = this.href;
-                    var isMobile = window.innerWidth <= 768;
-
-                    if (isMobile) {
-                        sessionStorage.setItem('blox_slide_dir', 'to-leaks');
-                        document.body.classList.add('slide-out-left');
-                        setTimeout(function() { window.location.href = href; }, 300);
-                    } else {
-                        window.location.href = href;
-                    }
-                });
+            
+            var isLeaks = href.indexOf('neo_bulletin') !== -1;
+            void track.offsetHeight;
+            track.classList.toggle('is-leaks', isLeaks);
+            
+            document.querySelectorAll('.pill-switcher a').forEach(function(a) {
+                a.classList.toggle('active', a.getAttribute('href') === href);
             });
-        })();
+            
+            setTimeout(function() { location.href = href; }, 380);
+            return false;
+        }
 
         // ── SEARCH ──
         let searchMatches = [];
@@ -2000,5 +1987,6 @@
             <div id="searchStats" class="search-stats"></div>
         </div>
     </div>
+
 </body>
 </html>
