@@ -14,6 +14,22 @@
         :root { --color-text: #1a1a2e; --color-border: #e8e8f0; --color-primary: #ffda00; --color-accent: #175ec2; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
+        /* ── 3D LAYERED DEPTH SYSTEM ── */
+        [data-depth] {
+            will-change: translate, filter, opacity;
+            transition: filter 0.8s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.8s ease;
+        }
+        [data-depth="3"] { filter: brightness(1.08); }
+        [data-depth="2"] { filter: brightness(1.04); }
+        [data-depth="1"] { filter: brightness(1.01); }
+        [data-depth="0"] { filter: brightness(0.97); opacity: 0.94; }
+        [data-depth="-1"] { filter: blur(1.5px) brightness(0.92); opacity: 0.75; }
+        [data-depth="-2"] { filter: blur(0.8px) brightness(0.96); opacity: 0.95; }
+        body.scrolling [data-depth] { transition: filter 0s, opacity 0s; }
+        body.scrolling [data-depth="-2"] { filter: blur(2px) brightness(0.9); opacity: 0.8; }
+        body.scrolling [data-depth="-1"] { filter: blur(3px) brightness(0.85); opacity: 0.65; }
+        body.scrolling [data-depth="0"]  { filter: blur(1px) brightness(0.94); opacity: 0.88; }
+        
         body { 
             font-family: 'Inter', sans-serif; color: var(--color-text); 
             background-color: #f0f2f8; min-height: 100vh; overflow-x: hidden;
@@ -1837,6 +1853,55 @@
         });
     })();
 
+    // ── 3D DEPTH ENGINE ──
+    let _depthEls = [];
+    const _depthFactors = { '3': 0.6, '2': 0.35, '1': 0.18, '0': 0.08, '-1': 0.03, '-2': 0.01 };
+
+    function assignDepth() {
+        const map = {
+            '-2': '.site-background',
+            '-1': '',
+            '0': '.pagination-info, .pagination-controls button, .pagination-bottom button, .news-card__content, .news-card__image-wrapper, .news-card__bar, .news-card__eyebrow',
+            '1': '.news-card, .site-header, .news-grid, .pagination-bar, .pagination-bottom, .tab-section',
+            '2': '.blue-banner, .leaks-banner, .page-title, .news-card__badge, .news-card__new, .news-card__button, .mobile-pagination-pill, .news-card__title, .tab-titles button',
+            '3': '.hero-title, .main-headline, .section-hero h1'
+        };
+        for (const [depth, sel] of Object.entries(map)) {
+            if (!sel) continue;
+            document.querySelectorAll(sel).forEach(el => el.dataset.depth = depth);
+        }
+        _depthEls = [...document.querySelectorAll('[data-depth]')];
+    }
+
+    function updateDepthParallax(mx, my) {
+        const dx = (mx / window.innerWidth - 0.5) * 2;
+        const dy = (my / window.innerHeight - 0.5) * 2;
+        for (const el of _depthEls) {
+            const f = _depthFactors[el.dataset.depth] || 0;
+            if (f) el.style.translate = `${dx * f * 18}px ${dy * f * 18}px`;
+        }
+    }
+
+    function initDepth() {
+        assignDepth();
+        let rafId = null;
+        let lastMX = 0, lastMY = 0;
+        document.addEventListener('mousemove', e => {
+            lastMX = e.clientX; lastMY = e.clientY;
+            if (!rafId) rafId = requestAnimationFrame(() => {
+                updateDepthParallax(lastMX, lastMY);
+                rafId = null;
+            });
+        }, { passive: true });
+        let scrollDepthTimer;
+        window.addEventListener('scroll', () => {
+            document.body.classList.add('scrolling');
+            clearTimeout(scrollDepthTimer);
+            scrollDepthTimer = setTimeout(() => document.body.classList.remove('scrolling'), 300);
+        }, { passive: true });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => { setTimeout(initDepth, 50); });
     </script>
 
     <!-- Pilule switcher mobile -->
