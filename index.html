@@ -858,27 +858,37 @@
             75%  { transform: translate(10%, -8%) scale(1.15); opacity: 0.35; }
         }
 
-        /* 018 ── GLACE — "FROZEN CRYSTAL GLASS" — redesign complet */
+        /* 018 ── LIQUID ICE — glace vivante semi-transparente avec flux gelé */
         .news-card.ice-card {
             isolation: isolate;
             border-radius: 24px;
             overflow: clip;
             background:
-                radial-gradient(ellipse at 50% -5%, rgba(190,235,255,0.12) 0%, transparent 46%),
-                radial-gradient(ellipse at 12% 92%, rgba(100,160,255,0.06) 0%, transparent 42%),
-                radial-gradient(ellipse at 88% 88%, rgba(80,145,225,0.05) 0%, transparent 42%),
-                linear-gradient(168deg, #00030c 0%, #000618 42%, #00030c 100%);
+                /* — Couche 4 : reflets de glace en surface (static) */
+                radial-gradient(ellipse 55% 35% at 10% 10%, rgba(210,245,255,0.06) 0%, transparent 60%),
+                radial-gradient(ellipse 50% 30% at 90% 8%,  rgba(190,235,255,0.05) 0%, transparent 55%),
+                radial-gradient(ellipse 40% 25% at 20% 92%, rgba(170,220,245,0.03) 0%, transparent 50%),
+                radial-gradient(ellipse 40% 25% at 80% 92%, rgba(170,220,245,0.03) 0%, transparent 50%),
+                /* — Couche 3 : base glacée profonde (fond sombre bleuté) */
+                linear-gradient(168deg,
+                    rgba(0,8,24,0.96) 0%,
+                    rgba(0,14,38,0.93) 30%,
+                    rgba(0,20,50,0.91) 55%,
+                    rgba(0,14,38,0.93) 80%,
+                    rgba(0,8,24,0.96) 100%
+                );
             border: 2px solid rgba(155,225,255,0.68);
             box-shadow:
-                0 0 0 1px rgba(210,240,255,0.13) inset,
-                0 0 0 2px rgba(100,180,255,0.05) inset,
+                0 0 0 1px rgba(210,245,255,0.18) inset,
+                0 0 0 2px rgba(100,180,255,0.08) inset,
                 0 0 48px rgba(110,205,255,0.65),
                 0 0 105px rgba(55,125,215,0.3),
                 0 30px 80px rgba(0,0,0,0.85);
             animation: fadeInUp 0.4s ease both;
             content-visibility: auto; contain-intrinsic-size: auto 480px;
+            backdrop-filter: blur(2px);
         }
-        /* Lueur gelée en dessous */
+        /* Lueur gelée en dessous — comme si la glace éclairait le sol */
         .news-card.ice-card::before {
             content: "";
             position: absolute;
@@ -891,54 +901,130 @@
             filter: blur(14px) saturate(1.9);
             animation: ice-glow-pulse 3s ease-in-out infinite;
         }
-        /* Givre cristallin sur toute la surface */
+        /* — SURFACE LIQUID ICE : couches de glace fracturée superposées — */
         .news-card.ice-card::after {
             content: "";
-            position: absolute; inset: 0; z-index: 8; pointer-events: none; border-radius:24px;
+            position: absolute; inset: 0; z-index: 8; pointer-events: none; border-radius: 24px;
             background:
-                /* Coins givrés */
-                radial-gradient(ellipse 58% 50% at 0% 0%,     rgba(215,245,255,0.1) 0%, transparent 58%),
-                radial-gradient(ellipse 50% 42% at 100% 100%, rgba(195,230,255,0.08) 0%, transparent 52%),
-                radial-gradient(ellipse 38% 32% at 100% 0%,   rgba(200,238,255,0.06) 0%, transparent 48%),
-                radial-gradient(ellipse 32% 28% at 0% 100%,   rgba(185,225,255,0.05) 0%, transparent 45%),
-                /* Réseau cristallin horizontal */
-                repeating-linear-gradient(92deg,
-                    transparent 0 16px, rgba(190,235,255,0.032) 16px 17px,
-                    transparent 17px 35px, rgba(175,225,255,0.022) 35px 36px,
-                    transparent 36px 55px
+                /* ── Coin TL ── */
+                radial-gradient(ellipse 55% 40% at 0% 0%,     rgba(215,245,255,0.08) 0%, transparent 55%),
+                /* ── Coin TR ── */
+                radial-gradient(ellipse 48% 35% at 100% 0%,   rgba(200,240,255,0.06) 0%, transparent 50%),
+                /* ── Coin BL ── */
+                radial-gradient(ellipse 38% 28% at 0% 100%,   rgba(185,230,255,0.04) 0%, transparent 45%),
+                /* ── Coin BR ── */
+                radial-gradient(ellipse 38% 28% at 100% 100%, rgba(185,230,255,0.04) 0%, transparent 45%),
+                /* ── Plan de fracture 1 (125°) — large bloc incliné ── */
+                linear-gradient(125deg,
+                    transparent 0%, transparent 18%,
+                    rgba(215,245,255,0.07) 20%, rgba(210,240,255,0.03) 22%, transparent 24%,
+                    transparent 42%,
+                    rgba(205,238,255,0.04) 44%, rgba(200,235,255,0.02) 46%, transparent 48%,
+                    transparent 100%
                 ),
-                /* Réseau cristallin diagonal */
-                repeating-linear-gradient(38deg,
-                    transparent 0 20px, rgba(210,242,255,0.028) 20px 21px,
-                    transparent 21px 42px
+                /* ── Plan de fracture 2 (−45°) — second bloc ── */
+                linear-gradient(-45deg,
+                    transparent 0%, transparent 35%,
+                    rgba(220,248,255,0.05) 37%, rgba(210,245,255,0.02) 39%, transparent 41%,
+                    transparent 62%,
+                    rgba(215,245,255,0.03) 64%, rgba(210,240,255,0.01) 66%, transparent 68%,
+                    transparent 100%
+                ),
+                /* ── Plan de fracture 3 (160°) — petite fracture ── */
+                linear-gradient(160deg,
+                    transparent 0%, transparent 55%,
+                    rgba(210,245,255,0.06) 57%, rgba(205,238,255,0.02) 59%, transparent 61%,
+                    transparent 78%,
+                    rgba(220,248,255,0.03) 80%, rgba(215,245,255,0.01) 82%, transparent 84%,
+                    transparent 100%
+                ),
+                /* ── Traînée spéculaire mobile (reflet froid) ── */
+                linear-gradient(105deg,
+                    transparent 0%,
+                    rgba(220,248,255,0.03) 10%,
+                    rgba(200,238,255,0.07) 16%,
+                    rgba(220,248,255,0.02) 20%,
+                    transparent 25%, transparent 45%,
+                    rgba(190,230,255,0.03) 50%,
+                    rgba(210,245,255,0.05) 54%,
+                    transparent 58%,
+                    transparent 75%,
+                    rgba(200,238,255,0.02) 80%,
+                    transparent 84%
+                ),
+                /* ── Arête de fracture brillante (−30°) ── */
+                linear-gradient(-30deg,
+                    transparent 0%, transparent 40%,
+                    rgba(225,250,255,0.06) 41%, rgba(215,248,255,0.01) 42%, transparent 43%,
+                    transparent 70%,
+                    rgba(220,248,255,0.04) 71%, rgba(210,245,255,0.01) 72%, transparent 73%,
+                    transparent 100%
+                ),
+                /* ── Caustiques internes (profondeur) ── */
+                radial-gradient(ellipse 50% 25% at 35% 22%, rgba(155,225,255,0.05) 0%, transparent 52%),
+                radial-gradient(ellipse 45% 22% at 68% 48%, rgba(135,210,245,0.04) 0%, transparent 48%),
+                radial-gradient(ellipse 55% 20% at 22% 62%, rgba(175,230,255,0.03) 0%, transparent 50%),
+                /* ── Réseau de fissures 1 (162°) ── */
+                repeating-linear-gradient(162deg,
+                    transparent 0 22px,
+                    rgba(220,248,255,0.012) 22px 23px,
+                    transparent 23px 46px,
+                    rgba(210,245,255,0.006) 46px 47px,
+                    transparent 47px 70px
+                ),
+                /* ── Réseau de fissures 2 (−172°) ── */
+                repeating-linear-gradient(-172deg,
+                    transparent 0 18px,
+                    rgba(215,245,255,0.01) 18px 19px,
+                    transparent 19px 40px,
+                    rgba(205,240,255,0.005) 40px 41px,
+                    transparent 41px 62px
+                ),
+                /* ── Micro-texture cristalline ── */
+                repeating-linear-gradient(45deg,
+                    transparent 0 14px, rgba(190,235,255,0.005) 14px 15px,
+                    transparent 15px 30px
+                ),
+                repeating-linear-gradient(-38deg,
+                    transparent 0 18px, rgba(180,228,250,0.004) 18px 19px,
+                    transparent 19px 38px
                 );
-            animation: ice-frost-breathe 4.5s ease-in-out infinite;
+            background-size:
+                100% 100%, 100% 100%, 100% 100%, 100% 100%,
+                200% 100%, 200% 100%, 200% 100%,
+                350% 100%,
+                250% 100%,
+                100% 100%, 100% 100%, 100% 100%,
+                100% 100%, 100% 100%,
+                100% 100%, 100% 100%;
+            animation:
+                liquid-ice-flow 18s ease-in-out infinite,
+                ice-frost-breathe 5s ease-in-out infinite;
         }
         .news-card.ice-card .news-card__image-wrapper {
-            background: linear-gradient(180deg, #000412 0%, #000310 100%);
+            background: linear-gradient(180deg, #000a1e 0%, #000816 100%);
             border-radius: 22px 22px 0 0;
             box-shadow: inset 0 -3px 0 rgba(155,225,255,0.84), inset 0 0 26px rgba(0,0,0,0.45);
             overflow: hidden; position: relative;
         }
-        /* Givre sur les bords de l'image */
+        /* Glace liquide sur les bords de l'image */
         .news-card.ice-card .news-card__image-wrapper::before {
             content: "";
             position: absolute; inset: 0; z-index: 3; pointer-events: none; border-radius: 22px 22px 0 0;
             background:
-                linear-gradient(180deg, rgba(210,245,255,0.2) 0%, rgba(185,235,255,0.07) 15%, transparent 35%),
-                linear-gradient(90deg,  rgba(190,235,255,0.14) 0%, rgba(168,225,255,0.04) 14%, transparent 28%),
-                linear-gradient(270deg, rgba(190,235,255,0.11) 0%, rgba(168,225,255,0.03) 12%, transparent 26%),
-                /* Reflet glacé diagonal */
-                linear-gradient(138deg, transparent 0 26%, rgba(228,248,255,0.08) 28% 29%, transparent 30% 62%, rgba(190,235,255,0.055) 64% 65%, transparent 66%);
-            background-size: 100% 100%, 100% 100%, 100% 100%, 288% 100%;
-            animation: ice-frost-grow 6s ease-in-out infinite;
+                linear-gradient(180deg, rgba(210,245,255,0.15) 0%, rgba(185,235,255,0.05) 12%, transparent 28%),
+                linear-gradient(90deg,  rgba(190,235,255,0.1) 0%, rgba(168,225,255,0.03) 10%, transparent 22%),
+                linear-gradient(270deg, rgba(190,235,255,0.08) 0%, rgba(168,225,255,0.02) 10%, transparent 22%),
+                linear-gradient(135deg, transparent 0 22%, rgba(228,248,255,0.06) 24% 25%, transparent 26% 58%, rgba(190,235,255,0.04) 60% 61%, transparent 62%);
+            background-size: 100% 100%, 100% 100%, 100% 100%, 300% 100%;
+            animation: liquid-ice-edge 8s ease-in-out infinite;
         }
         .news-card.ice-card .news-card__image-wrapper::after {
             z-index: 4; border-radius: 22px 22px 0 0;
             background:
-                radial-gradient(circle at 50% 50%, transparent 0 13%, rgba(0,4,16,0.4) 56%, rgba(0,2,10,0.84) 100%),
-                radial-gradient(circle at 50% 3%, rgba(155,225,255,0.24) 0 28%, transparent 60%),
-                linear-gradient(180deg, transparent 52%, rgba(100,185,255,0.065) 100%);
+                radial-gradient(circle at 50% 50%, transparent 0 13%, rgba(0,6,20,0.5) 56%, rgba(0,3,14,0.9) 100%),
+                radial-gradient(circle at 50% 3%, rgba(155,225,255,0.2) 0 28%, transparent 60%),
+                linear-gradient(180deg, transparent 52%, rgba(100,185,255,0.05) 100%);
         }
         .news-card.ice-card .news-card__image {
             filter: brightness(0.88) contrast(1.05);
@@ -949,48 +1035,53 @@
             transform: scale(1.18) rotate(0.5deg);
         }
         .news-card.ice-card:hover {
+            border-color: rgba(195,238,255,0.9);
             box-shadow:
-                0 0 0 1px rgba(210,245,255,0.15) inset,
-                0 0 68px rgba(155,225,255,0.95), 0 0 145px rgba(85,165,245,0.52),
+                0 0 0 1px rgba(220,248,255,0.2) inset,
+                0 0 0 2px rgba(130,200,255,0.1) inset,
+                0 0 68px rgba(155,225,255,0.95),
+                0 0 145px rgba(85,165,245,0.52),
                 0 32px 90px rgba(0,0,0,0.9);
+            backdrop-filter: blur(4px);
         }
         .news-card.ice-card .news-card__badge, .news-card.ice-card .news-card__new {
-            background: rgba(0,4,16,0.96); color: #92dcff;
+            background: rgba(0,6,20,0.92); color: #b2e4ff;
             border: 1px solid rgba(155,225,255,0.74);
             box-shadow: 0 0 22px rgba(110,205,255,0.88), inset 0 0 8px rgba(110,205,255,0.1);
             backdrop-filter: blur(10px); z-index: 6;
         }
         .news-card.ice-card .news-card__content {
             background:
-                /* Caustic lumineuse glacée */
-                radial-gradient(ellipse at 50% 0%, rgba(155,225,255,0.11) 0%, transparent 46%),
-                radial-gradient(ellipse at 10% 88%, rgba(80,165,245,0.06) 0%, transparent 36%),
-                radial-gradient(ellipse at 90% 80%, rgba(100,185,255,0.05) 0%, transparent 32%),
-                /* Micro-texture givre */
-                repeating-linear-gradient(45deg,
-                    transparent 0 28px, rgba(190,235,255,0.018) 28px 29px, transparent 29px 58px
+                radial-gradient(ellipse at 50% 0%, rgba(155,225,255,0.08) 0%, transparent 42%),
+                radial-gradient(ellipse at 12% 85%, rgba(80,165,245,0.04) 0%, transparent 34%),
+                radial-gradient(ellipse at 88% 78%, rgba(100,185,255,0.03) 0%, transparent 32%),
+                repeating-linear-gradient(42deg,
+                    transparent 0 24px, rgba(190,235,255,0.005) 24px 25px, transparent 25px 50px
                 ),
-                linear-gradient(180deg, #000a1c 0%, #000410 100%);
+                linear-gradient(180deg, rgba(0,12,30,0.88) 0%, rgba(0,8,22,0.9) 100%);
             border-top: 1px solid rgba(155,225,255,0.48);
-            position: relative; z-index: 1; border-radius: 0 0 22px 22px; backdrop-filter:blur(3px);
+            position: relative; z-index: 1; border-radius: 0 0 22px 22px;
+            backdrop-filter: blur(2px);
         }
         .news-card.ice-card .news-card__content::before { content: none; }
-        .news-card.ice-card .news-card__content::after {
-            content:none;
-        }
-        .news-card.ice-card .news-card__eyebrow { color:#92dcff; text-shadow:0 0 10px rgba(155,225,255,0.88); letter-spacing:1px; }
+        .news-card.ice-card .news-card__content::after { content: none; }
+        .news-card.ice-card .news-card__eyebrow { color:#8dd4ff; text-shadow:0 0 10px rgba(155,225,255,0.88); letter-spacing:1px; }
         .news-card.ice-card .news-card__title {
-            color:#caeeff;
+            color:#c4ecff;
             text-shadow:0 0 24px rgba(155,225,255,0.98),0 0 58px rgba(85,165,245,0.58),0 1px 0 rgba(0,6,25,0.95);
         }
         .news-card.ice-card .news-card__button {
-            background:linear-gradient(135deg,#000a20,#001638 52%,#000a20);
+            background: linear-gradient(135deg, rgba(0,12,32,0.9), rgba(0,22,56,0.85) 52%, rgba(0,12,32,0.9));
             color:#92dcff; border:1px solid rgba(155,225,255,0.68);
             border-radius:100px;
             box-shadow:0 0 22px rgba(110,205,255,0.68),inset 0 1px 0 rgba(210,245,255,0.24); overflow:hidden;
         }
         .news-card.ice-card .news-card__button::before { background:linear-gradient(90deg,transparent,rgba(210,245,255,0.52),transparent); animation:ice-btn-shine 3.2s ease-in-out infinite; }
-        .news-card.ice-card:hover .news-card__button { background:linear-gradient(135deg,#0077cc,#55bbff 52%,#0066aa); color:#000; box-shadow:0 0 46px rgba(155,225,255,1),0 0 95px rgba(85,165,245,0.58); }
+        .news-card.ice-card:hover .news-card__button {
+            background: linear-gradient(135deg, #0077cc, #55bbff 52%, #0066aa);
+            color:#000; box-shadow:0 0 46px rgba(155,225,255,1),0 0 95px rgba(85,165,245,0.58);
+            backdrop-filter: blur(2px);
+        }
         .news-card.ice-card .news-card__bar { background:linear-gradient(90deg,#001635,#80d8ff,#caeeff,#80d8ff,#001635); background-size:300% auto; height:5px; border-radius:0 0 22px 22px; }
         .ice-deco { position:absolute; inset:0; z-index:15; pointer-events:none; overflow:visible; border-radius:24px; }
         .ice-crystal {
@@ -1002,7 +1093,21 @@
         .ice-crystal::before { content:"❄"; }
         .ice-crystal:nth-child(3n)::before { content:"✦"; }
         .ice-crystal:nth-child(5n)::before { content:"❆"; }
-
+        /* Highlight dynamique (souris) sur la surface liquid ice */
+        .news-card.ice-card .liquid-ice-highlight {
+            position: absolute; inset: 0; z-index: 9; pointer-events: none; border-radius: 24px;
+            background: radial-gradient(
+                circle at calc(var(--mx, 0.5) * 100%) calc(var(--my, 0.5) * 100%),
+                rgba(220,248,255,0.1) 0%,
+                rgba(200,238,255,0.03) 18%,
+                transparent 38%
+            );
+            opacity: 0; transition: opacity 0.5s ease;
+        }
+        .news-card.ice-card:hover .liquid-ice-highlight {
+            opacity: 1;
+        }
+        
                 /* KEYFRAMES GLOBAUX POUR LES CARTES SPÉCIALES */
         @keyframes glitch-card-surge { 0%,100%{box-shadow:0 0 24px rgba(0,255,65,.7),0 0 60px rgba(0,255,65,.22),0 18px 46px rgba(0,0,0,.55)} 18%{box-shadow:0 0 34px rgba(255,0,88,.82),0 0 70px rgba(0,255,65,.26),0 18px 46px rgba(0,0,0,.55)} 19%{box-shadow:0 0 28px rgba(0,162,255,.82),0 0 70px rgba(0,255,65,.26),0 18px 46px rgba(0,0,0,.55)} 48%{border-color:#ff0058}49%{border-color:#00ff41} }
         @keyframes glitch-scan{0%{background-position:0 0,0 0}100%{background-position:0 220px,120px 0}}
@@ -1076,18 +1181,22 @@
         }
         @keyframes water-btn-shine{0%,60%,100%{opacity:0;transform:translateX(-120%)}74%{opacity:.84;transform:translateX(124%)}}
 
-        /* ── Givre qui se forme et fond sur la vitre ── */
-        @keyframes frost-grow {
-            0%   { opacity: 0; transform: scale(0.92); }
-            25%  { opacity: 1; transform: scale(1); }
-            65%  { opacity: 1; transform: scale(1); }
-            100% { opacity: 0; transform: scale(1.02); }
+        /* ── COUCHE DE GLACE ORGANIQUE SUR L'IMAGE — givre liquide qui ondule ── */
+        @keyframes liquid-frost-bloom {
+            0%   { opacity: 0.4; transform: scale(0.94); filter: blur(1px); }
+            30%  { opacity: 0.9; transform: scale(1);    filter: blur(0px); }
+            70%  { opacity: 0.9; transform: scale(1);    filter: blur(0px); }
+            100% { opacity: 0.3; transform: scale(1.01); filter: blur(1.5px); }
         }
-        @keyframes frost-drop-melt {
-            0%,30% { transform: scaleY(0); opacity: 0; transform-origin: top center; }
-            50%    { transform: scaleY(1); opacity: 0.8; }
-            85%    { transform: scaleY(1); opacity: 0.5; }
-            100%   { transform: scaleY(1.1) translateY(6px); opacity: 0; }
+        @keyframes liquid-frost-droplets {
+            0%,25% { transform: scaleY(0); opacity: 0; transform-origin: top center; }
+            40%    { transform: scaleY(1); opacity: 0.7; }
+            80%    { transform: scaleY(1); opacity: 0.4; }
+            100%   { transform: scaleY(1.1) translateY(8px); opacity: 0; }
+        }
+        @keyframes liquid-ice-edge {
+            0%,100% { background-position: 0% 0%, 0% 0%, 0% 0%, 0% 0%; opacity: 0.85; }
+            50%     { background-position: 0% 0%, 0% 0%, 0% 0%, 100% 0%; opacity: 1; }
         }
         .news-card.ice-card .ice-frost-overlay {
             position: absolute; inset: 0; z-index: 5; pointer-events: none;
@@ -1098,43 +1207,43 @@
             position: absolute; inset: 0;
             border-radius: 22px 22px 0 0;
             background:
-                /* Cristaux de givre — coins */
-                radial-gradient(ellipse 85% 65% at 0% 0%,     rgba(220,248,255,0.62) 0%, rgba(195,238,255,0.28) 32%, transparent 56%),
-                radial-gradient(ellipse 70% 55% at 100% 0%,   rgba(210,245,255,0.52) 0%, rgba(185,232,255,0.22) 28%, transparent 52%),
-                radial-gradient(ellipse 55% 45% at 0% 100%,   rgba(200,240,255,0.38) 0%, transparent 50%),
-                radial-gradient(ellipse 48% 38% at 100% 100%, rgba(205,242,255,0.32) 0%, transparent 48%),
-                /* Voile central */
-                radial-gradient(ellipse 60% 40% at 50% 0%,    rgba(235,252,255,0.28) 0%, transparent 55%),
-                /* Réseau dendritique */
-                repeating-linear-gradient(32deg,
-                    transparent 0 12px, rgba(215,245,255,0.14) 12px 13px,
-                    transparent 13px 28px, rgba(205,240,255,0.08) 28px 29px,
-                    transparent 29px 44px
+                /* Halos de glace organique aux coins */
+                radial-gradient(ellipse 75% 55% at 0% 0%,     rgba(215,248,255,0.12) 0%, transparent 55%),
+                radial-gradient(ellipse 60% 45% at 100% 0%,   rgba(205,242,255,0.1)  0%, transparent 50%),
+                radial-gradient(ellipse 50% 35% at 0% 100%,   rgba(195,238,255,0.07) 0%, transparent 45%),
+                radial-gradient(ellipse 50% 35% at 100% 100%, rgba(195,238,255,0.07) 0%, transparent 45%),
+                /* Nappe de givre organique */
+                radial-gradient(ellipse 55% 35% at 50% 0%,    rgba(225,250,255,0.08) 0%, transparent 52%),
+                /* Texture dendritique adoucie (réseau cristallin fondu) */
+                repeating-linear-gradient(35deg,
+                    transparent 0 10px, rgba(215,245,255,0.025) 10px 11px,
+                    transparent 11px 24px, rgba(205,240,255,0.015) 24px 25px,
+                    transparent 25px 38px
                 ),
-                repeating-linear-gradient(-32deg,
-                    transparent 0 14px, rgba(210,242,255,0.12) 14px 15px,
-                    transparent 15px 30px
+                repeating-linear-gradient(-35deg,
+                    transparent 0 12px, rgba(210,242,255,0.02) 12px 13px,
+                    transparent 13px 26px
                 ),
-                repeating-linear-gradient(90deg,
-                    transparent 0 18px, rgba(220,248,255,0.07) 18px 19px,
-                    transparent 19px 38px
+                repeating-linear-gradient(88deg,
+                    transparent 0 16px, rgba(220,248,255,0.012) 16px 17px,
+                    transparent 17px 34px
                 );
-            animation: frost-grow 6s ease-in-out infinite;
+            animation: liquid-frost-bloom 7s ease-in-out infinite;
         }
-        /* Gouttes qui coulent quand le givre fond */
+        /* Gouttes de glace qui s'écoulent lentement */
         .news-card.ice-card .ice-frost-overlay::after {
             content: "";
             position: absolute;
             top: 0; left: 0; right: 0;
             height: 100%;
             background:
-                radial-gradient(ellipse 3px 22px at 12% 0%, rgba(200,240,255,0.65) 0%, transparent 75%),
-                radial-gradient(ellipse 2px 16px at 28% 0%, rgba(215,245,255,0.5)  0%, transparent 72%),
-                radial-gradient(ellipse 4px 28px at 45% 0%, rgba(200,240,255,0.58) 0%, transparent 78%),
-                radial-gradient(ellipse 2px 14px at 62% 0%, rgba(210,242,255,0.45) 0%, transparent 70%),
-                radial-gradient(ellipse 3px 24px at 78% 0%, rgba(200,240,255,0.55) 0%, transparent 76%),
-                radial-gradient(ellipse 2px 18px at 90% 0%, rgba(215,245,255,0.48) 0%, transparent 73%);
-            animation: frost-drop-melt 6s ease-in-out infinite;
+                radial-gradient(ellipse 3px 20px at 12% 0%, rgba(200,240,255,0.3) 0%, transparent 75%),
+                radial-gradient(ellipse 2px 14px at 28% 0%, rgba(215,245,255,0.22) 0%, transparent 72%),
+                radial-gradient(ellipse 4px 26px at 45% 0%, rgba(200,240,255,0.28) 0%, transparent 78%),
+                radial-gradient(ellipse 2px 12px at 62% 0%, rgba(210,242,255,0.2)  0%, transparent 70%),
+                radial-gradient(ellipse 3px 22px at 78% 0%, rgba(200,240,255,0.25) 0%, transparent 76%),
+                radial-gradient(ellipse 2px 16px at 90% 0%, rgba(215,245,255,0.2)  0%, transparent 73%);
+            animation: liquid-frost-droplets 7s ease-in-out infinite;
         }
 
         @keyframes ice-glow-pulse{
@@ -1145,13 +1254,29 @@
             0%,100%{opacity:.82}
             50%    {opacity:1}
         }
-        @keyframes ice-frost-grow{
-            0%,100%{opacity:.88;transform:scale(1)}
-            50%    {opacity:1;transform:scale(1.015)}
-        }
-        @keyframes ice-border-pulse{
-            0%,100%{box-shadow:0 0 0 1px rgba(210,240,255,.13) inset,0 0 0 2px rgba(100,180,255,.05) inset,0 0 48px rgba(110,205,255,.65),0 0 105px rgba(55,125,215,.3),0 30px 80px rgba(0,0,0,.85);border-color:rgba(155,225,255,.68)}
-            50%    {box-shadow:0 0 0 1px rgba(225,248,255,.16) inset,0 0 0 2px rgba(120,195,255,.07) inset,0 0 68px rgba(155,225,255,1),0 0 142px rgba(80,155,240,.52),0 30px 92px rgba(0,0,0,.9); border-color:rgba(195,238,255,1)}
+        @keyframes liquid-ice-flow{
+            0%,100% {
+                background-position:
+                    0% 0%, 0% 0%, 0% 0%, 0% 0%,
+                    0% 0%, 0% 0%, 0% 0%,
+                    0% 0%,
+                    0% 0%,
+                    0% 0%, 0% 0%, 0% 0%,
+                    0% 0%, 0% 0%,
+                    0% 0%, 0% 0%;
+                opacity: 1;
+            }
+            50% {
+                background-position:
+                    0% 0%, 0% 0%, 0% 0%, 0% 0%,
+                    4% 2%, -3% 1%, 2% -1%,
+                    100% 0%,
+                    60% 0%,
+                    0% 0%, 0% 0%, 0% 0%,
+                    1% 0%, -1% 0%,
+                    0% 0%, 0% 0%;
+                opacity: 0.92;
+            }
         }
         @keyframes ice-crystal-fall{
             0%  {opacity:0;transform:translateY(0)    rotate(-10deg) scale(.7)}
@@ -1569,6 +1694,7 @@
             });
             initWaterHover();
             assignDepth();
+            initLiquidIce();
         }
 
         function changePage(dir) {
@@ -1839,6 +1965,25 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => { setTimeout(initDepth, 50); });
+
+        // ── LIQUID ICE — highlight dynamique au survol ──
+        function initLiquidIce() {
+            document.querySelectorAll('.ice-card').forEach(card => {
+                if (card.querySelector('.liquid-ice-highlight')) return;
+                const hl = document.createElement('div');
+                hl.className = 'liquid-ice-highlight';
+                card.appendChild(hl);
+                card.addEventListener('mousemove', e => {
+                    const r = card.getBoundingClientRect();
+                    card.style.setProperty('--mx', ((e.clientX - r.left) / r.width).toFixed(3));
+                    card.style.setProperty('--my', ((e.clientY - r.top) / r.height).toFixed(3));
+                }, { passive: true });
+                card.addEventListener('mouseleave', () => {
+                    card.style.setProperty('--mx', '0.5');
+                    card.style.setProperty('--my', '0.5');
+                }, { passive: true });
+            });
+        }
     </script>
 
     <!-- ── SEARCH OVERLAY ── -->
