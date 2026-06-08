@@ -134,8 +134,8 @@
         .category-section { display: none; }
         .category-section.active-section {
             display: block;
-            animation: fadeIn 0.35s ease;
         }
+        /* No animation on section switch — prevents child animation restart */
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
         /* ── BLOC DOSSIER TOP SECRET ── */
@@ -171,6 +171,7 @@
             transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.35s ease; 
             display: flex; flex-direction: column; height: 100%;
             animation: fadeInUp 0.45s ease both;
+            contain: layout paint;
         }
         .news-card:hover { 
             transform: translateY(-12px) scale(1.02); 
@@ -198,7 +199,7 @@
         .news-card__button--disabled:hover {
             background: #f4f4f4 !important; color: #111 !important; box-shadow: none !important; border-color: rgba(0,0,0,0.08) !important; transform: none !important; cursor: not-allowed;
         }
-        .news-card__bar { height: 5px; background: linear-gradient(90deg, transparent, var(--cat-hex), var(--cat-hex), transparent); background-size: 200% auto; animation: barSlide 3s linear infinite; }
+        .news-card__bar { height: 5px; background: linear-gradient(90deg, transparent, var(--cat-hex), var(--cat-hex), transparent); background-size: 200% auto; animation: barSlide 3s linear infinite; will-change: background-position; }
 
         /* ── LA BULLE MODALE (LIGHTBOX VIDEO & IMAGE) ── */
         .modal-overlay {
@@ -758,6 +759,137 @@
                 background: rgba(255,255,255,0.92); color: #111;
                 box-shadow: 0 2px 10px rgba(0,0,0,0.18);
             }
+        }
+
+
+        /* ═══════════════════════════════════════════════════════
+           SYSTÈME DE LIKE — POSTS (sans connexion requise)
+           Séparé du système de like des commentaires
+        ═══════════════════════════════════════════════════════ */
+
+        /* Dossier bulletin — ligne titre + like */
+        .bulletin-header-row {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .bulletin-header-row h2 { flex: 1; min-width: 0; margin: 0; }
+
+        /* Bouton like post */
+        .post-like-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            background: none;
+            border: 1.5px solid rgba(0,0,0,0.12);
+            border-radius: 100px;
+            padding: 6px 14px 6px 10px;
+            cursor: pointer;
+            color: #9a9a9a;
+            font-size: 15px;
+            font-weight: 700;
+            font-family: 'Inter', sans-serif;
+            white-space: nowrap;
+            flex-shrink: 0;
+            position: relative;
+            overflow: visible;
+            user-select: none;
+            transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+        }
+        .post-like-btn:hover {
+            border-color: rgba(255, 50, 90, 0.38);
+            background: rgba(255, 50, 90, 0.06);
+            color: #ff3264;
+        }
+        .post-like-btn.liked {
+            border-color: rgba(255, 50, 90, 0.45);
+            background: rgba(255, 50, 90, 0.09);
+            color: #ff3264;
+        }
+
+        /* Cœur SVG */
+        .post-like-heart {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+            overflow: visible;
+            transition: fill 0.18s ease, stroke 0.18s ease;
+        }
+        .post-like-heart path {
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 1.85;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            transition: fill 0.18s ease, stroke 0.18s ease;
+        }
+        .post-like-btn.liked .post-like-heart path {
+            fill: #ff3264;
+            stroke: #ff3264;
+        }
+
+        /* Compteur */
+        .post-like-count {
+            font-variant-numeric: tabular-nums;
+            min-width: 18px;
+            line-height: 1;
+        }
+
+        /* Animation Discord — cœur bounce */
+        @keyframes postHeartPop {
+            0%   { transform: scale(1);    }
+            15%  { transform: scale(1.48) rotate(-10deg); }
+            32%  { transform: scale(0.82) rotate(5deg);  }
+            50%  { transform: scale(1.22) rotate(-4deg); }
+            68%  { transform: scale(0.94) rotate(2deg);  }
+            84%  { transform: scale(1.06) rotate(0deg);  }
+            100% { transform: scale(1);    }
+        }
+        @keyframes postCountPop {
+            0%   { transform: translateY(0);    }
+            38%  { transform: translateY(-6px); }
+            68%  { transform: translateY(2px);  }
+            100% { transform: translateY(0);    }
+        }
+        .post-heart-animate {
+            animation: postHeartPop 0.52s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+        }
+        .post-count-animate {
+            animation: postCountPop 0.38s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+        }
+
+        /* Footer carte avec like */
+        .post-like-card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-top: 10px;
+            margin-top: 4px;
+            border-top: 1px solid rgba(0,0,0,0.06);
+        }
+        /* Adaptation dark (carte dans section colorée) */
+        .category-section .post-like-btn {
+            border-color: rgba(255,255,255,0.18);
+            color: rgba(255,255,255,0.55);
+        }
+        .category-section .post-like-btn:hover {
+            border-color: rgba(255, 80, 110, 0.55);
+            background: rgba(255, 50, 90, 0.12);
+            color: #ff8aaa;
+        }
+        .category-section .post-like-btn.liked {
+            border-color: rgba(255, 80, 110, 0.6);
+            background: rgba(255, 50, 90, 0.15);
+            color: #ff8aaa;
+        }
+        .category-section .post-like-btn.liked .post-like-heart path {
+            fill: #ff8aaa;
+            stroke: #ff8aaa;
+        }
+        .category-section .post-like-card-footer {
+            border-top-color: rgba(255,255,255,0.1);
         }
 
     </style>
@@ -1930,5 +2062,154 @@
         <a href="./neo_bulletin.html" class="active">Leaks</a>
     </div>
 
+    <script>
+    // ═══════════════════════════════════════════════════════════════
+    //  SYSTÈME DE LIKE — POSTS (persistance localStorage, sans login)
+    // ═══════════════════════════════════════════════════════════════
+    const POST_LIKE_KEY = 'blox_post_likes_v1';
+
+    function _plLoad()       { try { return JSON.parse(localStorage.getItem(POST_LIKE_KEY)) || {}; } catch { return {}; } }
+    function _plSave(data)   { try { localStorage.setItem(POST_LIKE_KEY, JSON.stringify(data)); } catch {} }
+    function _plSlug(str)    { return (str||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,48); }
+
+    function _plHeartSVG() {
+        const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+        svg.setAttribute('viewBox','0 0 24 24');
+        svg.setAttribute('class','post-like-heart');
+        svg.setAttribute('aria-hidden','true');
+        const path = document.createElementNS('http://www.w3.org/2000/svg','path');
+        path.setAttribute('d','M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z');
+        svg.appendChild(path);
+        return svg;
+    }
+
+    function _plMakeBtn(id, entry) {
+        const btn  = document.createElement('button');
+        btn.className = 'post-like-btn' + (entry.liked ? ' liked' : '');
+        btn.dataset.postId = id;
+        btn.setAttribute('aria-label', 'Liker');
+        btn.setAttribute('title', 'Liker ce post');
+
+        const heart = _plHeartSVG();
+        const count = document.createElement('span');
+        count.className = 'post-like-count';
+        count.textContent = entry.count;
+
+        btn.appendChild(heart);
+        btn.appendChild(count);
+        btn.addEventListener('click', _plToggle);
+        return btn;
+    }
+
+    function _plToggle(e) {
+        const btn   = e.currentTarget;
+        const id    = btn.dataset.postId;
+        const data  = _plLoad();
+        const entry = data[id] || { count: 0, liked: false };
+
+        entry.liked  = !entry.liked;
+        entry.count += entry.liked ? 1 : -1;
+        if (entry.count < 0) entry.count = 0;
+        data[id] = entry;
+        _plSave(data);
+
+        // Mise à jour visuelle
+        btn.classList.toggle('liked', entry.liked);
+        const countEl = btn.querySelector('.post-like-count');
+        const heartEl = btn.querySelector('.post-like-heart');
+        countEl.textContent = entry.count;
+
+        if (entry.liked) {
+            // Animation cœur (Discord style)
+            heartEl.classList.remove('post-heart-animate');
+            void heartEl.offsetWidth;
+            heartEl.classList.add('post-heart-animate');
+            heartEl.addEventListener('animationend', () => heartEl.classList.remove('post-heart-animate'), { once: true });
+
+            // Animation compteur
+            countEl.classList.remove('post-count-animate');
+            void countEl.offsetWidth;
+            countEl.classList.add('post-count-animate');
+            countEl.addEventListener('animationend', () => countEl.classList.remove('post-count-animate'), { once: true });
+
+            // Particules (réutilise le système existant)
+            _plParticles(btn);
+        }
+    }
+
+    function _plParticles(btn) {
+        const rect   = btn.getBoundingClientRect();
+        const cx     = rect.left + 22;
+        const cy     = rect.top  + rect.height * .5;
+        const wrap   = document.createElement('div');
+        wrap.style.cssText = `position:fixed;left:${cx}px;top:${cy}px;width:0;height:0;pointer-events:none;z-index:99999;overflow:visible;`;
+        document.body.appendChild(wrap);
+
+        // Ripple
+        const rp = document.createElement('div');
+        rp.className = 'like-ripple';
+        rp.style.cssText = 'border-color:rgba(255,50,90,0.6)';
+        wrap.appendChild(rp);
+
+        // Particules colorées
+        const cols = ['#ff3264','#ff6b8a','#ffb3c8','#ff1a52','#ff8fa8','#e91e63','#ff4081','#f06292'];
+        for (let i = 0; i < 8; i++) {
+            const p = document.createElement('div');
+            p.className = 'like-particle';
+            const ang  = (i / 8) * Math.PI * 2;
+            const dist = 16 + Math.random() * 12;
+            p.style.setProperty('--px', Math.cos(ang)*dist+'px');
+            p.style.setProperty('--py', Math.sin(ang)*dist+'px');
+            p.style.cssText += `left:-3px;top:-3px;background:${cols[i]};animation-delay:${i*.028}s;`;
+            wrap.appendChild(p);
+        }
+        setTimeout(() => wrap.remove(), 750);
+    }
+
+    function initPostLikes() {
+        const data = _plLoad();
+
+        // ── 1. Dossier bulletin (post texte principal) ──────────────
+        document.querySelectorAll('.bulletin-header').forEach(header => {
+            if (header.querySelector('.post-like-btn')) return;
+            const h2 = header.querySelector('h2');
+            if (!h2) return;
+            const id    = 'dossier-' + _plSlug(h2.textContent.trim());
+            const entry = data[id] || { count: 0, liked: false };
+            const btn   = _plMakeBtn(id, entry);
+
+            // Wrap h2 + btn dans une ligne flex
+            const row = document.createElement('div');
+            row.className = 'bulletin-header-row';
+            h2.parentNode.insertBefore(row, h2);
+            row.appendChild(h2);
+            row.appendChild(btn);
+        });
+
+        // ── 2. Toutes les news-cards ─────────────────────────────────
+        document.querySelectorAll('.news-card').forEach((card, idx) => {
+            const content = card.querySelector('.news-card__content');
+            if (!content) return;
+            if (content.querySelector('.post-like-btn')) return;
+
+            const titleEl = content.querySelector('.news-card__title');
+            const id      = 'card-' + _plSlug(titleEl ? titleEl.textContent.trim() : String(idx));
+            const entry   = data[id] || { count: 0, liked: false };
+            const btn     = _plMakeBtn(id, entry);
+
+            const footer = document.createElement('div');
+            footer.className = 'post-like-card-footer';
+            footer.appendChild(btn);
+            content.appendChild(footer);
+        });
+    }
+
+    // Initialisation après chargement du DOM
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initPostLikes);
+    } else {
+        initPostLikes();
+    }
+    </script>
 </body>
 </html>
