@@ -782,12 +782,13 @@
             display: inline-flex;
             align-items: center;
             gap: 7px;
-            background: none;
-            border: 1.5px solid rgba(0,0,0,0.12);
+            /* Toujours visible, même sans hover */
+            background: rgba(255, 50, 90, 0.07);
+            border: 1.5px solid rgba(255, 50, 90, 0.28);
             border-radius: 100px;
-            padding: 6px 14px 6px 10px;
+            padding: 7px 16px 7px 11px;
             cursor: pointer;
-            color: #9a9a9a;
+            color: #e05070;
             font-size: 15px;
             font-weight: 700;
             font-family: 'Inter', sans-serif;
@@ -796,17 +797,28 @@
             position: relative;
             overflow: visible;
             user-select: none;
-            transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+            /* Zone tactile minimum 44px pour mobile */
+            min-height: 44px;
+            transition: border-color 0.2s ease, background 0.2s ease,
+                        color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
         }
-        .post-like-btn:hover {
-            border-color: rgba(255, 50, 90, 0.38);
-            background: rgba(255, 50, 90, 0.06);
+        .post-like-btn:hover,
+        .post-like-btn:focus-visible {
+            border-color: rgba(255, 50, 90, 0.6);
+            background: rgba(255, 50, 90, 0.13);
             color: #ff3264;
+            transform: scale(1.04);
+            box-shadow: 0 3px 14px rgba(255, 50, 90, 0.22);
+            outline: none;
+        }
+        .post-like-btn:active {
+            transform: scale(0.96);
         }
         .post-like-btn.liked {
-            border-color: rgba(255, 50, 90, 0.45);
-            background: rgba(255, 50, 90, 0.09);
+            border-color: rgba(255, 50, 90, 0.65);
+            background: rgba(255, 50, 90, 0.14);
             color: #ff3264;
+            box-shadow: 0 2px 12px rgba(255, 50, 90, 0.2);
         }
 
         /* Cœur SVG */
@@ -866,13 +878,15 @@
             align-items: center;
             justify-content: flex-end;
             padding-top: 10px;
+            padding-bottom: 2px;
             margin-top: 4px;
             border-top: 1px solid rgba(0,0,0,0.06);
         }
         /* Adaptation dark (carte dans section colorée) */
         .category-section .post-like-btn {
-            border-color: rgba(255,255,255,0.18);
-            color: rgba(255,255,255,0.55);
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.3);
+            color: rgba(255,255,255,0.75);
         }
         .category-section .post-like-btn:hover {
             border-color: rgba(255, 80, 110, 0.55);
@@ -2068,6 +2082,11 @@
     // ═══════════════════════════════════════════════════════════════
     const POST_LIKE_KEY = 'blox_post_likes_v1';
 
+    // ⚠️  localStorage = sauvegarde PAR APPAREIL uniquement.
+    // Pour un compteur global partagé entre tous les visiteurs,
+    // ton ami doit remplacer _plLoad() / _plSave() par des appels API :
+    //   _plLoad()  → GET  /api/likes
+    //   _plSave()  → POST /api/likes  { id, liked }
     function _plLoad()       { try { return JSON.parse(localStorage.getItem(POST_LIKE_KEY)) || {}; } catch { return {}; } }
     function _plSave(data)   { try { localStorage.setItem(POST_LIKE_KEY, JSON.stringify(data)); } catch {} }
     function _plSlug(str)    { return (str||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,48); }
