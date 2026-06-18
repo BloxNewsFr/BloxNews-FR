@@ -29,35 +29,86 @@
         body.scrolling [data-depth="-1"] { filter: blur(3px) brightness(0.85); opacity: 0.65; }
         body.scrolling [data-depth="0"]  { filter: blur(1px) brightness(0.94); opacity: 0.88; }
         
-        body { font-family: 'Inter', sans-serif; color: var(--color-text); background-color: #f0f2f8; min-height: 100vh; }
+        body { 
+            font-family: 'Inter', sans-serif; 
+            color: var(--color-text); 
+            background-color: #f0f2f8; 
+            min-height: 100vh; 
+        }
 
-        .site-background { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; z-index: -1; pointer-events: none; }
-        .site-background img { width: 100%; height: 100%; object-fit: cover; display: block; }
-        @media (max-width: 768px) { .site-background { display: none; } }
+        .site-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            z-index: -1;  
+            pointer-events: none;
+        }
+        .site-background img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; 
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .site-background { display: none; }
+        }
 
         /* ── NAVBAR LIQUID GLASS ── */
         .site-header {
-            display: flex; align-items: center; justify-content: space-between; padding: 0 55px;
-            position: sticky; top: 0; z-index: 1000; height: 72px;
-            background-color: rgba(255, 255, 255, 0.08); background-image: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.05) 50%, transparent 100%);
-            background-size: 200% 100%; backdrop-filter: blur(24px) saturate(180%); -webkit-backdrop-filter: blur(24px) saturate(180%);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 4px 30px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            padding: 0 55px;
+            position: sticky; 
+            top: 0; 
+            z-index: 1000; 
+            height: 72px;
+            background-color: rgba(255, 255, 255, 0.08);
+            background-image: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.05) 50%, transparent 100%);
+            background-size: 200% 100%;
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.2);
             transition: background 0.5s cubic-bezier(0.4, 0, 0.2, 1), backdrop-filter 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .site-header__logo { cursor: pointer; }
-        .site-header__logo img { height: 42px; width: auto; display: block; filter: none !important; }
+        /* Le logo ne change plus jamais de couleur */
+        .site-header__logo img { 
+            height: 42px; width: auto; display: block; filter: none !important; 
+        }
 
         .site-nav { display: flex; gap: 8px; padding: 0; margin: 0; list-style: none; font-weight: 900; position: relative; z-index: 1; }
-        .site-nav a, .site-header__icons { color: var(--color-text); transition: color 0.55s cubic-bezier(0.4, 0, 0.2, 1); }
-        .site-header.nav-light-text .site-nav a, .site-header.nav-light-text .site-header__icons { color: #fff; -webkit-text-stroke: 1.2px rgba(0,0,0,0.7); text-shadow: 0 2px 8px rgba(0,0,0,0.35); }
+        .site-nav a, .site-header__icons {
+            color: var(--color-text);
+            transition: color 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .site-header.nav-light-text .site-nav a,
+        .site-header.nav-light-text .site-header__icons {
+            color: #fff;
+            -webkit-text-stroke: 1.2px rgba(0,0,0,0.7);
+            text-shadow: 0 2px 8px rgba(0,0,0,0.35);
+        }
+
         .site-nav a { text-decoration: none; font-size: 17px; text-transform: uppercase; font-family: 'LuckiestGuy Regular', cursive; padding: 8px 16px; border-radius: 10px; }
         .site-nav a:hover { background: var(--color-primary); color: #000; }
         .site-header__icons { display: flex; gap: 12px; cursor: pointer; align-items: center; position: relative; z-index: 1; }
         .site-header__icons span { padding: 8px; border-radius: 10px; transition: background 0.2s; }
         .site-header__icons span:hover { background: rgba(0,0,0,0.06); }
-        .mobile-menu-btn, .mobile-nav-dropdown { display: none; }
         
+        /* Bouton Hamburger Mobile (Caché sur PC) */
+        .mobile-menu-btn { display: none; }
+
+        /* MENU DÉROULANT MOBILE (CACHÉ SUR PC) */
+        .mobile-nav-dropdown { display: none; }
+        
+        /* MAIN */
         .main-content { max-width: 1240px; margin: 0 auto; padding: 40px 24px 80px; }
+        
+        /* PAGINATION PC (HAUT) */
         .pagination-bar { display: flex; flex-direction: column; align-items: center; gap: 16px; margin-bottom: 36px; }
         .page-title { font-size: 38px; font-weight: 900; color: #fff; text-shadow: 0 2px 20px rgba(0,0,0,0.4); letter-spacing: -0.5px; }
         .blue-banner { display: inline-block; background: linear-gradient(135deg, #175ec2, #2980d4, #175ec2); background-size: 200% auto; color: #fff; padding: 16px 60px; font-size: 36px; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; border-radius: 100px; font-family: 'LuckiestGuy Regular', cursive; box-shadow: 0 8px 32px rgba(23,94,194,0.45), 0 2px 8px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.2); }
@@ -73,32 +124,13 @@
         .news-card { width: 360px; max-width: 100%; border-radius: 24px; overflow: hidden; position: relative; cursor: pointer; background: #fff; box-shadow: 0 10px 40px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08); transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.35s ease; display: flex; flex-direction: column; animation: fadeInUp 0.4s ease both; }
         .news-card:hover { transform: translateY(-10px) scale(1.02); box-shadow: 0 20px 60px rgba(0,0,0,0.18), 0 8px 20px rgba(0,0,0,0.12), 0 0 0 2px rgba(23,94,194,0.25); }
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-        
         .news-card__image-wrapper { width: 100%; padding-top: 58%; position: relative; background: #1a1a3e; border-radius: 24px 24px 0 0; }
         .news-card__image { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
         .news-card:hover .news-card__image { transform: scale(1.08); }
         .news-card__image-wrapper::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 30%, rgba(0,0,0,0.15) 60%, rgba(0,0,0,0.5) 100%); pointer-events: none; }
-        
         .news-card__badge { position: absolute; top: 14px; left: 14px; background: var(--color-primary); color: #000; font-weight: 900; font-size: 13px; padding: 5px 12px; border-radius: 100px; font-family: 'LuckiestGuy Regular', cursive; letter-spacing: 1px; z-index: 2; border: 2px solid rgba(255,255,255,0.6); }
-        
-        /* Bouton LIKES (Global sur toutes les cartes) */
-        .post-like-btn {
-            position: absolute; top: 14px; right: 14px; display: flex !important; align-items: center; gap: 6px;
-            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); padding: 6px 12px;
-            border-radius: 30px; border: 2px solid #000; z-index: 10; cursor: pointer;
-            box-shadow: 0 4px 0 #000; font-family: 'Inter', sans-serif; font-weight: 800; font-size: 14px;
-            color: #1a1a2e; transition: all 0.2s ease;
-        }
-        .post-like-btn:active { transform: translateY(4px); box-shadow: 0 0 0 #000; }
-        .post-like-btn.liked { background: var(--color-primary); color: #000; }
-        .post-like-btn.liked .material-symbols-outlined { font-variation-settings: 'FILL' 1; color: #ff0040; }
-        .post-like-btn:hover { background: #f0f0f0; }
-        .post-like-btn.liked:hover { background: #ffe833; }
-
-        /* Badge Événement repositionné en dessous du badge principal à gauche */
-        .news-card__new { position: absolute; top: 48px; left: 14px; background: linear-gradient(135deg, #ff4d4d, #ff0000); color: #fff; font-weight: 900; font-size: 11px; padding: 4px 10px; border-radius: 100px; font-family: 'Inter', sans-serif; letter-spacing: 1px; text-transform: uppercase; z-index: 2; animation: pulseBadge 2s ease-in-out infinite; }
+        .news-card__new { position: absolute; top: 14px; right: 14px; background: linear-gradient(135deg, #ff4d4d, #ff0000); color: #fff; font-weight: 900; font-size: 11px; padding: 4px 10px; border-radius: 100px; font-family: 'Inter', sans-serif; letter-spacing: 1px; text-transform: uppercase; z-index: 2; animation: pulseBadge 2s ease-in-out infinite; }
         @keyframes pulseBadge { 0%,100% { transform: scale(1); } 50% { transform: scale(1.08); } }
-        
         .news-card__content { padding: 22px 22px 20px; display: flex; flex-direction: column; flex-grow: 1; background: #fff; border-radius: 0 0 24px 24px; }
         .news-card__eyebrow { font-size: 11px; font-weight: 700; color: var(--color-accent); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px; }
         .news-card__title { font-size: 20px; font-weight: 900; color: #111; line-height: 1.25; margin-bottom: 16px; font-family: 'LuckiestGuy Regular', cursive; letter-spacing: 0.5px; }
@@ -107,30 +139,16 @@
         .news-card:hover .news-card__button::before { left: 100%; }
         .news-card:hover .news-card__button { background: linear-gradient(135deg, #ffe833, #ffda00); box-shadow: 0 6px 25px rgba(255,218,0,0.6); transform: translateX(3px); }
         .news-card__bar { height: 4px; background: linear-gradient(90deg, var(--color-accent), #5b9bd5, var(--color-primary)); background-size: 200% auto; }
-        
+        /* PAGINATION PC (BAS) */
         .pagination-bottom { display: flex; justify-content: center; align-items: center; gap: 16px; margin-top: 50px; }
         .pagination-bottom button { background: rgba(255,255,255,0.95); border: none; border-radius: 50%; width: 48px; height: 48px; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: 900; box-shadow: 0 4px 15px rgba(0,0,0,0.15); transition: all 0.2s ease; color: #111; }
         .pagination-bottom button:hover:not(:disabled) { background: var(--color-primary); transform: scale(1.12); box-shadow: 0 6px 20px rgba(255,218,0,0.5); }
         .pagination-bottom button:disabled { background: rgba(255,255,255,0.3); color: rgba(255,255,255,0.4); cursor: not-allowed; box-shadow: none; }
 
+        /* PILULE MOBILE (CACHÉE SUR PC) */
         .mobile-pagination-pill { display: none; }
 
-        /* ── MODAL UI ── */
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(8px); z-index: 99999; align-items: center; justify-content: center; padding: 20px; opacity: 0; transition: opacity 0.3s; }
-        .modal-overlay.show { display: flex; opacity: 1; }
-        .modal-content { background: #fff; border: 4px solid #000; border-radius: 20px; width: 100%; max-width: 800px; max-height: 90vh; overflow-y: auto; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.5); animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        @keyframes modalPop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        .modal-close { position: absolute; top: 15px; right: 15px; background: #ff0040; color: #fff; border: 2px solid #000; border-radius: 50%; width: 35px; height: 35px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; z-index: 10; transition: transform 0.2s; }
-        .modal-close:hover { transform: scale(1.1); background: #cc0033; }
-        .modal-header { background: var(--color-primary); border-bottom: 4px solid #000; padding: 20px; }
-        .modal-section { font-family: 'Inter', sans-serif; font-weight: 900; text-transform: uppercase; background: #000; color: #fff; padding: 4px 10px; border-radius: 8px; font-size: 12px; display: inline-block; }
-        .modal-title { font-family: 'LuckiestGuy Regular', sans-serif; font-size: 32px; margin: 10px 0 0 0; color: #000; letter-spacing: 1px; }
-        .modal-body { padding: 20px; }
-        .modal-body img { width: 100%; border-radius: 12px; border: 2px solid #000; display: block; }
-        .modal-info { margin-top: 20px; background: #f4f4f5; padding: 15px; border-radius: 12px; border: 2px solid #e8e8f0; }
-        .modal-info h3 { font-family: 'LuckiestGuy Regular', sans-serif; margin-bottom: 10px; font-size: 20px; }
-
-        /* RESPONSIVE MOBILE */
+        /* ── RESPONSIVE MOBILE ── */
         @media (max-width: 768px) { 
             .site-header { padding: 0 20px; height: auto; min-height: 60px; } 
             .site-nav { display: none; } 
@@ -139,8 +157,11 @@
             .news-card { width: 100%; border-radius: 20px; } 
             .blue-banner { font-size: 24px; padding: 12px 30px; margin: 12px 0 8px; } 
             .page-title { font-size: 28px; margin: 16px 0 8px; padding: 0 12px; }
+            
+            /* Cacher la pagination PC */
             .pagination-controls, .pagination-bottom { display: none !important; }
 
+            /* MENU DÉROULANT MOBILE */
             .mobile-nav-dropdown {
                 display: flex; flex-direction: column; gap: 12px;
                 position: fixed; top: 60px; right: -280px; width: 250px;
@@ -154,104 +175,1112 @@
                 color: #111; text-align: center; padding: 12px; border-radius: 100px; border: 2px solid #e8e8f0;
                 text-transform: uppercase; transition: all 0.2s;
             }
-            .mobile-nav-dropdown a.active { background: #175ec2; color: #fff; border-color: transparent; }
-
-            .mobile-pagination-pill {
-                display: flex !important; position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%); z-index: 9999;
-                background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(22px) saturate(160%); -webkit-backdrop-filter: blur(22px) saturate(160%);
-                border: 1px solid rgba(255, 255, 255, 0.15); padding: 6px 22px; border-radius: 100px;
-                box-shadow: 0 8px 32px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.12);
-                gap: 18px; align-items: center; transition: background 0.4s cubic-bezier(0.4,0,0.2,1), border-color 0.4s cubic-bezier(0.4,0,0.2,1);
+            .mobile-nav-dropdown a.active {
+                background: #175ec2; color: #fff; border-color: transparent;
             }
-            .mobile-pagination-pill button { background: transparent; border: none; color: #fff; font-size: 20px; width: 38px; height: 38px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.25s ease; flex-shrink: 0; }
+            .mobile-nav-dropdown a.nav-news { color: #1a73e8; }
+            .mobile-nav-dropdown a.nav-leaks { color: #d93025; }
+
+            /* PILULE FLOTTANTE MOBILE LIQUID GLASS */
+            .mobile-pagination-pill {
+                display: flex !important;
+                position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%); z-index: 9999;
+                background: rgba(255, 255, 255, 0.1);
+                backdrop-filter: blur(22px) saturate(160%);
+                -webkit-backdrop-filter: blur(22px) saturate(160%);
+                border: 1px solid rgba(255, 255, 255, 0.15);
+                padding: 6px 22px; border-radius: 100px;
+                box-shadow: 0 8px 32px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.12);
+                gap: 18px; align-items: center;
+                transition: background 0.4s cubic-bezier(0.4,0,0.2,1), border-color 0.4s cubic-bezier(0.4,0,0.2,1);
+            }
+            .mobile-pagination-pill button {
+                background: transparent; border: none; color: #fff; font-size: 20px;
+                width: 38px; height: 38px; border-radius: 50%; cursor: pointer;
+                display: flex; align-items: center; justify-content: center;
+                transition: all 0.25s ease; flex-shrink: 0;
+            }
             .mobile-pagination-pill button:hover:not(:disabled) { background: rgba(255,255,255,0.15); }
             .mobile-pagination-pill button:disabled { opacity: 0.25; cursor: default; }
-            .mobile-pagination-pill .page-info { color: #fff; font-weight: 900; font-size: 15px; min-width: 48px; text-align: center; font-family: 'Inter', sans-serif; transition: color 0.4s cubic-bezier(0.4,0,0.2,1); }
-            .mobile-pagination-pill.is-light { background: rgba(0, 0, 0, 0.05); border-color: rgba(0, 0, 0, 0.08); box-shadow: 0 8px 32px rgba(0,0,0,0.04), inset 0 1px 0 rgba(255,255,255,0.3); }
-            .mobile-pagination-pill.is-light button, .mobile-pagination-pill.is-light .page-info { color: #000 !important; }
+            .mobile-pagination-pill .page-info {
+                color: #fff; font-weight: 900; font-size: 15px; min-width: 48px;
+                text-align: center; font-family: 'Inter', sans-serif;
+                transition: color 0.4s cubic-bezier(0.4,0,0.2,1);
+            }
+
+            /* Pilule fond clair */
+            .mobile-pagination-pill.is-light {
+                background: rgba(0, 0, 0, 0.05);
+                border-color: rgba(0, 0, 0, 0.08);
+                box-shadow: 0 8px 32px rgba(0,0,0,0.04), inset 0 1px 0 rgba(255,255,255,0.3);
+            }
+            .mobile-pagination-pill.is-light button,
+            .mobile-pagination-pill.is-light .page-info { color: #000 !important; }
         }
 
-        /* ── TOUT LE RESTE DU CSS (Spécial Cards Glitch, Halloween, Fire, Water, Ice...) EST INCLUS ── */
+
+            /* ── Switcher News↔Leaks dans la pilule ─────── */
+            .mobile-pagination-pill .pill-switcher {
+                display: flex; align-items: center; gap: 0;
+                background: rgba(255,255,255,0.12); border-radius: 100px;
+                padding: 3px; border: 1px solid rgba(255,255,255,0.18);
+            }
+            .mobile-pagination-pill .pill-switcher a {
+                text-decoration: none; font-family: 'LuckiestGuy Regular', cursive;
+                font-size: 12px; color: rgba(255,255,255,0.65); padding: 11px 13px 3px;
+                border-radius: 100px; transition: all 0.25s ease; white-space: nowrap;
+                letter-spacing: 0.3px;
+            }
+            .mobile-pagination-pill .pill-switcher a.active {
+                background: rgba(255,255,255,0.95); color: #111;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            }
+            .mobile-pagination-pill .pill-divider {
+                width: 1px; height: 22px; background: rgba(255,255,255,0.2); margin: 0 4px;
+            }
+            /* Pilule fond clair : adapter le switcher */
+            .mobile-pagination-pill.is-light .pill-switcher {
+                background: rgba(0,0,0,0.06); border-color: rgba(0,0,0,0.1);
+            }
+            .mobile-pagination-pill.is-light .pill-switcher a { color: rgba(0,0,0,0.45); }
+            .mobile-pagination-pill.is-light .pill-switcher a.active {
+                background: rgba(0,0,0,0.85); color: #fff;
+            }
+
+
+        /* ════════════════════════════════════════════════════════════
+           SYSTÈME DE PROFONDEUR — Hiérarchie spatiale (Z-layers)
+           L0: fond page | L1: contenu | L2: cards | L3: badges/boutons
+           L4: navbar + pilule flottante
+        ════════════════════════════════════════════════════════════ */
+
+        /* L4 — Navbar : couche la plus haute */
+        .site-header {
+            box-shadow:
+                0 1px 0 rgba(255,255,255,0.22) inset,
+                0 2px 4px rgba(0,0,0,0.05),
+                0 8px 28px rgba(0,0,0,0.18),
+                0 32px 72px rgba(0,0,0,0.08);
+        }
+
+        /* L3.5 — Bannière titre : titre flottant prononcé */
+        .blue-banner {
+            box-shadow:
+                0 2px 0 rgba(255,255,255,0.24) inset,
+                0 4px 8px rgba(23,94,194,0.25),
+                0 12px 36px rgba(23,94,194,0.5),
+                0 28px 80px rgba(0,0,20,0.28),
+                0 60px 120px rgba(0,0,10,0.1);
+            transform: translateY(-4px);
+            text-shadow:
+                0 1px 0 rgba(255,255,255,0.28),
+                0 3px 10px rgba(0,0,0,0.35),
+                0 10px 40px rgba(23,94,194,0.55);
+        }
+
+        /* L3 — Contrôles pagination : éléments interactifs */
+        .pagination-controls button {
+            box-shadow:
+                0 1px 0 rgba(255,255,255,0.92) inset,
+                0 2px 4px rgba(0,0,0,0.1),
+                0 6px 18px rgba(0,0,0,0.18),
+                0 18px 48px rgba(0,0,0,0.08);
+        }
+        .pagination-controls button:hover:not(:disabled) {
+            box-shadow:
+                0 1px 0 rgba(255,255,255,0.92) inset,
+                0 4px 10px rgba(255,218,0,0.35),
+                0 10px 30px rgba(255,218,0,0.45),
+                0 24px 60px rgba(255,218,0,0.18);
+            transform: scale(1.12) translateY(-4px);
+        }
+        .pagination-info {
+            box-shadow:
+                0 2px 8px rgba(0,0,0,0.28),
+                0 8px 28px rgba(0,0,0,0.18),
+                inset 0 1px 0 rgba(255,255,255,0.12);
+        }
+
+        /* L2 — Cards : plan principal flottant */
+        .news-card {
+            box-shadow:
+                0 1px 2px rgba(0,0,0,0.07),
+                0 4px 10px rgba(0,0,0,0.09),
+                0 14px 38px rgba(0,0,0,0.15),
+                0 36px 90px rgba(0,0,0,0.11),
+                0 70px 140px rgba(0,0,0,0.05);
+        }
+        .news-card:hover {
+            transform: translateY(-13px) scale(1.025);
+            box-shadow:
+                0 2px 4px rgba(0,0,0,0.05),
+                0 8px 18px rgba(0,0,0,0.09),
+                0 26px 62px rgba(0,0,0,0.18),
+                0 60px 130px rgba(0,0,0,0.13),
+                0 90px 180px rgba(0,0,0,0.05),
+                0 0 0 2px rgba(23,94,194,0.28);
+        }
+
+        /* Image wrapper — légèrement enfoncé (retrait visuel) */
+        .news-card__image-wrapper {
+            box-shadow: inset 0 -5px 20px rgba(0,0,0,0.22);
+        }
+
+        /* L3 — Badges : plan avant, flottants au-dessus de l'image */
+        .news-card__badge {
+            box-shadow:
+                0 1px 2px rgba(0,0,0,0.18),
+                0 3px 10px rgba(0,0,0,0.22),
+                0 8px 24px rgba(0,0,0,0.12),
+                inset 0 1px 0 rgba(255,255,255,0.65);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .news-card:hover .news-card__badge {
+            transform: translateY(-2px);
+            box-shadow:
+                0 2px 5px rgba(0,0,0,0.22),
+                0 6px 18px rgba(0,0,0,0.28),
+                0 14px 36px rgba(0,0,0,0.12),
+                inset 0 1px 0 rgba(255,255,255,0.65);
+        }
+        .news-card__new { box-shadow: 0 2px 8px rgba(0,0,0,0.2), 0 6px 18px rgba(255,0,0,0.18); }
+
+        /* L1 — Content zone : légèrement en retrait derrière le bouton */
+        .news-card__content {
+            box-shadow: inset 0 5px 16px rgba(0,0,0,0.04);
+        }
+        .news-card__title {
+            text-shadow: 0 1px 3px rgba(0,0,0,0.09), 0 4px 14px rgba(0,0,0,0.04);
+        }
+
+        /* L3 — Bouton CTA : plan avant proche, pop fort */
+        .news-card__button {
+            box-shadow:
+                0 1px 0 rgba(255,255,255,0.32) inset,
+                0 2px 5px rgba(0,0,0,0.14),
+                0 7px 20px rgba(255,218,0,0.38),
+                0 18px 45px rgba(255,218,0,0.14);
+        }
+        .news-card:hover .news-card__button {
+            box-shadow:
+                0 1px 0 rgba(255,255,255,0.32) inset,
+                0 4px 10px rgba(0,0,0,0.12),
+                0 10px 28px rgba(255,218,0,0.55),
+                0 22px 55px rgba(255,218,0,0.18);
+        }
+
+        /* L4 — Pilule mobile : couche flottante */
+        .mobile-pagination-pill {
+            box-shadow:
+                0 2px 5px rgba(0,0,0,0.12),
+                0 8px 28px rgba(0,0,0,0.22),
+                0 28px 68px rgba(0,0,0,0.16),
+                inset 0 1px 0 rgba(255,255,255,0.18);
+        }
+
+        /* ── SPECIAL CARDS : GLITCH, HALLOWEEN, VALENTINE (TON CODE ORIGINAL) ── */
         .news-card.glitch-card, .news-card.valentine-card { isolation: isolate; }
         .news-card.glitch-card .news-card__image-wrapper, .news-card.glitch-card .news-card__content, .news-card.glitch-card .news-card__bar, .news-card.halloween-card .news-card__image-wrapper, .news-card.halloween-card .news-card__content, .news-card.halloween-card .news-card__bar, .news-card.valentine-card .news-card__image-wrapper, .news-card.valentine-card .news-card__content, .news-card.valentine-card .news-card__bar { position: relative; z-index: 2; }
-        .news-card.glitch-card { background: #020402; border: 2px solid #00ff41; box-shadow: 0 0 24px rgba(0,255,65,0.7), 0 0 60px rgba(0,255,65,0.22), 0 18px 46px rgba(0,0,0,0.55); animation: fadeInUp 0.4s ease both, glitch-card-surge 2.8s steps(1) infinite; }
+        
+        /* 012: glitch terminal */
+        .news-card.glitch-card { background: #020402; border: 2px solid #00ff41; box-shadow: 0 0 24px rgba(0,255,65,0.7), 0 0 60px rgba(0,255,65,0.22), 0 18px 46px rgba(0,0,0,0.55); animation: fadeInUp 0.4s ease both, glitch-card-surge 2.8s steps(1) infinite; content-visibility: auto; contain-intrinsic-size: auto 480px; }
         .news-card.glitch-card::before { content: ""; position: absolute; inset: 0; z-index: 8; pointer-events: none; background: repeating-linear-gradient(0deg, rgba(0,255,65,0.16) 0 1px, transparent 1px 4px), linear-gradient(90deg, transparent 0 42%, rgba(255,0,88,0.16) 43% 45%, transparent 46% 67%, rgba(0,140,255,0.16) 68% 70%, transparent 71%); mix-blend-mode: screen; animation: glitch-scan 4s linear infinite; }
+        .news-card.glitch-card::after { content: "SYSTEM BREACH"; position: absolute; left: 0; right: 0; top: 46%; z-index: 9; color: rgba(0,255,65,0.7); font-family: 'Share Tech Mono', monospace; font-size: 12px; font-weight: 900; letter-spacing: 0; text-align: center; text-shadow: 2px 0 #ff0058, -2px 0 #00a2ff, 0 0 14px #00ff41; transform: skewX(-12deg); pointer-events: none; animation: glitch-warning 1.4s steps(2) infinite; }
         .news-card.glitch-card .news-card__image { filter: sepia(1) hue-rotate(82deg) saturate(420%) contrast(150%) brightness(0.86); transform: scale(1.12); animation: glitch-image-break 1.55s steps(1) infinite; }
         .news-card.glitch-card:hover .news-card__image { transform: scale(1.18); }
         .news-card.glitch-card .news-card__image-wrapper { background: #001100; }
-        .news-card.glitch-card .news-card__badge, .news-card.glitch-card .news-card__new { background: #000; color: #00ff41; border-color: #00ff41; box-shadow: 0 0 18px rgba(0,255,65,0.85); font-family: 'Share Tech Mono', monospace; }
+        .news-card.glitch-card .news-card__image-wrapper::after { background: radial-gradient(circle at 50% 35%, transparent 0 30%, rgba(0,0,0,0.38) 62%, rgba(0,0,0,0.88) 100%); }
+        .news-card.glitch-card .news-card__badge, .news-card.glitch-card .news-card__new { background: #000; color: #00ff41; border-color: #00ff41; box-shadow: 0 0 18px rgba(0,255,65,0.85); font-family: 'Share Tech Mono', monospace; letter-spacing: 0; }
         .news-card.glitch-card .news-card__new { color: #ff355d; border-color: #ff355d; animation: glitch-label-blink 1.2s steps(1) infinite; }
         .news-card.glitch-card .news-card__content { background: linear-gradient(180deg, #031006, #000); border-top: 1px solid rgba(0,255,65,0.6); }
-        .news-card.glitch-card .news-card__eyebrow, .news-card.glitch-card .news-card__title { color: #00ff41; font-family: 'Share Tech Mono', monospace; text-shadow: 2px 0 #ff0058, -2px 0 #00a2ff, 0 0 14px #00ff41; animation: glitch-text-break 0.28s steps(2) infinite alternate; }
-        .news-card.glitch-card .news-card__button { background: #000; color: #00ff41; border-color: #00ff41; border-radius: 10px; box-shadow: 0 0 18px rgba(0,255,65,0.62); font-family: 'Share Tech Mono', monospace; }
+        .news-card.glitch-card .news-card__eyebrow, .news-card.glitch-card .news-card__title { color: #00ff41; font-family: 'Share Tech Mono', monospace; letter-spacing: 0; text-shadow: 2px 0 #ff0058, -2px 0 #00a2ff, 0 0 14px #00ff41; animation: glitch-text-break 0.28s steps(2) infinite alternate; }
+        .news-card.glitch-card .news-card__button { background: #000; color: #00ff41; border-color: #00ff41; border-radius: 10px; box-shadow: 0 0 18px rgba(0,255,65,0.62); font-family: 'Share Tech Mono', monospace; letter-spacing: 0; }
         .news-card.glitch-card:hover .news-card__button { background: #00ff41; color: #000; box-shadow: 0 0 28px #00ff41; }
         .news-card.glitch-card .news-card__bar { background: linear-gradient(90deg, #00ff41, #ff0058, #00a2ff, #00ff41); }
 
-        .news-card.halloween-card { background: #0d0500; border: 2px solid rgba(255,106,0,0.7); box-shadow: 0 0 0 1px rgba(255,140,0,0.06) inset, 0 0 38px rgba(255,106,0,0.9), 0 0 85px rgba(200,50,0,0.44), 0 30px 80px rgba(0,0,0,0.75); }
-        .news-card.halloween-card .news-card__image-wrapper { background: #0d0500; border-radius: 22px 22px 0 0; }
-        .news-card.halloween-card .news-card__image { filter: sepia(0.15) hue-rotate(340deg) saturate(250%) contrast(140%) brightness(0.7); transform: scale(1.1); transition: filter 0.4s ease, transform 0.5s ease; }
-        .news-card.halloween-card:hover .news-card__image { filter: sepia(0.1) hue-rotate(345deg) saturate(320%) contrast(155%) brightness(0.9); transform: scale(1.19) rotate(-0.5deg); }
-        .news-card.halloween-card .news-card__badge, .news-card.halloween-card .news-card__new { background: rgba(13, 5, 0, 0.93); color: #ff8c00; border: 1px solid rgba(255, 106, 0, 0.7); box-shadow: 0 0 22px rgba(255, 106, 0, 0.9), inset 0 0 10px rgba(255, 60, 0, 0.1); backdrop-filter: blur(8px); }
-        .news-card.halloween-card .news-card__content { background: radial-gradient(circle at 86% 10%, rgba(255, 80, 0, 0.19), transparent 36%), radial-gradient(circle at 12% 85%, rgba(200, 40, 0, 0.12), transparent 32%), linear-gradient(180deg, #1a0800, #0d0500); border-top: 1px solid rgba(255, 106, 0, 0.6); }
-        .news-card.halloween-card .news-card__eyebrow { color: #ff8c00; text-shadow: 0 0 12px rgba(255, 106, 0, 0.85); }
-        .news-card.halloween-card .news-card__title { color: #ffb060; text-shadow: 0 0 22px rgba(255,106,0,1), 0 0 55px rgba(200,50,0,0.7), 2px 0 rgba(100,30,0,0.5), -2px 0 rgba(255,160,0,0.4); }
-        .news-card.halloween-card .news-card__button { background: linear-gradient(135deg, #4a1500, #cc5500 52%, #6a2000); color: #ffb060; border: 1px solid rgba(255, 106, 0, 0.6); }
-        .news-card.halloween-card:hover .news-card__button { background: linear-gradient(135deg, #ff6a00, #cc4400 50%, #881100); color: #fff; box-shadow: 0 0 44px rgba(255, 106, 0, 1), 0 0 92px rgba(200, 50, 0, 0.56); }
-        .news-card.halloween-card .news-card__bar { background: linear-gradient(90deg,#cc4400,#ff6a00,#ff8c00,#ff5500,#cc4400); height: 5px; }
+        /* 017 ── HALLOWEEN (FIERY OVERHAUL) */
+        .news-card.halloween-card {
+            background: #0d0500; border: 2px solid rgba(255,106,0,0.7);
+            box-shadow: 0 0 0 1px rgba(255,140,0,0.06) inset, 0 0 38px rgba(255,106,0,0.9), 0 0 85px rgba(200,50,0,0.44), 0 30px 80px rgba(0,0,0,0.75);
+            animation: fadeInUp 0.4s ease both;
+        }
+        .news-card.halloween-card .news-card__image-wrapper {
+            background: #0d0500; border-radius: 22px 22px 0 0;
+            box-shadow: inset 0 -2px 0 rgba(255, 106, 0, 0.8); overflow: hidden;
+        }
+        .news-card.halloween-card .news-card__image-wrapper::after {
+            z-index: 4; border-radius: 22px 22px 0 0;
+            background: radial-gradient(circle at 50% 50%, transparent 0 16%, rgba(0, 0, 0, 0.46) 60%, rgba(0, 0, 0, 0.9) 100%),
+                        radial-gradient(circle at 50% 4%, rgba(255, 106, 0, 0.3) 0 32%, transparent 64%);
+        }
+        .news-card.halloween-card .news-card__image {
+            filter: sepia(0.15) hue-rotate(340deg) saturate(250%) contrast(140%) brightness(0.7);
+            transform: scale(1.1); transition: filter 0.4s ease, transform 0.5s ease;
+        }
+        .news-card.halloween-card:hover .news-card__image {
+            filter: sepia(0.1) hue-rotate(345deg) saturate(320%) contrast(155%) brightness(0.9);
+            transform: scale(1.19) rotate(-0.5deg);
+        }
+        .news-card.halloween-card:hover {
+            box-shadow: 0 0 0 1px rgba(255, 140, 0, 0.08) inset, 0 0 60px rgba(255, 106, 0, 1), 0 0 120px rgba(200, 50, 0, 0.6), 0 32px 90px rgba(0, 0, 0, 0.82);
+        }
+        .news-card.halloween-card .news-card__badge,
+        .news-card.halloween-card .news-card__new {
+            background: rgba(13, 5, 0, 0.93); color: #ff8c00;
+            border: 1px solid rgba(255, 106, 0, 0.7);
+            box-shadow: 0 0 22px rgba(255, 106, 0, 0.9), inset 0 0 10px rgba(255, 60, 0, 0.1);
+            backdrop-filter: blur(8px);
+        }
+        .news-card.halloween-card .news-card__content {
+            background: radial-gradient(circle at 86% 10%, rgba(255, 80, 0, 0.19), transparent 36%),
+                        radial-gradient(circle at 12% 85%, rgba(200, 40, 0, 0.12), transparent 32%),
+                        linear-gradient(180deg, #1a0800, #0d0500);
+            border-top: 1px solid rgba(255, 106, 0, 0.6);
+            position: relative; z-index: 1; border-radius: 0 0 22px 22px;
+        }
+        .news-card.halloween-card .news-card__content::before { content: none; }
+        .news-card.halloween-card .news-card__content::after {
+            content: "🕷️"; position: absolute; left: 15px; bottom: 14px;
+            font-size: 18px; opacity: 0.4; pointer-events: none;
+        }
+        .news-card.halloween-card .news-card__eyebrow {
+            color: #ff8c00; text-shadow: 0 0 12px rgba(255, 106, 0, 0.85); letter-spacing: 1px;
+        }
+        .news-card.halloween-card .news-card__title {
+            color: #ffb060;
+            text-shadow: 0 0 22px rgba(255,106,0,1), 0 0 55px rgba(200,50,0,0.7), 2px 0 rgba(100,30,0,0.5), -2px 0 rgba(255,160,0,0.4);
+        }
+        .news-card.halloween-card .news-card__button {
+            background: linear-gradient(135deg, #4a1500, #cc5500 52%, #6a2000);
+            color: #ffb060; border: 1px solid rgba(255, 106, 0, 0.6);
+            border-radius: 100px;
+            box-shadow: 0 0 22px rgba(255, 80, 0, 0.7), inset 0 1px 0 rgba(255, 180, 50, 0.25);
+            overflow: hidden;
+        }
+        .news-card.halloween-card .news-card__button::before {
+            background: linear-gradient(90deg, transparent, rgba(255, 200, 50, 0.55), transparent);
+            animation: hw-btn-shine 2.6s ease-in-out infinite;
+        }
+        .news-card.halloween-card:hover .news-card__button {
+            background: linear-gradient(135deg, #ff6a00, #cc4400 50%, #881100);
+            color: #fff;
+            box-shadow: 0 0 44px rgba(255, 106, 0, 1), 0 0 92px rgba(200, 50, 0, 0.56);
+        }
+        .news-card.halloween-card .news-card__bar { background: linear-gradient(90deg,#cc4400,#ff6a00,#ff8c00,#ff5500,#cc4400); background-size: 300% auto; height: 5px; border-radius: 0 0 22px 22px; }
+        .hw-deco { position:absolute; inset:0; z-index:15; pointer-events:none; overflow:visible; border-radius:24px; }
+        .hw-bat { position:absolute; top:var(--bt,-10px); left:var(--bx); font-size:18px; opacity:0; filter:drop-shadow(0 0 6px rgba(255,106,0,0.9)); animation:hw-bat-fly 6s var(--bd) ease-in-out infinite; }
+        .hw-bat::before { content:"🦇"; }
+        .hw-skull { position:absolute; right:14px; top:40%; font-size:22px; opacity:0; filter:drop-shadow(0 0 10px rgba(255,106,0,1)); animation:hw-skull-pop 8s ease-in-out infinite; }
+        .hw-skull::before { content:"💀"; }
 
-        .news-card.valentine-card { background: linear-gradient(155deg,#1a0008 0%,#400015 40%,#180008 100%); border: 2px solid rgba(255,55,95,0.72); box-shadow: 0 0 0 1px rgba(255,145,175,0.15) inset, 0 0 35px rgba(255,38,88,0.78), 0 0 78px rgba(202,0,58,0.36), 0 28px 80px rgba(82,0,28,0.66); }
-        .news-card.valentine-card .news-card__image-wrapper { background: #200008; border-radius: 22px 22px 0 0; }
-        .news-card.valentine-card .news-card__image { filter: sepia(0.2) hue-rotate(320deg) saturate(200%) contrast(120%) brightness(0.78); transform: scale(1.07); }
+        /* 019 ── SAINT-VALENTIN */
+        .news-card.valentine-card { border-radius: 24px; overflow: hidden; background: linear-gradient(155deg,#1a0008 0%,#400015 40%,#180008 100%); border: 2px solid rgba(255,55,95,0.72); box-shadow: 0 0 0 1px rgba(255,145,175,0.15) inset, 0 0 35px rgba(255,38,88,0.78), 0 0 78px rgba(202,0,58,0.36), 0 28px 80px rgba(82,0,28,0.66); animation: fadeInUp 0.4s ease both, val-heartbeat 1.05s ease-in-out infinite; transform-origin: center center; content-visibility: auto; contain-intrinsic-size: auto 480px; }
+        .news-card.valentine-card::before { content: ""; position: absolute; inset:-18px; z-index:-1; border-radius: 36px; pointer-events:none; background: radial-gradient(ellipse at 50% 62%, rgba(255,28,78,0.42) 0%, rgba(202,0,48,0.22) 40%, transparent 70%); filter: blur(18px); animation: val-halo-pulse 1.05s ease-in-out infinite; }
+        .news-card.valentine-card::after { content: ""; position: absolute; inset:0; z-index:1; pointer-events:none; border-radius: 24px;             background: linear-gradient(130deg,transparent 0 44%,rgba(255,178,198,0.22) 46% 48%,transparent 50%); }
+        .news-card.valentine-card .news-card__image-wrapper { background: #200008; border-radius: 22px 22px 0 0; box-shadow: inset 0 -2px 0 rgba(255,58,98,0.72); overflow: hidden; }
+        .news-card.valentine-card .news-card__image-wrapper::after { z-index:4; border-radius:22px 22px 0 0; background: radial-gradient(circle at 50% 50%, transparent 0 20%, rgba(58,0,18,0.4) 62%, rgba(28,0,8,0.88) 100%), linear-gradient(180deg,rgba(255,78,108,0.12),rgba(182,0,48,0.3)); animation: val-vignette-beat 1.05s ease-in-out infinite; }
+        .news-card.valentine-card .news-card__image { filter: sepia(0.2) hue-rotate(320deg) saturate(200%) contrast(120%) brightness(0.78); transform: scale(1.07); transition: filter 0.4s ease, transform 0.5s ease; }
         .news-card.valentine-card:hover .news-card__image { filter: sepia(0.1) hue-rotate(325deg) saturate(260%) contrast(130%) brightness(1.05); transform: scale(1.16) rotate(0.5deg); }
-        .news-card.valentine-card .news-card__badge, .news-card.valentine-card .news-card__new { background: rgba(30,0,12,0.92); color: #ff90b0; border: 1px solid rgba(255,58,98,0.62); box-shadow: 0 0 18px rgba(255,28,78,0.87), inset 0 0 8px rgba(255,0,48,0.1); }
-        .news-card.valentine-card .news-card__content { background: radial-gradient(circle at 85% 10%, rgba(255,28,78,0.17), transparent 32%), linear-gradient(180deg,#1e000a,#100005); border-top: 1px solid rgba(255,48,88,0.62); }
-        .news-card.valentine-card .news-card__eyebrow { color: #ff6080; text-shadow: 0 0 10px rgba(255,48,78,0.62); }
+        .news-card.valentine-card .news-card__badge, .news-card.valentine-card .news-card__new { background: rgba(30,0,12,0.92); color: #ff90b0; border: 1px solid rgba(255,58,98,0.62); box-shadow: 0 0 18px rgba(255,28,78,0.87), inset 0 0 8px rgba(255,0,48,0.1); backdrop-filter: blur(8px); z-index: 6; }
+        .news-card.valentine-card .news-card__content { background: radial-gradient(circle at 85% 10%, rgba(255,28,78,0.17), transparent 32%), radial-gradient(circle at 10% 85%, rgba(202,0,52,0.1), transparent 30%), linear-gradient(180deg,#1e000a,#100005); border-top: 1px solid rgba(255,48,88,0.62); position: relative; z-index:1; border-radius: 0 0 22px 22px; }
+        .news-card.valentine-card .news-card__content::before { content: "❤️"; position: absolute; right:14px; top:10px; font-size: 32px; line-height:1; pointer-events:none; filter: drop-shadow(0 0 16px rgba(255,28,78,1)); animation: val-heart-icon-beat 1.05s ease-in-out infinite; }
+        .news-card.valentine-card .news-card__content::after { content: "💋"; position: absolute; left:14px; bottom:12px; font-size:20px; opacity:0.44; pointer-events:none; }
+        .news-card.valentine-card .news-card__eyebrow { color: #ff6080; text-transform:none; font-style:italic; text-shadow: 0 0 10px rgba(255,48,78,0.62); }
         .news-card.valentine-card .news-card__title { color: #ffccd8; text-shadow: 0 0 20px rgba(255,58,88,0.92), 0 0 50px rgba(222,0,52,0.52), 0 1px 0 rgba(100,0,28,0.82); }
-        .news-card.valentine-card .news-card__button { background: linear-gradient(135deg,#800020,#cc0040 52%,#900030); color: #ffccd8; border: 1px solid rgba(255,58,98,0.58); }
-        .news-card.valentine-card:hover .news-card__button { background: linear-gradient(135deg,#ff2060,#ff0045 52%,#dd0038); color: #fff; box-shadow: 0 0 40px rgba(255,18,68,1), 0 0 82px rgba(202,0,48,0.52); }
-        .news-card.valentine-card .news-card__bar { background: linear-gradient(90deg,#cc0030,#ff3060,#ffb0c0,#ff3060,#cc0030); height: 5px; }
+        .news-card.valentine-card .news-card__button { background: linear-gradient(135deg,#800020,#cc0040 52%,#900030); color: #ffccd8; border: 1px solid rgba(255,58,98,0.58); border-radius: 100px; box-shadow: 0 0 22px rgba(220,0,52,0.67), inset 0 1px 0 rgba(255,128,158,0.25); overflow: hidden; }
+        .news-card.valentine-card .news-card__button::before { background: linear-gradient(90deg,transparent,rgba(255,178,198,0.52),transparent); animation: val-btn-shine 2.8s ease-in-out infinite; }
+        .news-card.valentine-card .news-card__button::after { content: "♥"; position: absolute; right:16px; top:50%; font-size:14px; color:rgba(255,158,178,0.92); transform: translateY(-50%) scale(0.7); opacity:0; transition: opacity 0.22s, transform 0.22s; }
+        .news-card.valentine-card:hover .news-card__button { background: linear-gradient(135deg,#ff2060,#ff0045 52%,#dd0038); color: #fff; box-shadow: 0 0 40px rgba(255,18,68,1), 0 0 82px rgba(202,0,48,0.52); padding-right: 36px; }
+        .news-card.valentine-card:hover .news-card__button::after { opacity:1; transform:translateY(-50%) scale(1); color:#fff; }
+        .news-card.valentine-card .news-card__bar { background: linear-gradient(90deg,#cc0030,#ff3060,#ffb0c0,#ff3060,#cc0030); background-size: 300% auto; height: 5px; border-radius: 0 0 22px 22px; }
+        
+        .val-deco { position:absolute; inset:0; z-index:14; pointer-events:none; overflow:hidden; border-radius:24px; }
+        .val-heart { position:absolute; bottom:-20px; left:var(--hx); font-size:var(--hs,1.1em); opacity:0; filter:drop-shadow(0 0 5px rgba(255,38,78,0.78)); animation:val-heart-rise 4.5s var(--hd) ease-in-out infinite; }
+        .val-heart::before { content:"❤️"; }
+        .val-heart:nth-child(3n)::before { content:"💕"; }
+        .val-heart:nth-child(5n)::before { content:"💗"; }
+        .val-rose { position:absolute; right:18px; bottom:-18px; font-size:24px; pointer-events:none; filter:drop-shadow(0 0 12px rgba(255,48,88,0.9)); animation:val-rose-float 4s ease-in-out infinite; }
+        .val-rose::before { content:"🌹"; }
+        @keyframes val-rose-float { 0%,100%{transform:translateY(0) rotate(-5deg);opacity:0.6} 50%{transform:translateY(-10px) rotate(5deg);opacity:1} }
 
-        .news-card.fire-card { background: radial-gradient(ellipse at 50% 105%, rgba(30,80,0,0.35) 0%, transparent 45%), linear-gradient(170deg, #010800 0%, #021200 40%, #000c00 100%); border: 2px solid rgba(57,255,20,0.72); box-shadow: 0 0 0 1px rgba(57,255,20,0.1) inset, 0 0 52px rgba(57,255,20,0.75), 0 0 110px rgba(20,200,0,0.38), 0 30px 80px rgba(0,0,0,0.82); }
-        .news-card.fire-card .news-card__image-wrapper { background: linear-gradient(180deg, #010800 0%, #000500 100%); border-radius: 22px 22px 0 0; }
-        .news-card.fire-card .news-card__image { filter: brightness(0.92) contrast(1.04); transform: scale(1.08); }
-        .news-card.fire-card:hover .news-card__image { filter: brightness(1.05) contrast(1.06); transform: scale(1.19); }
-        .news-card.fire-card .news-card__badge, .news-card.fire-card .news-card__new { background: rgba(0,6,0,0.96); color: #7aff40; border: 1px solid rgba(57,255,20,0.78); box-shadow: 0 0 22px rgba(57,255,20,0.92), inset 0 0 8px rgba(57,255,20,0.12); }
-        .news-card.fire-card .news-card__content { background: radial-gradient(ellipse at 50% 0%, rgba(57,255,20,0.14) 0%, transparent 48%), linear-gradient(180deg, #031200 0%, #010800 100%); border-top: 1px solid rgba(57,255,20,0.65); }
-        .news-card.fire-card .news-card__eyebrow { color:#7aff40; text-shadow:0 0 10px rgba(57,255,20,0.88); }
-        .news-card.fire-card .news-card__title { color: #c8ff80; text-shadow: 0 0 22px rgba(57,255,20,1), 0 0 55px rgba(20,200,0,0.62); }
-        .news-card.fire-card .news-card__button { background: linear-gradient(135deg, #010e00, #004000 52%, #010a00); color: #7aff40; border: 1px solid rgba(57,255,20,0.68); }
-        .news-card.fire-card:hover .news-card__button { background: linear-gradient(135deg,#00cc00,#39ff14 52%,#009900); color:#000; box-shadow:0 0 46px rgba(57,255,20,1); }
-        .news-card.fire-card .news-card__bar { background:linear-gradient(90deg,#002200,#39ff14,#c8ff80,#39ff14,#002200); height:5px; }
+        /* 015 ── FEU VERT "HELLFIRE EMERALD" — redesign complet */
+        .news-card.fire-card {
+            isolation: isolate;
+            border-radius: 24px;
+            overflow: clip;
+            background:
+                radial-gradient(ellipse at 50% 105%, rgba(30,80,0,0.35) 0%, transparent 45%),
+                linear-gradient(170deg, #010800 0%, #021200 40%, #000c00 100%);
+            border: 2px solid rgba(57,255,20,0.72);
+            box-shadow:
+                0 0 0 1px rgba(57,255,20,0.1) inset,
+                0 0 52px rgba(57,255,20,0.75),
+                0 0 110px rgba(20,200,0,0.38),
+                0 0 200px rgba(0,80,0,0.14),
+                0 30px 80px rgba(0,0,0,0.82);
+            animation: fadeInUp 0.4s ease both;
+            content-visibility: auto; contain-intrinsic-size: auto 480px;
+        }
+        /* Canvas flammes vertes (rendu JS) */
+        .news-card.fire-card .fire-canvas {
+            position: absolute;
+            bottom: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            border-radius: 24px;
+        }
+        .news-card.fire-card .news-card__image-wrapper {
+            background: linear-gradient(180deg, #010800 0%, #000500 100%);
+            border-radius: 22px 22px 0 0;
+            box-shadow: inset 0 -3px 0 rgba(57,255,20,0.85), inset 0 0 32px rgba(0,0,0,0.55);
+            overflow: hidden;
+        }
+        /* Distorsion chaleur sur image */
+        .news-card.fire-card .news-card__image-wrapper::before {
+            content: "";
+            position: absolute; inset: 0; z-index: 3; pointer-events: none;
+            border-radius: 22px 22px 0 0;
+            background:
+                linear-gradient(180deg, rgba(57,255,20,0.10) 0%, transparent 42%),
+                repeating-linear-gradient(180deg, transparent 0 5px, rgba(57,255,20,0.025) 5px 6px);
+        }
+        .news-card.fire-card .news-card__image-wrapper::after {
+            z-index: 4; border-radius: 22px 22px 0 0;
+            background:
+                radial-gradient(circle at 50% 50%, transparent 0 14%, rgba(0,8,0,0.4) 54%, rgba(0,4,0,0.88) 100%),
+                radial-gradient(circle at 50% 2%, rgba(57,255,20,0.32) 0 26%, transparent 58%),
+                linear-gradient(180deg, transparent 38%, rgba(57,255,20,0.1) 100%);
+        }
+        .news-card.fire-card .news-card__image {
+            filter: brightness(0.92) contrast(1.04);
+            transform: scale(1.08); transition: filter 0.4s ease, transform 0.5s ease;
+        }
+        .news-card.fire-card:hover .news-card__image {
+            filter: brightness(1.05) contrast(1.06);
+            transform: scale(1.19) rotate(0.3deg);
+        }
+        .news-card.fire-card:hover {
+            box-shadow:
+                0 0 0 1px rgba(57,255,20,0.12) inset,
+                0 0 72px rgba(57,255,20,1), 0 0 145px rgba(20,200,0,0.58),
+                0 0 250px rgba(0,80,0,0.2), 0 32px 90px rgba(0,0,0,0.88);
+        }
+        .news-card.fire-card .news-card__badge, .news-card.fire-card .news-card__new {
+            background: rgba(0,6,0,0.96); color: #7aff40;
+            border: 1px solid rgba(57,255,20,0.78);
+            box-shadow: 0 0 22px rgba(57,255,20,0.92), inset 0 0 8px rgba(57,255,20,0.12);
+            backdrop-filter: blur(8px); z-index: 6;
+        }
+        .news-card.fire-card .news-card__content {
+            background:
+                radial-gradient(ellipse at 50% 0%, rgba(57,255,20,0.14) 0%, transparent 48%),
+                radial-gradient(ellipse at 85% 90%, rgba(0,140,0,0.07) 0%, transparent 35%),
+                linear-gradient(180deg, #031200 0%, #010800 100%);
+            border-top: 1px solid rgba(57,255,20,0.65);
+            position: relative; z-index: 1; border-radius: 0 0 22px 22px;
+        }
+        .news-card.fire-card .news-card__content::before { content: none; }
+        .news-card.fire-card .news-card__content::after { content: none; }
+        .news-card.fire-card .news-card__eyebrow { color:#7aff40; text-shadow:0 0 10px rgba(57,255,20,0.88); letter-spacing:1px; }
+        .news-card.fire-card .news-card__title {
+            color: #c8ff80;
+            text-shadow: 0 0 22px rgba(57,255,20,1), 0 0 55px rgba(20,200,0,0.62), 0 1px 0 rgba(0,25,0,0.95);
+        }
+        .news-card.fire-card .news-card__button {
+            background: linear-gradient(135deg, #010e00, #004000 52%, #010a00);
+            color: #7aff40; border: 1px solid rgba(57,255,20,0.68);
+            border-radius: 100px;
+            box-shadow: 0 0 22px rgba(57,255,20,0.65), inset 0 1px 0 rgba(150,255,80,0.22); overflow:hidden;
+        }
+        .news-card.fire-card .news-card__button::before { background: linear-gradient(90deg,transparent,rgba(150,255,80,0.56),transparent); animation: fire-btn-shine 2.4s ease-in-out infinite; }
+        .news-card.fire-card:hover .news-card__button { background: linear-gradient(135deg,#00cc00,#39ff14 52%,#009900); color:#000; box-shadow:0 0 46px rgba(57,255,20,1),0 0 95px rgba(20,200,0,0.56); }
+        .news-card.fire-card .news-card__bar { background:linear-gradient(90deg,#002200,#39ff14,#c8ff80,#39ff14,#002200); background-size:300% auto; height:5px; border-radius:0 0 22px 22px; }
+        /* 016 ── EAU — "LIQUID RAIN GLASS" */
+        .news-card.water-card {
+            isolation: isolate; border-radius: 24px; overflow: clip;
+            filter: url(#water-surface);
+            background:
+                radial-gradient(ellipse at 28% 18%, rgba(0,160,255,0.07) 0%, transparent 48%),
+                radial-gradient(ellipse at 72% 82%, rgba(0,100,200,0.05) 0%, transparent 44%),
+                linear-gradient(168deg, #00080f 0%, #001525 42%, #000610 100%);
+            border: 2px solid rgba(55,180,255,0.58);
+            box-shadow:
+                0 0 0 1px rgba(100,200,255,0.09) inset,
+                0 0 0 3px rgba(0,120,200,0.04) inset,
+                0 0 42px rgba(0,165,255,0.52),
+                0 0 90px rgba(0,80,180,0.22),
+                0 30px 80px rgba(0,0,0,0.8);
+            animation: fadeInUp 0.4s ease both;
+        }
+        /* Stries d'eau verticales */
+        .news-card.water-card::after {
+            content: ""; position: absolute; inset: 0; z-index: 8; pointer-events: none; border-radius:24px;
+            background:
+                repeating-linear-gradient(180deg,
+                    transparent 0 3px, rgba(100,210,255,0.055) 3px 4px,
+                    transparent 4px 10px, rgba(70,190,255,0.038) 10px 11px,
+                    transparent 11px 20px, rgba(120,225,255,0.045) 20px 21px,
+                    transparent 21px 32px
+                ),
+                repeating-linear-gradient(90deg,
+                    transparent 0 26px, rgba(130,215,255,0.028) 26px 28px,
+                    transparent 28px 55px
+                );
+        }
+        .news-card.water-card .news-card__image-wrapper {
+            background: linear-gradient(180deg, #000810 0%, #000610 100%);
+            border-radius: 22px 22px 0 0;
+            box-shadow: inset 0 -3px 0 rgba(0,175,255,0.78), inset 0 0 22px rgba(0,0,0,0.32);
+            overflow: hidden; position: relative;
+        }
+        /* Surface vitrée mouillée — gouttes */
+        .news-card.water-card .news-card__image-wrapper::before {
+            content: "";
+            position: absolute; inset: 0; z-index: 3; pointer-events: none; border-radius: 22px 22px 0 0;
+            background:
+                /* Gouttes statiques */
+                radial-gradient(ellipse 5px 8px at 16% 28%, rgba(200,240,255,0.22) 0 50%, transparent 55%),
+                radial-gradient(ellipse 4px 6px at 42% 55%, rgba(180,230,255,0.18) 0 50%, transparent 55%),
+                radial-gradient(ellipse 6px 9px at 68% 20%, rgba(210,245,255,0.2)  0 50%, transparent 55%),
+                radial-gradient(ellipse 4px 7px at 82% 70%, rgba(190,235,255,0.17) 0 50%, transparent 55%),
+                radial-gradient(ellipse 5px 8px at 30% 80%, rgba(200,240,255,0.16) 0 50%, transparent 55%),
+                radial-gradient(ellipse 3px 5px at 90% 42%, rgba(180,228,255,0.14) 0 50%, transparent 55%),
+                /* Reflet latéral */
+                linear-gradient(90deg,rgba(140,220,255,0.05) 0%,transparent 18%,transparent 82%,rgba(140,220,255,0.04) 100%),
+                /* Voile humide haut */
+                linear-gradient(180deg,rgba(150,220,255,0.07) 0%,transparent 32%);
+            animation: water-droplets-sway 4.5s ease-in-out infinite;
+        }
+        .news-card.water-card .news-card__image-wrapper::after {
+            z-index: 4; border-radius: 22px 22px 0 0;
+            background:
+                radial-gradient(circle at 50% 50%, transparent 0 16%, rgba(0,8,18,0.36) 58%, rgba(0,3,12,0.8) 100%),
+                radial-gradient(circle at 50% 5%, rgba(0,165,255,0.18) 0 28%, transparent 60%),
+                linear-gradient(180deg, transparent 55%, rgba(0,140,220,0.08) 100%);
+        }
+        .news-card.water-card .news-card__image {
+            filter: brightness(0.9) contrast(1.04);
+            transform: scale(1.08); transition: filter 0.4s ease, transform 0.5s ease;
+        }
+        .news-card.water-card:hover .news-card__image {
+            filter: brightness(1.06) contrast(1.06);
+            transform: scale(1.18) rotate(-0.3deg);
+        }
+        .news-card.water-card:hover {
+            box-shadow:
+                0 0 0 1px rgba(100,200,255,0.12) inset,
+                0 0 68px rgba(0,180,255,0.92), 0 0 135px rgba(0,100,200,0.48),
+                0 32px 90px rgba(0,0,0,0.85);
+        }
+        .news-card.water-card .news-card__badge, .news-card.water-card .news-card__new {
+            background: rgba(0,6,18,0.95); color: #66d8ff;
+            border: 1px solid rgba(0,180,255,0.74);
+            box-shadow: 0 0 22px rgba(0,180,255,0.88), inset 0 0 8px rgba(0,180,255,0.1);
+            backdrop-filter: blur(10px); z-index: 6;
+        }
+        .news-card.water-card .news-card__content {
+            background:
+                radial-gradient(ellipse at 22% 0%, rgba(0,180,255,0.1) 0%, transparent 42%),
+                radial-gradient(ellipse at 78% 100%, rgba(0,120,200,0.07) 0%, transparent 36%),
+                linear-gradient(180deg, #001320 0%, #000810 100%);
+            border-top: 1px solid rgba(0,180,255,0.48);
+            position: relative; z-index: 1; border-radius: 0 0 22px 22px; backdrop-filter:blur(2px);
+        }
+        .news-card.water-card .news-card__content::before { content: none; }
+        .news-card.water-card .news-card__content::after {
+            content:none;
+        }
+        .news-card.water-card .news-card__eyebrow { color:#66d8ff; text-shadow:0 0 10px rgba(0,180,255,0.82); letter-spacing:1px; }
+        .news-card.water-card .news-card__title {
+            color:#a8eaff;
+            text-shadow:0 0 22px rgba(0,180,255,0.92),0 0 52px rgba(0,120,220,0.52),0 1px 0 rgba(0,12,32,0.95);
+        }
+        .news-card.water-card .news-card__button {
+            background:linear-gradient(135deg,#001222,#002e4a 52%,#001828);
+            color:#66d8ff; border:1px solid rgba(0,180,255,0.68);
+            border-radius:100px;
+            box-shadow:0 0 22px rgba(0,180,255,0.65),inset 0 1px 0 rgba(100,205,255,0.22); overflow:hidden;
+        }
+        .news-card.water-card .news-card__button::before { background:linear-gradient(90deg,transparent,rgba(100,210,255,0.54),transparent); animation:water-btn-shine 3s ease-in-out infinite; }
+        .news-card.water-card:hover .news-card__button { background:linear-gradient(135deg,#0088cc,#00b4ff 52%,#006699); color:#000; box-shadow:0 0 46px rgba(0,180,255,1),0 0 95px rgba(0,100,200,0.54); }
+        .news-card.water-card .news-card__bar { background:linear-gradient(90deg,#002e50,#00b4ff,#80dcff,#00b4ff,#002e50); background-size:300% auto; height:5px; border-radius:0 0 22px 22px; }
+        .water-deco { position:absolute; inset:0; z-index:15; pointer-events:none; overflow:hidden; border-radius:24px; }
 
-        .news-card.water-card { background: linear-gradient(168deg, #00080f 0%, #001525 42%, #000610 100%); border: 2px solid rgba(55,180,255,0.58); box-shadow: 0 0 42px rgba(0,165,255,0.52), 0 30px 80px rgba(0,0,0,0.8); }
-        .news-card.water-card .news-card__image-wrapper { background: linear-gradient(180deg, #000810 0%, #000610 100%); border-radius: 22px 22px 0 0; }
-        .news-card.water-card .news-card__image { filter: brightness(0.9) contrast(1.04); transform: scale(1.08); }
-        .news-card.water-card:hover .news-card__image { filter: brightness(1.06) contrast(1.06); transform: scale(1.18); }
-        .news-card.water-card .news-card__badge, .news-card.water-card .news-card__new { background: rgba(0,6,18,0.95); color: #66d8ff; border: 1px solid rgba(0,180,255,0.74); box-shadow: 0 0 22px rgba(0,180,255,0.88); }
-        .news-card.water-card .news-card__content { background: linear-gradient(180deg, #001320 0%, #000810 100%); border-top: 1px solid rgba(0,180,255,0.48); }
-        .news-card.water-card .news-card__eyebrow { color:#66d8ff; text-shadow:0 0 10px rgba(0,180,255,0.82); }
-        .news-card.water-card .news-card__title { color:#a8eaff; text-shadow:0 0 22px rgba(0,180,255,0.92); }
-        .news-card.water-card .news-card__button { background:linear-gradient(135deg,#001222,#002e4a 52%,#001828); color:#66d8ff; border:1px solid rgba(0,180,255,0.68); }
-        .news-card.water-card:hover .news-card__button { background:linear-gradient(135deg,#0088cc,#00b4ff 52%,#006699); color:#000; box-shadow:0 0 46px rgba(0,180,255,1); }
-        .news-card.water-card .news-card__bar { background:linear-gradient(90deg,#002e50,#00b4ff,#80dcff,#00b4ff,#002e50); height:5px; }
+        /* Bulles animées en JS (physique rebond) */
+        .water-bubble {
+            position: absolute;
+            top: 0; left: 0;
+            width: var(--bs,10px); height: var(--bs,10px);
+            border-radius: 50%;
+            background: radial-gradient(circle at 32% 28%,
+                rgba(255,255,255,0.88) 0 18%,
+                rgba(180,235,255,0.55) 20%,
+                rgba(60,175,255,0.22) 55%,
+                rgba(0,140,230,0.08) 100%);
+            box-shadow:
+                inset 0 0 0 1px rgba(160,225,255,0.45),
+                0 0 6px rgba(0,175,255,0.35),
+                0 0 14px rgba(0,140,220,0.2);
+            will-change: transform, opacity;
+            pointer-events: none;
+        }
 
-        .news-card.ice-card { background: linear-gradient(168deg, rgba(0,8,24,0.96) 0%, rgba(0,14,38,0.93) 30%, rgba(0,20,50,0.91) 55%); border: 2px solid rgba(155,225,255,0.68); box-shadow: 0 0 48px rgba(110,205,255,0.65), 0 30px 80px rgba(0,0,0,0.85); backdrop-filter: blur(2px); }
-        .news-card.ice-card .news-card__image-wrapper { background: linear-gradient(180deg, #000a1e 0%, #000816 100%); border-radius: 22px 22px 0 0; }
-        .news-card.ice-card .news-card__image { filter: brightness(0.88) contrast(1.05); transform: scale(1.08); }
-        .news-card.ice-card:hover .news-card__image { filter: brightness(1.04) contrast(1.06); transform: scale(1.18); }
-        .news-card.ice-card .news-card__badge, .news-card.ice-card .news-card__new { background: rgba(0,6,20,0.92); color: #b2e4ff; border: 1px solid rgba(155,225,255,0.74); box-shadow: 0 0 22px rgba(110,205,255,0.88); }
-        .news-card.ice-card .news-card__content { background: linear-gradient(180deg, rgba(0,12,30,0.88) 0%, rgba(0,8,22,0.9) 100%); border-top: 1px solid rgba(155,225,255,0.48); }
-        .news-card.ice-card .news-card__eyebrow { color:#8dd4ff; text-shadow:0 0 10px rgba(155,225,255,0.88); }
-        .news-card.ice-card .news-card__title { color:#c4ecff; text-shadow:0 0 24px rgba(155,225,255,0.98); }
-        .news-card.ice-card .news-card__button { background: linear-gradient(135deg, rgba(0,12,32,0.9), rgba(0,22,56,0.85) 52%, rgba(0,12,32,0.9)); color:#92dcff; border:1px solid rgba(155,225,255,0.68); }
-        .news-card.ice-card:hover .news-card__button { background: linear-gradient(135deg, #0077cc, #55bbff 52%, #0066aa); color:#000; box-shadow:0 0 46px rgba(155,225,255,1); }
-        .news-card.ice-card .news-card__bar { background:linear-gradient(90deg,#001635,#80d8ff,#caeeff,#80d8ff,#001635); height:5px; }
+        /* Surface d'eau visible (vagues + reflets) */
+        .water-surface {
+            position: absolute; inset: 0; z-index: 12;
+            pointer-events: none; border-radius: 24px; overflow: hidden;
+            background:
+                linear-gradient(168deg,
+                    rgba(30,120,210,0.08) 0%,
+                    rgba(0,60,140,0.12) 45%,
+                    rgba(0,20,55,0.18) 100%
+                );
+        }
+        .water-surface::before {
+            content: ''; position: absolute; inset: -20%;
+            background:
+                repeating-linear-gradient(78deg,
+                    transparent 0px,
+                    rgba(100,210,255,0.03) 18px,
+                    transparent 36px,
+                    rgba(60,185,245,0.015) 56px,
+                    transparent 74px
+                ),
+                repeating-linear-gradient(-72deg,
+                    transparent 0px,
+                    rgba(120,220,255,0.02) 22px,
+                    transparent 44px,
+                    rgba(80,195,245,0.01) 66px,
+                    transparent 88px
+                );
+            background-size: 200% 200%;
+            mix-blend-mode: overlay;
+            animation: water-flow 10s ease-in-out infinite alternate;
+            transition: animation-duration 0.6s;
+        }
+        .water-surface::after {
+            content: ''; position: absolute;
+            width: 60%; height: 40%;
+            top: -8%; left: 20%;
+            background: radial-gradient(ellipse, rgba(180,235,255,0.10) 0%, transparent 70%);
+            filter: blur(14px);
+            animation: water-sheen 16s ease-in-out infinite;
+            transition: animation-duration 0.6s, opacity 0.6s;
+        }
+        .news-card.water-card:hover .water-surface::before {
+            animation-duration: 5s;
+        }
+        .news-card.water-card:hover .water-surface::after {
+            animation-duration: 8s;
+            opacity: 0.6;
+        }
+        @keyframes water-flow {
+            0%   { background-position: 0% 0%; }
+            100% { background-position: 100% 60%; }
+        }
+        @keyframes water-sheen {
+            0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.2; }
+            25%  { transform: translate(22%, 12%) scale(1.25); opacity: 0.5; }
+            50%  { transform: translate(-18%, 28%) scale(0.85); opacity: 0.08; }
+            75%  { transform: translate(10%, -8%) scale(1.15); opacity: 0.35; }
+        }
 
+        /* 018 ── LIQUID ICE — glace vivante semi-transparente avec flux gelé */
+        .news-card.ice-card {
+            isolation: isolate;
+            border-radius: 24px;
+            overflow: clip;
+            background:
+                /* — Couche 4 : reflets de glace en surface (static) */
+                radial-gradient(ellipse 55% 35% at 10% 10%, rgba(210,245,255,0.06) 0%, transparent 60%),
+                radial-gradient(ellipse 50% 30% at 90% 8%,  rgba(190,235,255,0.05) 0%, transparent 55%),
+                radial-gradient(ellipse 40% 25% at 20% 92%, rgba(170,220,245,0.03) 0%, transparent 50%),
+                radial-gradient(ellipse 40% 25% at 80% 92%, rgba(170,220,245,0.03) 0%, transparent 50%),
+                /* — Couche 3 : base glacée profonde (fond sombre bleuté) */
+                linear-gradient(168deg,
+                    rgba(0,8,24,0.96) 0%,
+                    rgba(0,14,38,0.93) 30%,
+                    rgba(0,20,50,0.91) 55%,
+                    rgba(0,14,38,0.93) 80%,
+                    rgba(0,8,24,0.96) 100%
+                );
+            border: 2px solid rgba(155,225,255,0.68);
+            box-shadow:
+                0 0 0 1px rgba(210,245,255,0.18) inset,
+                0 0 0 2px rgba(100,180,255,0.08) inset,
+                0 0 48px rgba(110,205,255,0.65),
+                0 0 105px rgba(55,125,215,0.3),
+                0 30px 80px rgba(0,0,0,0.85);
+            animation: fadeInUp 0.4s ease both;
+            backdrop-filter: blur(2px);
+        }
+        .news-card.ice-card .frost-canvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 7;
+            pointer-events: none;
+            border-radius: 24px;
+        }
+        /* — SURFACE LIQUID ICE : couches de glace fracturée superposées — */
+        .news-card.ice-card::after {
+            content: "";
+            position: absolute; inset: 0; z-index: 8; pointer-events: none; border-radius: 24px;
+            background:
+                /* ── Coin TL ── */
+                radial-gradient(ellipse 55% 40% at 0% 0%,     rgba(215,245,255,0.08) 0%, transparent 55%),
+                /* ── Coin TR ── */
+                radial-gradient(ellipse 48% 35% at 100% 0%,   rgba(200,240,255,0.06) 0%, transparent 50%),
+                /* ── Coin BL ── */
+                radial-gradient(ellipse 38% 28% at 0% 100%,   rgba(185,230,255,0.04) 0%, transparent 45%),
+                /* ── Coin BR ── */
+                radial-gradient(ellipse 38% 28% at 100% 100%, rgba(185,230,255,0.04) 0%, transparent 45%),
+                /* ── Plan de fracture 1 (125°) — large bloc incliné ── */
+                linear-gradient(125deg,
+                    transparent 0%, transparent 18%,
+                    rgba(215,245,255,0.07) 20%, rgba(210,240,255,0.03) 22%, transparent 24%,
+                    transparent 42%,
+                    rgba(205,238,255,0.04) 44%, rgba(200,235,255,0.02) 46%, transparent 48%,
+                    transparent 100%
+                ),
+                /* ── Plan de fracture 2 (−45°) — second bloc ── */
+                linear-gradient(-45deg,
+                    transparent 0%, transparent 35%,
+                    rgba(220,248,255,0.05) 37%, rgba(210,245,255,0.02) 39%, transparent 41%,
+                    transparent 62%,
+                    rgba(215,245,255,0.03) 64%, rgba(210,240,255,0.01) 66%, transparent 68%,
+                    transparent 100%
+                ),
+                /* ── Plan de fracture 3 (160°) — petite fracture ── */
+                linear-gradient(160deg,
+                    transparent 0%, transparent 55%,
+                    rgba(210,245,255,0.06) 57%, rgba(205,238,255,0.02) 59%, transparent 61%,
+                    transparent 78%,
+                    rgba(220,248,255,0.03) 80%, rgba(215,245,255,0.01) 82%, transparent 84%,
+                    transparent 100%
+                ),
+                /* ── Traînée spéculaire mobile (reflet froid) ── */
+                linear-gradient(105deg,
+                    transparent 0%,
+                    rgba(220,248,255,0.03) 10%,
+                    rgba(200,238,255,0.07) 16%,
+                    rgba(220,248,255,0.02) 20%,
+                    transparent 25%, transparent 45%,
+                    rgba(190,230,255,0.03) 50%,
+                    rgba(210,245,255,0.05) 54%,
+                    transparent 58%,
+                    transparent 75%,
+                    rgba(200,238,255,0.02) 80%,
+                    transparent 84%
+                ),
+                /* ── Arête de fracture brillante (−30°) ── */
+                linear-gradient(-30deg,
+                    transparent 0%, transparent 40%,
+                    rgba(225,250,255,0.06) 41%, rgba(215,248,255,0.01) 42%, transparent 43%,
+                    transparent 70%,
+                    rgba(220,248,255,0.04) 71%, rgba(210,245,255,0.01) 72%, transparent 73%,
+                    transparent 100%
+                ),
+                /* ── Caustiques internes (profondeur) ── */
+                radial-gradient(ellipse 50% 25% at 35% 22%, rgba(155,225,255,0.05) 0%, transparent 52%),
+                radial-gradient(ellipse 45% 22% at 68% 48%, rgba(135,210,245,0.04) 0%, transparent 48%),
+                radial-gradient(ellipse 55% 20% at 22% 62%, rgba(175,230,255,0.03) 0%, transparent 50%),
+                /* ── Réseau de fissures 1 (162°) ── */
+                repeating-linear-gradient(162deg,
+                    transparent 0 22px,
+                    rgba(220,248,255,0.012) 22px 23px,
+                    transparent 23px 46px,
+                    rgba(210,245,255,0.006) 46px 47px,
+                    transparent 47px 70px
+                ),
+                /* ── Réseau de fissures 2 (−172°) ── */
+                repeating-linear-gradient(-172deg,
+                    transparent 0 18px,
+                    rgba(215,245,255,0.01) 18px 19px,
+                    transparent 19px 40px,
+                    rgba(205,240,255,0.005) 40px 41px,
+                    transparent 41px 62px
+                ),
+                /* ── Micro-texture cristalline ── */
+                repeating-linear-gradient(45deg,
+                    transparent 0 14px, rgba(190,235,255,0.005) 14px 15px,
+                    transparent 15px 30px
+                ),
+                repeating-linear-gradient(-38deg,
+                    transparent 0 18px, rgba(180,228,250,0.004) 18px 19px,
+                    transparent 19px 38px
+                );
+            background-size:
+                100% 100%, 100% 100%, 100% 100%, 100% 100%,
+                200% 100%, 200% 100%, 200% 100%,
+                350% 100%,
+                250% 100%,
+                100% 100%, 100% 100%, 100% 100%,
+                100% 100%, 100% 100%,
+                100% 100%, 100% 100%;
+            animation:
+                liquid-ice-flow 18s ease-in-out infinite,
+                ice-frost-breathe 5s ease-in-out infinite;
+        }
+        .news-card.ice-card .news-card__image-wrapper {
+            background: linear-gradient(180deg, #000a1e 0%, #000816 100%);
+            border-radius: 22px 22px 0 0;
+            box-shadow: inset 0 -3px 0 rgba(155,225,255,0.84), inset 0 0 26px rgba(0,0,0,0.45);
+            overflow: hidden; position: relative;
+        }
+        /* Glace liquide sur les bords de l'image */
+        .news-card.ice-card .news-card__image-wrapper::before {
+            content: "";
+            position: absolute; inset: 0; z-index: 3; pointer-events: none; border-radius: 22px 22px 0 0;
+            background:
+                linear-gradient(180deg, rgba(210,245,255,0.15) 0%, rgba(185,235,255,0.05) 12%, transparent 28%),
+                linear-gradient(90deg,  rgba(190,235,255,0.1) 0%, rgba(168,225,255,0.03) 10%, transparent 22%),
+                linear-gradient(270deg, rgba(190,235,255,0.08) 0%, rgba(168,225,255,0.02) 10%, transparent 22%),
+                linear-gradient(135deg, transparent 0 22%, rgba(228,248,255,0.06) 24% 25%, transparent 26% 58%, rgba(190,235,255,0.04) 60% 61%, transparent 62%);
+            background-size: 100% 100%, 100% 100%, 100% 100%, 300% 100%;
+            animation: liquid-ice-edge 8s ease-in-out infinite;
+        }
+        .news-card.ice-card .news-card__image-wrapper::after {
+            z-index: 4; border-radius: 22px 22px 0 0;
+            background:
+                radial-gradient(circle at 50% 50%, transparent 0 13%, rgba(0,6,20,0.5) 56%, rgba(0,3,14,0.9) 100%),
+                radial-gradient(circle at 50% 3%, rgba(155,225,255,0.2) 0 28%, transparent 60%),
+                linear-gradient(180deg, transparent 52%, rgba(100,185,255,0.05) 100%);
+        }
+        .news-card.ice-card .news-card__image {
+            filter: brightness(0.88) contrast(1.05);
+            transform: scale(1.08); transition: filter 0.4s ease, transform 0.5s ease;
+        }
+        .news-card.ice-card:hover .news-card__image {
+            filter: brightness(1.04) contrast(1.06);
+            transform: scale(1.18) rotate(0.5deg);
+        }
+        .news-card.ice-card:hover {
+            border-color: rgba(195,238,255,0.9);
+            box-shadow:
+                0 0 0 1px rgba(220,248,255,0.2) inset,
+                0 0 0 2px rgba(130,200,255,0.1) inset,
+                0 0 68px rgba(155,225,255,0.95),
+                0 0 145px rgba(85,165,245,0.52),
+                0 32px 90px rgba(0,0,0,0.9);
+            backdrop-filter: blur(4px);
+        }
+        .news-card.ice-card .news-card__badge, .news-card.ice-card .news-card__new {
+            background: rgba(0,6,20,0.92); color: #b2e4ff;
+            border: 1px solid rgba(155,225,255,0.74);
+            box-shadow: 0 0 22px rgba(110,205,255,0.88), inset 0 0 8px rgba(110,205,255,0.1);
+            backdrop-filter: blur(10px); z-index: 6;
+        }
+        .news-card.ice-card .news-card__content {
+            background:
+                radial-gradient(ellipse at 50% 0%, rgba(155,225,255,0.08) 0%, transparent 42%),
+                radial-gradient(ellipse at 12% 85%, rgba(80,165,245,0.04) 0%, transparent 34%),
+                radial-gradient(ellipse at 88% 78%, rgba(100,185,255,0.03) 0%, transparent 32%),
+                repeating-linear-gradient(42deg,
+                    transparent 0 24px, rgba(190,235,255,0.005) 24px 25px, transparent 25px 50px
+                ),
+                linear-gradient(180deg, rgba(0,12,30,0.88) 0%, rgba(0,8,22,0.9) 100%);
+            border-top: 1px solid rgba(155,225,255,0.48);
+            position: relative; z-index: 1; border-radius: 0 0 22px 22px;
+            backdrop-filter: blur(2px);
+        }
+        .news-card.ice-card .news-card__content::before { content: none; }
+        .news-card.ice-card .news-card__content::after { content: none; }
+        .news-card.ice-card .news-card__eyebrow { color:#8dd4ff; text-shadow:0 0 10px rgba(155,225,255,0.88); letter-spacing:1px; }
+        .news-card.ice-card .news-card__title {
+            color:#c4ecff;
+            text-shadow:0 0 24px rgba(155,225,255,0.98),0 0 58px rgba(85,165,245,0.58),0 1px 0 rgba(0,6,25,0.95);
+        }
+        .news-card.ice-card .news-card__button {
+            background: linear-gradient(135deg, rgba(0,12,32,0.9), rgba(0,22,56,0.85) 52%, rgba(0,12,32,0.9));
+            color:#92dcff; border:1px solid rgba(155,225,255,0.68);
+            border-radius:100px;
+            box-shadow:0 0 22px rgba(110,205,255,0.68),inset 0 1px 0 rgba(210,245,255,0.24); overflow:hidden;
+        }
+        .news-card.ice-card .news-card__button::before { background:linear-gradient(90deg,transparent,rgba(210,245,255,0.52),transparent); animation:ice-btn-shine 3.2s ease-in-out infinite; }
+        .news-card.ice-card:hover .news-card__button {
+            background: linear-gradient(135deg, #0077cc, #55bbff 52%, #0066aa);
+            color:#000; box-shadow:0 0 46px rgba(155,225,255,1),0 0 95px rgba(85,165,245,0.58);
+            backdrop-filter: blur(2px);
+        }
+        .news-card.ice-card .news-card__bar { background:linear-gradient(90deg,#001635,#80d8ff,#caeeff,#80d8ff,#001635); background-size:300% auto; height:5px; border-radius:0 0 22px 22px; }
+        .ice-deco { position:absolute; inset:0; z-index:15; pointer-events:none; overflow:visible; border-radius:24px; }
+        .ice-crystal {
+            position:absolute; top:calc(var(--iy,-18px)); left:var(--ix);
+            font-size:var(--is,16px); opacity:0; color:#92dcff;
+            filter:drop-shadow(0 0 6px rgba(155,225,255,0.82));
+            animation:ice-crystal-fall 5.5s var(--id) ease-in infinite;
+        }
+        .ice-crystal::before { content:"❄"; }
+        .ice-crystal:nth-child(3n)::before { content:"✦"; }
+        .ice-crystal:nth-child(5n)::before { content:"❆"; }
+        /* Highlight dynamique (souris) sur la surface liquid ice */
+        .news-card.ice-card .liquid-ice-highlight {
+            position: absolute; inset: 0; z-index: 9; pointer-events: none; border-radius: 24px;
+            background: radial-gradient(
+                circle at calc(var(--mx, 0.5) * 100%) calc(var(--my, 0.5) * 100%),
+                rgba(220,248,255,0.1) 0%,
+                rgba(200,238,255,0.03) 18%,
+                transparent 38%
+            );
+            opacity: 0; transition: opacity 0.5s ease;
+        }
+        .news-card.ice-card:hover .liquid-ice-highlight {
+            opacity: 1;
+        }
+        
+                /* KEYFRAMES GLOBAUX POUR LES CARTES SPÉCIALES */
+        @keyframes glitch-card-surge { 0%,100%{box-shadow:0 0 24px rgba(0,255,65,.7),0 0 60px rgba(0,255,65,.22),0 18px 46px rgba(0,0,0,.55)} 18%{box-shadow:0 0 34px rgba(255,0,88,.82),0 0 70px rgba(0,255,65,.26),0 18px 46px rgba(0,0,0,.55)} 19%{box-shadow:0 0 28px rgba(0,162,255,.82),0 0 70px rgba(0,255,65,.26),0 18px 46px rgba(0,0,0,.55)} 48%{border-color:#ff0058}49%{border-color:#00ff41} }
         @keyframes glitch-scan{0%{background-position:0 0,0 0}100%{background-position:0 220px,120px 0}}
+        @keyframes glitch-warning{ 0%,70%,100%{opacity:0;transform:translateX(0) skewX(-12deg)} 72%{opacity:1;transform:translateX(-14px) skewX(-12deg)} 74%{opacity:.45;transform:translateX(12px) skewX(12deg)} 76%{opacity:1;transform:translateX(0) skewX(-12deg)} }
         @keyframes glitch-image-break{ 0%,14%,20%,63%,100%{transform:scale(1.12);filter:sepia(1) hue-rotate(82deg) saturate(420%) contrast(150%) brightness(.86)} 15%{transform:translateX(8px) skewX(-8deg) scale(1.18);filter:invert(1) hue-rotate(180deg) contrast(220%)} 17%{transform:translateX(-8px) skewX(8deg) scale(1.16);filter:sepia(1) hue-rotate(120deg) saturate(520%) contrast(220%)} 64%{transform:translateY(-5px) scale(1.2);filter:brightness(2.4) contrast(260%)} 66%{transform:translateY(3px) scale(1.1)} }
         @keyframes glitch-label-blink{0%,55%,100%{opacity:1}56%,62%{opacity:0}63%,66%{opacity:1}}
         @keyframes glitch-text-break{ 0%{transform:translate(0,0);text-shadow:2px 0 #ff0058,-2px 0 #00a2ff,0 0 14px #00ff41} 50%{transform:translate(1px,-1px);text-shadow:-3px 0 #ff0058,3px 0 #00a2ff,0 0 18px #00ff41} 100%{transform:translate(-1px,1px)} }
-        @keyframes glitch-card-surge { 0%,100%{box-shadow:0 0 24px rgba(0,255,65,.7),0 0 60px rgba(0,255,65,.22),0 18px 46px rgba(0,0,0,.55)} 18%{box-shadow:0 0 34px rgba(255,0,88,.82),0 0 70px rgba(0,255,65,.26),0 18px 46px rgba(0,0,0,.55)} 19%{box-shadow:0 0 28px rgba(0,162,255,.82),0 0 70px rgba(0,255,65,.26),0 18px 46px rgba(0,0,0,.55)} 48%{border-color:#ff0058}49%{border-color:#00ff41} }
+        @keyframes hw-border-pulse{ 0%,100%{box-shadow:0 0 0 1px rgba(255,140,0,.06) inset,0 0 38px rgba(255,106,0,.9),0 0 85px rgba(200,50,0,.44),0 30px 80px rgba(0,0,0,.75);border-color:rgba(255,106,0,.7)} 50% {box-shadow:0 0 0 1px rgba(255,160,0,.09) inset,0 0 58px rgba(255,106,0,1), 0 0 125px rgba(200,60,0,.62),0 30px 92px rgba(0,0,0,.82);border-color:rgba(255,140,0,1)} }
+        @keyframes hw-title-haunt{ 0%,100%{text-shadow:0 0 22px rgba(255,106,0,1),0 0 55px rgba(200,50,0,.7),2px 0 rgba(100,30,0,.5),-2px 0 rgba(255,160,0,.4)} 50% {text-shadow:0 0 36px rgba(255,140,0,1),0 0 82px rgba(255,80,0,.88),-3px 0 rgba(80,20,0,.62),3px 0 rgba(255,180,50,.52)} }
+        @keyframes hw-btn-shine{0%,60%,100%{opacity:0;transform:translateX(-120%)}74%{opacity:.9;transform:translateX(122%)}}
+        @keyframes hw-bat-fly{ 0% {opacity:0;transform:translate(0,0) scale(.7) rotate(-5deg)} 8% {opacity:.9} 50% {opacity:.85;transform:translate(32px,-36vh) scale(1.12) rotate(15deg)} 92% {opacity:.28} 100%{opacity:0;transform:translate(-22px,-102vh) scale(.8) rotate(-22deg)} }
+        @keyframes hw-skull-pop{ 0%,55%,100%{opacity:0;transform:translateX(22px) scale(.7)} 62%{opacity:1;transform:translateX(0) scale(1.12)} 74%{opacity:1;transform:translateX(-4px) scale(1)} 88%{opacity:0;transform:translateX(-22px) scale(.7)} }
+        @keyframes val-heartbeat{ 0% {transform:scale(1)} 8% {transform:scale(1.034)} 16% {transform:scale(.994)} 24% {transform:scale(1.022)} 36% {transform:scale(1)} 100%{transform:scale(1)} }
+        @keyframes val-halo-pulse{ 0%,36%,100%{opacity:.5;transform:scale(1)} 8% {opacity:1; transform:scale(1.05)} 24% {opacity:.88;transform:scale(1.028)} }
+        @keyframes val-vignette-beat{ 0%,36%,100%{opacity:.82} 8% {opacity:1} 24% {opacity:.94} }
+        @keyframes val-heart-icon-beat{ 0%,36%,100%{transform:scale(1)} 8% {transform:scale(1.38)} 16% {transform:scale(.94)} 24% {transform:scale(1.22)} }
+        @keyframes val-silk-sweep{ 0% {background-position:-150% 0;opacity:.6} 50% {opacity:1} 100%{background-position:252% 0;opacity:.6} }
+        @keyframes val-heart-rise{ 0% {opacity:0;transform:translateY(0) scale(.7) rotate(-10deg)} 10% {opacity:.9} 55% {opacity:.8;transform:translateY(-46vh) scale(1.12) rotate(8deg)} 90% {opacity:.2} 100%{opacity:0;transform:translateY(-96vh) scale(.8) rotate(-5deg)} }
+        @keyframes val-btn-shine{0%,62%,100%{opacity:0;transform:translateX(-120%)}76%{opacity:.88;transform:translateX(122%)}}
+        @keyframes fire-btn-shine{0%,60%,100%{opacity:0;transform:translateX(-120%)}74%{opacity:.88;transform:translateX(124%)}}
+        @keyframes water-droplets-sway{
+            0%,100%{transform:translateY(0);opacity:.88}
+            50%    {transform:translateY(3px);opacity:1}
+        }
+
+        @keyframes water-btn-shine{0%,60%,100%{opacity:0;transform:translateX(-120%)}74%{opacity:.84;transform:translateX(124%)}}
+
+        /* ── COUCHE DE GLACE ORGANIQUE SUR L'IMAGE — givre liquide qui ondule ── */
+        @keyframes liquid-frost-bloom {
+            0%   { opacity: 0.4; transform: scale(0.94); filter: blur(1px); }
+            30%  { opacity: 0.9; transform: scale(1);    filter: blur(0px); }
+            70%  { opacity: 0.9; transform: scale(1);    filter: blur(0px); }
+            100% { opacity: 0.3; transform: scale(1.01); filter: blur(1.5px); }
+        }
+        @keyframes liquid-frost-droplets {
+            0%,25% { transform: scaleY(0); opacity: 0; transform-origin: top center; }
+            40%    { transform: scaleY(1); opacity: 0.7; }
+            80%    { transform: scaleY(1); opacity: 0.4; }
+            100%   { transform: scaleY(1.1) translateY(8px); opacity: 0; }
+        }
+        @keyframes liquid-ice-edge {
+            0%,100% { background-position: 0% 0%, 0% 0%, 0% 0%, 0% 0%; opacity: 0.85; }
+            50%     { background-position: 0% 0%, 0% 0%, 0% 0%, 100% 0%; opacity: 1; }
+        }
+        .news-card.ice-card .ice-frost-overlay {
+            position: absolute; inset: 0; z-index: 5; pointer-events: none;
+            border-radius: 22px 22px 0 0; overflow: hidden;
+        }
+        .news-card.ice-card .ice-frost-overlay::before {
+            content: "";
+            position: absolute; inset: 0;
+            border-radius: 22px 22px 0 0;
+            background:
+                /* Halos de glace organique aux coins */
+                radial-gradient(ellipse 75% 55% at 0% 0%,     rgba(215,248,255,0.12) 0%, transparent 55%),
+                radial-gradient(ellipse 60% 45% at 100% 0%,   rgba(205,242,255,0.1)  0%, transparent 50%),
+                radial-gradient(ellipse 50% 35% at 0% 100%,   rgba(195,238,255,0.07) 0%, transparent 45%),
+                radial-gradient(ellipse 50% 35% at 100% 100%, rgba(195,238,255,0.07) 0%, transparent 45%),
+                /* Nappe de givre organique */
+                radial-gradient(ellipse 55% 35% at 50% 0%,    rgba(225,250,255,0.08) 0%, transparent 52%),
+                /* Texture dendritique adoucie (réseau cristallin fondu) */
+                repeating-linear-gradient(35deg,
+                    transparent 0 10px, rgba(215,245,255,0.025) 10px 11px,
+                    transparent 11px 24px, rgba(205,240,255,0.015) 24px 25px,
+                    transparent 25px 38px
+                ),
+                repeating-linear-gradient(-35deg,
+                    transparent 0 12px, rgba(210,242,255,0.02) 12px 13px,
+                    transparent 13px 26px
+                ),
+                repeating-linear-gradient(88deg,
+                    transparent 0 16px, rgba(220,248,255,0.012) 16px 17px,
+                    transparent 17px 34px
+                );
+            animation: liquid-frost-bloom 7s ease-in-out infinite;
+        }
+        /* Gouttes de glace qui s'écoulent lentement */
+        .news-card.ice-card .ice-frost-overlay::after {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 100%;
+            background:
+                radial-gradient(ellipse 3px 20px at 12% 0%, rgba(200,240,255,0.3) 0%, transparent 75%),
+                radial-gradient(ellipse 2px 14px at 28% 0%, rgba(215,245,255,0.22) 0%, transparent 72%),
+                radial-gradient(ellipse 4px 26px at 45% 0%, rgba(200,240,255,0.28) 0%, transparent 78%),
+                radial-gradient(ellipse 2px 12px at 62% 0%, rgba(210,242,255,0.2)  0%, transparent 70%),
+                radial-gradient(ellipse 3px 22px at 78% 0%, rgba(200,240,255,0.25) 0%, transparent 76%),
+                radial-gradient(ellipse 2px 16px at 90% 0%, rgba(215,245,255,0.2)  0%, transparent 73%);
+            animation: liquid-frost-droplets 7s ease-in-out infinite;
+        }
+
+        @keyframes ice-frost-breathe{
+            0%,100%{opacity:.82}
+            50%    {opacity:1}
+        }
+        @keyframes liquid-ice-flow{
+            0%,100% {
+                background-position:
+                    0% 0%, 0% 0%, 0% 0%, 0% 0%,
+                    0% 0%, 0% 0%, 0% 0%,
+                    0% 0%,
+                    0% 0%,
+                    0% 0%, 0% 0%, 0% 0%,
+                    0% 0%, 0% 0%,
+                    0% 0%, 0% 0%;
+                opacity: 1;
+            }
+            50% {
+                background-position:
+                    0% 0%, 0% 0%, 0% 0%, 0% 0%,
+                    4% 2%, -3% 1%, 2% -1%,
+                    100% 0%,
+                    60% 0%,
+                    0% 0%, 0% 0%, 0% 0%,
+                    1% 0%, -1% 0%,
+                    0% 0%, 0% 0%;
+                opacity: 0.92;
+            }
+        }
+        @keyframes ice-crystal-fall{
+            0%  {opacity:0;transform:translateY(0)    rotate(-10deg) scale(.7)}
+            8%  {opacity:.88}
+            50% {opacity:.72;transform:translateY(52vh) rotate(14deg) scale(1.12)}
+            92% {opacity:.14}
+            100%{opacity:0; transform:translateY(104vh) rotate(-6deg) scale(.4)}
+        }
+        @keyframes ice-btn-shine{0%,60%,100%{opacity:0;transform:translateX(-120%)}76%{opacity:.84;transform:translateX(124%)}}
+        @keyframes glass-shimmer{0%{background-position:-200% 0;opacity:.42}50%{opacity:.88}100%{background-position:300% 0;opacity:.42}}
+        /* ── Mobile slider News ↔ Leaks (track, comme neo_bulletin) ── */
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 0;
+                overflow: hidden;
+                position: relative;
+                max-width: 100vw;
+            }
+            .slider-track {
+                display: flex;
+                width: 200%;
+                transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+                will-change: transform;
+            }
+            .slider-track.is-leaks {
+                transform: translateX(-50%);
+            }
+            .slider-panel {
+                width: 50%;
+                flex-shrink: 0;
+            }
+        }
+
+            /* ── Switcher News↔Leaks dans la pilule ─────── */
+            .mobile-pagination-pill .pill-switcher {
+                display: flex; align-items: center; gap: 0;
+                background: rgba(255,255,255,0.12); border-radius: 100px;
+                padding: 3px; border: 1px solid rgba(255,255,255,0.18);
+            }
+            .mobile-pagination-pill .pill-switcher a {
+                text-decoration: none; font-family: 'LuckiestGuy Regular', cursive;
+                font-size: 12px; color: rgba(255,255,255,0.65); padding: 5px 13px;
+                border-radius: 100px; transition: all 0.25s ease; white-space: nowrap;
+            }
+            .mobile-pagination-pill .pill-switcher a.active {
+                background: rgba(255,255,255,0.95); color: #111;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            }
+            .mobile-pagination-pill .pill-divider {
+                width: 1px; height: 22px; background: rgba(255,255,255,0.2); margin: 0 4px;
+            }
+            .mobile-pagination-pill.is-light .pill-switcher { background: rgba(0,0,0,0.06); border-color: rgba(0,0,0,0.1); }
+            .mobile-pagination-pill.is-light .pill-switcher a { color: rgba(0,0,0,0.45); }
+            .mobile-pagination-pill.is-light .pill-switcher a.active { background: rgba(0,0,0,0.85); color: #fff; }
+
+        /* ── SEARCH OVERLAY ── */
+        .search-overlay {
+            position: fixed; inset: 0;
+            background: linear-gradient(135deg, rgba(5,5,15,0.88), rgba(15,10,25,0.82));
+            backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+            z-index: 99999; display: flex; flex-direction: column;
+            align-items: center; padding-top: 120px;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .search-overlay.is-active { opacity: 1; pointer-events: auto; }
+        .search-container {
+            width: 92%; max-width: 560px;
+            transform: translateY(-24px) scale(0.94);
+            transition: transform 0.45s cubic-bezier(0.34,1.56,0.64,1);
+        }
+        .search-overlay.is-active .search-container { transform: translateY(0) scale(1); }
+        .search-bar {
+            display: flex; align-items: center; gap: 8px;
+            background: rgba(255,255,255,0.97); backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px; padding: 4px 4px 4px 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.06);
+            transition: box-shadow 0.25s;
+        }
+        .search-bar:focus-within { box-shadow: 0 8px 48px rgba(0,0,0,0.4), 0 0 0 2px rgba(255,255,255,0.1); }
+        .search-bar input {
+            flex: 1; border: none; outline: none; font-size: 17px;
+            font-family: 'Inter', sans-serif; color: #111;
+            background: transparent; padding: 14px 0; letter-spacing: 0.1px;
+        }
+        .search-bar input::placeholder { color: #aaa; }
+        .search-go-btn {
+            padding: 10px 22px; border-radius: 12px; border: none;
+            background: linear-gradient(135deg, #111, #333);
+            color: #fff; font-weight: 800; font-size: 13px;
+            cursor: pointer; font-family: 'Inter', sans-serif;
+            transition: all 0.25s ease; letter-spacing: 0.3px;
+            text-transform: uppercase; flex-shrink: 0;
+        }
+        .search-go-btn:hover { transform: scale(1.04); background: linear-gradient(135deg, #222, #444); box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+        .search-nav-btn {
+            width: 36px; height: 36px; border-radius: 10px; border: none;
+            background: #f2f2f6; color: #555; cursor: pointer;
+            font-size: 16px; display: flex; align-items: center;
+            justify-content: center; transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        .search-nav-btn:hover { background: #e0e0e6; color: #111; }
+        .search-nav-btn:disabled { opacity: 0.3; cursor: default; }
+        .search-close-btn {
+            width: 36px; height: 36px; border-radius: 10px; border: none;
+            background: transparent; color: #999; cursor: pointer;
+            font-size: 20px; display: flex; align-items: center;
+            justify-content: center; transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        .search-close-btn:hover { background: rgba(0,0,0,0.05); color: #111; }
+        .search-stats { margin-top: 12px; color: rgba(255,255,255,0.5); font-size: 14px; text-align: center; min-height: 20px; font-family: 'Inter', sans-serif; }
+        mark.search-hl {
+            background: linear-gradient(120deg, #fce83a 0%, #ffd700 100%);
+            color: #000; border-radius: 4px; padding: 1px 2px;
+        }
+        mark.search-hl.active {
+            background: linear-gradient(120deg, #ff6b35 0%, #ff4500 100%);
+            color: #fff; box-shadow: 0 0 12px rgba(255,70,0,0.5);
+        }
+        @media (max-width: 768px) {
+            .search-overlay { padding-top: 60px; }
+            .search-bar { gap: 4px; padding: 4px 4px 4px 14px; }
+            .search-bar .search-icon { display: none; }
+            .search-bar input { font-size: 15px; padding: 10px 0; }
+            .search-go-btn { padding: 8px 12px; font-size: 11px; }
+            .search-nav-btn { width: 32px; height: 32px; font-size: 14px; }
+            .search-close-btn { width: 32px; height: 32px; font-size: 17px; }
+        }
     </style>
 </head>
 <body>
@@ -273,7 +1302,7 @@
     </div>
 
     <header class="site-header">
-        <div class="site-header__logo" ondblclick="toggleAdminEditMode()"><img src="./BF_news.png" alt="Blox Fruits"></div>
+        <div class="site-header__logo"><img src="./BF_news.png" alt="Blox Fruits"></div>
         <nav>
             <ul class="site-nav">
                 <li><a href="https://www.roblox.com/fr/games/2753915549/Blox-Fruits">Game</a></li>
@@ -282,7 +1311,7 @@
             </ul>
         </nav>
         <div class="site-header__icons">
-            <span class="material-symbols-outlined">search</span>
+            <span class="material-symbols-outlined" onclick="openSearch()">search</span>
             <span class="material-symbols-outlined">person</span>
             <span class="material-symbols-outlined mobile-menu-btn" id="menuToggle">menu</span>
         </div>
@@ -324,23 +1353,6 @@
         </div>
     </main>
 
-    <div id="imageInfoModal" class="modal-overlay" onclick="if(event.target===this) closeImageModal()">
-        <div class="modal-content">
-            <button class="modal-close" onclick="closeImageModal()">✕</button>
-            <div class="modal-header">
-                <span class="modal-section" id="modalSection">Section</span>
-                <h2 class="modal-title" id="modalTitle">Titre de la pastille</h2>
-            </div>
-            <div class="modal-body">
-                <img id="modalImage" src="" alt="Aperçu">
-                <div class="modal-info">
-                    <h3>Informations</h3>
-                    <div id="modalDescription">Description ici...</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <script>
         const bulletins = [
             { num: "001", img: "./001/img/img_fruit.png",          href: "./001/bulletin-001.html" },
@@ -363,6 +1375,7 @@
             { num: "018", img: "./018/img/MysteryMan.png",         href: "./018/bulletin-018.html" },
             { num: "019", img: "./019/img/Mygame.png",             href: "./019/bulletin-019.html" },
         ];
+        const NEW_THRESHOLD = 4;
         const PER_PAGE = 6;
         let currentPage = 1;
         const totalPages = Math.ceil(bulletins.length / PER_PAGE);
@@ -370,88 +1383,506 @@
         const specialCards = {
             "012": { className: "glitch-card", badge: "#012", status: "HACK", eyebrow: "Terminal compromis", title: "BULLETIN #012", button: "Accéder au terminal" },
             "015": { className: "fire-card", badge: "#015", status: "", eyebrow: "The Blox Bulletin", title: "BULLETIN #015", button: "Lire maintenant →" },
-            "016": { className: "water-card", badge: "#016", status: "", eyebrow: "The Blox Bulletin", title: "BULLETIN #016", button: "Lire maintenant →" },
+            "016": { className: "water-card", badge: "#016", status: "✨ Nouveau", eyebrow: "The Blox Bulletin", title: "BULLETIN #016", button: "Lire maintenant →" },
             "017": { className: "halloween-card", badge: "#017", status: "HALLOWEEN", eyebrow: "Halloween Event", title: "BULLETIN #017", button: "Ouvrir la porte" },
-            "018": { className: "ice-card", badge: "#018", status: "", eyebrow: "The Blox Bulletin", title: "BULLETIN #018", button: "Lire maintenant →" },
+            "018": { className: "ice-card", badge: "#018", status: "✨ Nouveau", eyebrow: "The Blox Bulletin", title: "BULLETIN #018", button: "Lire maintenant →" },
             "019": { className: "valentine-card", badge: "#019", status: "SAINT-VALENTIN", eyebrow: "Saint-Valentin", title: "BULLETIN #019", button: "Lire la lettre" }
         };
 
-        // ── LOGIQUE DES LIKES (Local Storage) ──
-        function toggleLike(id, btn) {
-            let likes = JSON.parse(localStorage.getItem('bf_likes_count') || '{}');
-            let userLiked = JSON.parse(localStorage.getItem('bf_user_liked') || '{}');
-            
-            if (userLiked[id]) {
-                userLiked[id] = false;
-                likes[id] = Math.max(0, (likes[id] || 1) - 1);
-                btn.classList.remove('liked');
-            } else {
-                userLiked[id] = true;
-                likes[id] = (likes[id] || 0) + 1;
-                btn.classList.add('liked');
-            }
-            
-            localStorage.setItem('bf_likes_count', JSON.stringify(likes));
-            localStorage.setItem('bf_user_liked', JSON.stringify(userLiked));
-            btn.querySelector('.like-count').textContent = likes[id];
-        }
+        // ════════════════════════════════════════════════════════
+        //  ENGINE 015 — EMERALD PLASMA FIRE (canvas, 60fps)
+        // ════════════════════════════════════════════════════════
+        let _fireEngines = [];
 
-        function initLikes() {
-            let likes = JSON.parse(localStorage.getItem('bf_likes_count') || '{}');
-            let userLiked = JSON.parse(localStorage.getItem('bf_user_liked') || '{}');
-            document.querySelectorAll('.post-like-btn').forEach(btn => {
-                let id = btn.getAttribute('data-id');
-                btn.querySelector('.like-count').textContent = likes[id] || 0;
-                if(userLiked[id]) {
-                    btn.classList.add('liked');
+        class GreenFlameEngine {
+            constructor(canvas) {
+                this.canvas = canvas;
+                this.ctx    = canvas.getContext('2d', { alpha: true });
+                this.running = false;
+                this.hovering = false;
+                this.raf  = null;
+                this.time = 0;
+                this.pts  = [];
+                this.resize();
+                this.init();
+                this._onEnter = () => { this.hovering = true; };
+                this._onLeave = () => { this.hovering = false; };
+                const card = canvas.closest('.news-card');
+                if (card) {
+                    card.addEventListener('mouseenter', this._onEnter);
+                    card.addEventListener('mouseleave', this._onLeave);
                 }
-            });
+                this._obs = new IntersectionObserver(([e]) => {
+                    e.isIntersecting ? this.start() : this.stop();
+                }, { threshold: 0.05 });
+                this._obs.observe(canvas.parentElement || canvas);
+            }
+            resize() {
+                const p   = this.canvas.parentElement;
+                const dpr = Math.min(window.devicePixelRatio || 1, 2);
+                const w   = p ? p.clientWidth  : 360;
+                const h   = p ? p.clientHeight : 480;
+                if (w < 1 || h < 1) return;
+                this.w = w; this.h = h; this.dpr = dpr;
+                this.canvas.width  = w * dpr;
+                this.canvas.height = h * dpr;
+                this.canvas.style.width  = w + 'px';
+                this.canvas.style.height = h + 'px';
+            }
+            gauss() {
+                let u,v;
+                do { u = Math.random(); } while (!u);
+                do { v = Math.random(); } while (!v);
+                return Math.sqrt(-2*Math.log(u)) * Math.cos(6.283*v);
+            }
+            genPt(life) {
+                return {
+                    life,
+                    sx:  Math.max(0.02, Math.min(0.98, 0.5 + this.gauss() * 0.22)),
+                    spd: 0.1  + Math.random() * 0.3,
+                    wp:  Math.random() * 6.28,
+                    wf:  1.2  + Math.random() * 2.8,
+                    wa:  0.003 + Math.random() * 0.014,
+                    sz:  2.5  + Math.random() * 5.5,
+                    al:  0.6  + Math.random() * 0.4,
+                };
+            }
+            init() {
+                this.pts = [];
+                for (let i = 0; i < 320; i++) this.pts.push(this.genPt(Math.random()));
+            }
+            start() {
+                if (this.running) return;
+                this.running = true;
+                this.resize();
+                this._loop();
+            }
+            stop() {
+                this.running = false;
+                if (this.raf) { cancelAnimationFrame(this.raf); this.raf = null; }
+            }
+            destroy() {
+                this.stop();
+                this._obs.disconnect();
+                const card = this.canvas.closest('.news-card');
+                if (card) {
+                    card.removeEventListener('mouseenter', this._onEnter);
+                    card.removeEventListener('mouseleave', this._onLeave);
+                }
+                this.pts = [];
+            }
+            _loop() {
+                if (!this.running) return;
+                if (this.w < 1) { this.raf = requestAnimationFrame(() => this._loop()); return; }
+                this.time += this.hovering ? 0.022 : 0.016;
+                this._update();
+                this._draw();
+                this.raf = requestAnimationFrame(() => this._loop());
+            }
+            _update() {
+                const sp = this.hovering ? 1.55 : 1;
+                for (const p of this.pts) {
+                    p.life += 0.0065 * p.spd * sp;
+                    if (p.life >= 1) { Object.assign(p, this.genPt(0)); p.life = 0; }
+                }
+            }
+            _draw() {
+                const { ctx, w, h, dpr, time } = this;
+                ctx.setTransform(1,0,0,1,0,0);
+                ctx.clearRect(0, 0, w*dpr, h*dpr);
+                ctx.scale(dpr, dpr);
+
+                // Layer 0 — ambient base glow
+                const bg = ctx.createRadialGradient(w*.5, h, 0, w*.5, h, h*.72);
+                bg.addColorStop(0,   'rgba(0,200,60,0.18)');
+                bg.addColorStop(0.45,'rgba(0,160,20,0.08)');
+                bg.addColorStop(1,   'rgba(0,100,0,0)');
+                ctx.fillStyle = bg;
+                ctx.fillRect(0, 0, w, h);
+
+
+            }
+            _drawPt(p, time) {
+                const { ctx, w, h } = this;
+                const vy    = p.life * 0.58;
+                const y     = h * (1 - vy);
+                const drift = (0.5 - p.sx) * p.life * 0.38;
+                const wob   = Math.sin(p.life * time * p.wf + p.wp) * p.wa;
+                const x     = Math.max(0.01, Math.min(0.99, p.sx + drift + wob)) * w;
+                const sz    = p.sz * (1 + p.life * 0.7);
+                const al    = Math.sin(p.life * Math.PI) * p.al;
+                const v     = p.life;
+                let r, g, b;
+                if      (v < 0.15) { const t=v/.15;     r=255; g=200+55*t;    b=130+110*t; }
+                else if (v < 0.42) { const t=(v-.15)/.27;r=255-80*t;g=255;    b=220-140*t; }
+                else if (v < 0.70) { const t=(v-.42)/.28;r=175-150*t;g=255;   b=80-60*t;   }
+                else               { const t=(v-.70)/.30;r=25*(1-t);  g=120*(1-t);b=20*(1-t); }
+                const gr = ctx.createRadialGradient(x, y, 0, x, y, sz);
+                gr.addColorStop(0,   `rgba(${r|0},${g|0},${b|0},${al.toFixed(3)})`);
+                gr.addColorStop(0.48,`rgba(${(r*.65)|0},${(g*.65)|0},${(b*.65)|0},${(al*.35).toFixed(3)})`);
+                gr.addColorStop(1,   'rgba(0,200,0,0)');
+                ctx.fillStyle = gr;
+                ctx.fillRect(x-sz, y-sz, sz*2, sz*2);
+            }
         }
 
-        // ── LOGIQUE MODAL D'IMAGE ──
-        function openImageModal(imgSrc, tagTitle, sectionName, descriptionHTML) {
-            document.getElementById('modalImage').src = imgSrc;
-            document.getElementById('modalTitle').textContent = tagTitle;
-            document.getElementById('modalSection').textContent = sectionName;
-            document.getElementById('modalDescription').innerHTML = descriptionHTML;
-            document.getElementById('imageInfoModal').classList.add('show');
-            document.body.style.overflow = 'hidden';
-        }
-        function closeImageModal() {
-            document.getElementById('imageInfoModal').classList.remove('show');
-            document.body.style.overflow = 'auto';
+        // ════════════════════════════════════════════════════════
+        //  ENGINE 016 — LIQUID TIDE (dual canvas: fluid + bubbles)
+        // ════════════════════════════════════════════════════════
+        let _waterEngines = [];
+
+        class LiquidTideEngine {
+            constructor(fluidCanvas, bubbleCanvas) {
+                this.fc  = fluidCanvas;
+                this.bc  = bubbleCanvas;
+                this.fctx = fluidCanvas.getContext('2d',  { alpha: true });
+                this.bctx = bubbleCanvas.getContext('2d', { alpha: true });
+                this.running  = false;
+                this.hovering = false;
+                this.raf = null;
+                this.t   = 0;
+                this.bubbles = [];
+                this.waves   = [];
+                this.resize();
+                this._initWaves();
+                this._initBubbles();
+                const card = fluidCanvas.closest('.news-card');
+                this._onEnter = () => { this.hovering = true; };
+                this._onLeave = () => { this.hovering = false; };
+                if (card) {
+                    card.addEventListener('mouseenter', this._onEnter);
+                    card.addEventListener('mouseleave', this._onLeave);
+                }
+                this._obs = new IntersectionObserver(([e]) => {
+                    e.isIntersecting ? this.start() : this.stop();
+                }, { threshold: 0.05 });
+                this._obs.observe(fluidCanvas.parentElement || fluidCanvas);
+            }
+            resize() {
+                const p   = this.fc.parentElement;
+                const dpr = Math.min(window.devicePixelRatio || 1, 2);
+                const w   = p ? p.clientWidth  : 360;
+                const h   = p ? p.clientHeight : 480;
+                if (w < 1 || h < 1) return;
+                this.w = w; this.h = h; this.dpr = dpr;
+                for (const cv of [this.fc, this.bc]) {
+                    cv.width  = w * dpr; cv.height = h * dpr;
+                    cv.style.width = w+'px'; cv.style.height = h+'px';
+                }
+            }
+            _initWaves() {
+                this.waves = Array.from({length:6}, (_, i) => ({
+                    amp:   12  + i*4,
+                    freq:  0.008 + i*0.002,
+                    speed: 0.012 + i*0.004,
+                    phase: Math.random()*6.28,
+                    alpha: 0.04 + i*0.012,
+                }));
+            }
+            _initBubbles() {
+                const { w, h } = this;
+                this.bubbles = Array.from({length:12}, () => {
+                    const r = 3 + Math.random()*8;
+                    return {
+                        x: Math.random()*(w||360), y: Math.random()*(h||480),
+                        r, vx: (Math.random()-.5)*1.1, vy: (Math.random()-.5)*1.1-.3,
+                        opacity: 0.35 + Math.random()*0.5,
+                    };
+                });
+            }
+            start() {
+                if (this.running) return;
+                this.running = true;
+                this.resize();
+                this._loop();
+            }
+            stop() {
+                this.running = false;
+                if (this.raf) { cancelAnimationFrame(this.raf); this.raf = null; }
+            }
+            destroy() {
+                this.stop();
+                this._obs.disconnect();
+            }
+            _loop() {
+                if (!this.running) return;
+                const sp = this.hovering ? 1.55 : 1;
+                this.t += 0.016 * sp;
+                this._drawFluid();
+                this._drawBubbles(sp);
+                this.raf = requestAnimationFrame(() => this._loop());
+            }
+            _drawFluid() {
+                const { fctx:ctx, w, h, dpr, t, waves } = this;
+                ctx.setTransform(1,0,0,1,0,0);
+                ctx.clearRect(0, 0, w*dpr, h*dpr);
+                ctx.scale(dpr, dpr);
+                ctx.globalCompositeOperation = 'lighter';
+                for (const wv of waves) {
+                    ctx.beginPath();
+                    ctx.moveTo(0, h*.5);
+                    for (let x = 0; x <= w; x += 3) {
+                        const y = h*.5 + Math.sin(x*wv.freq + t*wv.speed + wv.phase)*wv.amp
+                                       + Math.sin(x*wv.freq*.7 + t*wv.speed*1.3)*wv.amp*.4;
+                        ctx.lineTo(x, y);
+                    }
+                    ctx.lineTo(w, h); ctx.lineTo(0, h); ctx.closePath();
+                    const gr = ctx.createLinearGradient(0, h*.3, 0, h);
+                    gr.addColorStop(0, `rgba(0,180,255,${wv.alpha*1.5})`);
+                    gr.addColorStop(.5,`rgba(0,140,220,${wv.alpha})`);
+                    gr.addColorStop(1, `rgba(0,80,160,0)`);
+                    ctx.fillStyle = gr;
+                    ctx.fill();
+                }
+                // caustic shimmer
+                const sh = ctx.createRadialGradient(w*.45+Math.sin(t*.4)*w*.12, h*.35+Math.cos(t*.28)*h*.08,
+                                                     0, w*.45, h*.35, w*.35);
+                sh.addColorStop(0,   'rgba(140,220,255,0.12)');
+                sh.addColorStop(0.5, 'rgba(80,180,255,0.04)');
+                sh.addColorStop(1,   'rgba(0,100,200,0)');
+                ctx.fillStyle = sh;
+                ctx.fillRect(0, 0, w, h);
+                ctx.globalCompositeOperation = 'source-over';
+            }
+            _drawBubbles(sp) {
+                const { bctx:ctx, w, h, dpr, bubbles } = this;
+                ctx.setTransform(1,0,0,1,0,0);
+                ctx.clearRect(0, 0, w*dpr, h*dpr);
+                ctx.scale(dpr, dpr);
+                for (const b of bubbles) {
+                    b.x += b.vx * sp; b.y += b.vy * sp;
+                    if (b.x - b.r < 0)  { b.x = b.r;   b.vx *= -.92; }
+                    if (b.x + b.r > w)  { b.x = w-b.r; b.vx *= -.92; }
+                    if (b.y - b.r < 0)  { b.y = b.r;   b.vy *= -.92; }
+                    if (b.y + b.r > h)  { b.y = h-b.r; b.vy *= -.92; }
+                    const spd = Math.hypot(b.vx, b.vy);
+                    if (spd < 0.35) { b.vx *= 1.04; b.vy *= 1.04; }
+                    if (spd > 2.2)  { b.vx *= 0.92; b.vy *= 0.92; }
+                    const gr = ctx.createRadialGradient(b.x-b.r*.32, b.y-b.r*.32, 0, b.x, b.y, b.r);
+                    gr.addColorStop(0,   `rgba(255,255,255,${b.opacity*.9})`);
+                    gr.addColorStop(.18, `rgba(180,235,255,${b.opacity*.55})`);
+                    gr.addColorStop(.55, `rgba(60,175,255,${b.opacity*.22})`);
+                    gr.addColorStop(1,   `rgba(0,140,230,0)`);
+                    ctx.beginPath();
+                    ctx.arc(b.x, b.y, b.r, 0, 6.283);
+                    ctx.fillStyle = gr;
+                    ctx.fill();
+                    ctx.strokeStyle = `rgba(160,225,255,${b.opacity*.42})`;
+                    ctx.lineWidth = 0.8;
+                    ctx.stroke();
+                }
+            }
         }
 
-        // ── MODE D'ÉDITION MAGIC COMMAND ──
-        function toggleAdminEditMode() {
-            if (document.designMode === "on") {
-                document.designMode = "off";
-                alert("🔒 Mode Édition DÉSACTIVÉ.");
-            } else {
-                document.designMode = "on";
-                alert("✏️ Mode Édition ACTIVÉ. Tu peux maintenant cliquer sur n'importe quel texte pour le modifier visuellement !");
+        // ════════════════════════════════════════════════════════
+        //  ENGINE 018 — CRYSTAL FROST (canvas: DLA-style dendrites)
+        // ════════════════════════════════════════════════════════
+        let _iceEngines = [];
+
+        class CrystalFrostEngine {
+            constructor(canvas) {
+                this.canvas = canvas;
+                this.ctx    = canvas.getContext('2d', { alpha: true });
+                this.running  = false;
+                this.raf      = null;
+                this.phase    = 'grow';   // grow → hold → melt → gap
+                this.phaseT   = 0;
+                this.GROW_DUR = 3.8;
+                this.HOLD_DUR = 2.2;
+                this.MELT_DUR = 2.8;
+                this.GAP_DUR  = 1.0;
+                this.branches = [];
+                this.alpha    = 0;
+                this.resize();
+                this._seed();
+                this._obs = new IntersectionObserver(([e]) => {
+                    e.isIntersecting ? this.start() : this.stop();
+                }, { threshold: 0.05 });
+                this._obs.observe(canvas.parentElement || canvas);
+            }
+            resize() {
+                const p   = this.canvas.parentElement;
+                const dpr = Math.min(window.devicePixelRatio || 1, 2);
+                const w   = p ? p.clientWidth  : 360;
+                const h   = p ? p.clientHeight : 220;
+                if (w < 1 || h < 1) return;
+                this.w = w; this.h = h; this.dpr = dpr;
+                this.canvas.width  = w * dpr;
+                this.canvas.height = h * dpr;
+                this.canvas.style.width  = w + 'px';
+                this.canvas.style.height = h + 'px';
+            }
+            _seed() {
+                // Crystal dendrites grow from edges inward
+                this.branches = [];
+                const { w, h } = this;
+                const origins = [
+                    // top edge
+                    ...[.08,.18,.3,.42,.54,.65,.78,.9].map(f => ({ x:f*w, y:0,  dx:0,  dy:1  })),
+                    // left edge
+                    ...[.12,.3,.5,.72,.9].map(f => ({ x:0,   y:f*h, dx:1,  dy:0  })),
+                    // right edge
+                    ...[.15,.38,.58,.8].map(f  => ({ x:w,   y:f*h, dx:-1, dy:0  })),
+                    // corners
+                    { x:0,y:0,dx:.7,dy:.7 }, { x:w,y:0,dx:-.7,dy:.7 },
+                ];
+                for (const o of origins) {
+                    const angle = Math.atan2(o.dy, o.dx) + (Math.random()-.5)*.3;
+                    this.branches.push({
+                        x0: o.x, y0: o.y, len: 0,
+                        maxLen: 20 + Math.random() * (w*.35),
+                        angle, speed: 1.2 + Math.random()*1.4,
+                        width: 0.4 + Math.random()*.9,
+                        children: [], childSpawned: false,
+                        opacity: 0.55 + Math.random()*.45,
+                    });
+                }
+            }
+            start() {
+                if (this.running) return;
+                this.running = true;
+                this.resize();
+                this._loop();
+            }
+            stop() {
+                this.running = false;
+                if (this.raf) { cancelAnimationFrame(this.raf); this.raf = null; }
+            }
+            destroy() {
+                this.stop();
+                this._obs.disconnect();
+            }
+            _loop() {
+                if (!this.running) return;
+                const dt = 0.016;
+                this.phaseT += dt;
+                switch (this.phase) {
+                    case 'grow':
+                        this._growBranches(dt);
+                        if (this.phaseT >= this.GROW_DUR) { this.phase = 'hold'; this.phaseT = 0; }
+                        this.alpha = Math.min(1, this.phaseT / this.GROW_DUR * 1.2);
+                        break;
+                    case 'hold':
+                        this.alpha = 1;
+                        if (this.phaseT >= this.HOLD_DUR) { this.phase = 'melt'; this.phaseT = 0; }
+                        break;
+                    case 'melt':
+                        this.alpha = Math.max(0, 1 - this.phaseT / this.MELT_DUR);
+                        if (this.phaseT >= this.MELT_DUR) { this.phase = 'gap'; this.phaseT = 0; }
+                        break;
+                    case 'gap':
+                        this.alpha = 0;
+                        if (this.phaseT >= this.GAP_DUR) { this.phase = 'grow'; this.phaseT = 0; this._seed(); }
+                        break;
+                }
+                this._draw();
+                this.raf = requestAnimationFrame(() => this._loop());
+            }
+            _growBranches(dt) {
+                const newChildren = [];
+                for (const br of this.branches) {
+                    if (br.len < br.maxLen) {
+                        br.len += br.speed;
+                        // Spawn 1-2 child branches at random points
+                        if (!br.childSpawned && br.len > br.maxLen * .35) {
+                            br.childSpawned = true;
+                            const count = 1 + (Math.random() > .55 ? 1 : 0);
+                            for (let c = 0; c < count; c++) {
+                                const t     = .3 + Math.random()*.5;
+                                const ang   = br.angle + (Math.random()>.5?1:-1)*(Math.PI/6 + Math.random()*Math.PI/8);
+                                const cx    = br.x0 + Math.cos(br.angle)*br.maxLen*t;
+                                const cy    = br.y0 + Math.sin(br.angle)*br.maxLen*t;
+                                newChildren.push({
+                                    x0: cx, y0: cy, len: 0,
+                                    maxLen: 8 + Math.random()*br.maxLen*.45,
+                                    angle: ang, speed: br.speed*.8,
+                                    width: br.width*.65,
+                                    children: [], childSpawned: true,
+                                    opacity: br.opacity*.8,
+                                });
+                            }
+                        }
+                    }
+                }
+                this.branches.push(...newChildren);
+            }
+            _draw() {
+                const { ctx, w, h, dpr, branches, alpha } = this;
+                ctx.setTransform(1,0,0,1,0,0);
+                ctx.clearRect(0, 0, w*dpr, h*dpr);
+                if (alpha <= 0) return;
+                ctx.scale(dpr, dpr);
+                for (const br of branches) {
+                    const len = Math.min(br.len, br.maxLen);
+                    if (len < .5) continue;
+                    const ex = br.x0 + Math.cos(br.angle)*len;
+                    const ey = br.y0 + Math.sin(br.angle)*len;
+                    const gr = ctx.createLinearGradient(br.x0, br.y0, ex, ey);
+                    const a  = (alpha * br.opacity).toFixed(3);
+                    gr.addColorStop(0,   `rgba(220,248,255,${a})`);
+                    gr.addColorStop(.5,  `rgba(180,235,255,${(alpha*br.opacity*.7).toFixed(3)})`);
+                    gr.addColorStop(1,   `rgba(140,215,255,0)`);
+                    ctx.strokeStyle = gr;
+                    ctx.lineWidth   = br.width;
+                    ctx.lineCap     = 'round';
+                    ctx.shadowColor = `rgba(180,235,255,${(alpha*.55).toFixed(2)})`;
+                    ctx.shadowBlur  = 4;
+                    ctx.beginPath();
+                    ctx.moveTo(br.x0, br.y0);
+                    ctx.lineTo(ex, ey);
+                    ctx.stroke();
+                }
+                ctx.shadowBlur = 0;
+                // frost veil
+                const fg = ctx.createLinearGradient(0, 0, 0, h);
+                fg.addColorStop(0,   `rgba(210,245,255,${(alpha*.12).toFixed(3)})`);
+                fg.addColorStop(.3,  `rgba(185,235,255,${(alpha*.06).toFixed(3)})`);
+                fg.addColorStop(1,   'rgba(140,215,255,0)');
+                ctx.fillStyle = fg;
+                ctx.fillRect(0, 0, w, h);
             }
         }
 
         function renderPage() {
+            // destroy old engines
+            _waterEngines.forEach(e => e.destroy());  _waterEngines = [];
+            _fireEngines.forEach(e  => e.destroy());  _fireEngines  = [];
+            _iceEngines.forEach(e   => e.destroy());  _iceEngines   = [];
+
+
+            _waterEngines.forEach(e => e.destroy());
+            _waterEngines = [];
+            _fireEngines.forEach(e => e.destroy());
+            _fireEngines = [];
             const grid = document.getElementById("news-grid");
             const start = (currentPage - 1) * PER_PAGE;
             const slice = bulletins.slice(start, start + PER_PAGE);
             
             grid.innerHTML = slice.map((b, i) => {
                 const special = specialCards[b.num] || {};
+                const globalIndex = start + i;
+                const isNew = globalIndex >= bulletins.length - NEW_THRESHOLD;
+                const statusLabel = special.status || (isNew ? "Nouveau" : "");
                 
-                // IMPORTANT : Plus de "Nouveau" automatique ici, uniquement les status comme HACK ou HALLOWEEN
-                const statusLabel = special.status || "";
+                // INJECTION DES ANIMATIONS SPÉCIALES
+                let deco = "";
+                if (b.num === "015") {
+                    deco = `<canvas class="fire-canvas" aria-hidden="true"></canvas>`;
+                } else if (b.num === "016") {
+                    deco = `<div class="water-surface" aria-hidden="true"></div><div class="water-deco" aria-hidden="true"></div>`;
+                } else if (b.num === "017") {
+                    deco = `<div class="hw-deco" aria-hidden="true"><span class="hw-bat" style="--bx:10%;--bd:-0.2s;--bt:-12px"></span><span class="hw-bat" style="--bx:60%;--bd:-2.4s;--bt:-8px"></span><span class="hw-bat" style="--bx:34%;--bd:-1.2s;--bt:-10px"></span><span class="hw-skull"></span></div>`;
+                } else if (b.num === "018") {
+                    deco = `<canvas class="frost-canvas" aria-hidden="true"></canvas>`;
+                } else if (b.num === "019") {
+                    deco = `<div class="val-deco" aria-hidden="true"><span class="val-heart" style="--hx:8%;--hd:-0.1s;--hs:1em"></span><span class="val-heart" style="--hx:28%;--hd:-1.7s;--hs:1.4em"></span><span class="val-heart" style="--hx:52%;--hd:-0.8s;--hs:.85em"></span><span class="val-heart" style="--hx:72%;--hd:-2.3s;--hs:1.2em"></span><span class="val-heart" style="--hx:88%;--hd:-0.5s;--hs:.96em"></span><span class="val-rose"></span></div>`;
+                }
 
                 return `<article class="news-card ${special.className || ""}" onclick="window.location='${b.href}'">
-                    <button class="post-like-btn" data-id="${b.num}" onclick="event.stopPropagation(); toggleLike('${b.num}', this)">
-                        <span class="material-symbols-outlined" style="font-size:18px;">favorite</span>
-                        <span class="like-count">0</span>
-                    </button>
+                    ${deco}
                     <div class="news-card__image-wrapper">
                         <img src="${b.img}" class="news-card__image" alt="Bulletin #${b.num}">
-                        <div class="news-card__badge">${special.badge || `#${b.num}`}</div>
+                       <div class="news-card__badge">${special.badge || `#${b.num}`}</div>
                         ${statusLabel ? `<div class="news-card__new">${statusLabel}</div>` : ""}
                     </div>
                     <div class="news-card__content">
@@ -463,21 +1894,44 @@
                 </article>`;
             }).join("");
 
-            // Mise à jour de la pagination
+            // Mise à jour du texte
             const info = `${currentPage} / ${totalPages}`;
             document.getElementById("page-info-top").textContent = info;
             document.getElementById("page-info-bot").textContent = info;
             document.getElementById("page-info-mobile").textContent = info;
 
+            // Désactivation des boutons
             document.getElementById("prev-top").disabled = currentPage === 1;
             document.getElementById("next-top").disabled = currentPage === totalPages;
             document.getElementById("prev-bot").disabled = currentPage === 1;
             document.getElementById("next-bot").disabled = currentPage === totalPages;
             document.getElementById("prev-mobile").disabled = currentPage === 1;
             document.getElementById("next-mobile").disabled = currentPage === totalPages;
-
-            // Charger les likes sur la page
-            initLikes();
+            try { initCardTilt(); } catch (e) {}
+            // 015 — Fire canvas
+            document.querySelectorAll('.fire-canvas').forEach(cv => {
+                const eng = new GreenFlameEngine(cv);
+                _fireEngines.push(eng);
+                setTimeout(() => eng.start(), 40);
+            });
+            // 016 — Liquid tide dual canvas
+            document.querySelectorAll('.news-card.water-card').forEach(card => {
+                const fc = card.querySelector('.fluid-canvas');
+                const bc = card.querySelector('.bubble-canvas');
+                if (fc && bc) {
+                    const eng = new LiquidTideEngine(fc, bc);
+                    _waterEngines.push(eng);
+                    setTimeout(() => eng.start(), 40);
+                }
+            });
+            // 018 — Crystal frost canvas
+            document.querySelectorAll('.frost-canvas').forEach(cv => {
+                const eng = new CrystalFrostEngine(cv);
+                _iceEngines.push(eng);
+                setTimeout(() => eng.start(), 40);
+            });
+            assignDepth();
+            initLiquidIce();
         }
 
         function changePage(dir) {
@@ -488,7 +1942,7 @@
         
         renderPage();
 
-        // Menu Mobile Toggle
+        // ── MENU HAMBURGER MOBILE ──
         const menuBtn = document.getElementById('menuToggle');
         const mobileNav = document.getElementById('mobileNav');
         if (menuBtn && mobileNav) {
@@ -497,6 +1951,294 @@
                 menuBtn.textContent = mobileNav.classList.contains('is-open') ? 'close' : 'menu';
             });
         }
+
+        // ── NAVBAR SCROLL TEXTE BLANC ──
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('.site-header');
+            const darkZones = document.querySelectorAll('.blue-banner');
+            let isOverDarkZone = false;
+            const headerRect = header.getBoundingClientRect();
+            darkZones.forEach(zone => {
+                const rect = zone.getBoundingClientRect();
+                if (rect.top < headerRect.bottom && rect.bottom > headerRect.top) isOverDarkZone = true;
+            });
+            header.classList.toggle('nav-light-text', isOverDarkZone);
+        });
+
+        // ── COULEUR PILULE FLOTTANTE MOBILE ──
+        function updateMobilePaginationColor() {
+            const pill = document.querySelector('.mobile-pagination-pill');
+            if (!pill || window.innerWidth > 768) return;
+            pill.style.pointerEvents = 'none';
+            const rect = pill.getBoundingClientRect();
+            const elementUnder = document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2);
+            pill.style.pointerEvents = 'auto';
+            if (!elementUnder) return;
+            const bgColor = window.getComputedStyle(elementUnder).backgroundColor;
+            const rgb = bgColor.match(/\d+/g);
+            let isLight = false;
+            if (rgb && rgb.length >= 3) {
+                const brightness = (parseInt(rgb[0]) * 299 + parseInt(rgb[1]) * 587 + parseInt(rgb[2]) * 114) / 1000;
+                if (brightness > 180) isLight = true;
+            }
+            pill.classList.toggle('is-light', isLight);
+        }
+        let _pagColorRaf = null;
+        window.addEventListener('scroll', () => {
+            if (_pagColorRaf) return;
+            _pagColorRaf = requestAnimationFrame(() => { _pagColorRaf = null; updateMobilePaginationColor(); });
+        }, { passive: true });
+        window.addEventListener('resize', updateMobilePaginationColor);
+
+        // ── Mobile slider (comme neo_bulletin) ──
+        function slideTo(href, e) {
+            if (window.innerWidth > 768) return true;
+            e.preventDefault();
+            
+            var main = document.querySelector('.main-content');
+            if (!main) { location.href = href; return false; }
+            
+            var track = main.querySelector('.slider-track');
+            if (!track) {
+                track = document.createElement('div');
+                track.className = 'slider-track';
+                var p1 = document.createElement('div');
+                p1.className = 'slider-panel';
+                var p2 = document.createElement('div');
+                p2.className = 'slider-panel';
+                p2.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;min-height:60vh;color:#888;font-size:14px;">Chargement…</div>';
+                var pill = main.querySelector('.mobile-pagination-pill');
+                var kids = [];
+                for (var i = 0; i < main.children.length; i++) kids.push(main.children[i]);
+                kids.forEach(function(c) { if (c !== pill) p1.appendChild(c); });
+                track.appendChild(p1);
+                track.appendChild(p2);
+                main.appendChild(track);
+            }
+            
+            var isLeaks = href.indexOf('neo_bulletin') !== -1;
+            void track.offsetHeight;
+            track.classList.toggle('is-leaks', isLeaks);
+            
+            document.querySelectorAll('.pill-switcher a').forEach(function(a) {
+                a.classList.toggle('active', a.getAttribute('href') === href);
+            });
+            
+            setTimeout(function() { location.href = href; }, 380);
+            return false;
+        }
+
+        // ── SEARCH ──
+        let searchMatches = [];
+        let searchCurrent = -1;
+        function openSearch() {
+            document.getElementById('searchOverlay').classList.add('is-active');
+            const inp = document.getElementById('searchInput');
+            inp.value = '';
+            document.getElementById('searchStats').textContent = '';
+            searchMatches = []; searchCurrent = -1;
+            removeHighlights();
+            setTimeout(() => inp.focus(), 200);
+        }
+        function closeSearch(keepHl) {
+            document.getElementById('searchOverlay').classList.remove('is-active');
+            if (!keepHl) removeHighlights();
+            if (!keepHl) { searchMatches = []; searchCurrent = -1; }
+        }
+        function removeHighlights() {
+            document.querySelectorAll('mark.search-hl').forEach(m => {
+                const p = m.parentNode;
+                p.replaceChild(document.createTextNode(m.textContent), m);
+                p.normalize();
+            });
+        }
+        function executeSearch() {
+            const q = document.getElementById('searchInput').value.trim().toLowerCase();
+            removeHighlights();
+            searchMatches = []; searchCurrent = -1;
+            document.getElementById('searchPrevBtn').disabled = true;
+            document.getElementById('searchNextBtn').disabled = true;
+            const stats = document.getElementById('searchStats');
+            stats.textContent = '';
+            if (!q) return;
+            const root = document.querySelector('.main-content') || document.body;
+            const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+                acceptNode: n => {
+                    const p = n.parentNode;
+                    if (!p || p.nodeName === 'SCRIPT' || p.nodeName === 'STYLE') return NodeFilter.FILTER_REJECT;
+                    if (p.closest('.search-overlay, .material-symbols-outlined, .mobile-menu-btn')) return NodeFilter.FILTER_REJECT;
+                    return NodeFilter.FILTER_ACCEPT;
+                }
+            });
+            const nodes = []; let n;
+            while (n = walker.nextNode()) nodes.push(n);
+            nodes.forEach(textNode => {
+                const text = textNode.textContent;
+                const lower = text.toLowerCase();
+                let idx = lower.indexOf(q);
+                if (idx === -1) return;
+                const frag = document.createDocumentFragment();
+                let last = 0;
+                while (idx !== -1) {
+                    if (idx > last) frag.appendChild(document.createTextNode(text.slice(last, idx)));
+                    const mark = document.createElement('mark');
+                    mark.className = 'search-hl';
+                    mark.textContent = text.slice(idx, idx + q.length);
+                    frag.appendChild(mark);
+                    searchMatches.push(mark);
+                    last = idx + q.length;
+                    idx = lower.indexOf(q, last);
+                }
+                if (last < text.length) frag.appendChild(document.createTextNode(text.slice(last)));
+                textNode.parentNode.replaceChild(frag, textNode);
+            });
+            const c = searchMatches.length;
+            if (c > 0) {
+                searchCurrent = 0;
+                searchMatches[0].classList.add('active');
+                searchMatches[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                stats.textContent = c + ' résultat' + (c > 1 ? 's' : '');
+                document.getElementById('searchPrevBtn').disabled = false;
+                document.getElementById('searchNextBtn').disabled = false;
+                closeSearch(true);
+            } else {
+                stats.textContent = 'Aucun résultat';
+            }
+        }
+        function nextMatch() {
+            if (searchMatches.length === 0) return;
+            searchMatches[searchCurrent]?.classList.remove('active');
+            searchCurrent = (searchCurrent + 1) % searchMatches.length;
+            searchMatches[searchCurrent].classList.add('active');
+            searchMatches[searchCurrent].scrollIntoView({ behavior: 'smooth', block: 'center' });
+            document.getElementById('searchStats').textContent = (searchCurrent+1) + '/' + searchMatches.length;
+        }
+        function prevMatch() {
+            if (searchMatches.length === 0) return;
+            searchMatches[searchCurrent]?.classList.remove('active');
+            searchCurrent = (searchCurrent - 1 + searchMatches.length) % searchMatches.length;
+            searchMatches[searchCurrent].classList.add('active');
+            searchMatches[searchCurrent].scrollIntoView({ behavior: 'smooth', block: 'center' });
+            document.getElementById('searchStats').textContent = (searchCurrent+1) + '/' + searchMatches.length;
+        }
+        document.addEventListener("keydown", e => {
+            if (e.key === "Escape" && document.getElementById('searchOverlay')?.classList.contains('is-active')) closeSearch();
+        });
+
+        // ── WATER SURFACE HOVER (amplification des vagues) ──
+        function initWaterHover() {
+            const map = document.querySelector('#water-surface feDisplacementMap');
+            if (!map) return;
+            document.querySelectorAll('.news-card.water-card').forEach(card => {
+                card.addEventListener('mouseenter', () => smoothScale(map, 8, 16, 600));
+                card.addEventListener('mouseleave', () => smoothScale(map, 16, 8, 800));
+            });
+        }
+        function smoothScale(el, from, to, dur) {
+            const start = performance.now();
+            function tick(now) {
+                const t = Math.min((now - start) / dur, 1);
+                const ease = 1 - Math.pow(1 - t, 3);
+                el.setAttribute('scale', String(Math.round(from + (to - from) * ease)));
+                if (t < 1) requestAnimationFrame(tick);
+            }
+            requestAnimationFrame(tick);
+        }
+        function smoothFilterScale(el, from, to, dur) {
+            const start = performance.now();
+            function tick(now) {
+                const t = Math.min((now - start) / dur, 1);
+                const ease = 1 - Math.pow(1 - t, 3);
+                el.setAttribute('scale', String(Math.round(from + (to - from) * ease)));
+                if (t < 1) requestAnimationFrame(tick);
+            }
+            requestAnimationFrame(tick);
+        }
+
+        // ── 3D DEPTH ENGINE ──
+        let _depthEls = [];
+        const _depthFactors = { '3': 0.6, '2': 0.35, '1': 0.18, '0': 0.08, '-1': 0.03, '-2': 0.01 };
+
+        function assignDepth() {
+            const map = {
+                '-2': '.site-background',
+                '-1': '',
+                '0': '.pagination-info, .pagination-controls button, .pagination-bottom button, .news-card__content, .news-card__image-wrapper, .news-card__bar, .news-card__eyebrow',
+                '1': '.news-card, .site-header, .news-grid, .pagination-bar, .pagination-bottom, .tab-section',
+                '2': '.blue-banner, .leaks-banner, .page-title, .news-card__badge, .news-card__new, .news-card__button, .mobile-pagination-pill, .news-card__title, .tab-titles button',
+                '3': '.hero-title, .main-headline, .section-hero h1'
+            };
+            for (const [depth, sel] of Object.entries(map)) {
+                if (!sel) continue;
+                document.querySelectorAll(sel).forEach(el => el.dataset.depth = depth);
+            }
+            _depthEls = [...document.querySelectorAll('[data-depth]')];
+        }
+
+        function updateDepthParallax(mx, my) {
+            const dx = (mx / window.innerWidth - 0.5) * 2;
+            const dy = (my / window.innerHeight - 0.5) * 2;
+            for (const el of _depthEls) {
+                const f = _depthFactors[el.dataset.depth] || 0;
+                if (f) el.style.translate = `${dx * f * 18}px ${dy * f * 18}px`;
+            }
+        }
+
+        function initDepth() {
+            assignDepth();
+            let rafId = null;
+            let lastMX = 0, lastMY = 0;
+            document.addEventListener('mousemove', e => {
+                lastMX = e.clientX; lastMY = e.clientY;
+                if (!rafId) rafId = requestAnimationFrame(() => {
+                    updateDepthParallax(lastMX, lastMY);
+                    rafId = null;
+                });
+            }, { passive: true });
+            let scrollDepthTimer;
+            window.addEventListener('scroll', () => {
+                document.body.classList.add('scrolling');
+                clearTimeout(scrollDepthTimer);
+                scrollDepthTimer = setTimeout(() => document.body.classList.remove('scrolling'), 300);
+            }, { passive: true });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => { setTimeout(initDepth, 50); });
+
+        // ── LIQUID ICE — highlight dynamique au survol ──
+        function initLiquidIce() {
+            document.querySelectorAll('.ice-card').forEach(card => {
+                if (card.querySelector('.liquid-ice-highlight')) return;
+                const hl = document.createElement('div');
+                hl.className = 'liquid-ice-highlight';
+                card.appendChild(hl);
+                card.addEventListener('mousemove', e => {
+                    const r = card.getBoundingClientRect();
+                    card.style.setProperty('--mx', ((e.clientX - r.left) / r.width).toFixed(3));
+                    card.style.setProperty('--my', ((e.clientY - r.top) / r.height).toFixed(3));
+                }, { passive: true });
+                card.addEventListener('mouseleave', () => {
+                    card.style.setProperty('--mx', '0.5');
+                    card.style.setProperty('--my', '0.5');
+                }, { passive: true });
+            });
+        }
     </script>
+
+    <!-- ── SEARCH OVERLAY ── -->
+    <div id="searchOverlay" class="search-overlay" onclick="if(event.target===this)closeSearch()">
+        <div class="search-container">
+            <div class="search-bar">
+                <span class="material-symbols-outlined search-icon" style="font-size:22px;color:#999;flex-shrink:0">search</span>
+                <input id="searchInput" type="text" placeholder="Rechercher…" autofocus onkeydown="if(event.key==='Escape')closeSearch();if(event.key==='Enter'){event.preventDefault();executeSearch()}">
+                <button class="search-go-btn" onclick="executeSearch()">Chercher</button>
+                <button class="search-nav-btn" onclick="prevMatch()" id="searchPrevBtn">▲</button>
+                <button class="search-nav-btn" onclick="nextMatch()" id="searchNextBtn">▼</button>
+                <button class="search-close-btn" onclick="closeSearch()">✕</button>
+            </div>
+            <div id="searchStats" class="search-stats"></div>
+        </div>
+    </div>
+
 </body>
 </html>

@@ -201,27 +201,80 @@
         }
         .news-card__bar { height: 5px; background: linear-gradient(90deg, transparent, var(--cat-hex), var(--cat-hex), transparent); background-size: 200% auto; animation: barSlide 3s linear infinite; will-change: background-position; }
 
-        /* ── LA BULLE MODALE (LIGHTBOX VIDEO & IMAGE) ── */
+        /* ── LIGHTBOX (VIDÉO & IMAGE) ── */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            background: rgba(0, 0, 0, 0.88); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
             display: flex; justify-content: center; align-items: center;
-            z-index: 2000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+            z-index: 9998; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
         }
         .modal-overlay.is-active { opacity: 1; pointer-events: auto; }
         .modal-content {
-            position: relative; width: 90%; max-width: 800px; background: #111; border-radius: 16px; padding: 4px;
-            transform: scale(0.95); transition: transform 0.3s ease; border: 2px solid #ff0055; box-shadow: 0 0 40px rgba(255, 0, 85, 0.3);
+            position: relative; width: 90%; max-width: 820px;
+            background: rgba(12,12,20,0.99);
+            border-radius: 20px; overflow: hidden; padding: 0;
+            transform: scale(0.96) translateY(10px);
+            transition: transform 0.32s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 40px 120px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.04), inset 0 1px 0 rgba(255,255,255,0.06);
         }
-        .modal-overlay.is-active .modal-content { transform: scale(1); }
-        .modal-close {
-            position: absolute; top: -45px; right: 0; color: #fff; font-size: 36px; font-weight: 900;
-            cursor: pointer; transition: color 0.2s; user-select: none;
+        .modal-overlay.is-active .modal-content { transform: scale(1) translateY(0); }
+
+        /* Bouton fermer flottant */
+        .modal-close-float {
+            position: absolute; top: 12px; right: 12px; z-index: 20;
+            width: 34px; height: 34px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.15);
+            background: rgba(0,0,0,0.55); backdrop-filter: blur(10px);
+            color: rgba(255,255,255,0.75); font-size: 14px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s;
         }
-        .modal-close:hover { color: #ff0055; }
-        .modal-video-container { width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 12px; overflow: hidden; display: flex; justify-content: center; align-items: center; }
-        .modal-video-container video { width: 100%; height: 100%; object-fit: cover; outline: none; display: none; }
-        .modal-video-container img { width: 100%; height: 100%; object-fit: contain; display: none; }
+        .modal-close-float:hover { background: #cc0000; border-color: #cc0000; color: #fff; transform: scale(1.08); }
+
+        /* Zone média */
+        .modal-media-zone {
+            width: 100%; aspect-ratio: 16/9; background: #000;
+            display: flex; justify-content: center; align-items: center;
+            position: relative;
+        }
+        .modal-media-zone video { width: 100%; height: 100%; object-fit: cover; outline: none; display: none; }
+        .modal-media-zone img  { width: 100%; height: 100%; object-fit: contain; display: none; }
+
+        /* Bandeau info en bas */
+        .modal-info-footer {
+            display: flex; align-items: center; gap: 10px;
+            padding: 13px 18px; flex-wrap: wrap;
+            border-top: 1px solid rgba(255,255,255,0.07);
+            background: linear-gradient(135deg, rgba(20,10,10,0.98), rgba(14,14,22,0.98));
+        }
+        .modal-info-badge {
+            font-family: 'LuckiestGuy Regular', cursive;
+            font-size: 11px; letter-spacing: 1.2px;
+            padding: 4px 13px; border-radius: 100px;
+            background: linear-gradient(135deg, #ff1a1a, #cc0000);
+            color: #fff; box-shadow: 0 2px 12px rgba(204,0,0,0.45);
+            border: 1.5px solid rgba(255,100,100,0.3);
+            white-space: nowrap; flex-shrink: 0;
+        }
+        .modal-info-section {
+            font-size: 10px; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 1.5px; color: rgba(255,255,255,0.35);
+            padding: 3px 10px; border-radius: 100px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.09);
+            white-space: nowrap; flex-shrink: 0;
+        }
+        .modal-info-title {
+            font-family: 'LuckiestGuy Regular', cursive;
+            font-size: 14px; color: rgba(255,255,255,0.72);
+            letter-spacing: 0.5px; margin: 0;
+            flex: 1; min-width: 0;
+            overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+        }
+        @media (max-width: 768px) {
+            .modal-info-footer { padding: 10px 14px; gap: 8px; }
+            .modal-info-title  { font-size: 12px; }
+        }
 
         /* ── RESPONSIVE RESPONSIVE ── */
         @media (max-width: 768px) { 
@@ -872,9 +925,11 @@
             animation: postCountPop 0.38s cubic-bezier(0.34, 1.56, 0.64, 1) both;
         }
 
-        /* Footer carte avec like */
+        /* Footer carte avec like — TOUJOURS VISIBLE */
         .post-like-card-footer {
-            display: flex;
+            display: flex !important;
+            opacity: 1 !important;
+            visibility: visible !important;
             align-items: center;
             justify-content: flex-end;
             padding-top: 10px;
@@ -884,26 +939,294 @@
         }
         /* Adaptation dark (carte dans section colorée) */
         .category-section .post-like-btn {
-            background: rgba(255,255,255,0.1);
-            border-color: rgba(255,255,255,0.3);
-            color: rgba(255,255,255,0.75);
+            background: rgba(255,255,255,0.14);
+            border-color: rgba(255,255,255,0.4);
+            color: rgba(255,255,255,0.9);
         }
         .category-section .post-like-btn:hover {
-            border-color: rgba(255, 80, 110, 0.55);
-            background: rgba(255, 50, 90, 0.12);
-            color: #ff8aaa;
+            border-color: rgba(255, 80, 110, 0.75);
+            background: rgba(255, 50, 90, 0.22);
+            color: #fff;
         }
         .category-section .post-like-btn.liked {
-            border-color: rgba(255, 80, 110, 0.6);
-            background: rgba(255, 50, 90, 0.15);
-            color: #ff8aaa;
+            border-color: rgba(255, 80, 110, 0.8);
+            background: rgba(255, 50, 90, 0.25);
+            color: #fff;
         }
         .category-section .post-like-btn.liked .post-like-heart path {
             fill: #ff8aaa;
             stroke: #ff8aaa;
         }
         .category-section .post-like-card-footer {
-            border-top-color: rgba(255,255,255,0.1);
+            border-top-color: rgba(255,255,255,0.12);
+        }
+
+        /* ══ LIKE ACTUS — bouton ancré top-right du secret-bulletin ══ */
+        .actus-like-wrap {
+            position: absolute;
+            top: 18px; right: 18px;
+            z-index: 20;
+        }
+        .actus-like-wrap .post-like-btn {
+            background: rgba(255,255,255,0.92);
+            border-color: rgba(255,50,90,0.35);
+            backdrop-filter: blur(8px);
+            box-shadow: 0 4px 18px rgba(0,0,0,0.10);
+        }
+        .actus-like-wrap .post-like-btn:hover {
+            background: #fff;
+            border-color: rgba(255,50,90,0.6);
+            box-shadow: 0 6px 24px rgba(255,50,90,0.22);
+        }
+        .actus-like-wrap .post-like-btn.liked {
+            background: rgba(255,50,90,0.10);
+            border-color: rgba(255,50,90,0.55);
+        }
+
+        /* ══ COMMAND EDITOR PANEL ══ */
+        #editModePanel {
+            position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(20px);
+            z-index: 99990; width: 340px; max-width: 92vw;
+            background: rgba(14,14,22,0.96);
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 18px;
+            box-shadow: 0 24px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.05);
+            padding: 0; overflow: hidden;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.28s ease, transform 0.32s cubic-bezier(0.34,1.56,0.64,1);
+        }
+        #editModePanel.is-open {
+            opacity: 1; pointer-events: auto;
+            transform: translateX(-50%) translateY(0);
+        }
+        .edit-panel__header {
+            display: flex; align-items: center; gap: 10px;
+            padding: 12px 16px; background: rgba(255,255,255,0.04);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        .edit-panel__title {
+            flex: 1; font-family: 'LuckiestGuy Regular', cursive;
+            font-size: 14px; color: #fff; letter-spacing: 0.5px;
+        }
+        .edit-panel__badge {
+            background: linear-gradient(135deg, #ff1a1a, #cc0000);
+            color: #fff; font-size: 10px; font-weight: 800;
+            padding: 2px 8px; border-radius: 100px; letter-spacing: 0.8px;
+            text-transform: uppercase;
+        }
+        .edit-panel__close {
+            width: 28px; height: 28px; border-radius: 50%; border: none;
+            background: rgba(255,255,255,0.08); color: #aaa; font-size: 14px;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s;
+        }
+        .edit-panel__close:hover { background: rgba(255,26,26,0.4); color: #fff; }
+        .edit-panel__hint {
+            padding: 10px 16px;
+            font-size: 12px; color: rgba(255,255,255,0.45);
+            line-height: 1.5;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        .edit-panel__hint strong { color: rgba(255,255,255,0.72); }
+        .edit-panel__cmd {
+            padding: 10px 12px;
+            display: flex; gap: 8px; align-items: center;
+        }
+        .edit-panel__cmd-prefix {
+            color: #ff1a1a; font-family: monospace; font-size: 14px; font-weight: 700;
+            flex-shrink: 0;
+        }
+        #editCmdInput {
+            flex: 1; border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.06); border-radius: 10px;
+            padding: 7px 12px; color: #fff; font-size: 13px;
+            font-family: monospace; outline: none;
+            transition: border-color 0.2s;
+        }
+        #editCmdInput::placeholder { color: rgba(255,255,255,0.25); }
+        #editCmdInput:focus { border-color: rgba(255,26,26,0.45); }
+        .edit-panel__cmd-send {
+            width: 32px; height: 32px; border-radius: 10px; border: none; flex-shrink: 0;
+            background: linear-gradient(135deg, #ff1a1a, #cc0000);
+            color: #fff; font-size: 14px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s;
+        }
+        .edit-panel__cmd-send:hover { transform: scale(1.08); }
+        .edit-panel__log {
+            max-height: 88px; overflow-y: auto;
+            padding: 6px 14px 10px;
+            font-family: monospace; font-size: 11px; color: rgba(255,255,255,0.38);
+            border-top: 1px solid rgba(255,255,255,0.06);
+        }
+        .edit-panel__log .log-line { padding: 2px 0; }
+        .edit-panel__log .log-line.ok { color: #39ff14; }
+        .edit-panel__log .log-line.err { color: #ff4444; }
+        .edit-panel__log .log-line.info { color: #66d8ff; }
+
+        /* Highlighting des éléments éditables */
+        body.edit-mode [data-editable] {
+            outline: 2px dashed rgba(255,26,26,0.4) !important;
+            outline-offset: 2px;
+            cursor: text !important;
+            transition: outline-color 0.15s;
+        }
+        body.edit-mode [data-editable]:hover {
+            outline-color: rgba(255,26,26,0.9) !important;
+            background: rgba(255,26,26,0.04) !important;
+        }
+
+        /* Hotkey tooltip */
+        #editModeToast {
+            position: fixed; bottom: 24px; left: 24px; z-index: 99991;
+            background: rgba(14,14,22,0.9); backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 12px;
+            padding: 8px 14px; font-size: 12px; color: rgba(255,255,255,0.6);
+            pointer-events: none;
+            opacity: 0; transform: translateY(6px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        #editModeToast.is-visible { opacity: 1; transform: translateY(0); }
+        #editModeToast kbd {
+            background: rgba(255,255,255,0.12); border-radius: 5px;
+            padding: 1px 6px; font-family: monospace; font-size: 11px;
+            color: #fff; border: 1px solid rgba(255,255,255,0.15);
+        }
+
+        /* Edit inline popup */
+        #editInlinePopup {
+            position: fixed; z-index: 99992;
+            background: rgba(14,14,22,0.98); backdrop-filter: blur(18px);
+            border: 1px solid rgba(255,255,255,0.12); border-radius: 14px;
+            padding: 12px 14px; width: 300px; max-width: 92vw;
+            box-shadow: 0 16px 60px rgba(0,0,0,0.5);
+            display: none;
+        }
+        #editInlinePopup.is-open { display: block; }
+        .edit-inline__label {
+            font-size: 10px; text-transform: uppercase; letter-spacing: 1px;
+            color: rgba(255,255,255,0.35); font-weight: 700; margin-bottom: 6px;
+        }
+        #editInlineTextarea {
+            width: 100%; border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.06); border-radius: 8px;
+            padding: 8px 10px; color: #fff; font-size: 13px;
+            font-family: 'Inter', sans-serif; outline: none; resize: vertical;
+            min-height: 60px; transition: border-color 0.2s;
+        }
+        #editInlineTextarea:focus { border-color: rgba(255,26,26,0.5); }
+        .edit-inline__actions {
+            display: flex; gap: 6px; margin-top: 8px; justify-content: flex-end;
+        }
+        .edit-inline__btn {
+            padding: 5px 14px; border-radius: 8px; border: none; font-size: 12px;
+            font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif;
+            transition: all 0.18s;
+        }
+        .edit-inline__btn--cancel {
+            background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.5);
+        }
+        .edit-inline__btn--cancel:hover { background: rgba(255,255,255,0.13); }
+        .edit-inline__btn--save {
+            background: linear-gradient(135deg, #ff1a1a, #cc0000);
+            color: #fff; box-shadow: 0 3px 10px rgba(255,26,26,0.35);
+        }
+        .edit-inline__btn--save:hover { transform: scale(1.04); }
+
+        /* ══ COMMENTAIRES AMÉLIORÉS — réactions emoji ══ */
+        .comment-reactions {
+            display: flex; align-items: center; gap: 5px;
+            flex-wrap: wrap; margin-top: 8px;
+        }
+        .reaction-btn {
+            display: inline-flex; align-items: center; gap: 3px;
+            background: rgba(0,0,0,0.04); border: 1px solid #eee;
+            border-radius: 100px; padding: 3px 9px 3px 7px;
+            font-size: 13px; cursor: pointer; transition: all 0.18s;
+            color: #666; font-weight: 600; font-family: 'Inter', sans-serif;
+            user-select: none;
+        }
+        .reaction-btn:hover { background: rgba(255,26,26,0.06); border-color: rgba(255,26,26,0.2); }
+        .reaction-btn.reacted {
+            background: rgba(255,26,26,0.08); border-color: rgba(255,26,26,0.3);
+            color: #ff1a1a;
+        }
+        .reaction-btn__count { font-size: 11px; font-weight: 700; min-width: 10px; }
+        .reaction-add-btn {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 26px; height: 26px; border-radius: 50%;
+            background: rgba(0,0,0,0.04); border: 1px dashed #ddd;
+            font-size: 14px; cursor: pointer; transition: all 0.18s; color: #aaa;
+        }
+        .reaction-add-btn:hover { background: rgba(255,26,26,0.06); border-color: rgba(255,26,26,0.3); color: #ff1a1a; }
+
+        /* Emoji picker popup */
+        .emoji-picker-popup {
+            position: absolute; background: #fff;
+            border: 1px solid #eee; border-radius: 12px;
+            padding: 8px; display: flex; gap: 4px; flex-wrap: wrap;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+            z-index: 9999; width: 180px;
+        }
+        .emoji-picker-popup button {
+            width: 32px; height: 32px; border: none; background: none;
+            border-radius: 8px; font-size: 18px; cursor: pointer;
+            transition: background 0.15s; display: flex; align-items: center; justify-content: center;
+        }
+        .emoji-picker-popup button:hover { background: rgba(0,0,0,0.06); }
+
+        /* Sort bar */
+        .comment-sort-bar {
+            display: flex; align-items: center; gap: 6px;
+            padding: 0 0 12px 0; margin-bottom: 4px;
+        }
+        .comment-sort-label {
+            font-size: 11px; font-weight: 700; color: #ccc;
+            text-transform: uppercase; letter-spacing: 0.8px; flex-shrink: 0;
+        }
+        .comment-sort-btn {
+            padding: 4px 12px; border-radius: 100px; border: 1.5px solid #eee;
+            font-size: 11px; font-weight: 700; cursor: pointer; background: none;
+            color: #999; font-family: 'Inter', sans-serif; transition: all 0.18s;
+        }
+        .comment-sort-btn.active {
+            background: #ff1a1a; border-color: #ff1a1a; color: #fff;
+        }
+        .comment-sort-btn:not(.active):hover { border-color: rgba(255,26,26,0.3); color: #ff1a1a; }
+
+        /* Compteur de caractères */
+        .comment-char-counter {
+            position: absolute; right: 80px; bottom: 14px;
+            font-size: 11px; color: #ccc; font-weight: 600;
+            pointer-events: none; transition: color 0.2s;
+        }
+        .comment-char-counter.warn { color: #ff8800; }
+        .comment-char-counter.danger { color: #ff1a1a; }
+        .comment-input-wrap { position: relative; }
+
+        /* Badge "Premier commentaire 🎉" */
+        .comment-first-badge {
+            display: inline-block; background: linear-gradient(135deg, #ff9500, #ffda00);
+            color: #000; font-size: 10px; font-weight: 800; padding: 2px 8px;
+            border-radius: 100px; letter-spacing: 0.5px; text-transform: uppercase;
+            vertical-align: middle; margin-left: 6px;
+        }
+
+        /* Timestamp relatif */
+        .comment-item__time[title] { cursor: help; text-decoration: underline dotted rgba(0,0,0,0.2); }
+
+        /* Pinned comment */
+        .comment-item--pinned .comment-item__body {
+            border-color: rgba(255,215,0,0.35);
+            background: linear-gradient(135deg, #fffef0, #f9f9fb);
+        }
+        .comment-pin-badge {
+            font-size: 10px; font-weight: 800; color: #cc8800;
+            background: rgba(255,215,0,0.15); border-radius: 6px;
+            padding: 1px 6px; margin-left: auto; white-space: nowrap;
+            border: 1px solid rgba(255,215,0,0.3);
         }
 
     </style>
@@ -1018,13 +1341,19 @@
                         <div class="comment-input-wrap">
                             <textarea class="comment-input" id="commentInput"
                                 placeholder="Écris un commentaire…" rows="1"
-                                oninput="autoResize(this)"></textarea>
+                                oninput="autoResize(this);updateCharCounter(this)" maxlength="240"></textarea>
+                            <span class="comment-char-counter" id="charCounter">240</span>
                             <button class="comment-submit" onclick="postComment()">Poster</button>
                         </div>
                     </div>
 
-                    <!-- Séparateur -->
-                    <div class="comment-divider">Top commentaires</div>
+                    <!-- Séparateur + tri -->
+                    <div class="comment-sort-bar">
+                        <span class="comment-sort-label">Trier :</span>
+                        <button class="comment-sort-btn active" id="sortTop" onclick="setSort('top')">⭐ Top</button>
+                        <button class="comment-sort-btn" id="sortNew" onclick="setSort('new')">🕐 Récents</button>
+                    </div>
+                    <div class="comment-divider">Commentaires</div>
 
                     <!-- Top 4 commentaires -->
                     <div class="comment-list" id="commentList"></div>
@@ -1331,20 +1660,63 @@
 
         <div id="videoModal" class="modal-overlay">
             <div class="modal-content">
-                <span class="modal-close" id="closeModal">&times;</span>
-                <div class="modal-video-container">
+                <!-- Bouton fermer flottant -->
+                <button class="modal-close-float" id="closeModal">✕</button>
+                <!-- Zone média -->
+                <div class="modal-media-zone">
                     <video id="fruitVideo" controls loop>
                         <source src="" type="video/mp4">
                         Votre navigateur ne supporte pas la lecture de vidéos.
                     </video>
                     <img id="modalImage" src="" alt="Aperçu Leak">
                 </div>
+                <!-- Infos en bas -->
+                <div class="modal-info-footer">
+                    <span class="modal-info-badge" id="modalBadge">LEAK</span>
+                    <span class="modal-info-section" id="modalSection">Section</span>
+                    <h3 class="modal-info-title" id="modalMetaTitle"></h3>
+                </div>
             </div>
         </div>
 
     </main>
 
-    <!-- ── SEARCH OVERLAY ── -->
+    <!-- ── COMMAND EDITOR PANEL ── -->
+    <div id="editModePanel">
+        <div class="edit-panel__header">
+            <span style="font-size:16px">✏️</span>
+            <span class="edit-panel__title">Mode Édition</span>
+            <span class="edit-panel__badge">ADMIN</span>
+            <button class="edit-panel__close" onclick="toggleEditMode()">✕</button>
+        </div>
+        <div class="edit-panel__hint">
+            <strong>Clique sur n'importe quel texte</strong> pour le modifier.<br>
+            Les modifications sont sauvegardées localement.
+        </div>
+        <div class="edit-panel__cmd">
+            <span class="edit-panel__cmd-prefix">›</span>
+            <input type="text" id="editCmdInput" placeholder="/reset · /list · /export · /help"
+                onkeydown="handleEditCmd(event)">
+            <button class="edit-panel__cmd-send" onclick="handleEditCmd({key:'Enter'})" title="Exécuter">↵</button>
+        </div>
+        <div class="edit-panel__log" id="editLog"></div>
+    </div>
+
+    <!-- ── INLINE EDIT POPUP ── -->
+    <div id="editInlinePopup">
+        <div class="edit-inline__label">Modifier le texte</div>
+        <textarea id="editInlineTextarea" rows="3"></textarea>
+        <div class="edit-inline__actions">
+            <button class="edit-inline__btn edit-inline__btn--cancel" onclick="closeEditInline()">Annuler</button>
+            <button class="edit-inline__btn edit-inline__btn--save" onclick="saveEditInline()">Sauvegarder</button>
+        </div>
+    </div>
+
+    <!-- ── EDIT MODE TOAST ── -->
+    <div id="editModeToast"><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>E</kbd> — Mode Édition</div>
+
+    <!-- EMOJI PICKER (shared) -->
+    <div id="emojiPicker" class="emoji-picker-popup" style="display:none"></div>
     <div id="searchOverlay" class="search-overlay" onclick="if(event.target===this)closeSearch()">
         <div class="search-container">
             <div class="search-bar">
@@ -1422,68 +1794,72 @@
                 });
             });
 
-            // ── 3. SYSTÈME DE LA BULLE MODALE DUPLIQUE (VIDÉO & IMAGE) ──
-            const modal = document.getElementById('videoModal');
+            // ── 3. SYSTÈME DE LA BULLE MODALE (VIDÉO & IMAGE) avec métadonnées ──
+            const SECTION_LABELS = {
+                'cat-fruit':    '🍎 Fruits & Reworks',
+                'cat-vfx':      '✨ VFX',
+                'cat-map':      '🗺️ Map & Build',
+                'cat-gui':      '💻 GUI & Systèmes',
+                'cat-messages': '✉️ Messages & Lore',
+                'cat-actus':    '📰 Actus'
+            };
+
+            const modal    = document.getElementById('videoModal');
             const openBtns = document.querySelectorAll('.open-modal-btn');
             const closeBtn = document.getElementById('closeModal');
-            const video = document.getElementById('fruitVideo');
+            const video    = document.getElementById('fruitVideo');
             const modalImg = document.getElementById('modalImage');
+            const modalBadge   = document.getElementById('modalBadge');
+            const modalSection = document.getElementById('modalSection');
+            const modalTitle   = document.getElementById('modalMetaTitle');
 
             if (modal && closeBtn) {
-                // Action : Ouvrir la bulle au clic
                 openBtns.forEach(btn => {
                     btn.addEventListener('click', (e) => {
                         e.preventDefault();
-                        const type = btn.getAttribute('data-type');
+                        const type      = btn.getAttribute('data-type');
                         const sourceUrl = btn.getAttribute('data-src');
 
-                        // On cache tout par défaut dans la bulle
-                        if (video) video.style.display = 'none';
+                        // Extraction des métadonnées depuis le DOM
+                        const card        = btn.closest('.news-card');
+                        const section     = btn.closest('[id^="cat-"]');
+                        const badgeText   = card?.querySelector('.news-card__badge')?.textContent?.trim() || 'LEAK';
+                        const titleText   = card?.querySelector('.news-card__title')?.textContent?.trim() || '';
+                        const sectionKey  = section?.id || '';
+                        const sectionName = SECTION_LABELS[sectionKey] || 'Blox Leaks';
+
+                        // Injection metadata (badge TOUJOURS rouge)
+                        if (modalBadge)   modalBadge.textContent   = badgeText;
+                        if (modalSection) modalSection.textContent = sectionName;
+                        if (modalTitle)   modalTitle.textContent   = titleText;
+
+                        // Media
+                        if (video)    video.style.display    = 'none';
                         if (modalImg) modalImg.style.display = 'none';
 
-                        if (type === 'video') {
-                            if (video) {
-                                video.src = sourceUrl;
-                                video.style.display = 'block';
-                                video.currentTime = 0;
-                                video.play().catch(err => console.log("Lancement automatique bloqué :", err));
-                            }
-                        } else if (type === 'image') {
-                            if (modalImg) {
-                                modalImg.src = sourceUrl;
-                                modalImg.style.display = 'block';
-                            }
+                        if (type === 'video' && video) {
+                            video.src = sourceUrl;
+                            video.style.display = 'block';
+                            video.currentTime   = 0;
+                            video.play().catch(() => {});
+                        } else if (type === 'image' && modalImg) {
+                            modalImg.src = sourceUrl;
+                            modalImg.style.display = 'block';
                         }
-
                         modal.classList.add('is-active');
                     });
                 });
 
-                // Fonction pour fermer proprement
-                const closeModalFunction = () => {
+                const closeModalFn = () => {
                     modal.classList.remove('is-active');
-                    if (video) {
-                        video.pause();
-                        video.src = ""; // Coupe la ressource nette
-                    }
-                    if (modalImg) {
-                        modalImg.src = "";
-                    }
+                    if (video) { video.pause(); video.src = ''; }
+                    if (modalImg) modalImg.src = '';
                 };
 
-                // Fermeture au clic sur la croix (X)
-                closeBtn.addEventListener('click', closeModalFunction);
-
-                // Fermeture au clic en dehors du cadre (dans le noir flouté)
-                modal.addEventListener('click', (e) => {
-                    if (e.target === modal) closeModalFunction();
-                });
-
-                // Fermeture avec la touche Échap
+                closeBtn.addEventListener('click', closeModalFn);
+                modal.addEventListener('click', (e) => { if (e.target === modal) closeModalFn(); });
                 document.addEventListener('keydown', (e) => {
-                    if (e.key === 'Escape' && modal.classList.contains('is-active')) {
-                        closeModalFunction();
-                    }
+                    if (e.key === 'Escape' && modal.classList.contains('is-active')) closeModalFn();
                 });
             }
         });
@@ -1506,15 +1882,28 @@
 
     <!-- LOGIQUE COMMENTAIRES -->
     <script>
-    const DISCORD_ICON = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 127.14 96.36" style="width:11px;height:11px;vertical-align:middle"><path fill="#5865F2" d="M107.7 8.07A105.15 105.15 0 0081.47 0a72.06 72.06 0 00-3.36 6.83 97.68 97.68 0 00-29.11 0A72.37 72.37 0 0045.64 0a105.89 105.89 0 00-26.25 8.09C2.79 32.65-1.71 56.6.54 80.21a105.73 105.73 0 0032.17 16.15 77.7 77.7 0 006.89-11.11 68.42 68.42 0 01-10.85-5.18c.91-.66 1.8-1.34 2.66-2a75.57 75.57 0 0064.32 0c.87.71 1.76 1.39 2.66 2a68.68 68.68 0 01-10.87 5.19 77 77 0 006.89 11.1 105.25 105.25 0 0032.19-16.14c2.64-27.38-4.51-51.11-18.9-72.15zM42.45 65.69C36.18 65.69 31 60 31 53s5-12.74 11.43-12.74S54 46 53.89 53s-5.1 12.69-11.44 12.69zm42.24 0C78.41 65.69 73.25 60 73.25 53s5-12.74 11.44-12.74S96.23 46 96.12 53s-5.12 12.69-11.43 12.69z"/></svg>`;
+    /* ─── Helpers timestamp relatif ────────────────────────────────── */
+    function relativeTime(isoOrStr) {
+        if (!isoOrStr || isoOrStr === "à l'instant") return "à l'instant";
+        const d = new Date(isoOrStr);
+        if (isNaN(d.getTime())) return isoOrStr;
+        const diff = Date.now() - d.getTime();
+        const s = Math.floor(diff / 1000);
+        if (s < 60)  return "à l'instant";
+        const m = Math.floor(s / 60);
+        if (m < 60)  return `il y a ${m}min`;
+        const h = Math.floor(m / 60);
+        if (h < 24)  return `il y a ${h}h`;
+        const j = Math.floor(h / 24);
+        if (j < 7)   return `il y a ${j}j`;
+        return d.toLocaleDateString('fr-FR', { day:'numeric', month:'short' });
+    }
+    function isoNow() { return new Date().toISOString(); }
 
-    /* ─── MODÉRATEURS ─────────────────────────────────────────────────────────
-       Ces 3 pseudos Discord peuvent supprimer N'IMPORTE QUEL commentaire.
-       Les autres utilisateurs ne peuvent supprimer QUE leurs propres commentaires.
-       ────────────────────────────────────────────────────────────────────── */
+    /* ─── Modérateurs ─── */
     const MODERATORS = ["fn_n0klip", "neolixx", "bryanbg"];
 
-    /* ─── FIREBASE INIT ──────────────────────────────────────────────────── */
+    /* ─── Firebase INIT ─── */
     firebase.initializeApp({
         apiKey: "AIzaSyBkJsHWyoiEeqmEktUlgcED-8mBPnar_0w",
         authDomain: "blox-bulletin-comments.firebaseapp.com",
@@ -1525,51 +1914,54 @@
         appId: "1:774633429491:web:d1f534a0df346fbea79a86",
         measurementId: "G-DKKQK7N4DQ"
     });
-    const FB_DB = firebase.database();
+    const FB_DB  = firebase.database();
     const FB_REF = FB_DB.ref('comments');
 
-    /* ─── PERSISTANCE mixte — Firebase (partagé) + localStorage (fallback + likes) ── */
-    function loadLocal() {
-        try { return JSON.parse(localStorage.getItem("bloxleaks_comments")) || []; }
-        catch(e) { return []; }
-    }
-    function saveLocal() {
-        try { localStorage.setItem("bloxleaks_comments", JSON.stringify(COMMENTS_DB)); }
-        catch(e) {}
-    }
-    function saveDB() {
+    /* ─── Persistance ─── */
+    function loadLocal() { try { return JSON.parse(localStorage.getItem("bloxleaks_comments")) || []; } catch { return []; } }
+    function saveLocal() { try { localStorage.setItem("bloxleaks_comments", JSON.stringify(COMMENTS_DB)); } catch {} }
+    function saveDB()    {
         saveLocal();
         const clean = COMMENTS_DB.map(c => ({
             ...c, likedByMe: false,
+            reactions: c.reactions || {},
+            myReactions: undefined,
             replies: (c.replies||[]).map(r => ({...r, likedByMe: false}))
         }));
         FB_REF.set(clean);
     }
 
-    /* ─── BASE DE DONNÉES ─────────────────────────────────────────────────── */
-    const COMMENTS_DB = []; // rempli par Firebase + localStorage likedByMe
+    /* ─── Base de données & état ─── */
+    const COMMENTS_DB = [];
     const MAX_SHOWN   = 4;
-    let   currentUser = null; // { username, avatar } — rempli par discordLogin()
+    let   currentUser = null;
+    let   sortMode    = 'top'; // 'top' | 'new'
 
-    /* ─── Écoute Firebase temps réel ────────────────────────────────────── */
-    FB_REF.on('value', (snap) => {
+    /* ─── Sort ─── */
+    function setSort(mode) {
+        sortMode = mode;
+        document.getElementById('sortTop')?.classList.toggle('active', mode === 'top');
+        document.getElementById('sortNew')?.classList.toggle('active', mode === 'new');
+        renderList();
+    }
+
+    /* ─── Écoute Firebase ─── */
+    FB_REF.on('value', snap => {
         let val = snap.val();
-        if (!val) { // Firebase vide → pousser les données locales si existantes
-            if (COMMENTS_DB.length > 0) saveDB();
-            return;
-        }
-        // Firebase stocke les tableaux en objet {0:..., 1:...} → conversion
-        if (!Array.isArray(val)) val = Object.keys(val).sort((a,b) => Number(a)-Number(b)).map(k => val[k]);
+        if (!val) { if (COMMENTS_DB.length > 0) saveDB(); return; }
+        if (!Array.isArray(val)) val = Object.keys(val).sort((a,b)=>Number(a)-Number(b)).map(k=>val[k]);
         if (val.length === 0) return;
-        // Préserver likedByMe local
-        const likes = {};
+        const likes = {}, myReacts = {};
         COMMENTS_DB.forEach(c => {
             likes[c.id] = c.likedByMe;
+            myReacts[c.id] = c.myReactions || {};
             (c.replies||[]).forEach(r => { likes[`${c.id}_r${r.id}`] = r.likedByMe; });
         });
         COMMENTS_DB.length = 0;
         val.forEach(c => {
-            c.likedByMe = !!likes[c.id];
+            c.likedByMe   = !!likes[c.id];
+            c.myReactions = myReacts[c.id] || {};
+            c.reactions   = c.reactions || {};
             (c.replies||[]).forEach(r => { r.likedByMe = !!likes[`${c.id}_r${r.id}`]; });
             COMMENTS_DB.push(c);
         });
@@ -1578,39 +1970,91 @@
         if (document.getElementById("commentsModal")?.classList.contains("is-active")) renderModal();
     });
 
-    // Chargement initial instantané depuis localStorage (avant Firebase)
     (function initLocal() {
         const legacy = loadLocal();
-        if (legacy.length > 0) COMMENTS_DB.push(...legacy);
+        if (legacy.length > 0) {
+            legacy.forEach(c => { c.reactions = c.reactions || {}; c.myReactions = c.myReactions || {}; });
+            COMMENTS_DB.push(...legacy);
+        }
     })();
 
-    /* ─── Droits de suppression ──────────────────────────────────────────── */
-    function canDelete(c)    {
-        if (!currentUser) return false;
-        return MODERATORS.includes(currentUser.username) || c.username === currentUser.username;
-    }
-    function canDeleteReply(r) {
-        if (!currentUser) return false;
-        return MODERATORS.includes(currentUser.username) || r.username === currentUser.username;
-    }
+    /* ─── Droits ─── */
+    function canDelete(c)      { if (!currentUser) return false; return MODERATORS.includes(currentUser.username) || c.username === currentUser.username; }
+    function canDeleteReply(r) { if (!currentUser) return false; return MODERATORS.includes(currentUser.username) || r.username === currentUser.username; }
+    function isMod()           { return currentUser && MODERATORS.includes(currentUser.username); }
 
-    /* ─── Helpers avatar & Discord tag ─────────────────────────────────── */
+    /* ─── Helpers avatar / discord ─── */
     const COLORS = ["#ff1a1a","#5865F2","#00c278","#ff9500","#a200ff","#0099ff","#ff6b00"];
-    function userColor(name) { return COLORS[name.charCodeAt(0) % COLORS.length]; }
-
+    function userColor(n) { return COLORS[n.charCodeAt(0) % COLORS.length]; }
     function avatarHTML(u, size=38) {
-        const s = `width:${size}px;height:${size}px;font-size:${Math.round(size*0.42)}px;`;
-        if (u && u.avatar)
-            return `<img src="${u.avatar}" class="comment-avatar" style="${s}" alt="">`;
-        const letter = (u ? u.username : "?")[0].toUpperCase();
-        const bg     = userColor(u ? u.username : "?");
-        return `<div class="comment-avatar--placeholder" style="${s}background:${bg}">${letter}</div>`;
+        const s = `width:${size}px;height:${size}px;font-size:${Math.round(size*.42)}px;`;
+        if (u?.avatar) return `<img src="${u.avatar}" class="comment-avatar" style="${s}" alt="">`;
+        const l = (u?u.username:'?')[0].toUpperCase();
+        return `<div class="comment-avatar--placeholder" style="${s}background:${userColor(u?u.username:'?')}">${l}</div>`;
     }
-    function discordTag() {
-        return `<span class="comment-item__discord-tag">${DISCORD_ICON} Discord</span>`;
+    const DISCORD_ICON = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 127.14 96.36" style="width:11px;height:11px;vertical-align:middle"><path fill="#5865F2" d="M107.7 8.07A105.15 105.15 0 0081.47 0a72.06 72.06 0 00-3.36 6.83 97.68 97.68 0 00-29.11 0A72.37 72.37 0 0045.64 0a105.89 105.89 0 00-26.25 8.09C2.79 32.65-1.71 56.6.54 80.21a105.73 105.73 0 0032.17 16.15 77.7 77.7 0 006.89-11.11 68.42 68.42 0 01-10.85-5.18c.91-.66 1.8-1.34 2.66-2a75.57 75.57 0 0064.32 0c.87.71 1.76 1.39 2.66 2a68.68 68.68 0 01-10.87 5.19 77 77 0 006.89 11.1 105.25 105.25 0 0032.19-16.14c2.64-27.38-4.51-51.11-18.9-72.15zM42.45 65.69C36.18 65.69 31 60 31 53s5-12.74 11.43-12.74S54 46 53.89 53s-5.1 12.69-11.44 12.69zm42.24 0C78.41 65.69 73.25 60 73.25 53s5-12.74 11.44-12.74S96.23 46 96.12 53s-5.12 12.69-11.43 12.69z"/></svg>`;
+    function discordTag() { return `<span class="comment-item__discord-tag">${DISCORD_ICON} Discord</span>`; }
+
+    /* ─── Réactions emoji ─── */
+    const REACTION_EMOJIS = ['❤️','😂','😮','🔥','👍','💀'];
+
+    function renderReactions(c, pfx) {
+        const reacts  = c.reactions   || {};
+        const myReacts= c.myReactions || {};
+        const pills   = REACTION_EMOJIS
+            .filter(em => reacts[em] > 0)
+            .map(em => `<button class="reaction-btn${myReacts[em]?' reacted':''}"
+                onclick="toggleReaction('${c.id}','${em}','${pfx}')" title="${em}">
+                ${em} <span class="reaction-btn__count">${reacts[em]||0}</span>
+            </button>`).join('');
+        return `<div class="comment-reactions" id="${pfx}reacts-${c.id}">
+            ${pills}
+            <button class="reaction-add-btn" onclick="openEmojiPicker(event,'${c.id}','${pfx}')" title="Ajouter une réaction">+</button>
+        </div>`;
     }
 
-    /* ─── Rendu réponse ─────────────────────────────────────────────────── */
+    function toggleReaction(cid, em, pfx) {
+        const c = COMMENTS_DB.find(x => x.id === cid); if (!c) return;
+        c.reactions    = c.reactions    || {};
+        c.myReactions  = c.myReactions  || {};
+        const had = !!c.myReactions[em];
+        c.myReactions[em] = !had;
+        c.reactions[em]   = Math.max(0, (c.reactions[em] || 0) + (had ? -1 : 1));
+        if (c.reactions[em] === 0) delete c.reactions[em];
+        saveDB();
+        // Mise à jour partielle (juste le bloc réactions)
+        const wrap = document.getElementById(pfx+'reacts-'+cid);
+        if (wrap) wrap.outerHTML = renderReactions(c, pfx);
+    }
+
+    let _emojiPickerTarget = null;
+    function openEmojiPicker(e, cid, pfx) {
+        e.stopPropagation();
+        const picker = document.getElementById('emojiPicker');
+        if (!picker) return;
+        _emojiPickerTarget = { cid, pfx };
+        picker.innerHTML = REACTION_EMOJIS.map(em =>
+            `<button onclick="pickEmoji('${em}')" title="${em}">${em}</button>`
+        ).join('');
+        picker.style.display = 'flex';
+        const btn = e.currentTarget;
+        const r   = btn.getBoundingClientRect();
+        picker.style.left = Math.min(r.left, window.innerWidth-190)+'px';
+        picker.style.top  = (r.bottom + 4)+'px';
+        picker.style.position = 'fixed';
+        setTimeout(() => document.addEventListener('click', closeEmojiPickerOutside, {once:true}), 50);
+    }
+    function pickEmoji(em) {
+        if (_emojiPickerTarget) toggleReaction(_emojiPickerTarget.cid, em, _emojiPickerTarget.pfx);
+        closeEmojiPickerOutside();
+    }
+    function closeEmojiPickerOutside() {
+        const p = document.getElementById('emojiPicker');
+        if (p) p.style.display = 'none';
+        _emojiPickerTarget = null;
+    }
+
+    /* ─── Rendu réponse ─── */
     function renderReply(r, cid, pfx) {
         return `<div class="comment-reply" id="${pfx}reply-${r.id}">
             ${avatarHTML(r, 30)}
@@ -1618,41 +2062,48 @@
                 <div class="comment-reply__header">
                     ${discordTag()}
                     <span class="comment-item__username">${r.username}</span>
-                    <span class="comment-item__time">${r.time}</span>
+                    <span class="comment-item__time" title="${r.time}">${relativeTime(r.time)}</span>
                 </div>
                 <div class="comment-reply__text">${r.text}</div>
                 <div class="comment-item__actions" style="margin-top:7px">
                     <button class="comment-btn ${r.likedByMe?"comment-btn--liked":""}" onclick="likeReply('${cid}','${r.id}',this)">
                         ${r.likedByMe?"❤️":"🤍"} <span class="comment-btn__like-count">${r.likes}</span>
                     </button>
-                    ${canDeleteReply(r) ? `<button class="comment-btn comment-btn--delete" onclick="deleteReply('${cid}','${r.id}')">🗑 Suppr.</button>` : ""}
+                    ${canDeleteReply(r)?`<button class="comment-btn comment-btn--delete" onclick="deleteReply('${cid}','${r.id}')">🗑 Suppr.</button>`:""}
                 </div>
             </div>
         </div>`;
     }
 
-    /* ─── Rendu commentaire ─────────────────────────────────────────────── */
+    /* ─── Rendu commentaire ─── */
     function renderComment(c, pfx="") {
-        const replies = (c.replies||[]).map(r => renderReply(r, c.id, pfx)).join("");
-        return `<div class="comment-item" id="${pfx}comment-${c.id}">
+        const replies     = (c.replies||[]).map(r => renderReply(r, c.id, pfx)).join("");
+        const isPinned    = !!c.pinned;
+        const isFirstEver = COMMENTS_DB.length === 1 && COMMENTS_DB[0].id === c.id;
+        return `<div class="comment-item${isPinned?' comment-item--pinned':''}" id="${pfx}comment-${c.id}">
             ${avatarHTML(c)}
             <div class="comment-item__body">
                 <div class="comment-item__header">
                     ${discordTag()}
                     <span class="comment-item__username">${c.username}</span>
-                    <span class="comment-item__time">${c.time}</span>
+                    ${isFirstEver?`<span class="comment-first-badge">Premier 🎉</span>`:""}
+                    ${isPinned?`<span class="comment-pin-badge">📌 Épinglé</span>`:""}
+                    <span class="comment-item__time" title="${c.time}">${relativeTime(c.time)}</span>
                 </div>
                 <div class="comment-item__text">${c.text}</div>
+                ${renderReactions(c, pfx)}
                 <div class="comment-item__actions">
                     <button class="comment-btn ${c.likedByMe?"comment-btn--liked":""}" onclick="likeComment('${c.id}',this)">
                         ${c.likedByMe?"❤️":"🤍"} <span class="comment-btn__like-count">${c.likes}</span>
                     </button>
-                    ${currentUser ? `<button class="comment-btn" onclick="toggleReplyBox('${pfx}rw-${c.id}')">↩ Répondre</button>` : ""}
-                    ${canDelete(c) ? `<button class="comment-btn comment-btn--delete" onclick="deleteComment('${c.id}')">🗑 Suppr.</button>` : ""}
+                    ${currentUser?`<button class="comment-btn" onclick="toggleReplyBox('${pfx}rw-${c.id}')">↩ Répondre</button>`:""}
+                    ${canDelete(c)?`<button class="comment-btn comment-btn--delete" onclick="deleteComment('${c.id}')">🗑 Suppr.</button>`:""}
+                    ${isMod()&&!isPinned?`<button class="comment-btn" onclick="pinComment('${c.id}')" title="Épingler">📌</button>`:""}
+                    ${isMod()&&isPinned?`<button class="comment-btn" onclick="unpinComment('${c.id}')" title="Désépingler">📌</button>`:""}
                 </div>
-                ${replies ? `<div class="comment-replies">${replies}</div>` : ""}
+                ${replies?`<div class="comment-replies">${replies}</div>`:""}
                 <div class="comment-reply-write" id="${pfx}rw-${c.id}">
-                    ${avatarHTML(currentUser, 30)}
+                    ${avatarHTML(currentUser,30)}
                     <textarea class="comment-reply-input" placeholder="Ta réponse…" rows="1" oninput="autoResize(this)"></textarea>
                     <button class="comment-reply-submit" onclick="postReply('${c.id}','${pfx}rw-${c.id}')">Poster</button>
                 </div>
@@ -1660,33 +2111,35 @@
         </div>`;
     }
 
-    /* ─── Tri & rendu des listes ────────────────────────────────────────── */
-    function sorted() { return [...COMMENTS_DB].sort((a,b) => b.likes - a.likes); }
+    /* ─── Tri & rendu ─── */
+    function sorted() {
+        const pinned    = COMMENTS_DB.filter(c => c.pinned);
+        const rest      = COMMENTS_DB.filter(c => !c.pinned);
+        const sortedRest = sortMode === 'top'
+            ? [...rest].sort((a,b) => b.likes - a.likes)
+            : [...rest].sort((a,b) => new Date(b.time) - new Date(a.time));
+        return [...pinned, ...sortedRest];
+    }
 
     function renderList() {
-        const top  = sorted().slice(0, MAX_SHOWN);
+        const all  = sorted();
+        const top  = all.slice(0, MAX_SHOWN);
         const list = document.getElementById("commentList");
-        if (top.length === 0) {
-            list.innerHTML = `<div style="text-align:center;padding:32px 0;color:#ccc;font-size:14px;font-weight:600;">
-                <div style="font-size:36px;margin-bottom:10px">💬</div>
-                Soyez le premier à commenter !
-            </div>`;
-        } else {
-            list.innerHTML = top.map(c => renderComment(c,"")).join("");
-        }
+        if (!list) return;
+        list.innerHTML = top.length === 0
+            ? `<div style="text-align:center;padding:32px 0;color:#ccc;font-size:14px;font-weight:600;"><div style="font-size:36px;margin-bottom:10px">💬</div>Soyez le premier à commenter !</div>`
+            : top.map(c => renderComment(c,"")).join("");
         const n = COMMENTS_DB.length;
         document.getElementById("commentCountBadge").textContent = n;
         const mb = document.getElementById("modalCountBadge");
         if (mb) mb.textContent = n;
-        document.getElementById("seeMoreBtn").classList.toggle("is-hidden", n <= MAX_SHOWN);
+        document.getElementById("seeMoreBtn")?.classList.toggle("is-hidden", n <= MAX_SHOWN);
     }
-
     function renderModal() {
-        document.getElementById("modalCommentList").innerHTML =
-            sorted().map(c => renderComment(c,"m")).join("");
+        document.getElementById("modalCommentList").innerHTML = sorted().map(c=>renderComment(c,"m")).join("");
     }
 
-    /* ─── Toggle affichage ────────────────────────────────────────────── */
+    /* ─── Toggle ─── */
     function toggleComments() {
         const body = document.getElementById("commentBody");
         const tog  = document.getElementById("commentToggle");
@@ -1695,54 +2148,59 @@
         if (open) renderList();
     }
 
-    /* ─── Login Discord ──────────────────────────────────────────────────
-       🔌 TON AMI APPELLE CETTE FONCTION après OAuth Discord
-       Signature : discordLogin({ username: string, avatar: string|null })  */
+    /* ─── Compteur caractères ─── */
+    function updateCharCounter(el) {
+        const counter = document.getElementById('charCounter');
+        if (!counter) return;
+        const rem = 240 - el.value.length;
+        counter.textContent = rem;
+        counter.className = 'comment-char-counter' + (rem < 20 ? ' danger' : rem < 50 ? ' warn' : '');
+    }
+
+    /* ─── Login ─── */
     function discordLogin(user) {
         currentUser = user;
         document.getElementById("discordBanner").style.display = "none";
         const box = document.getElementById("commentWriteBox");
         box.classList.remove("is-hidden");
         document.getElementById("userAvatarBox").outerHTML = avatarHTML(user);
-        renderList(); // rerend pour afficher boutons Suppr. si modérateur
+        renderList();
     }
 
     function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
 
-    /* ─── Poster un commentaire ────────────────────────────────────────── */
+    /* ─── Poster commentaire ─── */
     function postComment() {
         if (!currentUser) return;
         const inp = document.getElementById("commentInput");
         const txt = inp.value.trim(); if (!txt) return;
         COMMENTS_DB.unshift({ id: uid(), username: currentUser.username,
-            avatar: currentUser.avatar, text: txt, time: "à l'instant",
-            likes: 0, likedByMe: false, replies: [] });
+            avatar: currentUser.avatar, text: txt, time: isoNow(),
+            likes: 0, likedByMe: false, reactions: {}, myReactions: {}, replies: [] });
         saveDB();
         inp.value = ""; inp.style.height = "";
+        updateCharCounter(inp);
         renderList();
         if (document.getElementById("commentsModal").classList.contains("is-active")) renderModal();
     }
 
-    /* ─── Animation Like TikTok ────────────────────────────────────────── */
+    /* ─── Animations Like ─── */
     function spawnLikeParticles(btn) {
         const rect = btn.getBoundingClientRect();
-        const cx = rect.left + rect.width  / 2;
-        const cy = rect.top  + rect.height / 2;
+        const cx = rect.left + rect.width/2, cy = rect.top + rect.height/2;
         const container = document.createElement("div");
         container.style.cssText = `position:fixed;left:${cx}px;top:${cy}px;width:0;height:0;pointer-events:none;z-index:99999;overflow:visible;`;
         document.body.appendChild(container);
         const ripple = document.createElement("div"); ripple.className = "like-ripple";
         container.appendChild(ripple);
-        const count = 7;
-        for (let i = 0; i < count; i++) {
-            const p     = document.createElement("div"); p.className = "like-particle";
-            const angle = (i / count) * Math.PI * 2;
-            const dist  = 22 + Math.random() * 16;
-            p.style.setProperty("--px", Math.cos(angle) * dist + "px");
-            p.style.setProperty("--py", Math.sin(angle) * dist + "px");
-            p.style.left = "-3px"; p.style.top = "-3px";
-            p.style.background = ["#ff1a1a","#ff6060","#ffaaaa","#ff3366"][i % 4];
-            p.style.animationDelay = (i * 0.03) + "s";
+        for (let i=0;i<7;i++) {
+            const p = document.createElement("div"); p.className="like-particle";
+            const angle = (i/7)*Math.PI*2, dist = 22+Math.random()*16;
+            p.style.setProperty("--px", Math.cos(angle)*dist+"px");
+            p.style.setProperty("--py", Math.sin(angle)*dist+"px");
+            p.style.left="-3px"; p.style.top="-3px";
+            p.style.background=["#ff1a1a","#ff6060","#ffaaaa","#ff3366"][i%4];
+            p.style.animationDelay=(i*.03)+"s";
             container.appendChild(p);
         }
         setTimeout(() => container.remove(), 700);
@@ -1750,68 +2208,60 @@
     function animateLikeBtn(btn) {
         btn.classList.remove("like-animate"); void btn.offsetWidth;
         btn.classList.add("like-animate");
-        btn.addEventListener("animationend", () => btn.classList.remove("like-animate"), { once: true });
+        btn.addEventListener("animationend", () => btn.classList.remove("like-animate"), {once:true});
     }
 
     function likeComment(id, btn) {
-        const c = COMMENTS_DB.find(x => x.id === id); if (!c) return;
+        const c = COMMENTS_DB.find(x=>x.id===id); if (!c) return;
         c.likedByMe = !c.likedByMe; c.likes += c.likedByMe ? 1 : -1;
         if (c.likedByMe) { spawnLikeParticles(btn); animateLikeBtn(btn); }
         document.querySelectorAll(`[id$="comment-${id}"]`).forEach(el => {
             const lb = el.querySelector(".comment-btn__like-count"); if (lb) lb.textContent = c.likes;
             const hb = el.querySelector(".comment-btn"); if (hb) {
                 hb.classList.toggle("comment-btn--liked", c.likedByMe);
-                const em = hb.childNodes[0];
-                if (em && em.nodeType === 3) em.textContent = (c.likedByMe ? "❤️" : "🤍") + " ";
+                const em = hb.childNodes[0]; if (em&&em.nodeType===3) em.textContent=(c.likedByMe?"❤️":"🤍")+" ";
             }
         });
         saveDB();
     }
     function likeReply(cid, rid, btn) {
-        const c = COMMENTS_DB.find(x => x.id === cid); if (!c) return;
-        const r = c.replies.find(x => x.id === rid); if (!r) return;
+        const c = COMMENTS_DB.find(x=>x.id===cid); if (!c) return;
+        const r = c.replies.find(x=>x.id===rid); if (!r) return;
         r.likedByMe = !r.likedByMe; r.likes += r.likedByMe ? 1 : -1;
         if (r.likedByMe) { spawnLikeParticles(btn); animateLikeBtn(btn); }
         btn.classList.toggle("comment-btn--liked", r.likedByMe);
-        btn.innerHTML = `${r.likedByMe?"❤️":"🤍"} <span class="comment-btn__like-count">${r.likes}</span>`;
+        btn.innerHTML=`${r.likedByMe?"❤️":"🤍"} <span class="comment-btn__like-count">${r.likes}</span>`;
         saveDB();
     }
 
-    /* ─── Suppression — modal custom (pas d'alert) ─────────────────────── */
-    let _pendingDelete = null;
+    /* ─── Pin commentaire (modérateurs) ─── */
+    function pinComment(id)   { const c=COMMENTS_DB.find(x=>x.id===id); if(c){c.pinned=true;  saveDB(); renderList();} }
+    function unpinComment(id) { const c=COMMENTS_DB.find(x=>x.id===id); if(c){c.pinned=false; saveDB(); renderList();} }
 
+    /* ─── Suppression ─── */
+    let _pendingDelete = null;
     function deleteComment(id) {
         _pendingDelete = () => {
-            const i = COMMENTS_DB.findIndex(x => x.id === id);
-            if (i !== -1) { COMMENTS_DB.splice(i, 1); saveDB(); }
+            const i = COMMENTS_DB.findIndex(x=>x.id===id);
+            if (i!==-1) { COMMENTS_DB.splice(i,1); saveDB(); }
             renderList(); renderModal();
         };
         openDeleteModal();
     }
     function deleteReply(cid, rid) {
         _pendingDelete = () => {
-            const c = COMMENTS_DB.find(x => x.id === cid); if (!c) return;
-            const i = c.replies.findIndex(x => x.id === rid);
-            if (i !== -1) { c.replies.splice(i, 1); saveDB(); }
+            const c = COMMENTS_DB.find(x=>x.id===cid); if(!c) return;
+            const i = c.replies.findIndex(x=>x.id===rid);
+            if (i!==-1) { c.replies.splice(i,1); saveDB(); }
             renderList(); renderModal();
         };
         openDeleteModal();
     }
-    function openDeleteModal() {
-        document.getElementById("deleteModal").classList.add("is-active");
-        document.body.style.overflow = "hidden";
-    }
-    function closeDeleteModal() {
-        document.getElementById("deleteModal").classList.remove("is-active");
-        document.body.style.overflow = "";
-        _pendingDelete = null;
-    }
-    function confirmDelete() {
-        if (_pendingDelete) _pendingDelete();
-        closeDeleteModal();
-    }
+    function openDeleteModal()  { document.getElementById("deleteModal").classList.add("is-active"); document.body.style.overflow="hidden"; }
+    function closeDeleteModal() { document.getElementById("deleteModal").classList.remove("is-active"); document.body.style.overflow=""; _pendingDelete=null; }
+    function confirmDelete()    { if(_pendingDelete) _pendingDelete(); closeDeleteModal(); }
 
-    /* ─── Répondre ──────────────────────────────────────────────────────── */
+    /* ─── Répondre ─── */
     function toggleReplyBox(id) {
         const box = document.getElementById(id); if (!box) return;
         box.classList.toggle("is-open");
@@ -1822,34 +2272,24 @@
         const box = document.getElementById(boxId);
         const inp = box?.querySelector("textarea");
         const txt = inp?.value.trim(); if (!txt) return;
-        const c = COMMENTS_DB.find(x => x.id === cid); if (!c) return;
+        const c = COMMENTS_DB.find(x=>x.id===cid); if (!c) return;
         c.replies.push({ id: uid(), username: currentUser.username,
-            avatar: currentUser.avatar, text: txt, time: "à l'instant",
+            avatar: currentUser.avatar, text: txt, time: isoNow(),
             likes: 0, likedByMe: false });
         saveDB();
-        if (inp) { inp.value = ""; inp.style.height = ""; }
+        if (inp) { inp.value=""; inp.style.height=""; }
         box?.classList.remove("is-open");
         renderList();
         if (document.getElementById("commentsModal").classList.contains("is-active")) renderModal();
     }
 
-    /* ─── Modal "Voir tous" ─────────────────────────────────────────────── */
-    function openAllComments() {
-        renderModal();
-        document.getElementById("commentsModal").classList.add("is-active");
-        document.body.style.overflow = "hidden";
-    }
-    function closeAllComments(e) {
-        if (e && e.currentTarget !== e.target) return;
-        document.getElementById("commentsModal").classList.remove("is-active");
-        document.body.style.overflow = "";
-    }
+    /* ─── Modal "Voir tous" ─── */
+    function openAllComments()    { renderModal(); document.getElementById("commentsModal").classList.add("is-active"); document.body.style.overflow="hidden"; }
+    function closeAllComments(e)  { if(e&&e.currentTarget!==e.target) return; document.getElementById("commentsModal").classList.remove("is-active"); document.body.style.overflow=""; }
 
-    /* ─── Auto-resize textarea ──────────────────────────────────────────── */
-    function autoResize(el) {
-        el.style.height = "auto";
-        el.style.height = Math.min(el.scrollHeight, 150) + "px";
-    }
+    /* ─── Auto-resize textarea ─── */
+    function autoResize(el) { el.style.height="auto"; el.style.height=Math.min(el.scrollHeight,150)+"px"; }
+
 
     /* ─── SEARCH SYSTEM ────────────────────────────────────────────────── */
     let searchMatches = [];
@@ -2078,21 +2518,36 @@
 
     <script>
     // ═══════════════════════════════════════════════════════════════
-    //  SYSTÈME DE LIKE — POSTS (persistance localStorage, sans login)
+    //  SYSTÈME DE LIKE — POSTS  (compteur GLOBAL via Firebase)
     // ═══════════════════════════════════════════════════════════════
-    const POST_LIKE_KEY = 'blox_post_likes_v1';
+    const POST_LIKE_KEY    = 'blox_post_likes_v1';      // liked localement
+    const FB_LIKES_REF     = FB_DB.ref('post_likes');   // compteurs partagés
+    let   _plGlobalCounts  = {};                         // { postId: count }
+    let   _plInitDone      = false;
 
-    // ⚠️  localStorage = sauvegarde PAR APPAREIL uniquement.
-    // Pour un compteur global partagé entre tous les visiteurs,
-    // ton ami doit remplacer _plLoad() / _plSave() par des appels API :
-    //   _plLoad()  → GET  /api/likes
-    //   _plSave()  → POST /api/likes  { id, liked }
-    function _plLoad()       { try { return JSON.parse(localStorage.getItem(POST_LIKE_KEY)) || {}; } catch { return {}; } }
-    function _plSave(data)   { try { localStorage.setItem(POST_LIKE_KEY, JSON.stringify(data)); } catch {} }
-    function _plSlug(str)    { return (str||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,48); }
+    // ─── Persistance locale (liked = per device) ───────────────────
+    function _plLoadLocal() { try { return JSON.parse(localStorage.getItem(POST_LIKE_KEY)) || {}; } catch { return {}; } }
+    function _plSaveLocal(d) { try { localStorage.setItem(POST_LIKE_KEY, JSON.stringify(d)); } catch {} }
+    function _plSlug(s)      { return (s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,48); }
 
+    // ─── Écoute Firebase → mise à jour de tous les boutons ─────────
+    FB_LIKES_REF.on('value', snap => {
+        _plGlobalCounts = snap.val() || {};
+        document.querySelectorAll('.post-like-btn[data-post-id]').forEach(btn => {
+            const id = btn.dataset.postId;
+            const count = _plGlobalCounts[id] || 0;
+            const countEl = btn.querySelector('.post-like-count');
+            if (countEl) countEl.textContent = count;
+        });
+        if (!_plInitDone) { _plInitDone = true; initPostLikes(); }
+    });
+
+    // Timeout de sécurité : si Firebase met trop longtemps, on init quand même
+    setTimeout(() => { if (!_plInitDone) { _plInitDone = true; initPostLikes(); } }, 1800);
+
+    // ─── Construction SVG cœur ─────────────────────────────────────
     function _plHeartSVG() {
-        const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+        const svg  = document.createElementNS('http://www.w3.org/2000/svg','svg');
         svg.setAttribute('viewBox','0 0 24 24');
         svg.setAttribute('class','post-like-heart');
         svg.setAttribute('aria-hidden','true');
@@ -2102,20 +2557,20 @@
         return svg;
     }
 
-    function _plMakeBtn(id, entry) {
-        const btn  = document.createElement('button');
-        btn.className = 'post-like-btn' + (entry.liked ? ' liked' : '');
+    function _plMakeBtn(id, liked, count) {
+        const btn = document.createElement('button');
+        btn.className = 'post-like-btn' + (liked ? ' liked' : '');
         btn.dataset.postId = id;
-        btn.setAttribute('aria-label', 'Liker');
-        btn.setAttribute('title', 'Liker ce post');
+        btn.setAttribute('aria-label','Liker');
+        btn.setAttribute('title','Liker ce post');
 
-        const heart = _plHeartSVG();
-        const count = document.createElement('span');
-        count.className = 'post-like-count';
-        count.textContent = entry.count;
+        const heart   = _plHeartSVG();
+        const countEl = document.createElement('span');
+        countEl.className   = 'post-like-count';
+        countEl.textContent = count;
 
         btn.appendChild(heart);
-        btn.appendChild(count);
+        btn.appendChild(countEl);
         btn.addEventListener('click', _plToggle);
         return btn;
     }
@@ -2123,62 +2578,58 @@
     function _plToggle(e) {
         const btn   = e.currentTarget;
         const id    = btn.dataset.postId;
-        const data  = _plLoad();
-        const entry = data[id] || { count: 0, liked: false };
+        const local = _plLoadLocal();
+        const entry = local[id] || { liked: false };
+        const wasLiked = entry.liked;
 
-        entry.liked  = !entry.liked;
-        entry.count += entry.liked ? 1 : -1;
-        if (entry.count < 0) entry.count = 0;
-        data[id] = entry;
-        _plSave(data);
+        entry.liked    = !wasLiked;
+        local[id]      = entry;
+        _plSaveLocal(local);
 
-        // Mise à jour visuelle
+        // Mise à jour Firebase (transaction atomique)
+        FB_LIKES_REF.child(id).transaction(cur => Math.max(0, (cur || 0) + (entry.liked ? 1 : -1)));
+
+        // Visuel immédiat
+        const newCount = Math.max(0, (parseInt(btn.querySelector('.post-like-count').textContent) || 0) + (entry.liked ? 1 : -1));
         btn.classList.toggle('liked', entry.liked);
         const countEl = btn.querySelector('.post-like-count');
         const heartEl = btn.querySelector('.post-like-heart');
-        countEl.textContent = entry.count;
+        if (countEl) countEl.textContent = newCount;
 
         if (entry.liked) {
-            // Animation cœur (Discord style)
-            heartEl.classList.remove('post-heart-animate');
-            void heartEl.offsetWidth;
-            heartEl.classList.add('post-heart-animate');
-            heartEl.addEventListener('animationend', () => heartEl.classList.remove('post-heart-animate'), { once: true });
+            heartEl?.classList.remove('post-heart-animate');
+            void heartEl?.offsetWidth;
+            heartEl?.classList.add('post-heart-animate');
+            heartEl?.addEventListener('animationend', () => heartEl.classList.remove('post-heart-animate'), { once: true });
 
-            // Animation compteur
-            countEl.classList.remove('post-count-animate');
-            void countEl.offsetWidth;
-            countEl.classList.add('post-count-animate');
-            countEl.addEventListener('animationend', () => countEl.classList.remove('post-count-animate'), { once: true });
+            countEl?.classList.remove('post-count-animate');
+            void countEl?.offsetWidth;
+            countEl?.classList.add('post-count-animate');
+            countEl?.addEventListener('animationend', () => countEl.classList.remove('post-count-animate'), { once: true });
 
-            // Particules (réutilise le système existant)
             _plParticles(btn);
         }
     }
 
     function _plParticles(btn) {
-        const rect   = btn.getBoundingClientRect();
-        const cx     = rect.left + 22;
-        const cy     = rect.top  + rect.height * .5;
-        const wrap   = document.createElement('div');
+        const rect = btn.getBoundingClientRect();
+        const cx   = rect.left + 22;
+        const cy   = rect.top  + rect.height * .5;
+        const wrap = document.createElement('div');
         wrap.style.cssText = `position:fixed;left:${cx}px;top:${cy}px;width:0;height:0;pointer-events:none;z-index:99999;overflow:visible;`;
         document.body.appendChild(wrap);
-
-        // Ripple
         const rp = document.createElement('div');
         rp.className = 'like-ripple';
         rp.style.cssText = 'border-color:rgba(255,50,90,0.6)';
         wrap.appendChild(rp);
-
-        // Particules colorées
         const cols = ['#ff3264','#ff6b8a','#ffb3c8','#ff1a52','#ff8fa8','#e91e63','#ff4081','#f06292'];
         for (let i = 0; i < 8; i++) {
-            const p = document.createElement('div');
+            const p   = document.createElement('div');
             p.className = 'like-particle';
-            const ang  = (i / 8) * Math.PI * 2;
-            const dist = 16 + Math.random() * 12;
-            p.style.setProperty('--px', Math.cos(ang)*dist+'px');
-            p.style.setProperty('--py', Math.sin(ang)*dist+'px');
+            const ang = (i/8)*Math.PI*2;
+            const d   = 16 + Math.random()*12;
+            p.style.setProperty('--px', Math.cos(ang)*d+'px');
+            p.style.setProperty('--py', Math.sin(ang)*d+'px');
             p.style.cssText += `left:-3px;top:-3px;background:${cols[i]};animation-delay:${i*.028}s;`;
             wrap.appendChild(p);
         }
@@ -2186,35 +2637,35 @@
     }
 
     function initPostLikes() {
-        const data = _plLoad();
+        const local = _plLoadLocal();
 
-        // ── 1. Dossier bulletin (post texte principal) ──────────────
+        // ── 1. Dossier Actus (like en haut à droite du secret-bulletin) ──
         document.querySelectorAll('.bulletin-header').forEach(header => {
-            if (header.querySelector('.post-like-btn')) return;
+            const bulletin = header.closest('.secret-bulletin');
+            if (!bulletin || bulletin.querySelector('.actus-like-wrap')) return;
             const h2 = header.querySelector('h2');
             if (!h2) return;
             const id    = 'dossier-' + _plSlug(h2.textContent.trim());
-            const entry = data[id] || { count: 0, liked: false };
-            const btn   = _plMakeBtn(id, entry);
+            const liked = (local[id] || {}).liked || false;
+            const count = _plGlobalCounts[id] || 0;
+            const btn   = _plMakeBtn(id, liked, count);
 
-            // Wrap h2 + btn dans une ligne flex
-            const row = document.createElement('div');
-            row.className = 'bulletin-header-row';
-            h2.parentNode.insertBefore(row, h2);
-            row.appendChild(h2);
-            row.appendChild(btn);
+            const wrap = document.createElement('div');
+            wrap.className = 'actus-like-wrap';
+            wrap.appendChild(btn);
+            bulletin.appendChild(wrap);
         });
 
-        // ── 2. Toutes les news-cards ─────────────────────────────────
+        // ── 2. Toutes les news-cards ──────────────────────────────────
         document.querySelectorAll('.news-card').forEach((card, idx) => {
             const content = card.querySelector('.news-card__content');
-            if (!content) return;
-            if (content.querySelector('.post-like-btn')) return;
+            if (!content || content.querySelector('.post-like-btn')) return;
 
             const titleEl = content.querySelector('.news-card__title');
             const id      = 'card-' + _plSlug(titleEl ? titleEl.textContent.trim() : String(idx));
-            const entry   = data[id] || { count: 0, liked: false };
-            const btn     = _plMakeBtn(id, entry);
+            const liked   = (local[id] || {}).liked || false;
+            const count   = _plGlobalCounts[id] || 0;
+            const btn     = _plMakeBtn(id, liked, count);
 
             const footer = document.createElement('div');
             footer.className = 'post-like-card-footer';
@@ -2222,13 +2673,186 @@
             content.appendChild(footer);
         });
     }
+    </script>
 
-    // Initialisation après chargement du DOM
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initPostLikes);
-    } else {
-        initPostLikes();
+    <!-- ═══════════════════════════════════════════════════════════════
+         COMMAND EDITOR — Ctrl+Shift+E pour activer
+    ═══════════════════════════════════════════════════════════════ -->
+    <script>
+    // ─── Éditeur de contenu ────────────────────────────────────────
+    const EDIT_KEY      = 'blox_content_edits_v1';
+    const EDITABLE_SELS = ['h2','h3','.news-card__title','.news-card__eyebrow',
+                           '.bulletin-content p','.category-title',
+                           '.news-card__button:not(.open-modal-btn)',
+                           '.bulletin-meta','.highlight'];
+    let _editMode  = false;
+    let _editTarget = null;
+
+    function loadEdits()    { try { return JSON.parse(localStorage.getItem(EDIT_KEY)) || {}; } catch { return {}; } }
+    function saveEdits(obj) { try { localStorage.setItem(EDIT_KEY, JSON.stringify(obj)); } catch {} }
+
+    function getEditPath(el) {
+        // Génère un chemin CSS-like stable
+        const parts = [];
+        let cur = el;
+        while (cur && cur !== document.body) {
+            let tag  = cur.tagName.toLowerCase();
+            const id = cur.id;
+            if (id) { parts.unshift('#' + id); break; }
+            const parent = cur.parentNode;
+            if (parent) {
+                const siblings = [...parent.children].filter(c => c.tagName === cur.tagName);
+                if (siblings.length > 1) tag += ':nth('+(siblings.indexOf(cur)+1)+')';
+            }
+            parts.unshift(tag);
+            cur = cur.parentNode;
+        }
+        return parts.join('>');
     }
+
+    function applyStoredEdits() {
+        const edits = loadEdits();
+        Object.entries(edits).forEach(([path, text]) => {
+            try {
+                const el = document.querySelector(path.replace(/:nth\((\d+)\)/g, ':nth-child($1)'));
+                if (el) el.textContent = text;
+            } catch(e) {}
+        });
+    }
+
+    function tagEditables() {
+        EDITABLE_SELS.forEach(sel => {
+            document.querySelectorAll(sel).forEach(el => {
+                if (!el.dataset.editPath) el.dataset.editPath = getEditPath(el);
+                el.dataset.editable = '1';
+            });
+        });
+    }
+
+    function toggleEditMode() {
+        _editMode = !_editMode;
+        document.body.classList.toggle('edit-mode', _editMode);
+        const panel = document.getElementById('editModePanel');
+        panel?.classList.toggle('is-open', _editMode);
+        if (_editMode) {
+            tagEditables();
+            editLog('info', '✏️ Mode édition activé — clique sur un texte pour l\'éditer.');
+        } else {
+            closeEditInline();
+            editLog('info', '💤 Mode édition désactivé.');
+        }
+    }
+
+    function editLog(type, msg) {
+        const log = document.getElementById('editLog');
+        if (!log) return;
+        const line = document.createElement('div');
+        line.className = 'log-line ' + type;
+        line.textContent = '› ' + msg;
+        log.appendChild(line);
+        log.scrollTop = log.scrollHeight;
+    }
+
+    // Click sur un élément éditable
+    document.addEventListener('click', e => {
+        if (!_editMode) return;
+        const el = e.target.closest('[data-editable]');
+        if (!el) return;
+        e.preventDefault(); e.stopPropagation();
+        openEditInline(el, e.clientX, e.clientY);
+    });
+
+    let _editEl = null;
+    function openEditInline(el, x, y) {
+        _editEl = el;
+        const popup = document.getElementById('editInlinePopup');
+        const textarea = document.getElementById('editInlineTextarea');
+        if (!popup || !textarea) return;
+        textarea.value = el.textContent.trim();
+        popup.classList.add('is-open');
+        popup.style.display = 'block';
+        // Positionnement intelligent
+        const pw = 300; const ph = 140;
+        let left = Math.min(x + 10, window.innerWidth - pw - 16);
+        let top  = Math.min(y + 10, window.innerHeight - ph - 16);
+        popup.style.left = left + 'px';
+        popup.style.top  = top  + 'px';
+        textarea.focus();
+        textarea.select();
+    }
+    function closeEditInline() {
+        _editEl = null;
+        const popup = document.getElementById('editInlinePopup');
+        if (popup) { popup.classList.remove('is-open'); popup.style.display = 'none'; }
+    }
+    function saveEditInline() {
+        if (!_editEl) return;
+        const newText = document.getElementById('editInlineTextarea')?.value?.trim();
+        if (newText === undefined) return;
+        const oldText  = _editEl.textContent.trim();
+        _editEl.textContent = newText;
+        const path  = _editEl.dataset.editPath || getEditPath(_editEl);
+        const edits = loadEdits();
+        edits[path] = newText;
+        saveEdits(edits);
+        editLog('ok', `Sauvegardé : "${oldText.slice(0,22)}…"`);
+        closeEditInline();
+    }
+
+    // Fermer le popup Échap
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && _editEl) { closeEditInline(); return; }
+        if (e.key === 'Enter' && !e.shiftKey && _editEl) {
+            e.preventDefault(); saveEditInline();
+        }
+        // Ctrl+Shift+E — toggle
+        if (e.ctrlKey && e.shiftKey && e.key === 'E') { e.preventDefault(); toggleEditMode(); }
+    });
+
+    // Commandes textuelles
+    function handleEditCmd(e) {
+        if (e.key !== 'Enter') return;
+        const inp = document.getElementById('editCmdInput');
+        const raw = (inp?.value || '').trim();
+        inp.value = '';
+        if (!raw) return;
+        const cmd  = raw.split(' ')[0].toLowerCase();
+        const args = raw.slice(cmd.length).trim();
+
+        if (cmd === '/reset') {
+            localStorage.removeItem(EDIT_KEY);
+            editLog('ok', 'Toutes les modifications ont été réinitialisées. Rechargez la page.');
+        } else if (cmd === '/list') {
+            const edits = loadEdits();
+            const keys  = Object.keys(edits);
+            if (keys.length === 0) { editLog('info', 'Aucune modification enregistrée.'); }
+            else keys.forEach(k => editLog('info', k + ' → "' + (edits[k]||'').slice(0,30) + '"'));
+        } else if (cmd === '/export') {
+            const blob = new Blob([JSON.stringify(loadEdits(), null, 2)], {type:'application/json'});
+            const a = Object.assign(document.createElement('a'), {href:URL.createObjectURL(blob), download:'blox_edits.json'});
+            a.click(); editLog('ok', 'Export téléchargé.');
+        } else if (cmd === '/help') {
+            editLog('info', '/reset — efface tout  |  /list — voir les édits  |  /export — JSON');
+        } else {
+            editLog('err', 'Commande inconnue : ' + cmd + '. Tape /help.');
+        }
+    }
+
+    // Afficher le toast au chargement + badges NOUVEAU rouges
+    document.addEventListener('DOMContentLoaded', () => {
+        applyStoredEdits();
+        const toast = document.getElementById('editModeToast');
+        if (toast) {
+            setTimeout(() => { toast.classList.add('is-visible'); }, 1000);
+            setTimeout(() => { toast.classList.remove('is-visible'); }, 4500);
+        }
+        // Forcer les badges "NOUVEAU" en rouge
+        document.querySelectorAll('.news-card__badge').forEach(badge => {
+            if (badge.textContent.trim().toUpperCase().includes('NOUVEAU')) {
+                badge.style.cssText += 'background:linear-gradient(135deg,#ff1a1a,#cc0000)!important;box-shadow:0 2px 10px rgba(204,0,0,0.5)!important;left:auto!important;right:14px!important;';
+            }
+        });
+    });
     </script>
 </body>
 </html>
