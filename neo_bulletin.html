@@ -835,13 +835,12 @@
             display: inline-flex;
             align-items: center;
             gap: 7px;
-            /* Toujours visible, même sans hover */
-            background: rgba(255, 50, 90, 0.07);
-            border: 1.5px solid rgba(255, 50, 90, 0.28);
+            background: rgba(120,120,120,0.06);
+            border: 1.5px solid rgba(120,120,120,0.25);
             border-radius: 100px;
             padding: 7px 16px 7px 11px;
             cursor: pointer;
-            color: #e05070;
+            color: #888;
             font-size: 15px;
             font-weight: 700;
             font-family: 'Inter', sans-serif;
@@ -874,7 +873,7 @@
             box-shadow: 0 2px 12px rgba(255, 50, 90, 0.2);
         }
 
-        /* Cœur SVG */
+        /* Cœur SVG — gris par défaut, rouge liké */
         .post-like-heart {
             width: 20px;
             height: 20px;
@@ -884,11 +883,15 @@
         }
         .post-like-heart path {
             fill: none;
-            stroke: currentColor;
+            stroke: #999;
             stroke-width: 1.85;
             stroke-linecap: round;
             stroke-linejoin: round;
             transition: fill 0.18s ease, stroke 0.18s ease;
+        }
+        .post-like-btn:hover .post-like-heart path,
+        .post-like-btn:focus-visible .post-like-heart path {
+            stroke: #ff3264;
         }
         .post-like-btn.liked .post-like-heart path {
             fill: #ff3264;
@@ -939,9 +942,9 @@
         }
         /* Adaptation dark (carte dans section colorée) */
         .category-section .post-like-btn {
-            background: rgba(255,255,255,0.14);
-            border-color: rgba(255,255,255,0.4);
-            color: rgba(255,255,255,0.9);
+            background: rgba(120,120,120,0.06);
+            border-color: rgba(120,120,120,0.25);
+            color: #888;
         }
         .category-section .post-like-btn:hover {
             border-color: rgba(255, 80, 110, 0.75);
@@ -952,6 +955,13 @@
             border-color: rgba(255, 80, 110, 0.8);
             background: rgba(255, 50, 90, 0.25);
             color: #fff;
+        }
+        .category-section .post-like-btn .post-like-heart path {
+            stroke: #999;
+        }
+        .category-section .post-like-btn:hover .post-like-heart path,
+        .category-section .post-like-btn:focus-visible .post-like-heart path {
+            stroke: #fff;
         }
         .category-section .post-like-btn.liked .post-like-heart path {
             fill: #ff8aaa;
@@ -1383,7 +1393,7 @@
                         <h2 class="news-card__title">Magnet: Attaque</h2>
                         <button class="news-card__button open-modal-btn" data-type="image" data-src="./shared/blox_leaks/magnet.png">Voir l'image →</button>
                     </div>
-                    <div class="news-card__bar"></div>
+<div class="news-card__bar"></div>
                 </article>
 
                 <article class="news-card">
@@ -1396,7 +1406,7 @@
                         <h2 class="news-card__title">Magnet: Attaque</h2>
                         <button class="news-card__button open-modal-btn" data-type="video" data-src="./shared/blox_leaks/magnet_ability.mov">Voir la vidéo →</button>
                     </div>
-                    <div class="news-card__bar"></div>
+<div class="news-card__bar"></div>
                 </article>
 
                                 <article class="news-card">
@@ -1409,7 +1419,7 @@
                         <h2 class="news-card__title">Magnet: Attaque</h2>
                         <button class="news-card__button open-modal-btn" data-type="image" data-src="./shared/blox_leaks/magnet_ability 2.jpeg">Voir l'image →</button>
                     </div>
-                    <div class="news-card__bar"></div>
+<div class="news-card__bar"></div>
                 </article>
 
                                 <article class="news-card">
@@ -1422,7 +1432,7 @@
                         <h2 class="news-card__title">Celestial Fruit</h2>
                         <button class="news-card__button open-modal-btn" data-type="image" data-src="./shared/blox_leaks/celestial_physic.png">Voir l'image →</button>
                     </div>
-                    <div class="news-card__bar"></div>
+<div class="news-card__bar"></div>
                 </article>
 
                                 <article class="news-card">
@@ -1435,7 +1445,7 @@
                         <h2 class="news-card__title">Celestial Fruit</h2>
                         <button class="news-card__button open-modal-btn" data-type="image" data-src="./shared/blox_leaks/celestial_shop.png">Voir l'image →</button>
                     </div>
-                    <div class="news-card__bar"></div>
+<div class="news-card__bar"></div>
                 </article>
 
                                 <article class="news-card">
@@ -1448,7 +1458,7 @@
                         <h2 class="news-card__title">Oni Fruit</h2>
                         <button class="news-card__button open-modal-btn" data-type="image" data-src="./shared/blox_leaks/oni_physic.png">Voir l'image →</button>
                     </div>
-                    <div class="news-card__bar"></div>
+<div class="news-card__bar"></div>
                 </article>
 
                                 <article class="news-card">
@@ -1461,7 +1471,7 @@
                         <h2 class="news-card__title">Oni Fruits</h2>
                         <button class="news-card__button open-modal-btn" data-type="image" data-src="./shared/blox_leaks/oni_shop.png">Voir l'image →</button>
                     </div>
-                    <div class="news-card__bar"></div>
+<div class="news-card__bar"></div>
                 </article>
 
                                                 <article class="news-card">
@@ -1474,7 +1484,7 @@
                         <h2 class="news-card__title">Dark Rework</h2>
                         <button class="news-card__button open-modal-btn" data-type="image" data-src="./shared/blox_leaks/dark_rework.jpeg">Voir l'image →</button>
                     </div>
-                    <div class="news-card__bar"></div>
+<div class="news-card__bar"></div>
                 </article>
             </div>
         </section>
@@ -1494,7 +1504,7 @@
                         <h2 class="news-card__title">Attaque Skull Guitar</h2>
                         <button class="news-card__button open-modal-btn" data-type="image" data-src="./shared/blox_leaks/skull_guitar.jpeg">Voir l'image  →</button>
                     </div>
-                    <div class="news-card__bar"></div>
+<div class="news-card__bar"></div>
                 </article>
             </div>
         </section>
@@ -1516,7 +1526,7 @@
                         <h2 class="news-card__title">Middle Town rework ?</h2>
                         <button class="news-card__button open-modal-btn" data-type="image" data-src="./shared/blox_leaks/island_reworks1.png">Inspecter →</button>
                     </div>
-                    <div class="news-card__bar"></div>
+<div class="news-card__bar"></div>
                 </article>
 
                                 <article class="news-card">
@@ -1529,7 +1539,7 @@
                         <h2 class="news-card__title">Café rework ?</h2>
                         <button class="news-card__button open-modal-btn" data-type="image" data-src="./shared/blox_leaks/island_reworks2.png">Inspecter →</button>
                     </div>
-                    <div class="news-card__bar"></div>
+<div class="news-card__bar"></div>
                 </article>
 
                                 <article class="news-card">
@@ -1542,7 +1552,7 @@
                         <h2 class="news-card__title">L'île des Pirates rework ?</h2>
                         <button class="news-card__button open-modal-btn" data-type="image" data-src="./shared/blox_leaks/islandreworks3.png">Inspecter →</button>
                     </div>
-                    <div class="news-card__bar"></div>
+<div class="news-card__bar"></div>
                 </article>
 
                                 <article class="news-card">
@@ -1555,7 +1565,7 @@
                         <h2 class="news-card__title">Cursed Ship rework ?</h2>
                         <button class="news-card__button open-modal-btn" data-type="image" data-src="./shared/blox_leaks/island_reworks4.png">Inspecter →</button>
                     </div>
-                    <div class="news-card__bar"></div>
+<div class="news-card__bar"></div>
                 </article>
 
                                 <article class="news-card">
@@ -1568,7 +1578,7 @@
                         <h2 class="news-card__title">Factory rework ?</h2>
                         <button class="news-card__button open-modal-btn" data-type="image" data-src="./shared/blox_leaks/island_reworks5.png">Inspecter →</button>
                     </div>
-                    <div class="news-card__bar"></div>
+<div class="news-card__bar"></div>
                 </article>
 
                                 <article class="news-card">
@@ -1581,7 +1591,7 @@
                         <h2 class="news-card__title">Ice Castle rework ?</h2>
                         <button class="news-card__button open-modal-btn" data-type="image" data-src="./shared/blox_leaks/island_reworks6.png">Inspecter →</button>
                     </div>
-                    <div class="news-card__bar"></div>
+<div class="news-card__bar"></div>
                 </article>
             </div>
         </section>
@@ -1601,7 +1611,7 @@
                         <h2 class="news-card__title">Nouveau design</h2>
                         <button class="news-card__button open-modal-btn" data-type="image" data-src="./shared/blox_leaks/enchantements_design.jpeg">Aperçu →</button>
                     </div>
-                    <div class="news-card__bar"></div>
+<div class="news-card__bar"></div>
                 </article>
             </div>
         </section>
@@ -1621,7 +1631,7 @@
                         <p style="color: #555; margin-bottom: 15px; font-size: 14px;">Mdr, merci à Felku. Il est peut-être un peu perché, haha. En tout cas, ça fait plaisir. Le prochain fruit que je vais cuisiner va atomiser tout ce qu'il a pu préparer jusque-là, mdr.</p>
                         <button class="news-card__button news-card__button--disabled">Décrypter →</button>
                     </div>
-                    <div class="news-card__bar"></div>
+<div class="news-card__bar"></div>
                 </article>
 
                                 <article class="news-card">
@@ -1638,7 +1648,7 @@
                         </p>
                         <button class="news-card__button news-card__button--disabled">Décrypter →</button>
                     </div>
-                    <div class="news-card__bar"></div>
+<div class="news-card__bar"></div>
                 </article>
 
                                 <article class="news-card">
@@ -1651,7 +1661,7 @@
                         <p style="color: #555; margin-bottom: 15px; font-size: 14px;">Je vais rework le Quake (la refonte arrive). Les gens vont rager quand ça sortira et que le fruit sera devenu trop fort, juste parce qu'ils diront que ça n'a "aucun skill".</p>
                         <button class="news-card__button news-card__button--disabled">Décrypter →</button>
                     </div>
-                    <div class="news-card__bar"></div>
+<div class="news-card__bar"></div>
                 </article>
             </div>
         </section>
@@ -2521,7 +2531,7 @@
     //  SYSTÈME DE LIKE — POSTS  (compteur GLOBAL via Firebase)
     // ═══════════════════════════════════════════════════════════════
     const POST_LIKE_KEY   = 'blox_post_likes_v1';
-    const FB_LIKES_REF    = FB_DB.ref('post_likes');
+    const FB_LIKES_REF    = typeof FB_DB !== 'undefined' ? FB_DB.ref('post_likes') : null;
     let   _plGlobalCounts = {};
 
     // ─── Persistance locale (liked = par device) ───────────────────
@@ -2531,13 +2541,15 @@
 
     // ─── Écoute Firebase → met à jour UNIQUEMENT les compteurs ─────
     // (jamais le cœur liked — c'est localStorage qui décide ça)
-    FB_LIKES_REF.on('value', snap => {
-        _plGlobalCounts = snap.val() || {};
-        document.querySelectorAll('.post-like-btn[data-post-id]').forEach(btn => {
-            const countEl = btn.querySelector('.post-like-count');
-            if (countEl) countEl.textContent = _plGlobalCounts[btn.dataset.postId] || 0;
+    if (FB_LIKES_REF) {
+        FB_LIKES_REF.on('value', snap => {
+            _plGlobalCounts = snap.val() || {};
+            document.querySelectorAll('.post-like-btn[data-post-id]').forEach(btn => {
+                const countEl = btn.querySelector('.post-like-count');
+                if (countEl) countEl.textContent = _plGlobalCounts[btn.dataset.postId] || 0;
+            });
         });
-    });
+    }
 
     // ─── Construction SVG cœur ─────────────────────────────────────
     function _plHeartSVG() {
@@ -2641,10 +2653,13 @@
             const id      = 'card-' + _plSlug(titleEl ? titleEl.textContent.trim() : String(idx));
             const liked   = (local[id] || {}).liked || false;
             const btn     = _plMakeBtn(id, liked, _plGlobalCounts[id] || 0);
-            const footer  = document.createElement('div');
-            footer.className = 'post-like-card-footer';
+            let footer    = content.querySelector('.post-like-card-footer');
+            if (!footer) {
+                footer  = document.createElement('div');
+                footer.className = 'post-like-card-footer';
+                content.appendChild(footer);
+            }
             footer.appendChild(btn);
-            content.appendChild(footer);
         });
     }
 
