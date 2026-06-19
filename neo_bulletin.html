@@ -288,6 +288,99 @@
             overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
         }
 
+        /* ── ÉDITEUR DANS LA LIGHTBOX ── */
+        .modal-edit-btn {
+            margin-left: auto; flex-shrink: 0;
+            display: none; /* visible uniquement en mode édition */
+            align-items: center; gap: 5px;
+            padding: 5px 12px; border-radius: 8px; border: none;
+            background: rgba(255,26,26,0.12); color: rgba(255,100,100,0.8);
+            font-size: 11px; font-weight: 700; cursor: pointer;
+            font-family: 'Inter', sans-serif; transition: all 0.18s;
+            letter-spacing: 0.3px;
+        }
+        .modal-edit-btn:hover { background: rgba(255,26,26,0.22); color: #fff; }
+        .modal-edit-btn.is-active { background: rgba(255,26,26,0.28); color: #fff; }
+        body.edit-mode .modal-edit-btn { display: flex; }
+
+        .modal-editor-panel {
+            max-height: 0; overflow: hidden;
+            transition: max-height 0.35s cubic-bezier(0.4,0,0.2,1), padding 0.3s ease;
+            background: rgba(10,10,18,0.98);
+            border-top: 1px solid rgba(255,255,255,0.04);
+            padding: 0;
+        }
+        .modal-editor-panel.is-open {
+            max-height: 400px;
+            padding: 18px 20px 20px;
+        }
+        .modal-editor-panel::-webkit-scrollbar { width: 4px; }
+
+        .modal-editor-tabs {
+            display: flex; gap: 0; margin-bottom: 14px;
+            border-radius: 10px; overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.07);
+            background: rgba(255,255,255,0.03);
+        }
+        .modal-editor-tab {
+            flex: 1; padding: 7px 10px; border: none; background: transparent;
+            color: rgba(255,255,255,0.35); font-size: 11px; font-weight: 700;
+            cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.18s;
+            text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .modal-editor-tab.active {
+            background: rgba(255,26,26,0.14); color: rgba(255,120,120,0.9);
+        }
+        .modal-editor-tab:hover:not(.active) { color: rgba(255,255,255,0.6); }
+
+        .modal-editor-fields { display: flex; flex-direction: column; gap: 10px; }
+        .modal-editor-field { display: none; }
+        .modal-editor-field.active { display: block; }
+
+        .modal-editor-label {
+            font-size: 10px; text-transform: uppercase; letter-spacing: 1px;
+            color: rgba(255,255,255,0.3); font-weight: 700; margin-bottom: 6px;
+        }
+        .modal-editor-textarea {
+            width: 100%; padding: 10px 12px; border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.04);
+            color: #fff; font-size: 13px; font-family: 'Inter', sans-serif;
+            outline: none; resize: vertical; min-height: 80px; line-height: 1.6;
+            transition: border-color 0.2s, background 0.2s;
+            box-sizing: border-box;
+        }
+        .modal-editor-textarea:focus {
+            border-color: rgba(255,26,26,0.4);
+            background: rgba(255,26,26,0.03);
+        }
+        .modal-editor-textarea::placeholder { color: rgba(255,255,255,0.18); }
+
+        .modal-editor-actions {
+            display: flex; gap: 8px; justify-content: flex-end; margin-top: 12px;
+        }
+        .modal-editor-save {
+            padding: 7px 18px; border-radius: 8px; border: none;
+            background: linear-gradient(135deg, #ff1a1a, #cc0000); color: #fff;
+            font-size: 12px; font-weight: 700; cursor: pointer;
+            font-family: 'Inter', sans-serif; transition: all 0.2s;
+            box-shadow: 0 3px 12px rgba(204,0,0,0.35);
+        }
+        .modal-editor-save:hover { transform: translateY(-1px); box-shadow: 0 5px 18px rgba(204,0,0,0.5); }
+        .modal-editor-discard {
+            padding: 7px 14px; border-radius: 8px; border: none;
+            background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.4);
+            font-size: 12px; font-weight: 600; cursor: pointer;
+            font-family: 'Inter', sans-serif; transition: all 0.18s;
+        }
+        .modal-editor-discard:hover { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.7); }
+        .modal-editor-saved-tag {
+            font-size: 11px; color: rgba(80,220,80,0.7); font-weight: 600;
+            opacity: 0; transition: opacity 0.3s; margin-right: auto;
+            display: flex; align-items: center; gap: 4px;
+        }
+        .modal-editor-saved-tag.is-visible { opacity: 1; }
+
         /* ── RESPONSIVE RESPONSIVE ── */
         @media (max-width: 768px) { 
             .site-header { padding: 12px 20px; }
@@ -1016,11 +1109,12 @@
             border-radius: 18px;
             box-shadow: 0 24px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.05);
             padding: 0; overflow: hidden;
-            opacity: 0; pointer-events: none;
-            transition: opacity 0.28s ease, transform 0.32s cubic-bezier(0.34,1.56,0.64,1);
+            opacity: 0; pointer-events: none; visibility: hidden;
+            transition: opacity 0.28s ease, transform 0.32s cubic-bezier(0.34,1.56,0.64,1), visibility 0s 0.28s;
         }
         #editModePanel.is-open {
-            opacity: 1; pointer-events: auto;
+            opacity: 1; pointer-events: auto; visibility: visible;
+            transition: opacity 0.28s ease, transform 0.32s cubic-bezier(0.34,1.56,0.64,1), visibility 0s 0s;
             transform: translateX(-50%) translateY(0);
         }
         .edit-panel__header {
@@ -1132,89 +1226,423 @@
             display: block; font-weight: 600; color: #fff;
         }
 
-        /* ── Bulle /new (formulaire de création de carte) ── */
+        /* ════════════════════════════════════════════════════
+           ── BULLE /NEW — CARD FORGE REDESIGN ──
+        ════════════════════════════════════════════════════ */
         #newCardModal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: 99995; display: none;
             align-items: center; justify-content: center;
-            background: rgba(0,0,0,0.5);
-            backdrop-filter: blur(4px);
+            background: rgba(0,0,0,0.72);
+            backdrop-filter: blur(8px);
         }
         #newCardModal.is-open { display: flex; }
+
+        /* Panel principal */
         #newCardModal .ncm-panel {
-            background: rgba(18,18,30,0.96); backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.12); border-radius: 20px;
-            width: 420px; max-width: 94vw; max-height: 90vh; overflow-y: auto;
-            padding: 24px 28px; box-shadow: 0 24px 80px rgba(0,0,0,0.6);
+            background: #0e0e18;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 28px;
+            width: 780px; max-width: 96vw; max-height: 94vh; overflow: hidden;
+            display: flex; flex-direction: column;
+            box-shadow: 0 40px 120px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,26,26,0.12), inset 0 1px 0 rgba(255,255,255,0.05);
+            animation: ncmPop 0.32s cubic-bezier(0.34,1.56,0.64,1) both;
         }
-        #newCardModal .ncm-title {
-            font-size: 16px; font-weight: 700; color: #fff;
-            margin-bottom: 20px; display: flex; align-items: center; gap: 8px;
+        @keyframes ncmPop { from { opacity:0; transform: scale(0.93) translateY(12px); } to { opacity:1; transform: scale(1) translateY(0); } }
+
+        /* Header barre rouge */
+        #newCardModal .ncm-header {
+            display: flex; align-items: center; gap: 10px;
+            padding: 14px 22px;
+            background: linear-gradient(90deg, rgba(204,0,0,0.18), rgba(204,0,0,0.04), transparent);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            flex-shrink: 0;
         }
-        #newCardModal .ncm-title span { font-size: 18px; }
+        #newCardModal .ncm-header-icon {
+            width: 32px; height: 32px; border-radius: 10px; flex-shrink: 0;
+            background: linear-gradient(135deg, #ff1a1a, #cc0000);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 15px;
+            box-shadow: 0 4px 16px rgba(204,0,0,0.5);
+        }
+        #newCardModal .ncm-header-text { flex: 1; }
+        #newCardModal .ncm-header-title {
+            font-size: 14px; font-weight: 700; color: #fff; letter-spacing: 0.3px;
+        }
+        #newCardModal .ncm-header-sub {
+            font-size: 11px; color: rgba(255,255,255,0.35); margin-top: 1px;
+        }
+        #newCardModal .ncm-header-close {
+            width: 28px; height: 28px; border-radius: 8px; border: none;
+            background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.4);
+            font-size: 13px; cursor: pointer; display: flex; align-items: center;
+            justify-content: center; transition: all 0.18s; flex-shrink: 0;
+        }
+        #newCardModal .ncm-header-close:hover { background: #cc0000; color: #fff; }
+
+        /* Body layout */
+        #newCardModal .ncm-body {
+            display: flex; flex: 1; overflow: hidden; min-height: 0;
+        }
+
+        /* Colonne gauche — Prévisualisation */
+        #newCardModal .ncm-preview-col {
+            width: 260px; flex-shrink: 0;
+            padding: 24px 20px;
+            background: rgba(255,255,255,0.018);
+            border-right: 1px solid rgba(255,255,255,0.05);
+            display: flex; flex-direction: column; gap: 14px;
+            overflow-y: auto;
+        }
+        #newCardModal .ncm-preview-label {
+            font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px;
+            color: rgba(255,255,255,0.25); font-weight: 700;
+        }
+        #newCardModal .ncm-card {
+            border-radius: 18px; overflow: hidden;
+            background: #fff; box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+            font-family: 'Inter', sans-serif;
+        }
+        #newCardModal .ncm-card-img {
+            width: 100%; height: 160px; background: #1a1a2e;
+            position: relative; overflow: hidden; cursor: pointer;
+        }
+        #newCardModal .ncm-card-img-loaded {
+            width: 100%; height: 100%; object-fit: cover;
+            position: absolute; top: 0; left: 0;
+        }
+        #newCardModal .ncm-card-empty {
+            width: 100%; height: 100%; display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            gap: 6px; color: rgba(255,255,255,0.15);
+        }
+        #newCardModal .ncm-card-empty-icon { font-size: 28px; opacity: 0.4; }
+        #newCardModal .ncm-card-empty-text {
+            font-size: 10px; text-transform: uppercase; letter-spacing: 1px;
+            text-align: center; line-height: 1.4;
+        }
+        #newCardModal .ncm-card-img.drag-over {
+            outline: 2px dashed rgba(255,26,26,0.6) !important;
+            outline-offset: -4px;
+            background: rgba(255,26,26,0.08) !important;
+        }
+        #newCardModal .ncm-card-badge {
+            position: absolute; top: 10px; left: 10px;
+            background: linear-gradient(135deg,#ff1a1a,#cc0000);
+            padding: 3px 10px; border-radius: 20px;
+            font-size: 10px; font-weight: 700; color: #fff;
+            text-transform: uppercase; min-width: 30px; cursor: text;
+        }
+        #newCardModal .ncm-card-body { padding: 14px 14px 16px; }
+        #newCardModal .ncm-card-eyebrow {
+            font-size: 10px; font-weight: 700; text-transform: uppercase;
+            color: #7c3aed; margin-bottom: 5px; letter-spacing: 0.5px; cursor: text;
+        }
+        #newCardModal .ncm-card-title {
+            font-size: 14px; font-weight: 700; color: #111;
+            margin: 0 0 12px; line-height: 1.3; cursor: text;
+        }
+        #newCardModal .ncm-card-btn {
+            display: block; width: 100%; padding: 9px 16px;
+            background: linear-gradient(135deg,#7c3aed,#6d28d9);
+            color: #fff; border: none; border-radius: 10px;
+            font-size: 11px; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 0.5px; text-align: center; cursor: text;
+        }
+        /* Editables dans la preview */
+        #newCardModal .ncm-card [contenteditable] {
+            outline: none; border-radius: 4px;
+            transition: box-shadow 0.15s, background 0.15s;
+        }
+        #newCardModal .ncm-card [contenteditable]:hover { box-shadow: 0 0 0 2px rgba(124,58,237,0.35); }
+        #newCardModal .ncm-card [contenteditable]:focus { box-shadow: 0 0 0 2px rgba(124,58,237,0.65); background: rgba(124,58,237,0.05); }
+
+        /* Hint clique pour éditer */
+        #newCardModal .ncm-preview-hint {
+            font-size: 11px; color: rgba(255,255,255,0.22); text-align: center;
+            line-height: 1.5;
+        }
+        #newCardModal .ncm-preview-hint strong { color: rgba(255,255,255,0.45); }
+
+        /* Colonne droite — Formulaire */
+        #newCardModal .ncm-form-col {
+            flex: 1; padding: 24px 26px;
+            overflow-y: auto; display: flex; flex-direction: column; gap: 6px;
+        }
+        #newCardModal .ncm-form-col::-webkit-scrollbar { width: 4px; }
+        #newCardModal .ncm-form-col::-webkit-scrollbar-track { background: transparent; }
+        #newCardModal .ncm-form-col::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+
+        #newCardModal .ncm-section-title {
+            font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px;
+            color: rgba(255,255,255,0.25); font-weight: 700; margin-bottom: 10px;
+            margin-top: 8px;
+        }
+        #newCardModal .ncm-section-title:first-child { margin-top: 0; }
+
         #newCardModal .ncm-field { margin-bottom: 14px; }
         #newCardModal .ncm-field label {
-            display: block; font-size: 10px; text-transform: uppercase;
+            display: flex; align-items: center; gap: 6px;
+            font-size: 11px; text-transform: uppercase;
             letter-spacing: 1px; color: rgba(255,255,255,0.4);
-            font-weight: 700; margin-bottom: 4px;
+            font-weight: 700; margin-bottom: 6px;
         }
+        #newCardModal .ncm-field label .ncm-lbl-icon { font-size: 13px; opacity: 0.7; }
         #newCardModal .ncm-field input,
         #newCardModal .ncm-field select {
-            width: 100%; padding: 9px 12px; border-radius: 10px;
-            border: 1px solid rgba(255,255,255,0.1);
-            background: rgba(255,255,255,0.07);
+            width: 100%; padding: 10px 14px; border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.05);
             color: #fff; font-size: 13px; font-family: inherit;
-            outline: none; transition: border-color 0.2s;
+            outline: none; transition: border-color 0.2s, background 0.2s;
             box-sizing: border-box;
         }
         #newCardModal .ncm-field input:focus,
         #newCardModal .ncm-field select:focus {
-            border-color: rgba(255,26,26,0.5);
+            border-color: rgba(255,26,26,0.45);
+            background: rgba(255,26,26,0.04);
         }
-        #newCardModal .ncm-field select option {
-            background: #1a1a2e; color: #fff;
+        #newCardModal .ncm-field select option { background: #0e0e18; color: #fff; }
+        #newCardModal .ncm-field input::placeholder { color: rgba(255,255,255,0.2); }
+
+        /* Type radios redesignés */
+        #newCardModal .ncm-type-group { display: flex; gap: 8px; }
+        #newCardModal .ncm-type-pill {
+            flex: 1; padding: 9px 14px; border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.04);
+            cursor: pointer; transition: all 0.2s;
+            display: flex; align-items: center; gap: 8px;
         }
-        #newCardModal .ncm-field input::placeholder {
-            color: rgba(255,255,255,0.25);
+        #newCardModal .ncm-type-pill:hover { background: rgba(255,255,255,0.08); }
+        #newCardModal .ncm-type-pill.active {
+            border-color: rgba(255,26,26,0.4);
+            background: rgba(255,26,26,0.08);
         }
-        #newCardModal .ncm-type-group {
-            display: flex; gap: 10px; margin-top: 2px;
+        #newCardModal .ncm-type-pill input[type="radio"] { display: none; }
+        #newCardModal .ncm-type-dot {
+            width: 14px; height: 14px; border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.2); flex-shrink: 0;
+            position: relative; transition: border-color 0.2s;
         }
-        #newCardModal .ncm-type-group label {
-            display: flex; align-items: center; gap: 6px;
-            font-size: 12px; color: rgba(255,255,255,0.6);
-            cursor: pointer; text-transform: none; letter-spacing: normal;
-        }
-        #newCardModal .ncm-type-group input[type="radio"] {
-            appearance: none; width: 16px; height: 16px;
-            border: 2px solid rgba(255,255,255,0.2); border-radius: 50%;
-            margin: 0; position: relative; cursor: pointer;
-            transition: border-color 0.2s;
-        }
-        #newCardModal .ncm-type-group input[type="radio"]:checked {
-            border-color: #ff1a1a;
-        }
-        #newCardModal .ncm-type-group input[type="radio"]:checked::after {
+        #newCardModal .ncm-type-pill.active .ncm-type-dot { border-color: #ff1a1a; }
+        #newCardModal .ncm-type-pill.active .ncm-type-dot::after {
             content: ''; position: absolute; top: 2px; left: 2px;
-            width: 8px; height: 8px; border-radius: 50%;
-            background: #ff1a1a;
+            width: 6px; height: 6px; border-radius: 50%; background: #ff1a1a;
         }
-        #newCardModal .ncm-actions {
-            display: flex; gap: 10px; margin-top: 20px; justify-content: flex-end;
+        #newCardModal .ncm-type-name {
+            font-size: 13px; color: rgba(255,255,255,0.55); font-weight: 600;
         }
-        #newCardModal .ncm-actions button {
-            padding: 8px 18px; border-radius: 10px; border: none;
-            font-size: 13px; font-weight: 600; cursor: pointer;
-            font-family: inherit; transition: opacity 0.2s;
+        #newCardModal .ncm-type-pill.active .ncm-type-name { color: #fff; }
+        #newCardModal .ncm-type-emoji { font-size: 15px; }
+
+        /* Séparateur */
+        #newCardModal .ncm-divider {
+            height: 1px; background: rgba(255,255,255,0.05);
+            margin: 10px 0;
         }
-        #newCardModal .ncm-actions button:hover { opacity: 0.85; }
+
+        /* Footer avec actions */
+        #newCardModal .ncm-footer {
+            display: flex; align-items: center; gap: 10px;
+            padding: 14px 26px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            background: rgba(255,255,255,0.018);
+            flex-shrink: 0;
+        }
+        #newCardModal .ncm-footer-info {
+            flex: 1; font-size: 11px; color: rgba(255,255,255,0.2);
+        }
         #newCardModal .ncm-btn-cancel {
-            background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.6);
+            padding: 9px 20px; border-radius: 10px; border: none;
+            font-size: 13px; font-weight: 600; cursor: pointer;
+            font-family: inherit; transition: all 0.2s;
+            background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.5);
         }
+        #newCardModal .ncm-btn-cancel:hover { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.8); }
         #newCardModal .ncm-btn-create {
+            padding: 9px 24px; border-radius: 10px; border: none;
+            font-size: 13px; font-weight: 700; cursor: pointer;
+            font-family: inherit; transition: all 0.22s;
             background: linear-gradient(135deg,#ff1a1a,#cc0000);
-            color: #fff; box-shadow: 0 4px 16px rgba(204,0,0,0.35);
+            color: #fff; box-shadow: 0 4px 20px rgba(204,0,0,0.4);
+            display: flex; align-items: center; gap: 7px;
         }
+        #newCardModal .ncm-btn-create:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 28px rgba(204,0,0,0.55);
+        }
+        #newCardModal .ncm-btn-create:active { transform: translateY(0); }
+
+        /* ════════════════════════════════════════════════════
+           ── BULLE /DELETE — DANGER ZONE REDESIGN ──
+        ════════════════════════════════════════════════════ */
+        #deleteCardModal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 99995; display: none;
+            align-items: center; justify-content: center;
+            background: rgba(0,0,0,0.72); backdrop-filter: blur(8px);
+        }
+        #deleteCardModal.is-open { display: flex; }
+        #deleteCardModal .dcm-panel {
+            background: #0e0e18;
+            border: 1px solid rgba(255,50,50,0.15);
+            border-radius: 24px;
+            width: 520px; max-width: 96vw; max-height: 86vh;
+            display: flex; flex-direction: column; overflow: hidden;
+            box-shadow: 0 40px 120px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,50,50,0.08), inset 0 1px 0 rgba(255,255,255,0.04);
+            animation: ncmPop 0.3s cubic-bezier(0.34,1.56,0.64,1) both;
+        }
+        /* Header danger */
+        #deleteCardModal .dcm-header {
+            padding: 16px 22px;
+            background: linear-gradient(90deg, rgba(180,0,0,0.22), rgba(180,0,0,0.06), transparent);
+            border-bottom: 1px solid rgba(255,50,50,0.1);
+            display: flex; align-items: center; gap: 12px; flex-shrink: 0;
+        }
+        #deleteCardModal .dcm-header-icon {
+            width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+            background: rgba(255,50,50,0.12);
+            border: 1px solid rgba(255,50,50,0.25);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 17px;
+        }
+        #deleteCardModal .dcm-header-text { flex: 1; }
+        #deleteCardModal .dcm-header-title {
+            font-size: 14px; font-weight: 700; color: #fff;
+        }
+        #deleteCardModal .dcm-header-sub {
+            font-size: 11px; color: rgba(255,100,100,0.6); margin-top: 2px;
+        }
+        #deleteCardModal .dcm-header-close {
+            width: 28px; height: 28px; border-radius: 8px; border: none;
+            background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.4);
+            font-size: 13px; cursor: pointer; display: flex; align-items: center;
+            justify-content: center; transition: all 0.18s; flex-shrink: 0;
+        }
+        #deleteCardModal .dcm-header-close:hover { background: rgba(255,50,50,0.3); color: #ff4444; }
+
+        /* Liste scrollable */
+        #deleteCardModal #dcmList {
+            flex: 1; overflow-y: auto; padding: 16px 20px;
+        }
+        #deleteCardModal #dcmList::-webkit-scrollbar { width: 4px; }
+        #deleteCardModal #dcmList::-webkit-scrollbar-track { background: transparent; }
+        #deleteCardModal #dcmList::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+
+        #deleteCardModal .dcm-empty {
+            color: rgba(255,255,255,0.25); font-size: 13px; text-align: center;
+            padding: 40px 20px;
+            display: flex; flex-direction: column; align-items: center; gap: 10px;
+        }
+        #deleteCardModal .dcm-empty-icon { font-size: 36px; opacity: 0.3; }
+        #deleteCardModal .dcm-empty-text { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* Item carte */
+        #deleteCardModal .dcm-item {
+            display: flex; align-items: center; gap: 14px;
+            padding: 12px 14px; border-radius: 14px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.05);
+            margin-bottom: 8px; transition: all 0.18s;
+            position: relative; overflow: hidden;
+        }
+        #deleteCardModal .dcm-item::before {
+            content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+            width: 3px; background: rgba(255,50,50,0.3); border-radius: 0 2px 2px 0;
+            transition: width 0.2s;
+        }
+        #deleteCardModal .dcm-item:hover::before { width: 4px; background: rgba(255,50,50,0.7); }
+        #deleteCardModal .dcm-item:hover { background: rgba(255,50,50,0.04); border-color: rgba(255,50,50,0.12); }
+
+        #deleteCardModal .dcm-item-thumb {
+            width: 44px; height: 44px; border-radius: 10px; flex-shrink: 0;
+            background: rgba(255,255,255,0.06); overflow: hidden;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px; border: 1px solid rgba(255,255,255,0.06);
+        }
+        #deleteCardModal .dcm-item-thumb img {
+            width: 100%; height: 100%; object-fit: cover; display: block;
+        }
+        #deleteCardModal .dcm-item-info { flex: 1; min-width: 0; }
+        #deleteCardModal .dcm-item-badge {
+            display: inline-block;
+            font-size: 9px; text-transform: uppercase; letter-spacing: 1px;
+            color: #ff4444; font-weight: 700;
+            background: rgba(255,50,50,0.1); border-radius: 4px; padding: 1px 6px;
+            margin-bottom: 4px;
+        }
+        #deleteCardModal .dcm-item-title {
+            font-size: 13px; color: #fff; font-weight: 600;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        #deleteCardModal .dcm-item-section {
+            font-size: 10px; color: rgba(255,255,255,0.3); margin-top: 2px;
+        }
+        #deleteCardModal .dcm-item-del {
+            padding: 6px 14px; border-radius: 8px; border: none;
+            background: rgba(255,50,50,0.1); color: rgba(255,80,80,0.8);
+            font-size: 12px; font-weight: 700; cursor: pointer; flex-shrink: 0;
+            transition: all 0.18s; font-family: inherit;
+            letter-spacing: 0.3px;
+        }
+        #deleteCardModal .dcm-item-del:hover {
+            background: rgba(255,50,50,0.25); color: #fff;
+            box-shadow: 0 4px 12px rgba(255,50,50,0.2);
+        }
+
+        /* Zone confirmation inline */
+        #deleteCardModal .dcm-confirm-zone {
+            background: rgba(180,0,0,0.08);
+            border: 1px solid rgba(255,50,50,0.15);
+            border-radius: 10px; padding: 12px 14px; margin-top: 8px;
+            display: none; flex-direction: column; gap: 8px;
+        }
+        #deleteCardModal .dcm-confirm-zone.is-open { display: flex; }
+        #deleteCardModal .dcm-confirm-label {
+            font-size: 11px; color: rgba(255,150,150,0.7); font-weight: 600;
+            display: flex; align-items: center; gap: 5px;
+        }
+        #deleteCardModal .dcm-confirm-pwd {
+            width: 100%; padding: 8px 12px; border-radius: 8px;
+            border: 1px solid rgba(255,50,50,0.2);
+            background: rgba(255,255,255,0.04);
+            color: #fff; font-size: 13px; font-family: 'Inter', monospace;
+            outline: none; transition: border-color 0.2s;
+            box-sizing: border-box;
+        }
+        #deleteCardModal .dcm-confirm-pwd:focus { border-color: rgba(255,50,50,0.5); }
+        #deleteCardModal .dcm-confirm-pwd::placeholder { color: rgba(255,255,255,0.2); }
+        #deleteCardModal .dcm-confirm-actions { display: flex; gap: 8px; }
+        #deleteCardModal .dcm-confirm-cancel {
+            flex: 1; padding: 7px; border-radius: 8px; border: none;
+            background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.4);
+            font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit;
+            transition: all 0.18s;
+        }
+        #deleteCardModal .dcm-confirm-cancel:hover { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.7); }
+        #deleteCardModal .dcm-confirm-ok {
+            flex: 1; padding: 7px; border-radius: 8px; border: none;
+            background: linear-gradient(135deg, #cc0000, #900); color: #fff;
+            font-size: 12px; font-weight: 700; cursor: pointer; font-family: inherit;
+            transition: all 0.18s; box-shadow: 0 3px 10px rgba(180,0,0,0.35);
+        }
+        #deleteCardModal .dcm-confirm-ok:hover { box-shadow: 0 5px 16px rgba(180,0,0,0.5); }
+
+        /* Footer */
+        #deleteCardModal .dcm-footer {
+            padding: 12px 20px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            flex-shrink: 0;
+        }
+        #deleteCardModal .dcm-close {
+            display: block; width: 100%; padding: 10px;
+            border-radius: 10px; border: none; background: rgba(255,255,255,0.05);
+            color: rgba(255,255,255,0.4); font-size: 13px; font-weight: 600;
+            cursor: pointer; font-family: inherit; transition: all 0.18s;
+        }
+        #deleteCardModal .dcm-close:hover { background: rgba(255,255,255,0.09); color: rgba(255,255,255,0.7); }
+        #editModeToast kbd {
             background: rgba(255,255,255,0.12); border-radius: 5px;
             padding: 1px 6px; font-family: monospace; font-size: 11px;
             color: #fff; border: 1px solid rgba(255,255,255,0.15);
@@ -1227,7 +1655,7 @@
             border: 1px solid rgba(255,255,255,0.12); border-radius: 14px;
             padding: 12px 14px; width: 300px; max-width: 92vw;
             box-shadow: 0 16px 60px rgba(0,0,0,0.5);
-            display: none;
+            display: none; visibility: hidden;
         }
         #editInlinePopup.is-open { display: block; }
         .edit-inline__label {
@@ -1795,6 +2223,34 @@
                     <span class="modal-info-badge" id="modalBadge">LEAK</span>
                     <span class="modal-info-section" id="modalSection">Section</span>
                     <h3 class="modal-info-title" id="modalMetaTitle"></h3>
+                    <button class="modal-edit-btn" id="modalEditToggle" onclick="_modalEditToggle()">✏️ Éditer</button>
+                </div>
+                <!-- Panneau d'édition extensible (visible uniquement en mode édition) -->
+                <div class="modal-editor-panel" id="modalEditorPanel">
+                    <div class="modal-editor-tabs">
+                        <button class="modal-editor-tab active" onclick="_modalEditTab(this,'desc')">📝 Description</button>
+                        <button class="modal-editor-tab" onclick="_modalEditTab(this,'theory')">🔍 Théorie</button>
+                        <button class="modal-editor-tab" onclick="_modalEditTab(this,'notes')">📌 Notes admin</button>
+                    </div>
+                    <div class="modal-editor-fields">
+                        <div class="modal-editor-field active" id="modal-field-desc">
+                            <div class="modal-editor-label">Description visible par les lecteurs</div>
+                            <textarea class="modal-editor-textarea" id="modal-ta-desc" rows="4" placeholder="Décris ce que montre cette image, son contexte dans le jeu…"></textarea>
+                        </div>
+                        <div class="modal-editor-field" id="modal-field-theory">
+                            <div class="modal-editor-label">Théorie / Analyse</div>
+                            <textarea class="modal-editor-textarea" id="modal-ta-theory" rows="4" placeholder="Théories, spéculations, connexions avec d'autres leaks…"></textarea>
+                        </div>
+                        <div class="modal-editor-field" id="modal-field-notes">
+                            <div class="modal-editor-label">Notes internes (admin seulement)</div>
+                            <textarea class="modal-editor-textarea" id="modal-ta-notes" rows="3" placeholder="Source, date d'obtention, niveau de confiance…"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-editor-actions">
+                        <span class="modal-editor-saved-tag" id="modalEditSavedTag">✓ Sauvegardé</span>
+                        <button class="modal-editor-discard" onclick="_modalEditDiscard()">Annuler</button>
+                        <button class="modal-editor-save" onclick="_modalEditSave()">💾 Sauvegarder</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1839,49 +2295,112 @@
     <!-- ── BULLE /NEW ── -->
     <div id="newCardModal">
         <div class="ncm-panel">
-            <div class="ncm-title"><span>✦</span> Nouvelle carte</div>
-
-            <div class="ncm-field">
-                <label>Section</label>
-                <select id="ncmSection"></select>
+            <!-- Header -->
+            <div class="ncm-header">
+                <div class="ncm-header-icon">✦</div>
+                <div class="ncm-header-text">
+                    <div class="ncm-header-title">Nouvelle carte</div>
+                    <div class="ncm-header-sub">Clique sur chaque élément de la carte pour l'éditer</div>
+                </div>
+                <button class="ncm-header-close" onclick="document.getElementById('newCardModal').classList.remove('is-open')">✕</button>
             </div>
 
-            <div class="ncm-field">
-                <label>Badge</label>
-                <input id="ncmBadge" type="text" placeholder="EXCLU, NOUVEAU, BREAKING…" value="EXCLU">
-            </div>
+            <!-- Body -->
+            <div class="ncm-body">
+                <!-- Colonne prévisualisation -->
+                <div class="ncm-preview-col">
+                    <div class="ncm-preview-label">Aperçu</div>
+                    <div class="ncm-card">
+                        <div class="ncm-card-img" id="ncmDropZone" onclick="document.getElementById('ncmFileInput').click()">
+                            <div class="ncm-card-empty" id="ncmDropHint">
+                                <div class="ncm-card-empty-icon">🖼️</div>
+                                <div class="ncm-card-empty-text">Glisse une image<br>ou clique ici</div>
+                            </div>
+                            <div class="ncm-card-badge" contenteditable="true" id="ncmEditBadge" spellcheck="false">EXCLU</div>
+                        </div>
+                        <input type="file" id="ncmFileInput" accept="image/*" style="display:none" onchange="_ncmFileSelected(this)">
+                        <div class="ncm-card-body">
+                            <div class="ncm-card-eyebrow" contenteditable="true" id="ncmEditEyebrow" spellcheck="false">Leak</div>
+                            <h2 class="ncm-card-title" contenteditable="true" id="ncmEditTitle" spellcheck="false">Titre de la carte</h2>
+                            <div class="ncm-card-btn" contenteditable="true" id="ncmEditBtn" spellcheck="false">Voir l'image →</div>
+                        </div>
+                    </div>
+                    <div class="ncm-preview-hint">
+                        Clique sur le <strong>badge</strong>, le <strong>titre</strong> ou le <strong>bouton</strong> pour les modifier directement.
+                    </div>
+                </div>
 
-            <div class="ncm-field">
-                <label>Titre</label>
-                <input id="ncmTitle" type="text" placeholder="Titre de la carte">
-            </div>
+                <!-- Colonne formulaire -->
+                <div class="ncm-form-col">
+                    <div class="ncm-section-title">Configuration</div>
 
-            <div class="ncm-field">
-                <label>Image ou Vidéo URL</label>
-                <input id="ncmSrc" type="text" placeholder="https://…">
-            </div>
+                    <div class="ncm-field">
+                        <label><span class="ncm-lbl-icon">📂</span> Section</label>
+                        <select id="ncmSection"></select>
+                    </div>
 
-            <div class="ncm-field">
-                <label>Eyebrow</label>
-                <input id="ncmEyebrow" type="text" value="Leak">
-            </div>
+                    <div class="ncm-field">
+                        <label><span class="ncm-lbl-icon">🎞️</span> Type de média</label>
+                        <div class="ncm-type-group">
+                            <label class="ncm-type-pill active" id="ncmPillImage">
+                                <input type="radio" name="ncmType" value="image" checked onchange="_ncmTypeChange()">
+                                <span class="ncm-type-dot"></span>
+                                <span class="ncm-type-emoji">🖼️</span>
+                                <span class="ncm-type-name">Image</span>
+                            </label>
+                            <label class="ncm-type-pill" id="ncmPillVideo">
+                                <input type="radio" name="ncmType" value="video" onchange="_ncmTypeChange()">
+                                <span class="ncm-type-dot"></span>
+                                <span class="ncm-type-emoji">🎬</span>
+                                <span class="ncm-type-name">Vidéo</span>
+                            </label>
+                        </div>
+                    </div>
 
-            <div class="ncm-field">
-                <label>Texte du bouton</label>
-                <input id="ncmBtnLabel" type="text" value="Voir l'image →">
-            </div>
+                    <div class="ncm-field" id="ncmVideoField" style="display:none">
+                        <label><span class="ncm-lbl-icon">🔗</span> URL de la vidéo</label>
+                        <input id="ncmSrc" type="text" placeholder="https://…">
+                    </div>
 
-            <div class="ncm-field">
-                <label>Type de média</label>
-                <div class="ncm-type-group">
-                    <label><input type="radio" name="ncmType" value="image" checked> Image</label>
-                    <label><input type="radio" name="ncmType" value="video"> Vidéo</label>
+                    <div class="ncm-divider"></div>
+                    <div class="ncm-section-title">Aperçu rapide</div>
+
+                    <div class="ncm-field">
+                        <label><span class="ncm-lbl-icon">🏷️</span> Texte du badge</label>
+                        <input type="text" id="ncmBadgeInput" placeholder="EXCLU, LEAK, NOUVEAU…" oninput="document.getElementById('ncmEditBadge').textContent=this.value||'EXCLU'">
+                    </div>
+                    <div class="ncm-field">
+                        <label><span class="ncm-lbl-icon">✏️</span> Titre de la carte</label>
+                        <input type="text" id="ncmTitleInput" placeholder="Titre visible sur la carte" oninput="document.getElementById('ncmEditTitle').textContent=this.value||'Titre de la carte'">
+                    </div>
                 </div>
             </div>
 
-            <div class="ncm-actions">
+            <!-- Footer actions -->
+            <div class="ncm-footer">
+                <div class="ncm-footer-info">💾 Sauvegardé en local</div>
                 <button class="ncm-btn-cancel" onclick="document.getElementById('newCardModal').classList.remove('is-open')">Annuler</button>
-                <button class="ncm-btn-create" onclick="_cmdNewSubmit()">Créer ✓</button>
+                <button class="ncm-btn-create" onclick="_cmdNewSubmit()">
+                    <span>✦</span> Créer la carte
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── BULLE /DELETE ── -->
+    <div id="deleteCardModal">
+        <div class="dcm-panel">
+            <div class="dcm-header">
+                <div class="dcm-header-icon">🗑️</div>
+                <div class="dcm-header-text">
+                    <div class="dcm-header-title">Supprimer une carte</div>
+                    <div class="dcm-header-sub">Action irréversible — mot de passe requis</div>
+                </div>
+                <button class="dcm-header-close" onclick="document.getElementById('deleteCardModal').classList.remove('is-open')">✕</button>
+            </div>
+            <div id="dcmList"></div>
+            <div class="dcm-footer">
+                <button class="dcm-close" onclick="document.getElementById('deleteCardModal').classList.remove('is-open')">Fermer</button>
             </div>
         </div>
     </div>
@@ -2012,6 +2531,15 @@
                             modalImg.src = sourceUrl;
                             modalImg.style.display = 'block';
                         }
+                        // Charger les données de l'éditeur pour cette carte
+                        _modalEditKey = 'modal_edit__' + btoa(encodeURIComponent(sourceUrl || titleText)).slice(0,48);
+                        _modalEditLoad(_modalEditKey);
+                        // Fermer le panneau d'édition à chaque ouverture
+                        const edPanel = document.getElementById('modalEditorPanel');
+                        if (edPanel) edPanel.classList.remove('is-open');
+                        const edBtn = document.getElementById('modalEditToggle');
+                        if (edBtn) edBtn.classList.remove('is-active');
+                        edBtn.textContent = '✏️ Éditer';
                         modal.classList.add('is-active');
                     });
                 });
@@ -2020,6 +2548,11 @@
                     modal.classList.remove('is-active');
                     if (video) { video.pause(); video.src = ''; }
                     if (modalImg) modalImg.src = '';
+                    // Fermer le panneau d'édition
+                    const edPanel = document.getElementById('modalEditorPanel');
+                    if (edPanel) edPanel.classList.remove('is-open');
+                    const edBtn = document.getElementById('modalEditToggle');
+                    if (edBtn) { edBtn.classList.remove('is-active'); edBtn.textContent = '✏️ Éditer'; }
                 };
                 closeBtn.addEventListener('click', closeModalFn);
                 modal.addEventListener('click', (e) => { if (e.target === modal) closeModalFn(); });
@@ -2028,6 +2561,78 @@
                 });
             }
         });
+    </script>
+
+    <script>
+    /* ════════════════════════════════════════════════════════════════
+       ÉDITEUR DE CONTENU DANS LA LIGHTBOX (/edit modal)
+    ═══════════════════════════════════════════════════════════════ */
+    const MODAL_EDIT_STORE = 'bloxleaks_modal_edits';
+    let _modalEditKey = null;
+    let _modalEditOriginal = {}; // backup avant modification
+
+    function _modalEditGetAll() {
+        try { return JSON.parse(localStorage.getItem(MODAL_EDIT_STORE) || '{}'); } catch(e) { return {}; }
+    }
+    function _modalEditSaveAll(data) {
+        try { localStorage.setItem(MODAL_EDIT_STORE, JSON.stringify(data)); } catch(e) {}
+    }
+
+    function _modalEditLoad(key) {
+        const all = _modalEditGetAll();
+        const data = all[key] || {};
+        document.getElementById('modal-ta-desc').value    = data.desc    || '';
+        document.getElementById('modal-ta-theory').value  = data.theory  || '';
+        document.getElementById('modal-ta-notes').value   = data.notes   || '';
+        _modalEditOriginal = { ...data };
+    }
+
+    function _modalEditToggle() {
+        const panel = document.getElementById('modalEditorPanel');
+        const btn   = document.getElementById('modalEditToggle');
+        const isOpen = panel.classList.toggle('is-open');
+        btn.classList.toggle('is-active', isOpen);
+        btn.textContent = isOpen ? '✕ Fermer' : '✏️ Éditer';
+        // Reset tab to first
+        if (isOpen) _modalEditTab(document.querySelector('.modal-editor-tab'), 'desc');
+    }
+
+    function _modalEditTab(el, key) {
+        document.querySelectorAll('.modal-editor-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.modal-editor-field').forEach(f => f.classList.remove('active'));
+        if (el) el.classList.add('active');
+        const field = document.getElementById('modal-field-' + key);
+        if (field) field.classList.add('active');
+        // Focus le textarea
+        setTimeout(() => document.getElementById('modal-ta-' + key)?.focus(), 60);
+    }
+
+    function _modalEditSave() {
+        if (!_modalEditKey) return;
+        const all = _modalEditGetAll();
+        all[_modalEditKey] = {
+            desc:   document.getElementById('modal-ta-desc').value.trim(),
+            theory: document.getElementById('modal-ta-theory').value.trim(),
+            notes:  document.getElementById('modal-ta-notes').value.trim(),
+            savedAt: new Date().toISOString()
+        };
+        _modalEditSaveAll(all);
+        _modalEditOriginal = { ...all[_modalEditKey] };
+        // Toast de confirmation
+        const tag = document.getElementById('modalEditSavedTag');
+        if (tag) {
+            tag.classList.add('is-visible');
+            clearTimeout(tag._t);
+            tag._t = setTimeout(() => tag.classList.remove('is-visible'), 2000);
+        }
+    }
+
+    function _modalEditDiscard() {
+        if (!_modalEditKey) return;
+        document.getElementById('modal-ta-desc').value    = _modalEditOriginal.desc    || '';
+        document.getElementById('modal-ta-theory').value  = _modalEditOriginal.theory  || '';
+        document.getElementById('modal-ta-notes').value   = _modalEditOriginal.notes   || '';
+    }
     </script>
 
 
@@ -3060,10 +3665,124 @@
     });
 
     // ══════════════════════════════════════════════════════════════
-    //  COMMANDE /NEW — Bulle interactive
+    //  PERSISTANCE — Cards personnalisées
     // ══════════════════════════════════════════════════════════════
+    const CC_KEY = 'blox_custom_cards_v1';
+    const FB_CC_REF = typeof FB_DB !== 'undefined' ? FB_DB.ref('custom_cards') : null;
+
+    function _ccLoad() { try { return JSON.parse(localStorage.getItem(CC_KEY)) || []; } catch { return []; } }
+    function _ccSave(cards) {
+        try { localStorage.setItem(CC_KEY, JSON.stringify(cards)); } catch {}
+        if (FB_CC_REF) FB_CC_REF.set(cards);
+    }
+    function _ccAdd(card) { const c = _ccLoad(); c.push(card); _ccSave(c); }
+    function _ccRemove(id) { _ccSave(_ccLoad().filter(c => c.id !== id)); }
+    function _ccEsc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+    function _renderCustomCards() {
+        _ccLoad().forEach(card => {
+            const section = document.getElementById(card.sectionId);
+            if (!section) return;
+            let grid = section.querySelector('.news-grid');
+            if (!grid) {
+                grid = document.createElement('div');
+                grid.className = 'news-grid';
+                const ref = section.querySelector('.secret-bulletin');
+                if (ref) ref.after(grid); else section.appendChild(grid);
+            }
+            const e = _ccEsc;
+            const mediaTag = card.mediaType === 'video'
+                ? `<video src="${e(card.src)}#t=1" class="news-card__image" preload="metadata" muted playsinline></video>`
+                : `<img src="${e(card.src)}" class="news-card__image" alt="${e(card.title)}">`;
+            const btnLabel = e(card.btnLabel || "Voir l'image →");
+            const btnHtml = card.mediaType === 'video'
+                ? `<button class="news-card__button open-modal-btn" data-type="video" data-src="${e(card.src)}">${btnLabel}</button>`
+                : `<button class="news-card__button open-modal-btn" data-type="image" data-src="${e(card.src)}">${btnLabel}</button>`;
+            const html = `<article class="news-card" data-cc-id="${card.id}">
+                <div class="news-card__image-wrapper">
+                    ${mediaTag}
+                    <div class="news-card__badge">${e(card.badge)}</div>
+                </div>
+                <div class="news-card__content">
+                    <div class="news-card__eyebrow">${e(card.eyebrow)}</div>
+                    <h2 class="news-card__title">${e(card.title)}</h2>
+                    ${btnHtml}
+                </div>
+            </article>`;
+            const tmp = document.createElement('div');
+            tmp.innerHTML = html.trim();
+            const el = tmp.firstChild;
+            if (grid.firstChild) grid.insertBefore(el, grid.firstChild);
+            else grid.appendChild(el);
+            const imgEl = el.querySelector('.news-card__image');
+            const srcAttr = imgEl ? (imgEl.getAttribute('src') || '') : '';
+            const likeId = 'card-' + _plSlug(card.title + '-' + srcAttr);
+            const local = _plLoadLocal();
+            const liked = (local[likeId] || {}).liked || false;
+            const btnLike = _plMakeBtn(likeId, liked, _plGlobalCounts[likeId] || 0);
+            const content = el.querySelector('.news-card__content');
+            const footer = document.createElement('div');
+            footer.className = 'post-like-card-footer';
+            footer.appendChild(btnLike);
+            content.appendChild(footer);
+        });
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    //  COMMANDE /NEW — Card éditable WYSIWYG + drag & drop
+    // ══════════════════════════════════════════════════════════════
+    let _ncmImageData = null;
+
+    function _ncmFileSelected(input) {
+        const file = input.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = e => { _ncmImageData = e.target.result; _ncmShowImage(_ncmImageData); };
+        reader.readAsDataURL(file);
+        input.value = '';
+    }
+    function _ncmShowImage(src) {
+        const dz = document.getElementById('ncmDropZone');
+        const hint = document.getElementById('ncmDropHint');
+        if (!dz) return;
+        if (src) {
+            if (hint) hint.style.display = 'none';
+            let img = dz.querySelector('.ncm-card-img-loaded');
+            if (!img) { img = document.createElement('img'); img.className = 'ncm-card-img-loaded'; dz.prepend(img); }
+            img.src = src;
+        } else {
+            if (hint) hint.style.display = '';
+            const img = dz.querySelector('.ncm-card-img-loaded');
+            if (img) img.remove();
+        }
+    }
+    function _ncmInitDropZone() {
+        const dz = document.getElementById('ncmDropZone');
+        if (!dz || dz._init) return;
+        dz._init = true;
+        dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag-over'); });
+        dz.addEventListener('dragleave', () => dz.classList.remove('drag-over'));
+        dz.addEventListener('drop', e => {
+            e.preventDefault(); dz.classList.remove('drag-over');
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = ev => { _ncmImageData = ev.target.result; _ncmShowImage(_ncmImageData); };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+    function _ncmTypeChange() {
+        const isVideo = document.querySelector('#newCardModal input[name="ncmType"]:checked')?.value === 'video';
+        const vf = document.getElementById('ncmVideoField');
+        if (vf) vf.style.display = isVideo ? '' : 'none';
+        // Sync pills
+        document.getElementById('ncmPillImage')?.classList.toggle('active', !isVideo);
+        document.getElementById('ncmPillVideo')?.classList.toggle('active', isVideo);
+    }
     function _cmdNew() {
-        // Remplir le sélecteur de sections
+        _ncmImageData = null;
+        _ncmShowImage(null);
         const sel = document.getElementById('ncmSection');
         if (sel) {
             const prev = sel.value;
@@ -3076,38 +3795,41 @@
             });
             if (prev && [...sel.options].some(o => o.value === prev)) sel.value = prev;
         }
-        // Réinitialiser les champs
-        ['ncmBadge','ncmTitle','ncmSrc','ncmEyebrow','ncmBtnLabel'].forEach(id => {
-            const el = document.getElementById(id);
-            if (el && el.type !== 'text') return;
-            if (el && !el.dataset.default) el.dataset.default = el.value;
-            if (el) el.value = el.dataset.default || el.value;
-        });
         const imgRadio = document.querySelector('#newCardModal input[name="ncmType"][value="image"]');
         if (imgRadio) imgRadio.checked = true;
-        // Focus sur le premier champ
-        setTimeout(() => document.getElementById('ncmBadge')?.focus(), 100);
-        // Ouvrir la bulle
+        _ncmTypeChange();
+        document.getElementById('ncmEditBadge').textContent = 'EXCLU';
+        document.getElementById('ncmEditEyebrow').textContent = 'Leak';
+        document.getElementById('ncmEditTitle').textContent = 'Titre de la carte';
+        document.getElementById('ncmEditBtn').textContent = "Voir l'image →";
+        // Reset mirror inputs
+        const badgeInput = document.getElementById('ncmBadgeInput');
+        const titleInput = document.getElementById('ncmTitleInput');
+        if (badgeInput) badgeInput.value = '';
+        if (titleInput) titleInput.value = '';
+        const videoInput = document.getElementById('ncmSrc');
+        if (videoInput) videoInput.value = '';
+        _ncmInitDropZone();
+        setTimeout(() => document.getElementById('ncmEditBadge')?.focus(), 100);
         document.getElementById('newCardModal')?.classList.add('is-open');
     }
     function _cmdNewSubmit() {
         const sectionId = document.getElementById('ncmSection')?.value;
-        const badge     = document.getElementById('ncmBadge')?.value?.trim();
-        const title     = document.getElementById('ncmTitle')?.value?.trim();
-        const src       = document.getElementById('ncmSrc')?.value?.trim();
-        const eyebrow   = document.getElementById('ncmEyebrow')?.value?.trim() || 'Leak';
-        const btnLabel  = document.getElementById('ncmBtnLabel')?.value?.trim() || "Voir l'image →";
+        const badge     = document.getElementById('ncmEditBadge')?.textContent?.trim();
+        const title     = document.getElementById('ncmEditTitle')?.textContent?.trim();
+        const eyebrow   = document.getElementById('ncmEditEyebrow')?.textContent?.trim() || 'Leak';
+        const btnLabel  = document.getElementById('ncmEditBtn')?.textContent?.trim() || "Voir l'image →";
         const mediaType = document.querySelector('#newCardModal input[name="ncmType"]:checked')?.value || 'image';
+        const src       = mediaType === 'video' ? (document.getElementById('ncmSrc')?.value?.trim() || '') : _ncmImageData;
 
         if (!sectionId || !badge || !title || !src) {
-            editLog('err', 'Remplis au moins Section, Badge, Titre et URL.');
+            editLog('err', 'Remplis au moins Badge, Titre et Image.');
             return;
         }
 
         let section = document.getElementById(sectionId);
         if (!section) { editLog('err', 'Section introuvable.'); return; }
 
-        // Trouver ou créer le news-grid
         let grid = section.querySelector('.news-grid');
         if (!grid) {
             grid = document.createElement('div');
@@ -3117,35 +3839,33 @@
             else section.appendChild(grid);
         }
 
+        const e = _ccEsc;
+        const cardId = 'cc_' + Date.now();
         const btnHtml = mediaType === 'video'
-            ? `<button class="news-card__button open-modal-btn" data-type="video" data-src="${src.replace(/"/g,'&quot;')}">${btnLabel.replace(/"/g,'&quot;')}</button>`
-            : `<button class="news-card__button open-modal-btn" data-type="image" data-src="${src.replace(/"/g,'&quot;')}">${btnLabel.replace(/"/g,'&quot;')}</button>`;
-
+            ? `<button class="news-card__button open-modal-btn" data-type="video" data-src="${e(src)}">${e(btnLabel)}</button>`
+            : `<button class="news-card__button open-modal-btn" data-type="image" data-src="${e(src)}">${e(btnLabel)}</button>`;
         const mediaTag = mediaType === 'video'
-            ? `<video src="${src.replace(/"/g,'&quot;')}#t=1" class="news-card__image" preload="metadata" muted playsinline></video>`
-            : `<img src="${src.replace(/"/g,'&quot;')}" class="news-card__image" alt="${title.replace(/"/g,'&quot;')}">`;
+            ? `<video src="${e(src)}#t=1" class="news-card__image" preload="metadata" muted playsinline></video>`
+            : `<img src="${e(src)}" class="news-card__image" alt="${e(title)}">`;
 
-        const cardHtml = `
-            <article class="news-card">
-                <div class="news-card__image-wrapper">
-                    ${mediaTag}
-                    <div class="news-card__badge">${badge.replace(/</g,'&lt;')}</div>
-                </div>
-                <div class="news-card__content">
-                    <div class="news-card__eyebrow">${eyebrow.replace(/</g,'&lt;')}</div>
-                    <h2 class="news-card__title">${title.replace(/</g,'&lt;')}</h2>
-                    ${btnHtml}
-                </div>
-            </article>`;
+        const cardHtml = `<article class="news-card" data-cc-id="${cardId}">
+            <div class="news-card__image-wrapper">
+                ${mediaTag}
+                <div class="news-card__badge">${e(badge)}</div>
+            </div>
+            <div class="news-card__content">
+                <div class="news-card__eyebrow">${e(eyebrow)}</div>
+                <h2 class="news-card__title">${e(title)}</h2>
+                ${btnHtml}
+            </div>
+        </article>`;
 
         const temp = document.createElement('div');
         temp.innerHTML = cardHtml.trim();
         const cardEl = temp.firstChild;
-
         if (grid.firstChild) grid.insertBefore(cardEl, grid.firstChild);
         else grid.appendChild(cardEl);
 
-        // Like button
         const imgEl = cardEl.querySelector('.news-card__image');
         const srcAttr = imgEl ? (imgEl.getAttribute('src') || '') : '';
         const likeId = 'card-' + _plSlug(title + '-' + srcAttr);
@@ -3158,24 +3878,101 @@
         footer.appendChild(btnLike);
         content.appendChild(footer);
 
+        _ccAdd({ id: cardId, sectionId, badge, title, src, eyebrow, btnLabel, mediaType });
+
         document.querySelectorAll('.category-section:not(#cat-actus)').forEach(s => {
             _originalOrder.set(s.id, [...s.querySelectorAll('.news-card')]);
         });
         _sortAllSections();
 
         editLog('ok', 'Nouvelle carte créée dans ' + sectionId + ' : ' + title);
-
-        // Bulle de confirmation
         const toast = document.getElementById('newCardToast');
         if (toast) {
-            toast.innerHTML = '<span class="toast-badge">' + badge.replace(/</g,'&lt;') + '</span><span class="toast-title">' + title.replace(/</g,'&lt;') + '</span>';
+            toast.innerHTML = `<span class="toast-badge">${e(badge)}</span><span class="toast-title">${e(title)}</span>`;
             toast.classList.add('is-visible');
             clearTimeout(toast._hide);
             toast._hide = setTimeout(() => toast.classList.remove('is-visible'), 2500);
         }
-
-        // Fermer la bulle de création
         document.getElementById('newCardModal')?.classList.remove('is-open');
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    //  COMMANDE /DELETE — Bulle de suppression
+    // ══════════════════════════════════════════════════════════════
+    function _cmdDelete() {
+        const list = document.getElementById('dcmList');
+        if (!list) return;
+        const cards = _ccLoad();
+        if (cards.length === 0) {
+            list.innerHTML = `<div class="dcm-empty">
+                <div class="dcm-empty-icon">🗂️</div>
+                <div class="dcm-empty-text">Aucune carte personnalisée</div>
+            </div>`;
+        } else {
+            list.innerHTML = cards.map(c => {
+                const thumb = c.mediaType === 'image' && c.src && c.src.length < 200000
+                    ? `<img src="${_ccEsc(c.src)}" alt="">`
+                    : `<span style="font-size:20px">${c.mediaType === 'video' ? '🎬' : '🖼️'}</span>`;
+                return `<div class="dcm-item" id="dcm-item-${c.id}">
+                    <div class="dcm-item-thumb">${thumb}</div>
+                    <div class="dcm-item-info">
+                        <div class="dcm-item-badge">${_ccEsc(c.badge || 'CARTE')}</div>
+                        <div class="dcm-item-title">${_ccEsc(c.title)}</div>
+                        <div class="dcm-item-section">${c.sectionId}</div>
+                    </div>
+                    <button class="dcm-item-del" onclick="_dcmOpenConfirm('${c.id}')">Supprimer</button>
+                </div>
+                <div class="dcm-confirm-zone" id="dcm-confirm-${c.id}">
+                    <div class="dcm-confirm-label">🔒 Mot de passe requis</div>
+                    <input class="dcm-confirm-pwd" type="password" placeholder="Entrer le mot de passe…" id="dcm-pwd-${c.id}" onkeydown="if(event.key==='Enter')_cmdDeleteConfirm('${c.id}')">
+                    <div class="dcm-confirm-actions">
+                        <button class="dcm-confirm-cancel" onclick="_dcmCloseConfirm('${c.id}')">Annuler</button>
+                        <button class="dcm-confirm-ok" onclick="_cmdDeleteConfirm('${c.id}')">🗑️ Confirmer</button>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+        document.getElementById('deleteCardModal')?.classList.add('is-open');
+    }
+    function _dcmOpenConfirm(id) {
+        // Ferme tous les autres panels de confirmation
+        document.querySelectorAll('.dcm-confirm-zone').forEach(z => z.classList.remove('is-open'));
+        const zone = document.getElementById('dcm-confirm-' + id);
+        if (zone) {
+            zone.classList.add('is-open');
+            zone.querySelector('.dcm-confirm-pwd')?.focus();
+        }
+    }
+    function _dcmCloseConfirm(id) {
+        const zone = document.getElementById('dcm-confirm-' + id);
+        if (zone) {
+            zone.classList.remove('is-open');
+            const pwd = document.getElementById('dcm-pwd-' + id);
+            if (pwd) pwd.value = '';
+        }
+    }
+    function _cmdDeleteConfirm(id) {
+        const cards = _ccLoad();
+        const card = cards.find(c => c.id === id);
+        if (!card) return;
+        const pwd = document.getElementById('dcm-pwd-' + id)?.value || '';
+        if (pwd !== 'n0klip le best') {
+            editLog('err', 'Mot de passe incorrect.');
+            // Shake le champ
+            const inp = document.getElementById('dcm-pwd-' + id);
+            if (inp) { inp.style.borderColor='rgba(255,50,50,0.7)'; setTimeout(()=>inp.style.borderColor='',1200); }
+            return;
+        }
+        // Retirer du DOM
+        const el = document.querySelector(`[data-cc-id="${id}"]`);
+        if (el) el.remove();
+        _ccRemove(id);
+        document.querySelectorAll('.category-section:not(#cat-actus)').forEach(s => {
+            _originalOrder.set(s.id, [...s.querySelectorAll('.news-card')]);
+        });
+        _sortAllSections();
+        editLog('ok', 'Carte supprimée : ' + card.title);
+        _cmdDelete(); // Rafraîchir la liste
     }
 
     // ══════════════════════════════════════════════════════════════
@@ -3205,8 +4002,11 @@
             a.click(); editLog('ok', 'Export téléchargé.');
         } else if (cmd === '/new') {
             _cmdNew();
+        } else if (cmd === '/delete' || cmd === '/supp') {
+            _cmdDelete();
         } else if (cmd === '/help') {
-            editLog('info', '/reset — efface tout  |  /list — voir les édits  |  /export — JSON  |  /new — bulle de création');
+            editLog('info', '/new — créer une carte  |  /delete — supprimer une carte');
+            editLog('info', '/list — voir les édits  |  /export — JSON  |  /reset — tout effacer');
         } else {
             editLog('err', 'Commande inconnue : ' + cmd + '. Tape /help.');
         }
@@ -3214,6 +4014,7 @@
 
     document.addEventListener('DOMContentLoaded', () => {
         applyStoredEdits();
+        _renderCustomCards();
         const toast = document.getElementById('editModeToast');
         if (toast) {
             setTimeout(() => { toast.classList.add('is-visible'); }, 1000);
@@ -3224,6 +4025,16 @@
                 badge.style.cssText += 'background:linear-gradient(135deg,#ff1a1a,#cc0000)!important;box-shadow:0 2px 10px rgba(204,0,0,0.5)!important;left:auto!important;right:14px!important;';
             }
         });
+        if (FB_CC_REF) {
+            FB_CC_REF.on('value', snap => {
+                const fbCards = snap.val() || [];
+                const localCards = _ccLoad();
+                const localIds = new Set(localCards.map(c => c.id));
+                const merged = [...localCards];
+                fbCards.forEach(fc => { if (!localIds.has(fc.id)) merged.push(fc); });
+                _ccSave(merged);
+            });
+        }
     });
     </script>
 </body>
