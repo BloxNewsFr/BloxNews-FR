@@ -2520,30 +2520,24 @@
     // ═══════════════════════════════════════════════════════════════
     //  SYSTÈME DE LIKE — POSTS  (compteur GLOBAL via Firebase)
     // ═══════════════════════════════════════════════════════════════
-    const POST_LIKE_KEY    = 'blox_post_likes_v1';      // liked localement
-    const FB_LIKES_REF     = FB_DB.ref('post_likes');   // compteurs partagés
-    let   _plGlobalCounts  = {};                         // { postId: count }
-    let   _plInitDone      = false;
+    const POST_LIKE_KEY   = 'blox_post_likes_v1';
+    const FB_LIKES_REF    = FB_DB.ref('post_likes');
+    let   _plGlobalCounts = {};
 
-    // ─── Persistance locale (liked = per device) ───────────────────
+    // ─── Persistance locale (liked = par device) ───────────────────
     function _plLoadLocal() { try { return JSON.parse(localStorage.getItem(POST_LIKE_KEY)) || {}; } catch { return {}; } }
     function _plSaveLocal(d) { try { localStorage.setItem(POST_LIKE_KEY, JSON.stringify(d)); } catch {} }
-    function _plSlug(s)      { return (s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,48); }
+    function _plSlug(s) { return (s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,48); }
 
-    // ─── Écoute Firebase → mise à jour de tous les boutons ─────────
+    // ─── Écoute Firebase → met à jour UNIQUEMENT les compteurs ─────
+    // (jamais le cœur liked — c'est localStorage qui décide ça)
     FB_LIKES_REF.on('value', snap => {
         _plGlobalCounts = snap.val() || {};
         document.querySelectorAll('.post-like-btn[data-post-id]').forEach(btn => {
-            const id = btn.dataset.postId;
-            const count = _plGlobalCounts[id] || 0;
             const countEl = btn.querySelector('.post-like-count');
-            if (countEl) countEl.textContent = count;
+            if (countEl) countEl.textContent = _plGlobalCounts[btn.dataset.postId] || 0;
         });
-        if (!_plInitDone) { _plInitDone = true; initPostLikes(); }
     });
-
-    // Timeout de sécurité : si Firebase met trop longtemps, on init quand même
-    setTimeout(() => { if (!_plInitDone) { _plInitDone = true; initPostLikes(); } }, 1800);
 
     // ─── Construction SVG cœur ─────────────────────────────────────
     function _plHeartSVG() {
@@ -2563,12 +2557,10 @@
         btn.dataset.postId = id;
         btn.setAttribute('aria-label','Liker');
         btn.setAttribute('title','Liker ce post');
-
         const heart   = _plHeartSVG();
         const countEl = document.createElement('span');
         countEl.className   = 'post-like-count';
         countEl.textContent = count;
-
         btn.appendChild(heart);
         btn.appendChild(countEl);
         btn.addEventListener('click', _plToggle);
@@ -2580,41 +2572,29 @@
         const id    = btn.dataset.postId;
         const local = _plLoadLocal();
         const entry = local[id] || { liked: false };
-        const wasLiked = entry.liked;
-
-        entry.liked    = !wasLiked;
-        local[id]      = entry;
+        entry.liked = !entry.liked;
+        local[id]   = entry;
         _plSaveLocal(local);
 
-        // Mise à jour Firebase (transaction atomique)
+        // ── Firebase est le SEUL à mettre à jour le compteur ──────
+        // Pas d'update optimiste du nombre → zéro double-comptage
         FB_LIKES_REF.child(id).transaction(cur => Math.max(0, (cur || 0) + (entry.liked ? 1 : -1)));
 
-        // Visuel immédiat
-        const newCount = Math.max(0, (parseInt(btn.querySelector('.post-like-count').textContent) || 0) + (entry.liked ? 1 : -1));
+        // ── Feedback visuel immédiat (cœur + particules) ──────────
         btn.classList.toggle('liked', entry.liked);
-        const countEl = btn.querySelector('.post-like-count');
         const heartEl = btn.querySelector('.post-like-heart');
-        if (countEl) countEl.textContent = newCount;
-
         if (entry.liked) {
             heartEl?.classList.remove('post-heart-animate');
             void heartEl?.offsetWidth;
             heartEl?.classList.add('post-heart-animate');
             heartEl?.addEventListener('animationend', () => heartEl.classList.remove('post-heart-animate'), { once: true });
-
-            countEl?.classList.remove('post-count-animate');
-            void countEl?.offsetWidth;
-            countEl?.classList.add('post-count-animate');
-            countEl?.addEventListener('animationend', () => countEl.classList.remove('post-count-animate'), { once: true });
-
             _plParticles(btn);
         }
     }
 
     function _plParticles(btn) {
         const rect = btn.getBoundingClientRect();
-        const cx   = rect.left + 22;
-        const cy   = rect.top  + rect.height * .5;
+        const cx   = rect.left + 22, cy = rect.top + rect.height * .5;
         const wrap = document.createElement('div');
         wrap.style.cssText = `position:fixed;left:${cx}px;top:${cy}px;width:0;height:0;pointer-events:none;z-index:99999;overflow:visible;`;
         document.body.appendChild(wrap);
@@ -2624,10 +2604,9 @@
         wrap.appendChild(rp);
         const cols = ['#ff3264','#ff6b8a','#ffb3c8','#ff1a52','#ff8fa8','#e91e63','#ff4081','#f06292'];
         for (let i = 0; i < 8; i++) {
-            const p   = document.createElement('div');
+            const p = document.createElement('div');
             p.className = 'like-particle';
-            const ang = (i/8)*Math.PI*2;
-            const d   = 16 + Math.random()*12;
+            const ang = (i/8)*Math.PI*2, d = 16 + Math.random()*12;
             p.style.setProperty('--px', Math.cos(ang)*d+'px');
             p.style.setProperty('--py', Math.sin(ang)*d+'px');
             p.style.cssText += `left:-3px;top:-3px;background:${cols[i]};animation-delay:${i*.028}s;`;
@@ -2639,7 +2618,7 @@
     function initPostLikes() {
         const local = _plLoadLocal();
 
-        // ── 1. Dossier Actus (like en haut à droite du secret-bulletin) ──
+        // ── Dossier Actus (top-right du secret-bulletin) ──
         document.querySelectorAll('.bulletin-header').forEach(header => {
             const bulletin = header.closest('.secret-bulletin');
             if (!bulletin || bulletin.querySelector('.actus-like-wrap')) return;
@@ -2647,31 +2626,33 @@
             if (!h2) return;
             const id    = 'dossier-' + _plSlug(h2.textContent.trim());
             const liked = (local[id] || {}).liked || false;
-            const count = _plGlobalCounts[id] || 0;
-            const btn   = _plMakeBtn(id, liked, count);
-
-            const wrap = document.createElement('div');
+            const btn   = _plMakeBtn(id, liked, _plGlobalCounts[id] || 0);
+            const wrap  = document.createElement('div');
             wrap.className = 'actus-like-wrap';
             wrap.appendChild(btn);
             bulletin.appendChild(wrap);
         });
 
-        // ── 2. Toutes les news-cards ──────────────────────────────────
+        // ── Toutes les news-cards ──
         document.querySelectorAll('.news-card').forEach((card, idx) => {
             const content = card.querySelector('.news-card__content');
             if (!content || content.querySelector('.post-like-btn')) return;
-
             const titleEl = content.querySelector('.news-card__title');
             const id      = 'card-' + _plSlug(titleEl ? titleEl.textContent.trim() : String(idx));
             const liked   = (local[id] || {}).liked || false;
-            const count   = _plGlobalCounts[id] || 0;
-            const btn     = _plMakeBtn(id, liked, count);
-
-            const footer = document.createElement('div');
+            const btn     = _plMakeBtn(id, liked, _plGlobalCounts[id] || 0);
+            const footer  = document.createElement('div');
             footer.className = 'post-like-card-footer';
             footer.appendChild(btn);
             content.appendChild(footer);
         });
+    }
+
+    // ─── Init immédiat au chargement — boutons visibles sans attendre Firebase ──
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initPostLikes);
+    } else {
+        initPostLikes();
     }
     </script>
 
