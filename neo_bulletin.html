@@ -3249,6 +3249,8 @@ function deleteComment(id) {
     openDeleteModal();
 }
 
+
+
     function deleteReply(cid, rid) {
         _pendingDelete = () => {
             const c = COMMENTS_DB.find(x=>x.id===cid); if(!c) return;
@@ -3261,11 +3263,10 @@ function deleteComment(id) {
     function openDeleteModal()  { document.getElementById("deleteModal").classList.add("is-active"); document.body.style.overflow="hidden"; }
     function closeDeleteModal() { document.getElementById("deleteModal").classList.remove("is-active"); document.body.style.overflow=""; _pendingDelete=null; }
 function confirmDelete() {
-    if (_pendingDelete) {
-        _pendingDelete();
-    }
+    try { if (_pendingDelete) _pendingDelete(); } catch(e) { console.error(e); }
     closeDeleteModal();
 }
+
 
     /* ─── Répondre ─── */
     function toggleReplyBox(id) {
