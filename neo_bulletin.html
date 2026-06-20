@@ -4435,6 +4435,7 @@
 
         // Helper: afficher l'utilisateur dans la navbar (sans casser si erreur)
         function showUserInNavbar(user) {
+            console.log('showUserInNavbar called with:', user);
             try {
                 const avatarUrl = _discordAvatarUrl(user);
                 const displayName = user.global_name || user.username;
