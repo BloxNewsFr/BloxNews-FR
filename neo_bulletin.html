@@ -271,27 +271,41 @@
             background: linear-gradient(90deg, var(--cat-hex) 0%, rgba(var(--cat-rgb),0.3) 60%, transparent 100%); border-radius: 4px;
         }
 
-        /* ── SORT TOGGLE ── */
+        /* ── SORT TOGGLE — redesign ── */
         .sort-toggle {
-            display: inline-flex; align-items: center; gap: 0;
-            border-radius: 100px; overflow: hidden;
-            border: 1.5px solid rgba(0,0,0,0.15); background: rgba(255,255,255,0.9);
-            backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
-            font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 700;
-            flex-shrink: 0;
+            display: inline-flex; align-items: center; gap: 2px;
+            padding: 3px; border-radius: 100px; flex-shrink: 0;
+            background: rgba(8, 8, 14, 0.55);
+            border: 1px solid rgba(255,255,255,0.08);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.06);
+            font-family: 'Inter', sans-serif;
         }
         .sort-toggle button {
-            border: none; background: transparent; padding: 6px 14px;
-            cursor: pointer; color: #555; font-family: inherit; font-size: inherit;
-            font-weight: inherit; transition: background 0.2s, color 0.2s;
+            display: flex; align-items: center; gap: 5px;
+            border: none; background: transparent;
+            padding: 5px 14px; border-radius: 100px; cursor: pointer;
+            color: rgba(255,255,255,0.32);
+            font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 800;
+            letter-spacing: 0.5px; text-transform: uppercase; white-space: nowrap;
+            transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+        .sort-toggle button .st-icon {
+            font-size: 12px; line-height: 1; transition: transform 0.22s;
         }
         .sort-toggle button.active {
             background: var(--cat-hex, #ff0055);
-            color: #fff; border-radius: 100px;
+            color: #fff;
+            box-shadow: 0 2px 14px rgba(var(--cat-rgb, 255, 0, 85), 0.5),
+                        inset 0 1px 0 rgba(255,255,255,0.18);
         }
+        .sort-toggle button.active .st-icon { transform: scale(1.15); }
         .sort-toggle button:not(.active):hover {
-            background: rgba(0,0,0,0.08);
+            background: rgba(255,255,255,0.06);
+            color: rgba(255,255,255,0.65);
         }
+        .sort-toggle button:active { transform: scale(0.93); }
 
         /* ── GRID ET CARDS ── */
         .news-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 28px; }
@@ -3893,13 +3907,27 @@
             _originalOrder.set(section.id, [...section.querySelectorAll('.news-card')]);
             const title = section.querySelector('.category-title');
             if (!title) return;
+
             const toggle = document.createElement('div');
             toggle.className = 'sort-toggle';
+
             const btnRecent = document.createElement('button');
-            btnRecent.textContent = 'Récent';
             btnRecent.className = 'active';
+            btnRecent.innerHTML = `
+                <span class="st-icon">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                    </svg>
+                </span>Récent`;
+
             const btnLiked = document.createElement('button');
-            btnLiked.textContent = 'Liké';
+            btnLiked.innerHTML = `
+                <span class="st-icon">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                    </svg>
+                </span>Liké`;
+
             btnRecent.addEventListener('click', () => {
                 _sortModes.set(section.id, 'recent');
                 btnRecent.classList.add('active');
@@ -3912,6 +3940,7 @@
                 btnRecent.classList.remove('active');
                 _sortSection(section);
             });
+
             toggle.appendChild(btnRecent);
             toggle.appendChild(btnLiked);
             title.appendChild(toggle);
