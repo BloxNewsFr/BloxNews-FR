@@ -2922,7 +2922,7 @@
     /* ─── Base de données & état ─── */
     const COMMENTS_DB = [];
     const MAX_SHOWN   = 4;
-    let   currentUser = null;
+    window.currentUser = null;
     let   sortMode    = 'top'; // 'top' | 'new'
 
     /* ─── Sort ─── */
@@ -3147,8 +3147,8 @@
 
     /* ─── Login ─── */
     function discordLogin(user) {
-        currentUser = user;
-        window.discordCurrentUser = user; // exposé pour la navbar
+        window.currentUser = user;
+        window.discordCurrentUser = user;
         document.getElementById("discordBanner").style.display = "none";
         const box = document.getElementById("commentWriteBox");
         box.classList.remove("is-hidden");
