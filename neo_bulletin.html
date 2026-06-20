@@ -878,6 +878,39 @@
         }
         .search-overlay.is-active .search-container { transform: translateY(0) scale(1); }
 
+        /* ── Barre filtre actif (même design qu'index) ── */
+        #neoSearchFilterBar {
+            display: none; align-items: center; gap: 12px;
+            margin: 0 auto 22px; max-width: 960px; padding: 10px 18px;
+            background: rgba(23,94,194,0.15);
+            border: 1px solid rgba(23,94,194,0.32);
+            border-radius: 14px; backdrop-filter: blur(16px);
+            font-family: 'Inter', sans-serif;
+        }
+        #neoSearchFilterBar.is-active { display: flex; }
+        .nsb-icon { font-size: 18px; color: rgba(255,255,255,0.45); flex-shrink: 0; }
+        .nsb-text { flex: 1; font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.8); letter-spacing: 0.2px; }
+        .nsb-text em { font-style: normal; color: #ffd000; }
+        .nsb-count { font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.4); flex-shrink: 0; }
+        .nsb-clear {
+            border: none; background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.6);
+            border-radius: 8px; padding: 5px 12px; font-size: 12px; font-weight: 700;
+            cursor: pointer; transition: all 0.18s; font-family: 'Inter', sans-serif;
+        }
+        .nsb-clear:hover { background: rgba(255,60,60,0.25); color: #fff; }
+
+        /* Grille résultats de recherche */
+        #neoSearchResults {
+            display: none; max-width: 960px; margin: 0 auto;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px;
+        }
+        #neoSearchResults.is-active { display: grid; }
+        .nsb-no-results {
+            grid-column: 1/-1; text-align: center; padding: 64px 24px;
+            color: rgba(255,255,255,0.3); font-size: 15px; font-family: 'Inter', sans-serif;
+        }
+        .nsb-no-results strong { display: block; font-size: 32px; margin-bottom: 10px; opacity: 0.35; }
+
         .search-bar {
             display: flex; align-items: center; gap: 8px;
             background: rgba(255,255,255,0.97);
@@ -1810,28 +1843,28 @@
         .fmt-btn:hover { background: rgba(255,26,26,0.25); color: #fff; }
         .fmt-btn:active { transform: scale(0.9); }
 
-        /* Highlight color picker */
+        /* Highlight color picker — palette fixe positionnée par JS */
         .fmt-hl-wrap { position: relative; flex-shrink: 0; }
-        .fmt-hl-btn { position: relative; }
-        .fmt-hl-dot {
-            display: block; width: 12px; height: 12px;
+        .fmt-hl-btn  { position: relative; }
+        .fmt-hl-dot  {
+            display: block; width: 13px; height: 13px;
             border-radius: 3px; border: 1.5px solid rgba(255,255,255,0.3);
         }
-        .fmt-hl-picker {
-            display: none; position: absolute; top: calc(100% + 6px); left: 50%;
-            transform: translateX(-50%);
-            background: rgba(14,14,22,0.97); border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 10px; padding: 8px; box-shadow: 0 12px 40px rgba(0,0,0,0.5);
-            grid-template-columns: repeat(4, 1fr); gap: 5px;
-            z-index: 99999; width: 108px;
+        #fmtHlPalette {
+            position: fixed; z-index: 999999;
+            background: rgba(14,14,22,0.97); border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 12px; padding: 10px; box-shadow: 0 16px 48px rgba(0,0,0,0.65);
+            display: none;
+            grid-template-columns: repeat(4, 1fr); gap: 6px;
+            width: 120px;
         }
-        .fmt-hl-picker.is-open { display: grid; }
+        #fmtHlPalette.is-open { display: grid; }
         .hl-swatch {
             width: 22px; height: 22px; border-radius: 5px; cursor: pointer;
-            transition: transform 0.15s, box-shadow 0.15s;
-            border: 2px solid rgba(255,255,255,0.0);
+            transition: transform 0.15s, outline 0.1s;
+            outline: 2px solid transparent; outline-offset: 2px;
         }
-        .hl-swatch:hover { transform: scale(1.2); border-color: rgba(255,255,255,0.5); box-shadow: 0 2px 8px rgba(0,0,0,0.4); }
+        .hl-swatch:hover { transform: scale(1.18); outline-color: rgba(255,255,255,0.5); }
         .fmt-sep {
             width: 1px; height: 16px; background: rgba(255,255,255,0.1);
             margin: 0 4px; flex-shrink: 0;
@@ -2055,6 +2088,17 @@
             <div class="leaks-banner">Blox Leaks</div>
         </div>
 
+        <!-- ── Barre filtre + grille résultats de recherche ── -->
+        <div id="neoSearchFilterBar">
+            <span class="material-symbols-outlined nsb-icon">filter_list</span>
+            <span class="nsb-text">Résultats pour <em id="nsbQuery"></em></span>
+            <span class="nsb-count" id="nsbCount"></span>
+            <button class="nsb-clear" onclick="exitNeoSearch()">✕ Effacer</button>
+        </div>
+        <div id="neoSearchResults"></div>
+
+        <!-- ── Tabs + sections (masqués en mode recherche) ── -->
+        <div id="neoTabsAndSections">
         <div class="desktop-tabs" id="desktopTabs">
             <button class="leaks-tab active" data-target="cat-actus" style="--cat-hex: #cc0000; --cat-rgb: 204, 0, 0;">ACTUS</button>
             <button class="leaks-tab" data-target="cat-fruit" style="--cat-hex: #ff0055; --cat-rgb: 255, 0, 85;">FRUITS</button>
@@ -2438,6 +2482,7 @@
             </div>
         </section>
 
+        </div><!-- /neoTabsAndSections -->
 
         <div id="videoModal" class="modal-overlay">
             <div class="modal-content">
@@ -2532,21 +2577,10 @@
             <button class="fmt-btn" onclick="fmtWrap('*')" title="Italique"><i>I</i></button>
             <button class="fmt-btn" onclick="fmtWrap('__')" title="Souligné"><u>U</u></button>
             <button class="fmt-btn" onclick="fmtWrap('~~')" title="Barré"><s>S</s></button>
-            <!-- Surlignage + palette couleur -->
-            <div class="fmt-hl-wrap" id="fmtHlWrap">
-                <button class="fmt-btn fmt-hl-btn" onclick="toggleHlPicker(event)" title="Surligné">
+            <div class="fmt-hl-wrap">
+                <button class="fmt-btn fmt-hl-btn" id="fmtHlBtn" onclick="toggleHlPicker(event)" title="Surligné">
                     <span class="fmt-hl-dot" id="fmtHlDot" style="background:#ffd000"></span>
                 </button>
-                <div class="fmt-hl-picker" id="fmtHlPicker">
-                    <div class="hl-swatch" style="background:#ffd000" onclick="pickHlColor('#ffd000')" title="Jaune"></div>
-                    <div class="hl-swatch" style="background:#ff6b6b" onclick="pickHlColor('#ff6b6b')" title="Rouge"></div>
-                    <div class="hl-swatch" style="background:#ff9f43" onclick="pickHlColor('#ff9f43')" title="Orange"></div>
-                    <div class="hl-swatch" style="background:#7bc47f" onclick="pickHlColor('#7bc47f')" title="Vert"></div>
-                    <div class="hl-swatch" style="background:#4ecdc4" onclick="pickHlColor('#4ecdc4')" title="Cyan"></div>
-                    <div class="hl-swatch" style="background:#45b7d1" onclick="pickHlColor('#45b7d1')" title="Bleu"></div>
-                    <div class="hl-swatch" style="background:#c98bdb" onclick="pickHlColor('#c98bdb')" title="Violet"></div>
-                    <div class="hl-swatch" style="background:#ff85c2" onclick="pickHlColor('#ff85c2')" title="Rose"></div>
-                </div>
             </div>
             <div class="fmt-sep"></div>
             <span class="fmt-hint">**gras** *ital* __souligné__ ~~barré~~ ==surligné==</span>
@@ -2683,8 +2717,6 @@
                 <span class="material-symbols-outlined search-icon" style="font-size:22px;color:#999;flex-shrink:0">search</span>
                 <input id="searchInput" type="text" placeholder="Rechercher…" autofocus onkeydown="if(event.key==='Escape')closeSearch();if(event.key==='Enter'){event.preventDefault();executeSearch()}">
                 <button class="search-go-btn" onclick="executeSearch()">Chercher</button>
-                <button class="search-nav-btn" onclick="prevMatch()" id="searchPrevBtn">▲</button>
-                <button class="search-nav-btn" onclick="nextMatch()" id="searchNextBtn">▼</button>
                 <button class="search-close-btn" onclick="closeSearch()">✕</button>
             </div>
             <div id="searchStats" class="search-stats"></div>
@@ -3399,101 +3431,131 @@
 
 
     /* ─── SEARCH SYSTEM ────────────────────────────────────────────────── */
-    let searchMatches = [];
-    let searchCurrent = -1;
+    // ── SEARCH — mode filtre (même logique qu'index.html) ───────────
+    let _neoSearchActive = false;
+    let _neoSearchQuery  = '';
+
     function openSearch() {
         document.getElementById('searchOverlay').classList.add('is-active');
         const inp = document.getElementById('searchInput');
-        inp.value = '';
-        document.getElementById('searchStats').textContent = '';
-        searchMatches = []; searchCurrent = -1;
-        removeHighlights();
-        setTimeout(() => inp.focus(), 200);
+        inp.value = _neoSearchQuery;
+        _previewNeoSearch(_neoSearchQuery);
+        setTimeout(() => { inp.focus(); if (_neoSearchQuery) inp.select(); }, 200);
     }
-    function closeSearch(keepHl) {
+    function closeSearch() {
         document.getElementById('searchOverlay').classList.remove('is-active');
-        if (!keepHl) removeHighlights();
-        if (!keepHl) { searchMatches = []; searchCurrent = -1; }
     }
-    function removeHighlights() {
-        document.querySelectorAll('mark.search-hl').forEach(m => {
-            const p = m.parentNode;
-            p.replaceChild(document.createTextNode(m.textContent), m);
-            p.normalize();
-        });
-    }
-    function executeSearch() {
-        const q = document.getElementById('searchInput').value.trim().toLowerCase();
-        removeHighlights();
-        searchMatches = []; searchCurrent = -1;
-        document.getElementById('searchPrevBtn').disabled = true;
-        document.getElementById('searchNextBtn').disabled = true;
+
+    // Aperçu live dans l'overlay
+    function _previewNeoSearch(q) {
         const stats = document.getElementById('searchStats');
-        stats.textContent = '';
-        if (!q) return;
-
-        const root = document.querySelector('.main-content') || document.body;
-        const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
-            acceptNode: n => {
-                const p = n.parentNode;
-                if (!p || p.nodeName === 'SCRIPT' || p.nodeName === 'STYLE') return NodeFilter.FILTER_REJECT;
-                if (p.closest('.search-overlay, .material-symbols-outlined, .mobile-menu-btn')) return NodeFilter.FILTER_REJECT;
-                return NodeFilter.FILTER_ACCEPT;
-            }
-        });
-        const nodes = []; let n;
-        while (n = walker.nextNode()) nodes.push(n);
-
-        nodes.forEach(textNode => {
-            const text = textNode.textContent;
-            const lower = text.toLowerCase();
-            let idx = lower.indexOf(q);
-            if (idx === -1) return;
-            const frag = document.createDocumentFragment();
-            let last = 0;
-            while (idx !== -1) {
-                if (idx > last) frag.appendChild(document.createTextNode(text.slice(last, idx)));
-                const mark = document.createElement('mark');
-                mark.className = 'search-hl';
-                mark.textContent = text.slice(idx, idx + q.length);
-                frag.appendChild(mark);
-                searchMatches.push(mark);
-                last = idx + q.length;
-                idx = lower.indexOf(q, last);
-            }
-            if (last < text.length) frag.appendChild(document.createTextNode(text.slice(last)));
-            textNode.parentNode.replaceChild(frag, textNode);
-        });
-
-        const c = searchMatches.length;
-        if (c > 0) {
-            searchCurrent = 0;
-            searchMatches[0].classList.add('active');
-            searchMatches[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
-            stats.textContent = c + ' résultat' + (c > 1 ? 's' : '');
-            document.getElementById('searchPrevBtn').disabled = false;
-            document.getElementById('searchNextBtn').disabled = false;
-            closeSearch(true);
+        if (!q) { stats.innerHTML = ''; return; }
+        const results = _buildNeoIndex().filter(c =>
+            c.title.includes(q) || c.eyebrow.includes(q) || c.section.includes(q)
+        );
+        if (results.length) {
+            stats.innerHTML = results.map(c =>
+                `<div class="search-result-item" data-id="${c.id}">
+                    <span style="opacity:.5;font-size:11px;margin-right:6px">${c.sectionLabel}</span>${c.titleRaw}
+                </div>`
+            ).join('');
         } else {
-            stats.textContent = 'Aucun résultat';
+            stats.innerHTML = '<div class="search-no-results">Aucun résultat</div>';
         }
     }
-    function nextMatch() {
-        if (searchMatches.length === 0) return;
-        searchMatches[searchCurrent]?.classList.remove('active');
-        searchCurrent = (searchCurrent + 1) % searchMatches.length;
-        searchMatches[searchCurrent].classList.add('active');
-        searchMatches[searchCurrent].scrollIntoView({ behavior: 'smooth', block: 'center' });
-        document.getElementById('searchStats').textContent = (searchCurrent+1) + '/' + searchMatches.length;
+
+    document.getElementById('searchInput').addEventListener('input', e => {
+        _previewNeoSearch(e.target.value.trim().toLowerCase());
+    });
+
+    // Indexer toutes les cards du DOM
+    function _buildNeoIndex() {
+        const cards = [];
+        document.querySelectorAll('.category-section').forEach(section => {
+            const sectionId    = section.id;
+            const sectionLabel = (document.querySelector(`[data-target="${sectionId}"]`)?.textContent || sectionId).trim();
+            section.querySelectorAll('.news-card').forEach(card => {
+                const titleEl  = card.querySelector('.news-card__title, h2');
+                const eyeEl    = card.querySelector('.news-card__eyebrow');
+                const titleRaw = titleEl?.textContent.trim() || '';
+                cards.push({
+                    id:           card.id || '',
+                    section:      sectionId.toLowerCase(),
+                    sectionLabel,
+                    titleRaw,
+                    title:        titleRaw.toLowerCase(),
+                    eyebrow:      (eyeEl?.textContent || '').toLowerCase(),
+                    card,
+                    section_el:   section
+                });
+            });
+        });
+        return cards;
     }
-    function prevMatch() {
-        if (searchMatches.length === 0) return;
-        searchMatches[searchCurrent]?.classList.remove('active');
-        searchCurrent = (searchCurrent - 1 + searchMatches.length) % searchMatches.length;
-        searchMatches[searchCurrent].classList.add('active');
-        searchMatches[searchCurrent].scrollIntoView({ behavior: 'smooth', block: 'center' });
-        document.getElementById('searchStats').textContent = (searchCurrent+1) + '/' + searchMatches.length;
+
+    function executeSearch() {
+        const q = document.getElementById('searchInput').value.trim().toLowerCase();
+        if (!q) { exitNeoSearch(); closeSearch(); return; }
+        _neoSearchQuery  = q;
+        _neoSearchActive = true;
+
+        const all     = _buildNeoIndex();
+        const results = all.filter(c =>
+            c.title.includes(q) || c.eyebrow.includes(q) || c.section.includes(q)
+        );
+
+        // Masquer tabs + sections
+        document.getElementById('neoTabsAndSections').style.display = 'none';
+
+        // Afficher filter bar
+        const bar = document.getElementById('neoSearchFilterBar');
+        bar.classList.add('is-active');
+        document.getElementById('nsbQuery').textContent = `"${q}"`;
+        document.getElementById('nsbCount').textContent =
+            `${results.length} résultat${results.length !== 1 ? 's' : ''}`;
+
+        // Remplir la grille résultats
+        const grid = document.getElementById('neoSearchResults');
+        grid.classList.add('is-active');
+        if (results.length === 0) {
+            grid.innerHTML = `<div class="nsb-no-results"><strong>¯\\_(ツ)_/¯</strong>Aucun résultat pour cette recherche.</div>`;
+        } else {
+            grid.innerHTML = '';
+            results.forEach(c => {
+                const clone = c.card.cloneNode(true);
+                grid.appendChild(clone);
+            });
+        }
+
+        closeSearch();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+
+    function exitNeoSearch() {
+        _neoSearchActive = false;
+        _neoSearchQuery  = '';
+        document.getElementById('neoTabsAndSections').style.display = '';
+        document.getElementById('neoSearchFilterBar').classList.remove('is-active');
+        const grid = document.getElementById('neoSearchResults');
+        grid.classList.remove('is-active');
+        grid.innerHTML = '';
+    }
+
+    // Clic sur un résultat dans l'overlay → filtre
+    document.getElementById('searchStats').addEventListener('click', e => {
+        const item = e.target.closest('.search-result-item');
+        if (!item) return;
+        const id = item.dataset.id;
+        if (id) {
+            // Filtrer sur le titre exact
+            const card = document.getElementById(id);
+            const titleEl = card?.querySelector('.news-card__title, h2');
+            if (titleEl) {
+                document.getElementById('searchInput').value = titleEl.textContent.trim();
+            }
+        }
+        executeSearch();
+    });
 
     document.addEventListener("keydown", e => {
         if (e.key === "Escape" && document.getElementById('searchOverlay')?.classList.contains('is-active')) closeSearch();
@@ -3904,37 +3966,51 @@
     let _hlColor = '#ffd000';
     function toggleHlPicker(e) {
         e.stopPropagation();
-        document.getElementById('fmtHlPicker').classList.toggle('is-open');
+        const palette = document.getElementById('fmtHlPalette');
+        if (palette.classList.contains('is-open')) {
+            palette.classList.remove('is-open');
+            return;
+        }
+        // Positionner la palette au-dessous du bouton
+        const btn  = document.getElementById('fmtHlBtn');
+        const rect = btn.getBoundingClientRect();
+        const pw   = 120, ph = 80;
+        let left = rect.left + rect.width / 2 - pw / 2;
+        let top  = rect.bottom + 6;
+        if (left + pw > window.innerWidth - 8) left = window.innerWidth - pw - 8;
+        if (left < 8) left = 8;
+        if (top + ph > window.innerHeight - 8) top = rect.top - ph - 6;
+        palette.style.left = left + 'px';
+        palette.style.top  = top  + 'px';
+        palette.classList.add('is-open');
     }
     function pickHlColor(hex) {
         _hlColor = hex;
         document.getElementById('fmtHlDot').style.background = hex;
-        document.getElementById('fmtHlPicker').classList.remove('is-open');
-        // Insérer le marqueur autour de la sélection
+        document.getElementById('fmtHlPalette').classList.remove('is-open');
         const ta = document.getElementById('editInlineTextarea');
         if (!ta) return;
         const s = ta.selectionStart, e = ta.selectionEnd;
         const before = ta.value.slice(0, s);
         const after  = ta.value.slice(e);
         const sel    = ta.value.slice(s, e);
-        const isDefault = hex === '#ffd000';
+        const isDefault = (hex === '#ffd000');
         const openMark  = isDefault ? '==' : `==[#${hex.replace('#','')}]`;
-        const closeMark = '==';
         if (sel) {
-            ta.value = before + openMark + sel + closeMark + after;
+            ta.value = before + openMark + sel + '==' + after;
             ta.selectionStart = s; ta.selectionEnd = e + openMark.length + 2;
         } else {
             const ph = '…';
-            ta.value = before + openMark + ph + closeMark + after;
+            ta.value = before + openMark + ph + '==' + after;
             ta.selectionStart = s + openMark.length;
             ta.selectionEnd   = s + openMark.length + ph.length;
         }
         ta.focus();
     }
-    // Fermer la palette si on clique ailleurs
+    // Fermer la palette si clic ailleurs
     document.addEventListener('click', e => {
-        if (!e.target.closest('#fmtHlWrap')) {
-            document.getElementById('fmtHlPicker')?.classList.remove('is-open');
+        if (!e.target.closest('#fmtHlPalette') && !e.target.closest('#fmtHlBtn')) {
+            document.getElementById('fmtHlPalette')?.classList.remove('is-open');
         }
     });
         const ta = document.getElementById('editInlineTextarea');
@@ -4738,6 +4814,17 @@
         console.log('Navbar init: no user found, showing login button');
         loginBtn.style.display = '';
     })();
-    </script>
+    </script>    <!-- Palette de couleurs surlignage — directement dans body pour éviter tout overflow -->
+    <div id="fmtHlPalette">
+        <div class="hl-swatch" style="background:#ffd000" onclick="pickHlColor('#ffd000')" title="Jaune"></div>
+        <div class="hl-swatch" style="background:#ff6b6b" onclick="pickHlColor('#ff6b6b')" title="Rouge"></div>
+        <div class="hl-swatch" style="background:#ff9f43" onclick="pickHlColor('#ff9f43')" title="Orange"></div>
+        <div class="hl-swatch" style="background:#7bc47f" onclick="pickHlColor('#7bc47f')" title="Vert"></div>
+        <div class="hl-swatch" style="background:#4ecdc4" onclick="pickHlColor('#4ecdc4')" title="Cyan"></div>
+        <div class="hl-swatch" style="background:#45b7d1" onclick="pickHlColor('#45b7d1')" title="Bleu"></div>
+        <div class="hl-swatch" style="background:#c98bdb" onclick="pickHlColor('#c98bdb')" title="Violet"></div>
+        <div class="hl-swatch" style="background:#ff85c2" onclick="pickHlColor('#ff85c2')" title="Rose"></div>
+    </div>
+
 </body>
 </html>
