@@ -166,7 +166,7 @@
         
         /* GRID & CARDS */
         .news-grid { display: flex; flex-wrap: wrap; gap: 28px; justify-content: center; align-items: flex-start; }
-        .news-card { width: 360px; max-width: 100%; border-radius: 24px; overflow: hidden; position: relative; cursor: pointer; background: #fff; box-shadow: 0 10px 40px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08); transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.35s ease; display: flex; flex-direction: column; animation: fadeInUp 0.4s ease both; }
+        .news-card { width: 360px; max-width: 100%; border-radius: 24px; overflow: hidden; position: relative; cursor: pointer; background: #fff; box-shadow: 0 10px 40px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08); transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.35s ease; display: flex; flex-direction: column; animation: fadeInUp 0.4s ease both; scroll-margin-top: 90px; }
         .news-card:hover { transform: translateY(-10px) scale(1.02); box-shadow: 0 20px 60px rgba(0,0,0,0.18), 0 8px 20px rgba(0,0,0,0.12), 0 0 0 2px rgba(23,94,194,0.25); }
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
         .news-card__image-wrapper { width: 100%; padding-top: 58%; position: relative; background: #1a1a3e; border-radius: 24px 24px 0 0; }
@@ -1308,7 +1308,7 @@
             flex-shrink: 0;
         }
         .search-close-btn:hover { background: rgba(0,0,0,0.05); color: #111; }
-        .search-stats { margin-top: 12px; color: rgba(255,255,255,0.5); font-size: 14px; text-align: center; min-height: 20px; font-family: 'Inter', sans-serif; }
+        .search-stats { margin-top: 12px; color: rgba(255,255,255,0.5); font-size: 14px; text-align: center; min-height: 20px; max-height: 40vh; overflow-y: auto; font-family: 'Inter', sans-serif; }
         mark.search-hl {
             background: linear-gradient(120deg, #fce83a 0%, #ffd700 100%);
             color: #000; border-radius: 4px; padding: 1px 2px;
@@ -1317,6 +1317,22 @@
             background: linear-gradient(120deg, #ff6b35 0%, #ff4500 100%);
             color: #fff; box-shadow: 0 0 12px rgba(255,70,0,0.5);
         }
+        .search-highlight-card {
+            animation: searchPulse 0.6s ease 3;
+            box-shadow: 0 0 30px rgba(255,215,0,0.6), 0 0 60px rgba(255,215,0,0.3) !important;
+        }
+        @keyframes searchPulse {
+            0%, 100% { box-shadow: 0 0 10px rgba(255,215,0,0.3); }
+            50% { box-shadow: 0 0 30px rgba(255,215,0,0.6), 0 0 60px rgba(255,215,0,0.3); }
+        }
+        .search-result-item {
+            padding: 12px 16px; cursor: pointer; border-radius: 10px;
+            color: rgba(255,255,255,0.7); font-size: 14px; font-weight: 600;
+            transition: all 0.15s; margin-bottom: 4px;
+        }
+        .search-result-item:hover,
+        .search-result-item.active { background: rgba(88,101,242,0.15); color: #fff; }
+        .search-no-results { text-align: center; padding: 24px; color: rgba(255,255,255,0.4); font-size: 14px; }
         @media (max-width: 768px) {
             .search-overlay { padding-top: 60px; }
             .search-bar { gap: 4px; padding: 4px 4px 4px 14px; }
@@ -1950,7 +1966,7 @@
                     deco = `<div class="val-deco" aria-hidden="true"><span class="val-heart" style="--hx:8%;--hd:-0.1s;--hs:1em"></span><span class="val-heart" style="--hx:28%;--hd:-1.7s;--hs:1.4em"></span><span class="val-heart" style="--hx:52%;--hd:-0.8s;--hs:.85em"></span><span class="val-heart" style="--hx:72%;--hd:-2.3s;--hs:1.2em"></span><span class="val-heart" style="--hx:88%;--hd:-0.5s;--hs:.96em"></span><span class="val-rose"></span></div>`;
                 }
 
-                return `<article class="news-card ${special.className || ""}" onclick="window.location='${b.href}'">
+                return `<article class="news-card ${special.className || ""}" id="bulletin-${b.num}" onclick="window.location='${b.href}'">
                     ${deco}
                     <div class="news-card__image-wrapper">
                         <img src="${b.img}" class="news-card__image" alt="Bulletin #${b.num}">
@@ -2013,6 +2029,26 @@
         }
         
         renderPage();
+
+        // ── HASH: aller à la bonne page + scroll ──
+        function goToHash() {
+            const hash = window.location.hash;
+            if (!hash || !hash.startsWith('#bulletin-')) return;
+            const num = hash.replace('#bulletin-', '');
+            const idx = bulletins.findIndex(b => b.num === num);
+            if (idx === -1) return;
+            const page = Math.floor(idx / PER_PAGE) + 1;
+            if (currentPage !== page) {
+                currentPage = page;
+                renderPage();
+            }
+            requestAnimationFrame(() => {
+                const el = document.getElementById('bulletin-' + num);
+                if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            });
+        }
+        goToHash();
+        window.addEventListener('hashchange', goToHash);
 
         // ── MENU HAMBURGER MOBILE ──
         const menuBtn = document.getElementById('menuToggle');
@@ -2126,72 +2162,65 @@
         }
         function executeSearch() {
             const q = document.getElementById('searchInput').value.trim().toLowerCase();
-            removeHighlights();
+            const stats = document.getElementById('searchStats');
             searchMatches = []; searchCurrent = -1;
             document.getElementById('searchPrevBtn').disabled = true;
             document.getElementById('searchNextBtn').disabled = true;
-            const stats = document.getElementById('searchStats');
-            stats.textContent = '';
-            if (!q) return;
-            const root = document.querySelector('.main-content') || document.body;
-            const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
-                acceptNode: n => {
-                    const p = n.parentNode;
-                    if (!p || p.nodeName === 'SCRIPT' || p.nodeName === 'STYLE') return NodeFilter.FILTER_REJECT;
-                    if (p.closest('.search-overlay, .material-symbols-outlined, .mobile-menu-btn')) return NodeFilter.FILTER_REJECT;
-                    return NodeFilter.FILTER_ACCEPT;
+            if (!q) { stats.textContent = ''; return; }
+
+            // Rechercher dans TOUS les bulletins
+            const results = [];
+            bulletins.forEach(b => {
+                const special = specialCards[b.num] || {};
+                const title = (special.title || `Bulletin #${b.num}`).toLowerCase();
+                const eyebrow = (special.eyebrow || 'The Blox Bulletin').toLowerCase();
+                const status = (special.status || '').toLowerCase();
+                if (title.includes(q) || eyebrow.includes(q) || status.includes(q) || b.num.includes(q)) {
+                    results.push(b);
                 }
             });
-            const nodes = []; let n;
-            while (n = walker.nextNode()) nodes.push(n);
-            nodes.forEach(textNode => {
-                const text = textNode.textContent;
-                const lower = text.toLowerCase();
-                let idx = lower.indexOf(q);
-                if (idx === -1) return;
-                const frag = document.createDocumentFragment();
-                let last = 0;
-                while (idx !== -1) {
-                    if (idx > last) frag.appendChild(document.createTextNode(text.slice(last, idx)));
-                    const mark = document.createElement('mark');
-                    mark.className = 'search-hl';
-                    mark.textContent = text.slice(idx, idx + q.length);
-                    frag.appendChild(mark);
-                    searchMatches.push(mark);
-                    last = idx + q.length;
-                    idx = lower.indexOf(q, last);
-                }
-                if (last < text.length) frag.appendChild(document.createTextNode(text.slice(last)));
-                textNode.parentNode.replaceChild(frag, textNode);
-            });
-            const c = searchMatches.length;
-            if (c > 0) {
-                searchCurrent = 0;
-                searchMatches[0].classList.add('active');
-                searchMatches[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
-                stats.textContent = c + ' résultat' + (c > 1 ? 's' : '');
-                document.getElementById('searchPrevBtn').disabled = false;
-                document.getElementById('searchNextBtn').disabled = false;
-                closeSearch(true);
+
+            if (results.length > 0) {
+                stats.innerHTML = results.map((b, i) => {
+                    const special = specialCards[b.num] || {};
+                    const label = special.title || `Bulletin #${b.num}`;
+                    return `<div class="search-result-item" onclick="navigateToBulletin('${b.num}')">${label}</div>`;
+                }).join('');
+                document.getElementById('searchPrevBtn').disabled = results.length <= 1;
+                document.getElementById('searchNextBtn').disabled = results.length <= 1;
             } else {
-                stats.textContent = 'Aucun résultat';
+                stats.innerHTML = '<div class="search-no-results">Aucun résultat</div>';
             }
+            searchMatches = results;
         }
-        function nextMatch() {
-            if (searchMatches.length === 0) return;
-            searchMatches[searchCurrent]?.classList.remove('active');
+        function navigateToBulletin(num) {
+            closeSearch();
+            const idx = bulletins.findIndex(b => b.num === num);
+            if (idx === -1) return;
+            currentPage = Math.floor(idx / PER_PAGE) + 1;
+            renderPage();
+            requestAnimationFrame(() => {
+                const el = document.getElementById('bulletin-' + num);
+                if (el) {
+                    el.classList.add('search-highlight-card');
+                    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    setTimeout(() => el.classList.remove('search-highlight-card'), 3000);
+                }
+            });
+        }
+        function nextResult() {
+            if (!searchMatches.length) return;
             searchCurrent = (searchCurrent + 1) % searchMatches.length;
-            searchMatches[searchCurrent].classList.add('active');
-            searchMatches[searchCurrent].scrollIntoView({ behavior: 'smooth', block: 'center' });
-            document.getElementById('searchStats').textContent = (searchCurrent+1) + '/' + searchMatches.length;
+            const el = document.getElementById('searchStats').querySelectorAll('.search-result-item');
+            el.forEach((e,i) => e.classList.toggle('active', i === searchCurrent));
+            document.getElementById('searchStats').querySelector('.active')?.scrollIntoView({ block: 'nearest' });
         }
-        function prevMatch() {
-            if (searchMatches.length === 0) return;
-            searchMatches[searchCurrent]?.classList.remove('active');
+        function prevResult() {
+            if (!searchMatches.length) return;
             searchCurrent = (searchCurrent - 1 + searchMatches.length) % searchMatches.length;
-            searchMatches[searchCurrent].classList.add('active');
-            searchMatches[searchCurrent].scrollIntoView({ behavior: 'smooth', block: 'center' });
-            document.getElementById('searchStats').textContent = (searchCurrent+1) + '/' + searchMatches.length;
+            const el = document.getElementById('searchStats').querySelectorAll('.search-result-item');
+            el.forEach((e,i) => e.classList.toggle('active', i === searchCurrent));
+            document.getElementById('searchStats').querySelector('.active')?.scrollIntoView({ block: 'nearest' });
         }
         document.addEventListener("keydown", e => {
             if (e.key === "Escape" && document.getElementById('searchOverlay')?.classList.contains('is-active')) closeSearch();
@@ -2304,8 +2333,8 @@
                 <span class="material-symbols-outlined search-icon" style="font-size:22px;color:#999;flex-shrink:0">search</span>
                 <input id="searchInput" type="text" placeholder="Rechercher…" autofocus onkeydown="if(event.key==='Escape')closeSearch();if(event.key==='Enter'){event.preventDefault();executeSearch()}">
                 <button class="search-go-btn" onclick="executeSearch()">Chercher</button>
-                <button class="search-nav-btn" onclick="prevMatch()" id="searchPrevBtn">▲</button>
-                <button class="search-nav-btn" onclick="nextMatch()" id="searchNextBtn">▼</button>
+                <button class="search-nav-btn" onclick="prevResult()" id="searchPrevBtn">▲</button>
+                <button class="search-nav-btn" onclick="nextResult()" id="searchNextBtn">▼</button>
                 <button class="search-close-btn" onclick="closeSearch()">✕</button>
             </div>
             <div id="searchStats" class="search-stats"></div>
