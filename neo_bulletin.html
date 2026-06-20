@@ -2943,9 +2943,9 @@
     /* ─── Écoute Firebase ─── */
     FB_REF.on('value', snap => {
         let val = snap.val();
-        if (!val) { if (COMMENTS_DB.length > 0) saveDB(); return; }
+        if (!val) { COMMENTS_DB.length = 0; saveLocal(); renderList(); return; }
         if (!Array.isArray(val)) val = Object.keys(val).sort((a,b)=>Number(a)-Number(b)).map(k=>val[k]);
-        if (val.length === 0) return;
+        if (val.length === 0) { COMMENTS_DB.length = 0; saveLocal(); renderList(); return; }
         const likes = {}, myReacts = {};
         COMMENTS_DB.forEach(c => {
             likes[c.id] = c.likedByMe;
