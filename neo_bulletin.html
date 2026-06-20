@@ -4013,6 +4013,9 @@
             document.getElementById('fmtHlPalette')?.classList.remove('is-open');
         }
     });
+
+    // ── Insérer un marqueur autour de la sélection ───────────────────
+    function fmtWrap(marker) {
         const ta = document.getElementById('editInlineTextarea');
         if (!ta) return;
         const s = ta.selectionStart, e = ta.selectionEnd;
@@ -4030,6 +4033,7 @@
             ta.selectionEnd   = s + marker.length + ph.length;
         }
         ta.focus();
+    }
 
     function loadEdits() {
         try { return JSON.parse(localStorage.getItem(EDIT_KEY)) || {}; } catch { return {}; }
