@@ -2199,7 +2199,7 @@
                 stats.innerHTML = results.map((b, i) => {
                     const special = specialCards[b.num] || {};
                     const label = special.title || `Bulletin #${b.num}`;
-                    return `<div class="search-result-item" onclick="navigateToBulletin('${b.num}')">${label}</div>`;
+                    return `<div class="search-result-item" data-num="${b.num}">${label}</div>`;
                 }).join('');
                 document.getElementById('searchPrevBtn').disabled = results.length <= 1;
                 document.getElementById('searchNextBtn').disabled = results.length <= 1;
@@ -2208,6 +2208,11 @@
             }
             searchMatches = results;
         }
+        // Event delegation pour les résultats de recherche
+        document.getElementById('searchStats').addEventListener('click', e => {
+            const item = e.target.closest('.search-result-item');
+            if (item && item.dataset.num) navigateToBulletin(item.dataset.num);
+        });
         function navigateToBulletin(num) {
             closeSearch();
             const idx = bulletins.findIndex(b => b.num === num);

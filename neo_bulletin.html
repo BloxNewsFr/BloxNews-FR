@@ -3841,17 +3841,7 @@
         });
     }
 
-    const ADMIN_DISCORD_USERS = ['fn_n0klip', 'fn_n0k9p', 'neolixx'];
-
     function toggleEditMode() {
-        // Vérifier que l'utilisateur Discord connecté est admin
-        const discordUser = _getDiscordUser();
-        if (!discordUser || !ADMIN_DISCORD_USERS.includes(discordUser.username)) {
-            // Afficher un message discret si pas autorisé
-            editLog('err', '⛔ Accès réservé aux administrateurs Discord.');
-            const panel = document.getElementById('editModePanel');
-            if (!panel?.classList.contains('is-open')) return;
-        }
         _editMode = !_editMode;
         document.body.classList.toggle('edit-mode', _editMode);
         const panel = document.getElementById('editModePanel');
