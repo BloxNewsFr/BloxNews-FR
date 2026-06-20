@@ -1775,6 +1775,34 @@
             color: #fff; border: 1px solid rgba(255,255,255,0.15);
         }
 
+        /* Format bar du popup inline */
+        .edit-fmt-bar {
+            display: flex; align-items: center; gap: 3px;
+            padding: 6px 8px; margin-bottom: 6px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 8px; flex-wrap: wrap;
+        }
+        .fmt-btn {
+            width: 26px; height: 26px; border-radius: 6px; border: none;
+            background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.7);
+            font-size: 12px; cursor: pointer; display: flex; align-items: center;
+            justify-content: center; transition: all 0.15s; flex-shrink: 0;
+            font-family: 'Inter', sans-serif;
+        }
+        .fmt-btn:hover { background: rgba(255,26,26,0.25); color: #fff; }
+        .fmt-btn:active { transform: scale(0.9); }
+        .fmt-sep {
+            width: 1px; height: 16px; background: rgba(255,255,255,0.1);
+            margin: 0 4px; flex-shrink: 0;
+        }
+        .fmt-hint {
+            font-size: 9px; color: rgba(255,255,255,0.18);
+            font-family: monospace; letter-spacing: 0.2px;
+            flex: 1; min-width: 0; overflow: hidden;
+            text-overflow: ellipsis; white-space: nowrap;
+        }
+
         /* Edit inline popup */
         #editInlinePopup {
             position: fixed; z-index: 99992;
@@ -2455,6 +2483,15 @@
     <!-- ── INLINE EDIT POPUP ── -->
     <div id="editInlinePopup">
         <div class="edit-inline__label">Modifier le texte</div>
+        <div class="edit-fmt-bar">
+            <button class="fmt-btn" onclick="fmtWrap('**')" title="Gras"><b>B</b></button>
+            <button class="fmt-btn" onclick="fmtWrap('*')" title="Italique"><i>I</i></button>
+            <button class="fmt-btn" onclick="fmtWrap('__')" title="Souligné"><u>U</u></button>
+            <button class="fmt-btn" onclick="fmtWrap('~~')" title="Barré"><s>S</s></button>
+            <button class="fmt-btn" onclick="fmtWrap('==')" title="Surligné" style="color:#ffd000">▮</button>
+            <div class="fmt-sep"></div>
+            <span class="fmt-hint">**gras** *ital* __souligné__ ~~barré~~ ==surligné==</span>
+        </div>
         <textarea id="editInlineTextarea" rows="3"></textarea>
         <div class="edit-inline__actions">
             <button class="edit-inline__btn edit-inline__btn--cancel" onclick="closeEditInline()">Annuler</button>
