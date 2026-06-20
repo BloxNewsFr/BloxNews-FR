@@ -3093,14 +3093,14 @@
                     <button class="comment-btn ${c.likedByMe?"comment-btn--liked":""}" onclick="likeComment('${c.id}',this)">
                         ${c.likedByMe?"❤️":"🤍"} <span class="comment-btn__like-count">${c.likes}</span>
                     </button>
-                    ${currentUser?`<button class="comment-btn" onclick="toggleReplyBox('${pfx}rw-${c.id}')">↩ Répondre</button>`:""}
+                    ${window.currentUser?`<button class="comment-btn" onclick="toggleReplyBox('${pfx}rw-${c.id}')">↩ Répondre</button>`:""}
                     ${canDelete(c)?`<button class="comment-btn comment-btn--delete" onclick="deleteComment('${c.id}')">🗑 Suppr.</button>`:""}
                     ${isMod()&&!isPinned?`<button class="comment-btn" onclick="pinComment('${c.id}')" title="Épingler">📌</button>`:""}
                     ${isMod()&&isPinned?`<button class="comment-btn" onclick="unpinComment('${c.id}')" title="Désépingler">📌</button>`:""}
                 </div>
                 ${replies?`<div class="comment-replies">${replies}</div>`:""}
                 <div class="comment-reply-write" id="${pfx}rw-${c.id}">
-                    ${avatarHTML(currentUser,30)}
+                    ${avatarHTML(window.currentUser,30)}
                     <textarea class="comment-reply-input" placeholder="Ta réponse…" rows="1" oninput="autoResize(this)"></textarea>
                     <button class="comment-reply-submit" onclick="postReply('${c.id}','${pfx}rw-${c.id}')">Poster</button>
                 </div>
