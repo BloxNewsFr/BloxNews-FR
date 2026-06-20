@@ -2903,22 +2903,26 @@
     /* ─── Persistance ─── */
     function loadLocal() { try { return JSON.parse(localStorage.getItem("bloxleaks_comments")) || []; } catch { return []; } }
     function saveLocal() { try { localStorage.setItem("bloxleaks_comments", JSON.stringify(COMMENTS_DB)); } catch {} }
-function saveDB()    {
+    function saveDB() {
     saveLocal();
     const clean = COMMENTS_DB.map(c => {
-        // On clone l'objet pour ne pas modifier la base locale
         const newC = {
             ...c, 
             likedByMe: false,
-            reactions: c.reactions || {},
-            replies: (c.replies||[]).map(r => ({...r, likedByMe: false}))
+            reactions: c.reactions || {}
         };
-        // On supprime proprement la clé au lieu de passer 'undefined'
-        delete newC.myReactions; 
+        delete newC.myReactions; // On nettoie le parent
+        
+        // On nettoie aussi TOUTES les réponses
+        newC.replies = (c.replies || []).map(r => {
+            const newR = { ...r, likedByMe: false, reactions: r.reactions || {} };
+            delete newR.myReactions; // Le correctif manquant est ici !
+            return newR;
+        });
+        
         return newC;
     });
     
-    // On ajoute un .catch pour voir les futures erreurs Firebase dans la console
     FB_REF.set(clean).catch(e => console.error("Firebase Error: ", e));
 }
 
@@ -3072,6 +3076,7 @@ function saveDB()    {
         const isPinned    = !!c.pinned;
         const isFirstEver = COMMENTS_DB.length === 1 && COMMENTS_DB[0].id === c.id;
         return `<div class="comment-item${isPinned?' comment-item--pinned':''}" id="${pfx}comment-${c.id}">
+            
             ${avatarHTML(c)}
             <div class="comment-item__body">
                 <div class="comment-item__header">
@@ -3253,7 +3258,35 @@ function saveDB()    {
     }
     function openDeleteModal()  { document.getElementById("deleteModal").classList.add("is-active"); document.body.style.overflow="hidden"; }
     function closeDeleteModal() { document.getElementById("deleteModal").classList.remove("is-active"); document.body.style.overflow=""; _pendingDelete=null; }
-    function confirmDelete()    { if(_pendingDelete) _pendingDelete(); closeDeleteModal(); }
+function confirmDelete() {
+    // La variable où tu stockes l'ID au clic sur la poubelle
+    const targetId = window.currentDeleteId; 
+    let found = false;
+
+    // 1. Cherche si c'est un commentaire parent
+    const parentIndex = COMMENTS_DB.findIndex(c => c.id === targetId);
+    if (parentIndex > -1) {
+        COMMENTS_DB.splice(parentIndex, 1);
+        found = true;
+    } else {
+        // 2. Sinon, fouille dans les réponses de chaque commentaire
+        COMMENTS_DB.forEach(c => {
+            if (c.replies) {
+                const replyIndex = c.replies.findIndex(r => r.id === targetId);
+                if (replyIndex > -1) {
+                    c.replies.splice(replyIndex, 1);
+                    found = true;
+                }
+            }
+        });
+    }
+
+    if (found) {
+        saveDB();
+        renderComments();
+    }
+    closeDeleteModal();
+}
 
     /* ─── Répondre ─── */
     function toggleReplyBox(id) {
