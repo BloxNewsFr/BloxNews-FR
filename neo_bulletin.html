@@ -3148,6 +3148,7 @@
     /* ─── Login ─── */
     function discordLogin(user) {
         currentUser = user;
+        window.discordCurrentUser = user; // exposé pour la navbar
         document.getElementById("discordBanner").style.display = "none";
         const box = document.getElementById("commentWriteBox");
         box.classList.remove("is-hidden");
@@ -4419,6 +4420,7 @@
     function _discordLogout() {
         localStorage.removeItem(DISCORD_TOKEN_KEY);
         localStorage.removeItem(DISCORD_USER_KEY);
+        window.discordCurrentUser = null;
         document.getElementById('discordUserPill').classList.remove('is-visible', 'dropdown-open');
         document.getElementById('discordLoginBtn').style.display = '';
     }
@@ -4427,6 +4429,29 @@
     (async function _discordInit() {
         const skeleton   = document.getElementById('discordSkeleton');
         const loginBtn   = document.getElementById('discordLoginBtn');
+        const pill       = document.getElementById('discordUserPill');
+
+        // Helper: afficher l'utilisateur dans la navbar (sans casser si erreur)
+        function showUserInNavbar(user) {
+            try {
+                const avatarUrl = _discordAvatarUrl(user);
+                const displayName = user.global_name || user.username;
+
+                loginBtn.style.display = 'none';
+                skeleton.classList.remove('is-visible');
+
+                document.getElementById('discordAvatar').src = avatarUrl;
+                document.getElementById('discordAvatar').onerror = () => { document.getElementById('discordAvatar').src = ''; };
+                document.getElementById('discordUsername').textContent = displayName;
+                pill.classList.add('is-visible');
+
+                document.getElementById('discordDropdownAvatar').src = avatarUrl;
+                document.getElementById('discordDropdownName').textContent = displayName;
+                document.getElementById('discordDropdownTag').textContent = '@' + user.username;
+
+                pill.onclick = (e) => { e.stopPropagation(); pill.classList.toggle('dropdown-open'); };
+            } catch(e) { console.warn('Navbar Discord update failed:', e); }
+        }
 
         // 1. Vérifier si on revient du flux OAuth (token dans le hash)
         const hash = window.location.hash;
@@ -4436,7 +4461,6 @@
             const expiresIn  = parseInt(params.get('expires_in') || '604800');
             const expiresAt  = Date.now() + expiresIn * 1000;
 
-            // Nettoyer l'URL (retirer le hash)
             history.replaceState(null, '', window.location.pathname + window.location.search);
 
             if (token) {
@@ -4445,7 +4469,8 @@
                     const user = await _discordFetchUser(token);
                     localStorage.setItem(DISCORD_TOKEN_KEY, JSON.stringify({ token, expiresAt }));
                     localStorage.setItem(DISCORD_USER_KEY, JSON.stringify(user));
-                    _discordShowUser(user);
+                    showUserInNavbar(user);
+                    if (typeof discordLogin === 'function') discordLogin({ username: user.username, avatar: _discordAvatarUrl(user) });
                 } catch(e) {
                     skeleton.classList.remove('is-visible');
                     loginBtn.style.display = '';
@@ -4454,24 +4479,42 @@
             }
         }
 
-        // 2. Vérifier si un token valide est en cache
+        // 2. Vérifier token en cache (même expiré, on affiche l'utilisateur)
         try {
-            const stored    = JSON.parse(localStorage.getItem(DISCORD_TOKEN_KEY) || 'null');
+            const stored     = JSON.parse(localStorage.getItem(DISCORD_TOKEN_KEY) || 'null');
             const cachedUser = JSON.parse(localStorage.getItem(DISCORD_USER_KEY) || 'null');
 
-            if (stored && stored.expiresAt > Date.now() && cachedUser) {
-                // Token encore valide — afficher depuis le cache (rapide)
-                _discordShowUser(cachedUser);
-                // Vérifier en arrière-plan que le token est encore actif
-                _discordFetchUser(stored.token).then(freshUser => {
-                    localStorage.setItem(DISCORD_USER_KEY, JSON.stringify(freshUser));
-                    _discordShowUser(freshUser);
-                }).catch(() => _discordLogout());
+            if (cachedUser) {
+                // Afficher immédiatement depuis le cache (même si token expiré)
+                showUserInNavbar(cachedUser);
+
+                // Si token valide, vérifier en arrière-plan
+                if (stored && stored.expiresAt > Date.now()) {
+                    _discordFetchUserInterval = _discordFetchUser(stored.token);
+                    try {
+                        const freshUser = await _discordFetchUser(stored.token);
+                        localStorage.setItem(DISCORD_USER_KEY, JSON.stringify(freshUser));
+                        showUserInNavbar(freshUser);
+                    } catch(e) {
+                        // Token invalide → déconnexion silencieuse, mais on garde l'affichage
+                        console.warn('Discord token expired, using cached user');
+                    }
+                }
+                // Sync comment system
+                if (typeof discordLogin === 'function') discordLogin({ username: cachedUser.username, avatar: _discordAvatarUrl(cachedUser) });
+                else window.addEventListener('load', () => { if (typeof discordLogin === 'function') discordLogin({ username: cachedUser.username, avatar: _discordAvatarUrl(cachedUser) }); });
                 return;
             }
         } catch(e) {}
 
-        // 3. Non connecté — afficher le bouton
+        // 3. Fallback: vérifier si le système de commentaires a un currentUser en mémoire
+        // (via window.discordCurrentUser si exposé)
+        if (window.discordCurrentUser) {
+            showUserInNavbar(window.discordCurrentUser);
+            return;
+        }
+
+        // 4. Vraiment pas connecté
         loginBtn.style.display = '';
     })();
     </script>
