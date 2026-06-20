@@ -3239,14 +3239,16 @@
 
     /* ─── Suppression ─── */
     let _pendingDelete = null;
-    function deleteComment(id) {
-        _pendingDelete = () => {
-            const i = COMMENTS_DB.findIndex(x=>x.id===id);
-            if (i!==-1) { COMMENTS_DB.splice(i,1); saveDB(); }
-            renderList(); renderModal();
-        };
-        openDeleteModal();
-    }
+function deleteComment(id) {
+    _pendingDelete = () => {
+        const i = COMMENTS_DB.findIndex(c => c.id === id);
+        if (i !== -1) { COMMENTS_DB.splice(i, 1); saveDB(); }
+        renderList();
+        renderModal();
+    };
+    openDeleteModal();
+}
+
     function deleteReply(cid, rid) {
         _pendingDelete = () => {
             const c = COMMENTS_DB.find(x=>x.id===cid); if(!c) return;
