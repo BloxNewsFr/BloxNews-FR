@@ -236,13 +236,30 @@
             background: linear-gradient(135deg, #fff 0%, #fff9f9 100%);
         }
         .secret-bulletin::before {
-            content: "TOP SECRET"; position: absolute; top: 20px; right: 20px; color: rgba(255, 26, 26, 0.08);
-            font-size: 65px; font-weight: 900; transform: rotate(15deg); pointer-events: none;
-            font-family: 'LuckiestGuy Regular', cursive; border: 5px solid rgba(255, 26, 26, 0.08); padding: 10px 20px; border-radius: 12px;
+            content: "TOP SECRET"; position: absolute; bottom: 28px; right: 28px;
+            color: rgba(255, 26, 26, 0.07);
+            font-size: 60px; font-weight: 900; transform: rotate(12deg); pointer-events: none;
+            font-family: 'LuckiestGuy Regular', cursive;
+            border: 5px solid rgba(255, 26, 26, 0.07); padding: 10px 20px; border-radius: 12px;
+            z-index: 0;
         }
-        .bulletin-header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px dashed #ccc; padding-bottom: 15px; margin-bottom: 25px; }
-        .bulletin-header h2 { margin: 0; color: #111; font-family: 'LuckiestGuy Regular', cursive; font-size: 32px; letter-spacing: 1px;}
-        .bulletin-meta { font-size: 14px; color: #666; text-align: right; font-weight: 700; text-transform: uppercase;}
+        .bulletin-header {
+            display: flex; justify-content: space-between; align-items: flex-start; gap: 20px;
+            border-bottom: 2px dashed #e0e0e0; padding-bottom: 18px; margin-bottom: 25px;
+            position: relative; z-index: 1;
+        }
+        .bulletin-header h2 {
+            flex: 1; min-width: 0; margin: 0; color: #111;
+            font-family: 'LuckiestGuy Regular', cursive; font-size: 28px; letter-spacing: 0.5px;
+            line-height: 1.2; word-break: break-word;
+        }
+        .bulletin-meta {
+            flex-shrink: 0; font-size: 12px; color: #888; text-align: right;
+            font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+            background: rgba(255,26,26,0.04); border: 1px solid rgba(255,26,26,0.1);
+            border-radius: 10px; padding: 8px 12px; white-space: nowrap; line-height: 1.7;
+        }
+        .bulletin-content { position: relative; z-index: 1; }
         .bulletin-content p { font-size: 15px; margin-bottom: 15px; color: #333; line-height: 1.7; }
         .bulletin-content .highlight { color: #cc0000; background: rgba(255, 26, 26, 0.1); padding: 2px 8px; border-radius: 6px; font-weight: bold; }
 
@@ -511,8 +528,8 @@
             .mobile-menu-btn { display: block; }
             .mobile-nav-dropdown { display: flex; }
             .bulletin-header { flex-direction: column; align-items: flex-start; gap: 10px; }
-            .bulletin-meta { text-align: left; }
-            .secret-bulletin::before { font-size: 45px; top: 5px; right: 5px; }
+            .bulletin-meta { text-align: left; white-space: normal; }
+            .secret-bulletin::before { font-size: 38px; bottom: 12px; right: 12px; }
             .leaks-banner { font-size: 24px; padding: 12px 30px; margin: 16px 0 8px; }
             .news-grid { gap: 20px; padding: 0 12px; }
             .news-card { margin: 0; }
@@ -544,9 +561,9 @@
         }
         .comment-toggle-bar__icon {
             width: 38px; height: 38px; border-radius: 12px;
-            background: linear-gradient(135deg, #ff1a1a, #ff6060);
+            background: linear-gradient(135deg, #ff1a1a, #ff5555);
             display: flex; align-items: center; justify-content: center;
-            font-size: 17px; flex-shrink: 0;
+            flex-shrink: 0; color: #fff;
             box-shadow: 0 4px 14px rgba(255,26,26,0.38);
         }
         .comment-toggle-bar__label {
@@ -1792,6 +1809,29 @@
         }
         .fmt-btn:hover { background: rgba(255,26,26,0.25); color: #fff; }
         .fmt-btn:active { transform: scale(0.9); }
+
+        /* Highlight color picker */
+        .fmt-hl-wrap { position: relative; flex-shrink: 0; }
+        .fmt-hl-btn { position: relative; }
+        .fmt-hl-dot {
+            display: block; width: 12px; height: 12px;
+            border-radius: 3px; border: 1.5px solid rgba(255,255,255,0.3);
+        }
+        .fmt-hl-picker {
+            display: none; position: absolute; top: calc(100% + 6px); left: 50%;
+            transform: translateX(-50%);
+            background: rgba(14,14,22,0.97); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px; padding: 8px; box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+            grid-template-columns: repeat(4, 1fr); gap: 5px;
+            z-index: 99999; width: 108px;
+        }
+        .fmt-hl-picker.is-open { display: grid; }
+        .hl-swatch {
+            width: 22px; height: 22px; border-radius: 5px; cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s;
+            border: 2px solid rgba(255,255,255,0.0);
+        }
+        .hl-swatch:hover { transform: scale(1.2); border-color: rgba(255,255,255,0.5); box-shadow: 0 2px 8px rgba(0,0,0,0.4); }
         .fmt-sep {
             width: 1px; height: 16px; background: rgba(255,255,255,0.1);
             margin: 0 4px; flex-shrink: 0;
@@ -2046,7 +2086,11 @@
 
                 <!-- Barre toggle -->
                 <div class="comment-toggle-bar" id="commentToggle" onclick="toggleComments()">
-                    <div class="comment-toggle-bar__icon">💬</div>
+                    <div class="comment-toggle-bar__icon">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block">
+                            <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.002.022.015.043.033.055a19.91 19.91 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z" fill="currentColor"/>
+                        </svg>
+                    </div>
                     <span class="comment-toggle-bar__label">Commentaires</span>
                     <span class="comment-toggle-bar__count" id="commentCountBadge">0</span>
                     <span class="comment-toggle-bar__arrow">▾</span>
@@ -2488,7 +2532,22 @@
             <button class="fmt-btn" onclick="fmtWrap('*')" title="Italique"><i>I</i></button>
             <button class="fmt-btn" onclick="fmtWrap('__')" title="Souligné"><u>U</u></button>
             <button class="fmt-btn" onclick="fmtWrap('~~')" title="Barré"><s>S</s></button>
-            <button class="fmt-btn" onclick="fmtWrap('==')" title="Surligné" style="color:#ffd000">▮</button>
+            <!-- Surlignage + palette couleur -->
+            <div class="fmt-hl-wrap" id="fmtHlWrap">
+                <button class="fmt-btn fmt-hl-btn" onclick="toggleHlPicker(event)" title="Surligné">
+                    <span class="fmt-hl-dot" id="fmtHlDot" style="background:#ffd000"></span>
+                </button>
+                <div class="fmt-hl-picker" id="fmtHlPicker">
+                    <div class="hl-swatch" style="background:#ffd000" onclick="pickHlColor('#ffd000')" title="Jaune"></div>
+                    <div class="hl-swatch" style="background:#ff6b6b" onclick="pickHlColor('#ff6b6b')" title="Rouge"></div>
+                    <div class="hl-swatch" style="background:#ff9f43" onclick="pickHlColor('#ff9f43')" title="Orange"></div>
+                    <div class="hl-swatch" style="background:#7bc47f" onclick="pickHlColor('#7bc47f')" title="Vert"></div>
+                    <div class="hl-swatch" style="background:#4ecdc4" onclick="pickHlColor('#4ecdc4')" title="Cyan"></div>
+                    <div class="hl-swatch" style="background:#45b7d1" onclick="pickHlColor('#45b7d1')" title="Bleu"></div>
+                    <div class="hl-swatch" style="background:#c98bdb" onclick="pickHlColor('#c98bdb')" title="Violet"></div>
+                    <div class="hl-swatch" style="background:#ff85c2" onclick="pickHlColor('#ff85c2')" title="Rose"></div>
+                </div>
+            </div>
             <div class="fmt-sep"></div>
             <span class="fmt-hint">**gras** *ital* __souligné__ ~~barré~~ ==surligné==</span>
         </div>
@@ -3829,15 +3888,55 @@
         if (!text) return '';
         let h = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
         h = h.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-        h = h.replace(/==(.+?)==/g,     '<mark style="background:rgba(255,218,0,0.38);color:inherit;padding:0 2px;border-radius:3px">$1</mark>');
-        h = h.replace(/__(.+?)__/g,     '<u>$1</u>');
-        h = h.replace(/~~(.+?)~~/g,     '<s>$1</s>');
-        h = h.replace(/\*(.+?)\*/g,     '<em>$1</em>');
+        // Surlignage coloré : ==[#xxxxxx]texte==
+        h = h.replace(/==\[#([0-9a-fA-F]{3,6})\](.+?)==/g,
+            '<mark style="background:#$1;color:inherit;padding:0 2px;border-radius:3px">$2</mark>');
+        // Surlignage jaune par défaut : ==texte==
+        h = h.replace(/==(.+?)==/g,
+            '<mark style="background:rgba(255,218,0,0.38);color:inherit;padding:0 2px;border-radius:3px">$1</mark>');
+        h = h.replace(/__(.+?)__/g, '<u>$1</u>');
+        h = h.replace(/~~(.+?)~~/g, '<s>$1</s>');
+        h = h.replace(/\*(.+?)\*/g, '<em>$1</em>');
         return h;
     }
 
-    // ── Insérer un marqueur autour de la sélection ───────────────────
-    function fmtWrap(marker) {
+    // ── Color picker surlignage ──────────────────────────────────────
+    let _hlColor = '#ffd000';
+    function toggleHlPicker(e) {
+        e.stopPropagation();
+        document.getElementById('fmtHlPicker').classList.toggle('is-open');
+    }
+    function pickHlColor(hex) {
+        _hlColor = hex;
+        document.getElementById('fmtHlDot').style.background = hex;
+        document.getElementById('fmtHlPicker').classList.remove('is-open');
+        // Insérer le marqueur autour de la sélection
+        const ta = document.getElementById('editInlineTextarea');
+        if (!ta) return;
+        const s = ta.selectionStart, e = ta.selectionEnd;
+        const before = ta.value.slice(0, s);
+        const after  = ta.value.slice(e);
+        const sel    = ta.value.slice(s, e);
+        const isDefault = hex === '#ffd000';
+        const openMark  = isDefault ? '==' : `==[#${hex.replace('#','')}]`;
+        const closeMark = '==';
+        if (sel) {
+            ta.value = before + openMark + sel + closeMark + after;
+            ta.selectionStart = s; ta.selectionEnd = e + openMark.length + 2;
+        } else {
+            const ph = '…';
+            ta.value = before + openMark + ph + closeMark + after;
+            ta.selectionStart = s + openMark.length;
+            ta.selectionEnd   = s + openMark.length + ph.length;
+        }
+        ta.focus();
+    }
+    // Fermer la palette si on clique ailleurs
+    document.addEventListener('click', e => {
+        if (!e.target.closest('#fmtHlWrap')) {
+            document.getElementById('fmtHlPicker')?.classList.remove('is-open');
+        }
+    });
         const ta = document.getElementById('editInlineTextarea');
         if (!ta) return;
         const s = ta.selectionStart, e = ta.selectionEnd;
@@ -3855,7 +3954,6 @@
             ta.selectionEnd   = s + marker.length + ph.length;
         }
         ta.focus();
-    }
 
     function loadEdits() {
         try { return JSON.parse(localStorage.getItem(EDIT_KEY)) || {}; } catch { return {}; }
