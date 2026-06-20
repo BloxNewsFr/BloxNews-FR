@@ -1243,7 +1243,7 @@
             background: #0e0e18;
             border: 1px solid rgba(255,255,255,0.08);
             border-radius: 28px;
-            width: 780px; max-width: 96vw; max-height: 94vh; overflow: hidden;
+            width: 860px; max-width: 96vw; max-height: 94vh; overflow: hidden;
             display: flex; flex-direction: column;
             box-shadow: 0 40px 120px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,26,26,0.12), inset 0 1px 0 rgba(255,255,255,0.05);
             animation: ncmPop 0.32s cubic-bezier(0.34,1.56,0.64,1) both;
@@ -1287,7 +1287,7 @@
 
         /* Colonne gauche — Prévisualisation */
         #newCardModal .ncm-preview-col {
-            width: 260px; flex-shrink: 0;
+            width: 320px; flex-shrink: 0;
             padding: 24px 20px;
             background: rgba(255,255,255,0.018);
             border-right: 1px solid rgba(255,255,255,0.05);
@@ -1304,7 +1304,7 @@
             font-family: 'Inter', sans-serif;
         }
         #newCardModal .ncm-card-img {
-            width: 100%; height: 160px; background: #1a1a2e;
+            width: 100%; height: 200px; background: #1a1a2e;
             position: relative; overflow: hidden; cursor: pointer;
         }
         #newCardModal .ncm-card-img-loaded {
@@ -3668,64 +3668,131 @@
     //  PERSISTANCE — Cards personnalisées
     // ══════════════════════════════════════════════════════════════
     const CC_KEY = 'blox_custom_cards_v1';
-    const FB_CC_REF = typeof FB_DB !== 'undefined' ? FB_DB.ref('custom_cards') : null;
+    const FB_CC_REF      = typeof FB_DB !== 'undefined' ? FB_DB.ref('custom_cards')      : null;
+    const FB_DELETED_REF = typeof FB_DB !== 'undefined' ? FB_DB.ref('deleted_static_ids') : null;
 
-    function _ccLoad() { try { return JSON.parse(localStorage.getItem(CC_KEY)) || []; } catch { return []; } }
-    function _ccSave(cards) {
-        try { localStorage.setItem(CC_KEY, JSON.stringify(cards)); } catch {}
-        if (FB_CC_REF) FB_CC_REF.set(cards);
+    // ── IDs statiques ──────────────────────────────────────────────
+    // On assigne un data-static-id à chaque card statique au chargement
+    function _assignStaticIds() {
+        document.querySelectorAll('.news-card:not([data-cc-id])').forEach((card, i) => {
+            if (!card.dataset.staticId) {
+                const title = card.querySelector('.news-card__title')?.textContent?.trim() || '';
+                const section = card.closest('[id^="cat-"]')?.id || 'unknown';
+                // slug stable
+                const slug = (section + '__' + title).toLowerCase()
+                    .replace(/[^a-z0-9]+/g, '_').slice(0, 60) + '__' + i;
+                card.dataset.staticId = slug;
+            }
+        });
     }
+
+    // ── Persistence localStorage (cache local uniquement) ───────────
+    function _ccLoad() { try { return JSON.parse(localStorage.getItem(CC_KEY)) || []; } catch { return []; } }
+    function _ccSave(cards) { try { localStorage.setItem(CC_KEY, JSON.stringify(cards)); } catch {} }
     function _ccAdd(card) { const c = _ccLoad(); c.push(card); _ccSave(c); }
     function _ccRemove(id) { _ccSave(_ccLoad().filter(c => c.id !== id)); }
     function _ccEsc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
-    function _renderCustomCards() {
-        _ccLoad().forEach(card => {
-            const section = document.getElementById(card.sectionId);
-            if (!section) return;
-            let grid = section.querySelector('.news-grid');
-            if (!grid) {
-                grid = document.createElement('div');
-                grid.className = 'news-grid';
-                const ref = section.querySelector('.secret-bulletin');
-                if (ref) ref.after(grid); else section.appendChild(grid);
-            }
-            const e = _ccEsc;
-            const mediaTag = card.mediaType === 'video'
-                ? `<video src="${e(card.src)}#t=1" class="news-card__image" preload="metadata" muted playsinline></video>`
-                : `<img src="${e(card.src)}" class="news-card__image" alt="${e(card.title)}">`;
-            const btnLabel = e(card.btnLabel || "Voir l'image →");
-            const btnHtml = card.mediaType === 'video'
-                ? `<button class="news-card__button open-modal-btn" data-type="video" data-src="${e(card.src)}">${btnLabel}</button>`
-                : `<button class="news-card__button open-modal-btn" data-type="image" data-src="${e(card.src)}">${btnLabel}</button>`;
-            const html = `<article class="news-card" data-cc-id="${card.id}">
-                <div class="news-card__image-wrapper">
-                    ${mediaTag}
-                    <div class="news-card__badge">${e(card.badge)}</div>
-                </div>
-                <div class="news-card__content">
-                    <div class="news-card__eyebrow">${e(card.eyebrow)}</div>
-                    <h2 class="news-card__title">${e(card.title)}</h2>
-                    ${btnHtml}
-                </div>
-            </article>`;
-            const tmp = document.createElement('div');
-            tmp.innerHTML = html.trim();
-            const el = tmp.firstChild;
-            if (grid.firstChild) grid.insertBefore(el, grid.firstChild);
-            else grid.appendChild(el);
-            const imgEl = el.querySelector('.news-card__image');
-            const srcAttr = imgEl ? (imgEl.getAttribute('src') || '') : '';
-            const likeId = 'card-' + _plSlug(card.title + '-' + srcAttr);
-            const local = _plLoadLocal();
-            const liked = (local[likeId] || {}).liked || false;
-            const btnLike = _plMakeBtn(likeId, liked, _plGlobalCounts[likeId] || 0);
-            const content = el.querySelector('.news-card__content');
-            const footer = document.createElement('div');
-            footer.className = 'post-like-card-footer';
-            footer.appendChild(btnLike);
-            content.appendChild(footer);
+    // ── Rendu d'une card custom (depuis Firebase) ───────────────────
+    function _renderOneCard(card) {
+        const section = document.getElementById(card.sectionId);
+        if (!section) return;
+        // Évite les doublons
+        if (document.querySelector(`[data-cc-id="${card.id}"]`)) return;
+        let grid = section.querySelector('.news-grid');
+        if (!grid) {
+            grid = document.createElement('div');
+            grid.className = 'news-grid';
+            const ref = section.querySelector('.secret-bulletin');
+            if (ref) ref.after(grid); else section.appendChild(grid);
+        }
+        const e = _ccEsc;
+        const mediaTag = card.mediaType === 'video'
+            ? `<video src="${e(card.src)}#t=1" class="news-card__image" preload="metadata" muted playsinline></video>`
+            : `<img src="${e(card.src)}" class="news-card__image" alt="${e(card.title)}">`;
+        const btnLabel = e(card.btnLabel || "Voir l'image →");
+        const btnHtml = card.mediaType === 'video'
+            ? `<button class="news-card__button open-modal-btn" data-type="video" data-src="${e(card.src)}">${btnLabel}</button>`
+            : `<button class="news-card__button open-modal-btn" data-type="image" data-src="${e(card.src)}">${btnLabel}</button>`;
+        const html = `<article class="news-card" data-cc-id="${card.id}">
+            <div class="news-card__image-wrapper">
+                ${mediaTag}
+                <div class="news-card__badge">${e(card.badge)}</div>
+            </div>
+            <div class="news-card__content">
+                <div class="news-card__eyebrow">${e(card.eyebrow)}</div>
+                <h2 class="news-card__title">${e(card.title)}</h2>
+                ${btnHtml}
+            </div>
+        </article>`;
+        const tmp = document.createElement('div');
+        tmp.innerHTML = html.trim();
+        const el = tmp.firstChild;
+        if (grid.firstChild) grid.insertBefore(el, grid.firstChild);
+        else grid.appendChild(el);
+        // Like button
+        const imgEl = el.querySelector('.news-card__image');
+        const srcAttr = imgEl ? (imgEl.getAttribute('src') || '') : '';
+        const likeId = 'card-' + _plSlug(card.title + '-' + srcAttr);
+        const local = _plLoadLocal();
+        const liked = (local[likeId] || {}).liked || false;
+        const btnLike = _plMakeBtn(likeId, liked, _plGlobalCounts[likeId] || 0);
+        const content = el.querySelector('.news-card__content');
+        const footer = document.createElement('div');
+        footer.className = 'post-like-card-footer';
+        footer.appendChild(btnLike);
+        content.appendChild(footer);
+        // Rebind modale
+        el.querySelectorAll('.open-modal-btn').forEach(btn => {
+            btn.addEventListener('click', _modalBtnHandler);
         });
+    }
+
+    function _renderCustomCards() {
+        // Rendu initial depuis localStorage (offline fallback)
+        _ccLoad().forEach(_renderOneCard);
+    }
+
+    // ── Handler bouton modale (réutilisable) ────────────────────────
+    function _modalBtnHandler(e) {
+        e.preventDefault(); e.stopPropagation();
+        const btn = e.currentTarget;
+        const type = btn.getAttribute('data-type');
+        const sourceUrl = btn.getAttribute('data-src');
+        const card = btn.closest('.news-card');
+        const section = btn.closest('[id^="cat-"]');
+        const SECTION_LABELS = {
+            'cat-fruit':'🍎 Fruits & Reworks','cat-vfx':'✨ VFX',
+            'cat-map':'🗺️ Map & Build','cat-gui':'💻 GUI & Systèmes',
+            'cat-messages':'✉️ Messages & Lore','cat-actus':'📰 Actus'
+        };
+        const modal = document.getElementById('videoModal');
+        const video = document.getElementById('fruitVideo');
+        const modalImg = document.getElementById('modalImage');
+        const modalBadge = document.getElementById('modalBadge');
+        const modalSection = document.getElementById('modalSection');
+        const modalTitle = document.getElementById('modalMetaTitle');
+        const badgeText = card?.querySelector('.news-card__badge')?.textContent?.trim() || 'LEAK';
+        const titleText = card?.querySelector('.news-card__title')?.textContent?.trim() || '';
+        const sectionName = SECTION_LABELS[section?.id] || 'Blox Leaks';
+        if (modalBadge)   modalBadge.textContent   = badgeText;
+        if (modalSection) modalSection.textContent = sectionName;
+        if (modalTitle)   modalTitle.textContent   = titleText;
+        if (video)    video.style.display    = 'none';
+        if (modalImg) modalImg.style.display = 'none';
+        if (type === 'video' && video) {
+            video.src = sourceUrl; video.style.display = 'block';
+            video.currentTime = 0; video.play().catch(() => {});
+        } else if (type === 'image' && modalImg) {
+            modalImg.src = sourceUrl; modalImg.style.display = 'block';
+        }
+        _modalEditKey = 'modal_edit__' + btoa(encodeURIComponent(sourceUrl || titleText)).slice(0,48);
+        _modalEditLoad(_modalEditKey);
+        const edPanel = document.getElementById('modalEditorPanel');
+        if (edPanel) edPanel.classList.remove('is-open');
+        const edBtn = document.getElementById('modalEditToggle');
+        if (edBtn) { edBtn.classList.remove('is-active'); edBtn.textContent = '✏️ Éditer'; }
+        if (modal) modal.classList.add('is-active');
     }
 
     // ══════════════════════════════════════════════════════════════
@@ -3822,69 +3889,29 @@
         const mediaType = document.querySelector('#newCardModal input[name="ncmType"]:checked')?.value || 'image';
         const src       = mediaType === 'video' ? (document.getElementById('ncmSrc')?.value?.trim() || '') : _ncmImageData;
 
-        if (!sectionId || !badge || !title || !src) {
-            editLog('err', 'Remplis au moins Badge, Titre et Image.');
-            return;
-        }
+        if (!sectionId || !badge || !title || !src) { editLog('err', 'Remplis au moins Badge, Titre et Image.'); return; }
+        if (!document.getElementById(sectionId)) { editLog('err', 'Section introuvable.'); return; }
 
-        let section = document.getElementById(sectionId);
-        if (!section) { editLog('err', 'Section introuvable.'); return; }
-
-        let grid = section.querySelector('.news-grid');
-        if (!grid) {
-            grid = document.createElement('div');
-            grid.className = 'news-grid';
-            let ref = section.querySelector('.secret-bulletin');
-            if (ref) ref.after(grid);
-            else section.appendChild(grid);
-        }
-
-        const e = _ccEsc;
         const cardId = 'cc_' + Date.now();
-        const btnHtml = mediaType === 'video'
-            ? `<button class="news-card__button open-modal-btn" data-type="video" data-src="${e(src)}">${e(btnLabel)}</button>`
-            : `<button class="news-card__button open-modal-btn" data-type="image" data-src="${e(src)}">${e(btnLabel)}</button>`;
-        const mediaTag = mediaType === 'video'
-            ? `<video src="${e(src)}#t=1" class="news-card__image" preload="metadata" muted playsinline></video>`
-            : `<img src="${e(src)}" class="news-card__image" alt="${e(title)}">`;
+        const newCard = { id: cardId, sectionId, badge, title, src, eyebrow, btnLabel, mediaType };
 
-        const cardHtml = `<article class="news-card" data-cc-id="${cardId}">
-            <div class="news-card__image-wrapper">
-                ${mediaTag}
-                <div class="news-card__badge">${e(badge)}</div>
-            </div>
-            <div class="news-card__content">
-                <div class="news-card__eyebrow">${e(eyebrow)}</div>
-                <h2 class="news-card__title">${e(title)}</h2>
-                ${btnHtml}
-            </div>
-        </article>`;
-
-        const temp = document.createElement('div');
-        temp.innerHTML = cardHtml.trim();
-        const cardEl = temp.firstChild;
-        if (grid.firstChild) grid.insertBefore(cardEl, grid.firstChild);
-        else grid.appendChild(cardEl);
-
-        const imgEl = cardEl.querySelector('.news-card__image');
-        const srcAttr = imgEl ? (imgEl.getAttribute('src') || '') : '';
-        const likeId = 'card-' + _plSlug(title + '-' + srcAttr);
-        const local = _plLoadLocal();
-        const liked = (local[likeId] || {}).liked || false;
-        const btnLike = _plMakeBtn(likeId, liked, _plGlobalCounts[likeId] || 0);
-        const content = cardEl.querySelector('.news-card__content');
-        const footer = document.createElement('div');
-        footer.className = 'post-like-card-footer';
-        footer.appendChild(btnLike);
-        content.appendChild(footer);
-
-        _ccAdd({ id: cardId, sectionId, badge, title, src, eyebrow, btnLabel, mediaType });
+        // Pousser sur Firebase (source de vérité partagée)
+        if (FB_CC_REF) {
+            FB_CC_REF.transaction(current => {
+                const list = Array.isArray(current) ? current : [];
+                return [...list, newCard];
+            });
+        }
+        // Fallback local + rendu immédiat si pas de Firebase
+        _ccAdd(newCard);
+        if (!FB_CC_REF) _renderOneCard(newCard);
 
         document.querySelectorAll('.category-section:not(#cat-actus)').forEach(s => {
             _originalOrder.set(s.id, [...s.querySelectorAll('.news-card')]);
         });
         _sortAllSections();
 
+        const e = _ccEsc;
         editLog('ok', 'Nouvelle carte créée dans ' + sectionId + ' : ' + title);
         const toast = document.getElementById('newCardToast');
         if (toast) {
@@ -3897,83 +3924,92 @@
     }
 
     // ══════════════════════════════════════════════════════════════
-    //  COMMANDE /DELETE — Bulle de suppression
+    //  COMMANDE /DELETE — Suppression de N'IMPORTE QUELLE carte
     // ══════════════════════════════════════════════════════════════
     function _cmdDelete() {
         const list = document.getElementById('dcmList');
         if (!list) return;
-        const cards = _ccLoad();
-        if (cards.length === 0) {
-            list.innerHTML = `<div class="dcm-empty">
-                <div class="dcm-empty-icon">🗂️</div>
-                <div class="dcm-empty-text">Aucune carte personnalisée</div>
-            </div>`;
+        const allCards = [...document.querySelectorAll('.news-card')];
+        if (allCards.length === 0) {
+            list.innerHTML = '<div class="dcm-empty"><div class="dcm-empty-icon">🗂️</div><div class="dcm-empty-text">Aucune carte dans la page</div></div>';
         } else {
-            list.innerHTML = cards.map(c => {
-                const thumb = c.mediaType === 'image' && c.src && c.src.length < 200000
-                    ? `<img src="${_ccEsc(c.src)}" alt="">`
-                    : `<span style="font-size:20px">${c.mediaType === 'video' ? '🎬' : '🖼️'}</span>`;
-                return `<div class="dcm-item" id="dcm-item-${c.id}">
+            list.innerHTML = allCards.map((card, i) => {
+                const title    = card.querySelector('.news-card__title')?.textContent?.trim() || 'Sans titre';
+                const badge    = card.querySelector('.news-card__badge')?.textContent?.trim() || '';
+                const section  = card.closest('[id^="cat-"]');
+                const sectionName = section?.id?.replace('cat-','') || 'inconnu';
+                const ccId     = card.dataset.ccId || null;
+                const staticId = card.dataset.staticId || ('static_' + i);
+                const uid      = ccId || staticId;
+                const isCustom = !!ccId;
+                const imgEl    = card.querySelector('.news-card__image');
+                const imgSrc   = imgEl?.tagName === 'IMG' ? imgEl.src : '';
+                const isVideo  = imgEl?.tagName === 'VIDEO';
+                const thumb    = imgSrc
+                    ? `<img src="${_ccEsc(imgSrc)}" alt="" style="width:100%;height:100%;object-fit:cover;display:block;">`
+                    : `<span style="font-size:20px">${isVideo ? '🎬' : '🖼️'}</span>`;
+                return `<div class="dcm-item" id="dcm-item-${uid}">
                     <div class="dcm-item-thumb">${thumb}</div>
                     <div class="dcm-item-info">
-                        <div class="dcm-item-badge">${_ccEsc(c.badge || 'CARTE')}</div>
-                        <div class="dcm-item-title">${_ccEsc(c.title)}</div>
-                        <div class="dcm-item-section">${c.sectionId}</div>
+                        <div class="dcm-item-badge">${_ccEsc(badge)}</div>
+                        <div class="dcm-item-title">${_ccEsc(title)}</div>
+                        <div class="dcm-item-section">${sectionName}${isCustom ? ' · personnalisée' : ''}</div>
                     </div>
-                    <button class="dcm-item-del" onclick="_dcmOpenConfirm('${c.id}')">Supprimer</button>
+                    <button class="dcm-item-del" onclick="_dcmOpenConfirm('${uid}')">Supprimer</button>
                 </div>
-                <div class="dcm-confirm-zone" id="dcm-confirm-${c.id}">
+                <div class="dcm-confirm-zone" id="dcm-confirm-${uid}">
                     <div class="dcm-confirm-label">🔒 Mot de passe requis</div>
-                    <input class="dcm-confirm-pwd" type="password" placeholder="Entrer le mot de passe…" id="dcm-pwd-${c.id}" onkeydown="if(event.key==='Enter')_cmdDeleteConfirm('${c.id}')">
+                    <input class="dcm-confirm-pwd" type="password" placeholder="Entrer le mot de passe…" id="dcm-pwd-${uid}" onkeydown="if(event.key==='Enter')_cmdDeleteConfirm('${uid}','${ccId||''}','${staticId}')">
                     <div class="dcm-confirm-actions">
-                        <button class="dcm-confirm-cancel" onclick="_dcmCloseConfirm('${c.id}')">Annuler</button>
-                        <button class="dcm-confirm-ok" onclick="_cmdDeleteConfirm('${c.id}')">🗑️ Confirmer</button>
+                        <button class="dcm-confirm-cancel" onclick="_dcmCloseConfirm('${uid}')">Annuler</button>
+                        <button class="dcm-confirm-ok" onclick="_cmdDeleteConfirm('${uid}','${ccId||''}','${staticId}')">🗑️ Confirmer</button>
                     </div>
                 </div>`;
             }).join('');
         }
         document.getElementById('deleteCardModal')?.classList.add('is-open');
     }
-    function _dcmOpenConfirm(id) {
-        // Ferme tous les autres panels de confirmation
+    function _dcmOpenConfirm(uid) {
         document.querySelectorAll('.dcm-confirm-zone').forEach(z => z.classList.remove('is-open'));
-        const zone = document.getElementById('dcm-confirm-' + id);
-        if (zone) {
-            zone.classList.add('is-open');
-            zone.querySelector('.dcm-confirm-pwd')?.focus();
-        }
+        const zone = document.getElementById('dcm-confirm-' + uid);
+        if (zone) { zone.classList.add('is-open'); zone.querySelector('.dcm-confirm-pwd')?.focus(); }
     }
-    function _dcmCloseConfirm(id) {
-        const zone = document.getElementById('dcm-confirm-' + id);
-        if (zone) {
-            zone.classList.remove('is-open');
-            const pwd = document.getElementById('dcm-pwd-' + id);
-            if (pwd) pwd.value = '';
-        }
+    function _dcmCloseConfirm(uid) {
+        const zone = document.getElementById('dcm-confirm-' + uid);
+        if (zone) { zone.classList.remove('is-open'); const p = document.getElementById('dcm-pwd-' + uid); if(p) p.value=''; }
     }
-    function _cmdDeleteConfirm(id) {
-        const cards = _ccLoad();
-        const card = cards.find(c => c.id === id);
-        if (!card) return;
-        const pwd = document.getElementById('dcm-pwd-' + id)?.value || '';
+    function _cmdDeleteConfirm(uid, ccId, staticId) {
+        const pwd = document.getElementById('dcm-pwd-' + uid)?.value || '';
         if (pwd !== 'n0klip le best') {
             editLog('err', 'Mot de passe incorrect.');
-            // Shake le champ
-            const inp = document.getElementById('dcm-pwd-' + id);
-            if (inp) { inp.style.borderColor='rgba(255,50,50,0.7)'; setTimeout(()=>inp.style.borderColor='',1200); }
+            const inp = document.getElementById('dcm-pwd-' + uid);
+            if (inp) { inp.style.borderColor='rgba(255,50,50,0.7)'; setTimeout(()=>inp.style.borderColor='',1400); }
             return;
         }
-        // Retirer du DOM
-        const el = document.querySelector(`[data-cc-id="${id}"]`);
-        if (el) el.remove();
-        _ccRemove(id);
+        if (ccId) {
+            if (FB_CC_REF) { FB_CC_REF.transaction(c => Array.isArray(c) ? c.filter(x => x.id !== ccId) : []); }
+            _ccRemove(ccId);
+            const el = document.querySelector(`[data-cc-id="${ccId}"]`);
+            if (el) el.remove();
+        } else {
+            const el = document.querySelector(`[data-static-id="${staticId}"]`);
+            if (el) el.remove();
+            if (FB_DELETED_REF) {
+                FB_DELETED_REF.transaction(current => {
+                    const ids = Array.isArray(current) ? current : [];
+                    if (!ids.includes(staticId)) ids.push(staticId);
+                    return ids;
+                });
+            }
+        }
         document.querySelectorAll('.category-section:not(#cat-actus)').forEach(s => {
             _originalOrder.set(s.id, [...s.querySelectorAll('.news-card')]);
         });
         _sortAllSections();
-        editLog('ok', 'Carte supprimée : ' + card.title);
-        _cmdDelete(); // Rafraîchir la liste
+        editLog('ok', 'Carte supprimée.');
+        _cmdDelete();
     }
+
 
     // ══════════════════════════════════════════════════════════════
     //  COMMANDES TEXTUELLES
@@ -4014,7 +4050,41 @@
 
     document.addEventListener('DOMContentLoaded', () => {
         applyStoredEdits();
-        _renderCustomCards();
+
+        // 1. Assigner des IDs stables aux cards statiques (avant tout)
+        _assignStaticIds();
+
+        // 2. Appliquer les suppressions de cards statiques depuis Firebase
+        if (FB_DELETED_REF) {
+            FB_DELETED_REF.on('value', snap => {
+                const deletedIds = snap.val() || [];
+                deletedIds.forEach(sid => {
+                    const el = document.querySelector(`[data-static-id="${sid}"]`);
+                    if (el) el.remove();
+                });
+            });
+        }
+
+        // 3. Firebase est la source de vérité pour les cards custom
+        //    → on rend uniquement depuis Firebase (pas depuis localStorage)
+        if (FB_CC_REF) {
+            FB_CC_REF.on('value', snap => {
+                const fbCards = Array.isArray(snap.val()) ? snap.val() : [];
+                // Mettre à jour le cache local
+                _ccSave(fbCards);
+                // Rendre les nouvelles cards pas encore dans le DOM
+                fbCards.forEach(_renderOneCard);
+                // Retirer les cards supprimées du DOM
+                const fbIds = new Set(fbCards.map(c => c.id));
+                document.querySelectorAll('[data-cc-id]').forEach(el => {
+                    if (!fbIds.has(el.dataset.ccId)) el.remove();
+                });
+            });
+        } else {
+            // Pas de Firebase : rendu depuis localStorage
+            _renderCustomCards();
+        }
+
         const toast = document.getElementById('editModeToast');
         if (toast) {
             setTimeout(() => { toast.classList.add('is-visible'); }, 1000);
@@ -4025,16 +4095,6 @@
                 badge.style.cssText += 'background:linear-gradient(135deg,#ff1a1a,#cc0000)!important;box-shadow:0 2px 10px rgba(204,0,0,0.5)!important;left:auto!important;right:14px!important;';
             }
         });
-        if (FB_CC_REF) {
-            FB_CC_REF.on('value', snap => {
-                const fbCards = snap.val() || [];
-                const localCards = _ccLoad();
-                const localIds = new Set(localCards.map(c => c.id));
-                const merged = [...localCards];
-                fbCards.forEach(fc => { if (!localIds.has(fc.id)) merged.push(fc); });
-                _ccSave(merged);
-            });
-        }
     });
     </script>
 </body>
