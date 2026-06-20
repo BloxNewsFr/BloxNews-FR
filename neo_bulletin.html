@@ -44,7 +44,8 @@
         .site-header {
     display: flex; 
     align-items: center; 
-    justify-content: space-between; 
+    justify-content: center; 
+    position: relative;
     padding: 0 55px;
     position: sticky; 
     top: 0; 
@@ -64,18 +65,9 @@
     transition: background 0.5s cubic-bezier(0.4, 0, 0.2, 1), backdrop-filter 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     animation: navbarSheen 6s ease-in-out infinite;
 }
-
-        @keyframes navbarSheen {
-            0%, 100% { background-position: 200% 0; }
-            50% { background-position: 0% 0; }
-        }
-        .site-header__logo img { height: 42px; width: auto; display: block; filter: none !important; }
+        .site-header__logo { position: absolute; left: 55px; }
         .site-nav { display: flex; gap: 8px; padding: 0; margin: 0; list-style: none; font-weight: 900; }
-        .site-nav a { color: var(--color-text); text-decoration: none; font-weight: 900; font-size: 17px; text-transform: uppercase; font-family: 'LuckiestGuy Regular', cursive; padding: 8px 16px; border-radius: 10px; transition: background 0.2s, color 0.2s; }
-        .site-nav a:hover { background: var(--color-primary); color: #000; }
-        .site-header__icons { display: flex; gap: 12px; color: var(--color-text); cursor: pointer; align-items: center; }
-        .site-header__icons span { padding: 8px; border-radius: 10px; transition: background 0.2s; user-select: none; }
-        .site-header__icons span:hover { background: rgba(0,0,0,0.06); }
+        .site-header__icons { position: absolute; right: 55px; display: flex; gap: 12px; color: var(--color-text); cursor: pointer; align-items: center; }
 
         /* ── DISCORD AUTH ── */
         .discord-login-btn {
@@ -4487,6 +4479,8 @@
             const stored     = JSON.parse(localStorage.getItem(DISCORD_TOKEN_KEY) || 'null');
             const cachedUser = JSON.parse(localStorage.getItem(DISCORD_USER_KEY) || 'null');
 
+            console.log('Navbar init: checking cached user', { stored: !!stored, cachedUser: !!cachedUser, expiresAt: stored?.expiresAt, now: Date.now() });
+
             if (cachedUser) {
                 // Afficher immédiatement depuis le cache (même si token expiré)
                 showUserInNavbar(cachedUser);
@@ -4513,12 +4507,14 @@
 
         // 3. Fallback: vérifier si le système de commentaires a un currentUser en mémoire
         // (via window.discordCurrentUser si exposé)
+        console.log('Navbar init: checking window.discordCurrentUser', !!window.discordCurrentUser);
         if (window.discordCurrentUser) {
             showUserInNavbar(window.discordCurrentUser);
             return;
         }
 
         // 4. Vraiment pas connecté
+        console.log('Navbar init: no user found, showing login button');
         loginBtn.style.display = '';
     })();
     </script>
