@@ -2028,13 +2028,20 @@
             window.scrollTo({ top: 0, behavior: "smooth" });
         }
         
-        renderPage();
-
         // ── HASH: aller à la bonne page + scroll ──
+        function getHashBulletinNum() {
+            const h = window.location.hash;
+            return h && h.startsWith('#bulletin-') ? h.replace('#bulletin-', '') : null;
+        }
+        function scrollToBulletin(num) {
+            requestAnimationFrame(() => {
+                const el = document.getElementById('bulletin-' + num);
+                if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            });
+        }
         function goToHash() {
-            const hash = window.location.hash;
-            if (!hash || !hash.startsWith('#bulletin-')) return;
-            const num = hash.replace('#bulletin-', '');
+            const num = getHashBulletinNum();
+            if (!num) return;
             const idx = bulletins.findIndex(b => b.num === num);
             if (idx === -1) return;
             const page = Math.floor(idx / PER_PAGE) + 1;
@@ -2042,13 +2049,21 @@
                 currentPage = page;
                 renderPage();
             }
-            requestAnimationFrame(() => {
-                const el = document.getElementById('bulletin-' + num);
-                if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            });
+            scrollToBulletin(num);
         }
-        goToHash();
+
+        // Initialisation: lire la hash AVANT le premier render
+        const initNum = getHashBulletinNum();
+        if (initNum) {
+            const idx = bulletins.findIndex(b => b.num === initNum);
+            if (idx !== -1) currentPage = Math.floor(idx / PER_PAGE) + 1;
+        }
+        renderPage();
+        if (initNum) scrollToBulletin(initNum);
+
         window.addEventListener('hashchange', goToHash);
+        // Fallback si la hash arrive après le DOM (cache, bfcache)
+        window.addEventListener('load', () => { if (getHashBulletinNum()) goToHash(); });
 
         // ── MENU HAMBURGER MOBILE ──
         const menuBtn = document.getElementById('menuToggle');
