@@ -263,6 +263,38 @@
             border-top: 1px solid rgba(255,255,255,0.07);
             background: linear-gradient(135deg, rgba(20,10,10,0.98), rgba(14,14,22,0.98));
         }
+        /* ── Zone d'affichage du contenu éditorial ── */
+        .modal-content-display {
+            display: none;
+            padding: 18px 22px 4px;
+            background: rgba(10,10,18,0.99);
+            border-top: 1px solid rgba(255,255,255,0.04);
+        }
+        .modal-content-display.has-content { display: block; }
+        .mcd-tabs {
+            display: flex; gap: 0; margin-bottom: 14px;
+            border-radius: 8px; overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.06);
+            background: rgba(255,255,255,0.02);
+            width: fit-content;
+        }
+        .mcd-tab {
+            padding: 6px 14px; border: none; background: transparent;
+            color: rgba(255,255,255,0.3); font-size: 11px; font-weight: 700;
+            cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.18s;
+            text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .mcd-tab.active { background: rgba(255,26,26,0.12); color: rgba(255,120,120,0.9); }
+        .mcd-tab:hover:not(.active) { color: rgba(255,255,255,0.55); }
+        .mcd-tab.is-hidden { display: none; }
+        .mcd-panel { display: none; }
+        .mcd-panel.active { display: block; }
+        .mcd-text {
+            font-size: 13.5px; line-height: 1.75; color: rgba(255,255,255,0.72);
+            white-space: pre-wrap; font-family: 'Inter', sans-serif;
+            padding-bottom: 16px;
+        }
+
         .modal-info-badge {
             font-family: 'LuckiestGuy Regular', cursive;
             font-size: 11px; letter-spacing: 1.2px;
@@ -2225,6 +2257,23 @@
                     <h3 class="modal-info-title" id="modalMetaTitle"></h3>
                     <button class="modal-edit-btn" id="modalEditToggle" onclick="_modalEditToggle()">✏️ Éditer</button>
                 </div>
+                <!-- Zone d'affichage permanent des contenus éditoriaux -->
+                <div class="modal-content-display" id="modalContentDisplay">
+                    <div class="mcd-tabs" id="mcdTabs">
+                        <button class="mcd-tab active is-hidden" id="mcd-tab-desc"    onclick="_mcdTab('desc')">📝 Description</button>
+                        <button class="mcd-tab is-hidden"        id="mcd-tab-theory"  onclick="_mcdTab('theory')">🔍 Théorie</button>
+                        <button class="mcd-tab is-hidden"        id="mcd-tab-notes"   onclick="_mcdTab('notes')">📌 Notes admin</button>
+                    </div>
+                    <div class="mcd-panel active" id="mcd-panel-desc">
+                        <div class="mcd-text" id="mcd-text-desc"></div>
+                    </div>
+                    <div class="mcd-panel" id="mcd-panel-theory">
+                        <div class="mcd-text" id="mcd-text-theory"></div>
+                    </div>
+                    <div class="mcd-panel" id="mcd-panel-notes">
+                        <div class="mcd-text" id="mcd-text-notes"></div>
+                    </div>
+                </div>
                 <!-- Panneau d'édition extensible (visible uniquement en mode édition) -->
                 <div class="modal-editor-panel" id="modalEditorPanel">
                     <div class="modal-editor-tabs">
@@ -2581,10 +2630,51 @@
     function _modalEditLoad(key) {
         const all = _modalEditGetAll();
         const data = all[key] || {};
+        // Remplir les textareas (mode édition)
         document.getElementById('modal-ta-desc').value    = data.desc    || '';
         document.getElementById('modal-ta-theory').value  = data.theory  || '';
         document.getElementById('modal-ta-notes').value   = data.notes   || '';
         _modalEditOriginal = { ...data };
+        // Afficher le contenu en lecture pour tous
+        _mcdRefresh(data);
+    }
+
+    function _mcdRefresh(data) {
+        const desc   = (data.desc   || '').trim();
+        const theory = (data.theory || '').trim();
+        const notes  = (data.notes  || '').trim();
+        const display = document.getElementById('modalContentDisplay');
+        if (!display) return;
+
+        // Peupler les panneaux texte
+        document.getElementById('mcd-text-desc').textContent   = desc;
+        document.getElementById('mcd-text-theory').textContent = theory;
+        document.getElementById('mcd-text-notes').textContent  = notes;
+
+        // Afficher / masquer les onglets selon le contenu
+        const tabDesc   = document.getElementById('mcd-tab-desc');
+        const tabTheory = document.getElementById('mcd-tab-theory');
+        const tabNotes  = document.getElementById('mcd-tab-notes');
+        if (tabDesc)   tabDesc.classList.toggle('is-hidden',   !desc);
+        if (tabTheory) tabTheory.classList.toggle('is-hidden', !theory);
+        if (tabNotes)  tabNotes.classList.toggle('is-hidden',  !notes);
+
+        // Montrer la zone globale uniquement s'il y a du contenu
+        const hasAny = !!(desc || theory || notes);
+        display.classList.toggle('has-content', hasAny);
+
+        // Sélectionner le premier onglet visible
+        if (hasAny) {
+            const firstKey = desc ? 'desc' : theory ? 'theory' : 'notes';
+            _mcdTab(firstKey);
+        }
+    }
+
+    function _mcdTab(key) {
+        ['desc','theory','notes'].forEach(k => {
+            document.getElementById('mcd-tab-'   + k)?.classList.toggle('active', k === key);
+            document.getElementById('mcd-panel-' + k)?.classList.toggle('active', k === key);
+        });
     }
 
     function _modalEditToggle() {
@@ -2618,7 +2708,9 @@
         };
         _modalEditSaveAll(all);
         _modalEditOriginal = { ...all[_modalEditKey] };
-        // Toast de confirmation
+        // Rafraîchir l'affichage immédiatement
+        _mcdRefresh(all[_modalEditKey]);
+        // Toast
         const tag = document.getElementById('modalEditSavedTag');
         if (tag) {
             tag.classList.add('is-visible');
