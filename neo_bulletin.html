@@ -3259,31 +3259,8 @@
     function openDeleteModal()  { document.getElementById("deleteModal").classList.add("is-active"); document.body.style.overflow="hidden"; }
     function closeDeleteModal() { document.getElementById("deleteModal").classList.remove("is-active"); document.body.style.overflow=""; _pendingDelete=null; }
 function confirmDelete() {
-    // La variable où tu stockes l'ID au clic sur la poubelle
-    const targetId = window.currentDeleteId; 
-    let found = false;
-
-    // 1. Cherche si c'est un commentaire parent
-    const parentIndex = COMMENTS_DB.findIndex(c => c.id === targetId);
-    if (parentIndex > -1) {
-        COMMENTS_DB.splice(parentIndex, 1);
-        found = true;
-    } else {
-        // 2. Sinon, fouille dans les réponses de chaque commentaire
-        COMMENTS_DB.forEach(c => {
-            if (c.replies) {
-                const replyIndex = c.replies.findIndex(r => r.id === targetId);
-                if (replyIndex > -1) {
-                    c.replies.splice(replyIndex, 1);
-                    found = true;
-                }
-            }
-        });
-    }
-
-    if (found) {
-        saveDB();
-        renderComments();
+    if (_pendingDelete) {
+        _pendingDelete();
     }
     closeDeleteModal();
 }
