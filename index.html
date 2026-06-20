@@ -1333,6 +1333,28 @@
         .search-result-item:hover,
         .search-result-item.active { background: rgba(88,101,242,0.15); color: #fff; }
         .search-no-results { text-align: center; padding: 24px; color: rgba(255,255,255,0.4); font-size: 14px; }
+
+        /* ── Barre de filtre actif ── */
+        .search-filter-bar {
+            display: flex; align-items: center; gap: 12px;
+            margin: 0 auto 18px; max-width: 860px; padding: 10px 18px;
+            background: rgba(23,94,194,0.18);
+            border: 1px solid rgba(23,94,194,0.35);
+            border-radius: 14px; backdrop-filter: blur(16px);
+            font-family: 'Inter', sans-serif;
+        }
+        .search-filter-bar__icon { font-size: 18px; color: rgba(255,255,255,0.45); flex-shrink: 0; }
+        .search-filter-bar__text { flex: 1; font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.8); letter-spacing: 0.2px; }
+        .search-filter-bar__text em { font-style: normal; color: #ffd000; }
+        .search-filter-bar__count { font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.4); flex-shrink: 0; }
+        .search-filter-bar__clear {
+            border: none; background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.6);
+            border-radius: 8px; padding: 5px 12px; font-size: 12px; font-weight: 700;
+            cursor: pointer; transition: all 0.18s; font-family: 'Inter', sans-serif; letter-spacing: 0.3px;
+        }
+        .search-filter-bar__clear:hover { background: rgba(255,60,60,0.25); color: #fff; }
+        .search-no-cards { grid-column: 1/-1; text-align: center; padding: 64px 24px; color: rgba(255,255,255,0.3); font-size: 15px; font-family: 'Inter', sans-serif; }
+        .search-no-cards strong { display: block; font-size: 32px; margin-bottom: 10px; opacity: 0.35; }
         @media (max-width: 768px) {
             .search-overlay { padding-top: 60px; }
             .search-bar { gap: 4px; padding: 4px 4px 4px 14px; }
@@ -1420,6 +1442,9 @@
                 <button id="next-top" onclick="changePage(1)">→</button>
             </div>
         </div>
+
+        <!-- Bandeau résultats de recherche (caché par défaut) -->
+        <div id="searchFilterBar" style="display:none"></div>
         
         <div class="news-grid" id="news-grid"></div>
         
@@ -1466,7 +1491,12 @@
         const NEW_THRESHOLD = 4;
         const PER_PAGE = 6;
         let currentPage = 1;
-        const totalPages = Math.ceil(bulletins.length / PER_PAGE);
+        // ── État recherche filtre ──────────────────────────────────────
+        let _searchActive = false;   // mode filtre actif
+        let _searchQuery  = '';      // requête en cours
+        let _filteredList = null;    // null = pas de filtre, array = filtrés
+        function _activeList()   { return _filteredList ?? bulletins; }
+        function _totalPages()   { return Math.max(1, Math.ceil(_activeList().length / PER_PAGE)); }
         
         const specialCards = {
             "012": { className: "glitch-card", badge: "#012", status: "HACK", eyebrow: "Terminal compromis", title: "BULLETIN #012", button: "Accéder au terminal" },
@@ -1936,65 +1966,88 @@
             _waterEngines.forEach(e => e.destroy());  _waterEngines = [];
             _fireEngines.forEach(e  => e.destroy());  _fireEngines  = [];
             _iceEngines.forEach(e   => e.destroy());  _iceEngines   = [];
-
-
-            _waterEngines.forEach(e => e.destroy());
-            _waterEngines = [];
-            _fireEngines.forEach(e => e.destroy());
             _fireEngines = [];
-            const grid = document.getElementById("news-grid");
+
+            const list  = _activeList();
+            const total = _totalPages();
+            const grid  = document.getElementById("news-grid");
             const start = (currentPage - 1) * PER_PAGE;
-            const slice = bulletins.slice(start, start + PER_PAGE);
-            
-            grid.innerHTML = slice.map((b, i) => {
-                const special = specialCards[b.num] || {};
-                const globalIndex = start + i;
-                const isNew = globalIndex >= bulletins.length - NEW_THRESHOLD;
-                const statusLabel = special.status !== undefined ? (special.status || "") : (isNew ? "Nouveau" : "");
-                
-                // INJECTION DES ANIMATIONS SPÉCIALES
-                let deco = "";
-                if (b.num === "015") {
-                    deco = `<canvas class="fire-canvas" aria-hidden="true"></canvas>`;
-                } else if (b.num === "016") {
-                    deco = `<div class="water-surface" aria-hidden="true"></div><div class="water-deco" aria-hidden="true"></div>`;
-                } else if (b.num === "017") {
-                    deco = `<div class="hw-deco" aria-hidden="true"><span class="hw-bat" style="--bx:10%;--bd:-0.2s;--bt:-12px"></span><span class="hw-bat" style="--bx:60%;--bd:-2.4s;--bt:-8px"></span><span class="hw-bat" style="--bx:34%;--bd:-1.2s;--bt:-10px"></span><span class="hw-skull"></span></div>`;
-                } else if (b.num === "018") {
-                    deco = `<canvas class="frost-canvas" aria-hidden="true"></canvas>`;
-                } else if (b.num === "019") {
-                    deco = `<div class="val-deco" aria-hidden="true"><span class="val-heart" style="--hx:8%;--hd:-0.1s;--hs:1em"></span><span class="val-heart" style="--hx:28%;--hd:-1.7s;--hs:1.4em"></span><span class="val-heart" style="--hx:52%;--hd:-0.8s;--hs:.85em"></span><span class="val-heart" style="--hx:72%;--hd:-2.3s;--hs:1.2em"></span><span class="val-heart" style="--hx:88%;--hd:-0.5s;--hs:.96em"></span><span class="val-rose"></span></div>`;
+            const slice = list.slice(start, start + PER_PAGE);
+
+            // ── Barre filtre ─────────────────────────────────────────
+            const filterBar = document.getElementById('searchFilterBar');
+            if (filterBar) {
+                if (_searchActive) {
+                    const n = list.length;
+                    filterBar.style.display = '';
+                    filterBar.className = 'search-filter-bar';
+                    filterBar.innerHTML = `
+                        <span class="material-symbols-outlined search-filter-bar__icon">filter_list</span>
+                        <span class="search-filter-bar__text">
+                            Résultats pour <em>"${_searchQuery}"</em>
+                        </span>
+                        <span class="search-filter-bar__count">${n} bulletin${n !== 1 ? 's' : ''}</span>
+                        <button class="search-filter-bar__clear" onclick="exitSearchMode()">✕ Effacer</button>
+                    `;
+                } else {
+                    filterBar.style.display = 'none';
+                    filterBar.innerHTML = '';
                 }
+            }
+            
+            // ── Grille de cartes ─────────────────────────────────────
+            if (slice.length === 0) {
+                grid.innerHTML = `<div class="search-no-cards"><strong>¯\\_(ツ)_/¯</strong>Aucun bulletin trouvé pour cette recherche.</div>`;
+            } else {
+                grid.innerHTML = slice.map((b, i) => {
+                    const special = specialCards[b.num] || {};
+                    const globalIndex = _searchActive ? i : (start + i);
+                    const isNew = !_searchActive && globalIndex >= bulletins.length - NEW_THRESHOLD;
+                    const statusLabel = special.status !== undefined ? (special.status || "") : (isNew ? "Nouveau" : "");
+                    
+                    let deco = "";
+                    if (b.num === "015") {
+                        deco = `<canvas class="fire-canvas" aria-hidden="true"></canvas>`;
+                    } else if (b.num === "016") {
+                        deco = `<div class="water-surface" aria-hidden="true"></div><div class="water-deco" aria-hidden="true"></div>`;
+                    } else if (b.num === "017") {
+                        deco = `<div class="hw-deco" aria-hidden="true"><span class="hw-bat" style="--bx:10%;--bd:-0.2s;--bt:-12px"></span><span class="hw-bat" style="--bx:60%;--bd:-2.4s;--bt:-8px"></span><span class="hw-bat" style="--bx:34%;--bd:-1.2s;--bt:-10px"></span><span class="hw-skull"></span></div>`;
+                    } else if (b.num === "018") {
+                        deco = `<canvas class="frost-canvas" aria-hidden="true"></canvas>`;
+                    } else if (b.num === "019") {
+                        deco = `<div class="val-deco" aria-hidden="true"><span class="val-heart" style="--hx:8%;--hd:-0.1s;--hs:1em"></span><span class="val-heart" style="--hx:28%;--hd:-1.7s;--hs:1.4em"></span><span class="val-heart" style="--hx:52%;--hd:-0.8s;--hs:.85em"></span><span class="val-heart" style="--hx:72%;--hd:-2.3s;--hs:1.2em"></span><span class="val-heart" style="--hx:88%;--hd:-0.5s;--hs:.96em"></span><span class="val-rose"></span></div>`;
+                    }
 
-                return `<article class="news-card ${special.className || ""}" id="bulletin-${b.num}" onclick="window.location='${b.href}'">
-                    ${deco}
-                    <div class="news-card__image-wrapper">
-                        <img src="${b.img}" class="news-card__image" alt="Bulletin #${b.num}">
-                       <div class="news-card__badge">${special.badge || `#${b.num}`}</div>
-                        ${statusLabel ? `<div class="news-card__new">${statusLabel}</div>` : ""}
-                    </div>
-                    <div class="news-card__content">
-                        <div class="news-card__eyebrow">${special.eyebrow || "The Blox Bulletin"}</div>
-                        <h2 class="news-card__title">${special.title || `Bulletin #${b.num}`}</h2>
-                        <a href="${b.href}" class="news-card__button" onclick="event.stopPropagation()">${special.button || "Lire maintenant →"}</a>
-                    </div>
-                    <div class="news-card__bar"></div>
-                </article>`;
-            }).join("");
+                    return `<article class="news-card ${special.className || ""}" id="bulletin-${b.num}" onclick="window.location='${b.href}'">
+                        ${deco}
+                        <div class="news-card__image-wrapper">
+                            <img src="${b.img}" class="news-card__image" alt="Bulletin #${b.num}">
+                            <div class="news-card__badge">${special.badge || `#${b.num}`}</div>
+                            ${statusLabel ? `<div class="news-card__new">${statusLabel}</div>` : ""}
+                        </div>
+                        <div class="news-card__content">
+                            <div class="news-card__eyebrow">${special.eyebrow || "The Blox Bulletin"}</div>
+                            <h2 class="news-card__title">${special.title || `Bulletin #${b.num}`}</h2>
+                            <a href="${b.href}" class="news-card__button" onclick="event.stopPropagation()">${special.button || "Lire maintenant →"}</a>
+                        </div>
+                        <div class="news-card__bar"></div>
+                    </article>`;
+                }).join("");
+            }
 
-            // Mise à jour du texte
-            const info = `${currentPage} / ${totalPages}`;
+            // ── Pagination ───────────────────────────────────────────
+            const info = `${currentPage} / ${total}`;
             document.getElementById("page-info-top").textContent = info;
             document.getElementById("page-info-bot").textContent = info;
             document.getElementById("page-info-mobile").textContent = info;
 
-            // Désactivation des boutons
-            document.getElementById("prev-top").disabled = currentPage === 1;
-            document.getElementById("next-top").disabled = currentPage === totalPages;
-            document.getElementById("prev-bot").disabled = currentPage === 1;
-            document.getElementById("next-bot").disabled = currentPage === totalPages;
+            document.getElementById("prev-top").disabled    = currentPage === 1;
+            document.getElementById("next-top").disabled    = currentPage === total;
+            document.getElementById("prev-bot").disabled    = currentPage === 1;
+            document.getElementById("next-bot").disabled    = currentPage === total;
             document.getElementById("prev-mobile").disabled = currentPage === 1;
-            document.getElementById("next-mobile").disabled = currentPage === totalPages;
+            document.getElementById("next-mobile").disabled = currentPage === total;
+
             try { initCardTilt(); } catch (e) {}
             // 015 — Fire canvas
             document.querySelectorAll('.fire-canvas').forEach(cv => {
@@ -2023,7 +2076,8 @@
         }
 
         function changePage(dir) {
-            currentPage += dir;
+            const total = _totalPages();
+            currentPage = Math.max(1, Math.min(total, currentPage + dir));
             renderPage();
             window.scrollTo({ top: 0, behavior: "smooth" });
         }
@@ -2042,6 +2096,8 @@
         function goToHash() {
             const num = getHashBulletinNum();
             if (!num) return;
+            // Sortir du mode recherche si actif
+            if (_searchActive) exitSearchMode();
             const idx = bulletins.findIndex(b => b.num === num);
             if (idx === -1) return;
             const page = Math.floor(idx / PER_PAGE) + 1;
@@ -2151,96 +2207,91 @@
             return false;
         }
 
-        // ── SEARCH ──
+        // ── SEARCH (mode filtre) ─────────────────────────────────────
         let searchMatches = [];
         let searchCurrent = -1;
         function openSearch() {
             document.getElementById('searchOverlay').classList.add('is-active');
             const inp = document.getElementById('searchInput');
-            inp.value = '';
+            inp.value = _searchQuery; // pré-remplir avec la requête actuelle
             document.getElementById('searchStats').textContent = '';
             searchMatches = []; searchCurrent = -1;
-            removeHighlights();
-            setTimeout(() => inp.focus(), 200);
+            if (_searchQuery) _previewSearch(_searchQuery);
+            setTimeout(() => { inp.focus(); inp.select(); }, 200);
         }
-        function closeSearch(keepHl) {
+        function closeSearch() {
             document.getElementById('searchOverlay').classList.remove('is-active');
-            if (!keepHl) removeHighlights();
-            if (!keepHl) { searchMatches = []; searchCurrent = -1; }
         }
-        function removeHighlights() {
-            document.querySelectorAll('mark.search-hl').forEach(m => {
-                const p = m.parentNode;
-                p.replaceChild(document.createTextNode(m.textContent), m);
-                p.normalize();
-            });
-        }
-        function executeSearch() {
-            const q = document.getElementById('searchInput').value.trim().toLowerCase();
+        // Aperçu live dans l'overlay (sans filtrer la grille)
+        function _previewSearch(q) {
+            if (!q) { document.getElementById('searchStats').textContent = ''; return; }
             const stats = document.getElementById('searchStats');
-            searchMatches = []; searchCurrent = -1;
-            document.getElementById('searchPrevBtn').disabled = true;
-            document.getElementById('searchNextBtn').disabled = true;
-            if (!q) { stats.textContent = ''; return; }
-
-            // Rechercher dans TOUS les bulletins
-            const results = [];
-            bulletins.forEach(b => {
+            const results = bulletins.filter(b => {
                 const special = specialCards[b.num] || {};
-                const title = (special.title || `Bulletin #${b.num}`).toLowerCase();
-                const eyebrow = (special.eyebrow || 'The Blox Bulletin').toLowerCase();
-                const status = (special.status || '').toLowerCase();
-                if (title.includes(q) || eyebrow.includes(q) || status.includes(q) || b.num.includes(q)) {
-                    results.push(b);
-                }
+                return [
+                    special.title || `Bulletin #${b.num}`,
+                    special.eyebrow || '',
+                    special.status || '',
+                    b.num
+                ].some(s => s.toLowerCase().includes(q));
             });
-
             if (results.length > 0) {
-                stats.innerHTML = results.map((b, i) => {
+                stats.innerHTML = results.map(b => {
                     const special = specialCards[b.num] || {};
                     const label = special.title || `Bulletin #${b.num}`;
                     return `<div class="search-result-item" data-num="${b.num}">${label}</div>`;
                 }).join('');
-                document.getElementById('searchPrevBtn').disabled = results.length <= 1;
-                document.getElementById('searchNextBtn').disabled = results.length <= 1;
+                searchMatches = results;
             } else {
                 stats.innerHTML = '<div class="search-no-results">Aucun résultat</div>';
+                searchMatches = [];
             }
-            searchMatches = results;
         }
-        // Event delegation pour les résultats de recherche
+        // L'input live déclenche l'aperçu
+        document.getElementById('searchInput').addEventListener('input', e => {
+            _previewSearch(e.target.value.trim().toLowerCase());
+        });
+        function executeSearch() {
+            const q = document.getElementById('searchInput').value.trim().toLowerCase();
+            if (!q) { exitSearchMode(); closeSearch(); return; }
+            _searchQuery  = q;
+            _searchActive = true;
+            _filteredList = bulletins.filter(b => {
+                const special = specialCards[b.num] || {};
+                return [
+                    special.title || `Bulletin #${b.num}`,
+                    special.eyebrow || '',
+                    special.status || '',
+                    b.num
+                ].some(s => s.toLowerCase().includes(q));
+            });
+            currentPage = 1;
+            closeSearch();
+            renderPage();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        function exitSearchMode() {
+            _searchActive = false;
+            _searchQuery  = '';
+            _filteredList = null;
+            currentPage   = 1;
+            renderPage();
+        }
+        // Clic sur un résultat dans l'overlay → filtre + ferme
         document.getElementById('searchStats').addEventListener('click', e => {
             const item = e.target.closest('.search-result-item');
-            if (item && item.dataset.num) navigateToBulletin(item.dataset.num);
+            if (!item || !item.dataset.num) return;
+            // Chercher uniquement ce bulletin
+            document.getElementById('searchInput').value = item.dataset.num;
+            executeSearch();
         });
-        function navigateToBulletin(num) {
-            closeSearch();
-            const idx = bulletins.findIndex(b => b.num === num);
-            if (idx === -1) return;
-            currentPage = Math.floor(idx / PER_PAGE) + 1;
-            renderPage();
-            requestAnimationFrame(() => {
-                const el = document.getElementById('bulletin-' + num);
-                if (el) {
-                    el.classList.add('search-highlight-card');
-                    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    setTimeout(() => el.classList.remove('search-highlight-card'), 3000);
-                }
-            });
-        }
+        // Prev/next naviguent entre les pages filtrées
         function nextResult() {
-            if (!searchMatches.length) return;
-            searchCurrent = (searchCurrent + 1) % searchMatches.length;
-            const el = document.getElementById('searchStats').querySelectorAll('.search-result-item');
-            el.forEach((e,i) => e.classList.toggle('active', i === searchCurrent));
-            document.getElementById('searchStats').querySelector('.active')?.scrollIntoView({ block: 'nearest' });
+            const total = _totalPages();
+            if (currentPage < total) { currentPage++; renderPage(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
         }
         function prevResult() {
-            if (!searchMatches.length) return;
-            searchCurrent = (searchCurrent - 1 + searchMatches.length) % searchMatches.length;
-            const el = document.getElementById('searchStats').querySelectorAll('.search-result-item');
-            el.forEach((e,i) => e.classList.toggle('active', i === searchCurrent));
-            document.getElementById('searchStats').querySelector('.active')?.scrollIntoView({ block: 'nearest' });
+            if (currentPage > 1) { currentPage--; renderPage(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
         }
         document.addEventListener("keydown", e => {
             if (e.key === "Escape" && document.getElementById('searchOverlay')?.classList.contains('is-active')) closeSearch();

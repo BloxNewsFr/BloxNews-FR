@@ -3824,6 +3824,39 @@
     let _editMode  = false;
     let _editTarget = null;
 
+    // ── Rendu Markdown léger ─────────────────────────────────────────
+    function renderMarkdown(text) {
+        if (!text) return '';
+        let h = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+        h = h.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+        h = h.replace(/==(.+?)==/g,     '<mark style="background:rgba(255,218,0,0.38);color:inherit;padding:0 2px;border-radius:3px">$1</mark>');
+        h = h.replace(/__(.+?)__/g,     '<u>$1</u>');
+        h = h.replace(/~~(.+?)~~/g,     '<s>$1</s>');
+        h = h.replace(/\*(.+?)\*/g,     '<em>$1</em>');
+        return h;
+    }
+
+    // ── Insérer un marqueur autour de la sélection ───────────────────
+    function fmtWrap(marker) {
+        const ta = document.getElementById('editInlineTextarea');
+        if (!ta) return;
+        const s = ta.selectionStart, e = ta.selectionEnd;
+        const sel = ta.value.slice(s, e);
+        const before = ta.value.slice(0, s);
+        const after  = ta.value.slice(e);
+        if (sel) {
+            ta.value = before + marker + sel + marker + after;
+            ta.selectionStart = s;
+            ta.selectionEnd   = e + marker.length * 2;
+        } else {
+            const ph = '…';
+            ta.value = before + marker + ph + marker + after;
+            ta.selectionStart = s + marker.length;
+            ta.selectionEnd   = s + marker.length + ph.length;
+        }
+        ta.focus();
+    }
+
     function loadEdits() {
         try { return JSON.parse(localStorage.getItem(EDIT_KEY)) || {}; } catch { return {}; }
     }
@@ -3864,7 +3897,7 @@
         Object.entries(edits).forEach(([path, text]) => {
             try {
                 const el = document.querySelector(path.replace(/:nth\((\d+)\)/g, ':nth-child($1)'));
-                if (el) el.textContent = text;
+                if (el) el.innerHTML = renderMarkdown(text);
             } catch(e) {}
         });
     }
@@ -3883,7 +3916,6 @@
     function toggleEditMode() {
         const discordUser = _getDiscordUser();
         if (!discordUser || !ADMIN_DISCORD_USERS.includes(discordUser.username)) {
-            // Fermer silencieusement le panel si un non-admin l'a ouvert d'une façon ou d'une autre
             const panel = document.getElementById('editModePanel');
             if (panel?.classList.contains('is-open')) {
                 panel.classList.remove('is-open');
@@ -3917,12 +3949,11 @@
 
     document.addEventListener('click', e => {
         if (!_editMode) return;
-        // Ne pas interférer avec les clics à l'intérieur du popup d'édition
         if (e.target.closest('#editInlinePopup') || e.target.closest('#editModePanel')) return;
         const el = e.target.closest('[data-editable]');
         if (!el) return;
         e.preventDefault();
-        e.stopImmediatePropagation(); // empêche d'autres handlers document de voler le focus
+        e.stopImmediatePropagation();
         openEditInline(el, e.clientX, e.clientY);
     });
 
@@ -3932,16 +3963,17 @@
         const popup = document.getElementById('editInlinePopup');
         const textarea = document.getElementById('editInlineTextarea');
         if (!popup || !textarea) return;
-        textarea.value = el.textContent.trim();
+        // Lire le texte brut (avec marqueurs) depuis le stockage, pas l'innerHTML rendu
+        const path = el.dataset.editPath || getEditPath(el);
+        const edits = loadEdits();
+        textarea.value = (path in edits) ? edits[path] : el.textContent.trim();
         popup.classList.add('is-open');
         popup.style.display = 'block';
-        const pw = 300; const ph = 140;
+        const pw = 330; const ph = 200;
         let left = Math.min(x + 10, window.innerWidth - pw - 16);
         let top  = Math.min(y + 10, window.innerHeight - ph - 16);
         popup.style.left = left + 'px';
         popup.style.top  = top  + 'px';
-        // setTimeout 0 laisse le browser terminer le rendu du popup
-        // avant de donner le focus (sinon focus() échoue silencieusement)
         setTimeout(() => { textarea.focus(); textarea.select(); }, 0);
     }
     function closeEditInline() {
@@ -3953,11 +3985,12 @@
         if (!_editEl) return;
         const newText = document.getElementById('editInlineTextarea')?.value?.trim();
         if (newText === undefined) return;
-        const oldText  = _editEl.textContent.trim();
-        _editEl.textContent = newText;
+        const oldText = _editEl.textContent.trim();
+        // Rendre le markdown directement dans l'élément
+        _editEl.innerHTML = renderMarkdown(newText);
         const path  = _editEl.dataset.editPath || getEditPath(_editEl);
         const edits = loadEdits();
-        edits[path] = newText;
+        edits[path] = newText; // stocker le texte brut avec marqueurs
         saveEdits(edits);
         editLog('ok', `Sauvegardé : "${oldText.slice(0,22)}…"`);
         closeEditInline();
