@@ -2903,16 +2903,24 @@
     /* ─── Persistance ─── */
     function loadLocal() { try { return JSON.parse(localStorage.getItem("bloxleaks_comments")) || []; } catch { return []; } }
     function saveLocal() { try { localStorage.setItem("bloxleaks_comments", JSON.stringify(COMMENTS_DB)); } catch {} }
-    function saveDB()    {
-        saveLocal();
-        const clean = COMMENTS_DB.map(c => ({
-            ...c, likedByMe: false,
+function saveDB()    {
+    saveLocal();
+    const clean = COMMENTS_DB.map(c => {
+        // On clone l'objet pour ne pas modifier la base locale
+        const newC = {
+            ...c, 
+            likedByMe: false,
             reactions: c.reactions || {},
-            myReactions: undefined,
             replies: (c.replies||[]).map(r => ({...r, likedByMe: false}))
-        }));
-        FB_REF.set(clean);
-    }
+        };
+        // On supprime proprement la clé au lieu de passer 'undefined'
+        delete newC.myReactions; 
+        return newC;
+    });
+    
+    // On ajoute un .catch pour voir les futures erreurs Firebase dans la console
+    FB_REF.set(clean).catch(e => console.error("Firebase Error: ", e));
+}
 
     /* ─── Base de données & état ─── */
     const COMMENTS_DB = [];
@@ -3502,6 +3510,18 @@
         <a href="./neo_bulletin.html" class="active">Leaks</a>
     </div>
 
+
+        <div id="deleteModal" class="modal-overlay" onclick="if(event.target===this) closeDeleteModal()">
+        <div class="modal-content" style="max-width: 420px; padding: 24px; text-align: center; background: #0e0e18;">
+            <div style="font-size: 40px; margin-bottom: 12px;">🗑️</div>
+            <h3 style="color: #fff; font-family: 'LuckiestGuy Regular', cursive; margin-bottom: 8px; font-size: 20px; letter-spacing: 1px;">Supprimer ce commentaire ?</h3>
+            <p style="color: rgba(255,255,255,0.5); font-size: 13px; margin-bottom: 24px; font-family: 'Inter', sans-serif;">Cette action est définitive et retirera le message pour tout le monde.</p>
+            <div style="display: flex; gap: 12px; justify-content: center;">
+                <button class="ncm-btn-cancel" onclick="closeDeleteModal()">Annuler</button>
+                <button class="ncm-btn-create" onclick="confirmDelete()">Supprimer</button>
+            </div>
+        </div>
+    </div>
     <script>
     // ═══════════════════════════════════════════════════════════════
     //  SYSTÈME DE LIKE — POSTS  (compteur GLOBAL via Firebase)
