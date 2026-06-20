@@ -2967,9 +2967,9 @@
     })();
 
     /* ─── Droits ─── */
-    function canDelete(c)      { if (!currentUser) return false; return MODERATORS.includes(currentUser.username) || c.username === currentUser.username; }
-    function canDeleteReply(r) { if (!currentUser) return false; return MODERATORS.includes(currentUser.username) || r.username === currentUser.username; }
-    function isMod()           { return currentUser && MODERATORS.includes(currentUser.username); }
+    function canDelete(c)      { if (!window.currentUser) return false; return MODERATORS.includes(window.currentUser.username) || c.username === window.currentUser.username; }
+    function canDeleteReply(r) { if (!window.currentUser) return false; return MODERATORS.includes(window.currentUser.username) || r.username === window.currentUser.username; }
+    function isMod()           { return window.currentUser && MODERATORS.includes(window.currentUser.username); }
 
     /* ─── Helpers avatar / discord ─── */
     const COLORS = ["#ff1a1a","#5865F2","#00c278","#ff9500","#a200ff","#0099ff","#ff6b00"];
@@ -3160,11 +3160,11 @@
 
     /* ─── Poster commentaire ─── */
     function postComment() {
-        if (!currentUser) return;
+        if (!window.currentUser) return;
         const inp = document.getElementById("commentInput");
         const txt = inp.value.trim(); if (!txt) return;
-        COMMENTS_DB.unshift({ id: uid(), username: currentUser.username,
-            avatar: currentUser.avatar, text: txt, time: isoNow(),
+        COMMENTS_DB.unshift({ id: uid(), username: window.currentUser.username,
+            avatar: window.currentUser.avatar, text: txt, time: isoNow(),
             likes: 0, likedByMe: false, reactions: {}, myReactions: {}, replies: [] });
         saveDB();
         inp.value = ""; inp.style.height = "";
@@ -3257,13 +3257,13 @@
         if (box.classList.contains("is-open")) box.querySelector("textarea")?.focus();
     }
     function postReply(cid, boxId) {
-        if (!currentUser) return;
+        if (!window.currentUser) return;
         const box = document.getElementById(boxId);
         const inp = box?.querySelector("textarea");
         const txt = inp?.value.trim(); if (!txt) return;
         const c = COMMENTS_DB.find(x=>x.id===cid); if (!c) return;
-        c.replies.push({ id: uid(), username: currentUser.username,
-            avatar: currentUser.avatar, text: txt, time: isoNow(),
+        c.replies.push({ id: uid(), username: window.currentUser.username,
+            avatar: window.currentUser.avatar, text: txt, time: isoNow(),
             likes: 0, likedByMe: false });
         saveDB();
         if (inp) { inp.value=""; inp.style.height=""; }
