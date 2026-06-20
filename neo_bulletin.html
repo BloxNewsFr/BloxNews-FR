@@ -3147,6 +3147,7 @@
 
     /* ─── Login ─── */
     function discordLogin(user) {
+        console.log('discordLogin called with:', user);
         window.currentUser = user;
         window.discordCurrentUser = user;
         document.getElementById("discordBanner").style.display = "none";
@@ -3160,7 +3161,8 @@
 
     /* ─── Poster commentaire ─── */
     function postComment() {
-        if (!window.currentUser) return;
+        if (!window.currentUser) { console.warn('postComment: no currentUser', window.currentUser); return; }
+        console.log('postComment: posting as', window.currentUser.username);
         const inp = document.getElementById("commentInput");
         const txt = inp.value.trim(); if (!txt) return;
         COMMENTS_DB.unshift({ id: uid(), username: window.currentUser.username,
@@ -4501,6 +4503,7 @@
                     }
                 }
                 // Sync comment system
+                console.log('Navbar sync: calling discordLogin with cached user', cachedUser.username);
                 if (typeof discordLogin === 'function') discordLogin({ username: cachedUser.username, avatar: _discordAvatarUrl(cachedUser) });
                 else window.addEventListener('load', () => { if (typeof discordLogin === 'function') discordLogin({ username: cachedUser.username, avatar: _discordAvatarUrl(cachedUser) }); });
                 return;
