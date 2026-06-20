@@ -75,6 +75,7 @@
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.2);
             transition: background 0.5s cubic-bezier(0.4, 0, 0.2, 1), backdrop-filter 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
+        .site-header__logo { position: absolute; left: 55px; }
         /* Le logo ne change plus jamais de couleur */
         .site-header__logo img { 
             height: 42px; width: auto; display: block; filter: none !important; 
@@ -95,7 +96,7 @@
 
         .site-nav a { text-decoration: none; font-size: 17px; text-transform: uppercase; font-family: 'LuckiestGuy Regular', cursive; padding: 8px 16px; border-radius: 10px; }
         .site-nav a:hover { background: var(--color-primary); color: #000; }
-        .site-header__icons { display: flex; gap: 12px; cursor: pointer; align-items: center; position: relative; z-index: 1; }
+        .site-header__icons { display: flex; gap: 12px; cursor: pointer; align-items: center; position: absolute; right: 55px; }
         .site-header__icons span { padding: 8px; border-radius: 10px; transition: background 0.2s; }
         .site-header__icons span:hover { background: rgba(0,0,0,0.06); }
 
