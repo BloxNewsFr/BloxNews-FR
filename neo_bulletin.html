@@ -2903,26 +2903,26 @@
     /* ─── Persistance ─── */
     function loadLocal() { try { return JSON.parse(localStorage.getItem("bloxleaks_comments")) || []; } catch { return []; } }
     function saveLocal() { try { localStorage.setItem("bloxleaks_comments", JSON.stringify(COMMENTS_DB)); } catch {} }
+    function toArray(v) { if (Array.isArray(v)) return v; if (v && typeof v === 'object') return Object.values(v); return []; }
     function saveDB() {
     saveLocal();
     const clean = COMMENTS_DB.map(c => {
         const newC = {
-            ...c, 
+            ...c,
             likedByMe: false,
             reactions: c.reactions || {}
         };
-        delete newC.myReactions; // On nettoie le parent
-        
-        // On nettoie aussi TOUTES les réponses
-        newC.replies = (c.replies || []).map(r => {
+        delete newC.myReactions;
+
+        newC.replies = toArray(c.replies).map(r => {
             const newR = { ...r, likedByMe: false, reactions: r.reactions || {} };
-            delete newR.myReactions; // Le correctif manquant est ici !
+            delete newR.myReactions;
             return newR;
         });
-        
+
         return newC;
     });
-    
+
     FB_REF.set(clean).catch(e => console.error("Firebase Error: ", e));
 }
 
@@ -2950,14 +2950,15 @@
         COMMENTS_DB.forEach(c => {
             likes[c.id] = c.likedByMe;
             myReacts[c.id] = c.myReactions || {};
-            (c.replies||[]).forEach(r => { likes[`${c.id}_r${r.id}`] = r.likedByMe; });
+            toArray(c.replies).forEach(r => { likes[`${c.id}_r${r.id}`] = r.likedByMe; });
         });
         COMMENTS_DB.length = 0;
         val.forEach(c => {
+            c.replies     = toArray(c.replies);
             c.likedByMe   = !!likes[c.id];
             c.myReactions = myReacts[c.id] || {};
             c.reactions   = c.reactions || {};
-            (c.replies||[]).forEach(r => { r.likedByMe = !!likes[`${c.id}_r${r.id}`]; });
+            c.replies.forEach(r => { r.likedByMe = !!likes[`${c.id}_r${r.id}`]; });
             COMMENTS_DB.push(c);
         });
         saveLocal();
@@ -3239,30 +3240,33 @@
 
     /* ─── Suppression ─── */
     let _pendingDelete = null;
-function deleteComment(id) {
-    _pendingDelete = () => {
-        const i = COMMENTS_DB.findIndex(c => c.id === id);
-        if (i !== -1) { COMMENTS_DB.splice(i, 1); saveDB(); }
-        renderList();
-        renderModal();
-    };
-    openDeleteModal();
-}
+    function deleteComment(id) {
+        _pendingDelete = () => {
+            const i = COMMENTS_DB.findIndex(c => c.id === id);
+            if (i !== -1) { COMMENTS_DB.splice(i, 1); }
+            saveDB();
+            renderList();
+            renderModal();
+        };
+        openDeleteModal();
+    }
     function deleteReply(cid, rid) {
         _pendingDelete = () => {
             const c = COMMENTS_DB.find(x=>x.id===cid); if(!c) return;
+            c.replies = toArray(c.replies);
             const i = c.replies.findIndex(x=>x.id===rid);
-            if (i!==-1) { c.replies.splice(i,1); saveDB(); }
+            if (i !== -1) { c.replies.splice(i, 1); }
+            saveDB();
             renderList(); renderModal();
         };
         openDeleteModal();
     }
     function openDeleteModal()  { document.getElementById("deleteModal").classList.add("is-active"); document.body.style.overflow="hidden"; }
     function closeDeleteModal() { document.getElementById("deleteModal").classList.remove("is-active"); document.body.style.overflow=""; _pendingDelete=null; }
-function confirmDelete() {
-    try { if (_pendingDelete) _pendingDelete(); } catch(e) { console.error(e); }
-    closeDeleteModal();
-}
+    function confirmDelete() {
+        try { if (_pendingDelete) _pendingDelete(); } catch(e) { console.error('Delete error:', e); }
+        closeDeleteModal();
+    }
 
     /* ─── Répondre ─── */
     function toggleReplyBox(id) {
