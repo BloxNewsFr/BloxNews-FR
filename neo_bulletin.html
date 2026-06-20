@@ -3846,9 +3846,14 @@
     function toggleEditMode() {
         const discordUser = _getDiscordUser();
         if (!discordUser || !ADMIN_DISCORD_USERS.includes(discordUser.username)) {
-            editLog('err', '⛔ Accès réservé aux administrateurs Discord.');
+            // Fermer silencieusement le panel si un non-admin l'a ouvert d'une façon ou d'une autre
             const panel = document.getElementById('editModePanel');
-            if (!panel?.classList.contains('is-open')) return;
+            if (panel?.classList.contains('is-open')) {
+                panel.classList.remove('is-open');
+                _editMode = false;
+                document.body.classList.remove('edit-mode');
+            }
+            return;
         }
         _editMode = !_editMode;
         document.body.classList.toggle('edit-mode', _editMode);
@@ -3875,9 +3880,12 @@
 
     document.addEventListener('click', e => {
         if (!_editMode) return;
+        // Ne pas interférer avec les clics à l'intérieur du popup d'édition
+        if (e.target.closest('#editInlinePopup') || e.target.closest('#editModePanel')) return;
         const el = e.target.closest('[data-editable]');
         if (!el) return;
-        e.preventDefault(); e.stopPropagation();
+        e.preventDefault();
+        e.stopImmediatePropagation(); // empêche d'autres handlers document de voler le focus
         openEditInline(el, e.clientX, e.clientY);
     });
 
@@ -3895,8 +3903,9 @@
         let top  = Math.min(y + 10, window.innerHeight - ph - 16);
         popup.style.left = left + 'px';
         popup.style.top  = top  + 'px';
-        textarea.focus();
-        textarea.select();
+        // setTimeout 0 laisse le browser terminer le rendu du popup
+        // avant de donner le focus (sinon focus() échoue silencieusement)
+        setTimeout(() => { textarea.focus(); textarea.select(); }, 0);
     }
     function closeEditInline() {
         _editEl = null;
@@ -4348,8 +4357,14 @@
 
         const toast = document.getElementById('editModeToast');
         if (toast) {
-            setTimeout(() => { toast.classList.add('is-visible'); }, 1000);
-            setTimeout(() => { toast.classList.remove('is-visible'); }, 4500);
+            // Délai pour laisser le script OAuth initialiser _getDiscordUser
+            setTimeout(() => {
+                const _toastUser = typeof _getDiscordUser === 'function' ? _getDiscordUser() : null;
+                if (_toastUser && typeof ADMIN_DISCORD_USERS !== 'undefined' && ADMIN_DISCORD_USERS.includes(_toastUser.username)) {
+                    toast.classList.add('is-visible');
+                    setTimeout(() => { toast.classList.remove('is-visible'); }, 3500);
+                }
+            }, 1200);
         }
         document.querySelectorAll('.news-card__badge').forEach(badge => {
             if (badge.textContent.trim().toUpperCase().includes('NOUVEAU')) {
