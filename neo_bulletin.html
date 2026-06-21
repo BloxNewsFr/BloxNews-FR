@@ -1126,32 +1126,6 @@
 
 
         @keyframes spin{to{transform:rotate(360deg)}}
-        /* ── Mobile slider News ↔ Leaks ── */
-        @media (max-width: 768px) {
-            .main-content {
-                padding: 0;
-                overflow: hidden;
-                position: relative;
-                max-width: 100vw;
-            }
-            .slider-track {
-                display: flex;
-                width: 200%;
-                transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-                will-change: transform;
-            }
-            .slider-track.is-news {
-                transform: translateX(0%);
-            }
-            .slider-track.is-leaks {
-                transform: translateX(-50%);
-            }
-            .slider-panel {
-                width: 50%;
-                flex-shrink: 0;
-                padding: 0 16px 20px;
-            }
-        }
 
         /* ── Pilule switcher mobile (Neo Bulletin) ───────── */
         .mobile-switcher-pill { display: none; }
@@ -1624,6 +1598,102 @@
             line-height: 1.5;
         }
         #newCardModal .ncm-preview-hint strong { color: rgba(255,255,255,0.45); }
+
+        /* ── Previews spécifiques par type ── */
+        /* Standard : card normale (déjà stylée par .ncm-card) */
+        #ncmPreviewStandard { display: block; }
+        #ncmPreviewMessage  { display: none; }
+        #ncmPreviewActus    { display: none; }
+
+        /* Preview MESSAGE — calque la vraie carte message */
+        .ncm-msg-preview {
+            border-radius: 16px; overflow: hidden;
+            background: #111; border: 1px solid rgba(255,255,255,0.07);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+        .ncm-msg-header {
+            height: 90px; display: flex; align-items: center; justify-content: center;
+            background: #111;
+            color: #ff8800; font-family: 'LuckiestGuy Regular', cursive;
+            font-size: 38px; letter-spacing: 1px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            position: relative; overflow: hidden;
+            cursor: text;
+        }
+        .ncm-msg-header::before {
+            content: ''; position: absolute; inset: 0;
+            background: radial-gradient(ellipse at center, rgba(255,136,0,0.08) 0%, transparent 70%);
+        }
+        .ncm-msg-body { padding: 14px; background: #fff; }
+        .ncm-msg-eyebrow {
+            font-size: 10px; font-weight: 800; text-transform: uppercase;
+            letter-spacing: 0.8px; color: #999; margin-bottom: 5px;
+        }
+        .ncm-msg-title {
+            font-family: 'LuckiestGuy Regular', cursive; font-size: 16px;
+            color: #111; margin-bottom: 8px; line-height: 1.2;
+        }
+        .ncm-msg-text {
+            font-size: 12px; color: #555; line-height: 1.55; margin-bottom: 12px;
+            min-height: 36px; outline: none;
+            border: 1.5px dashed transparent; border-radius: 6px; padding: 2px 4px;
+            transition: border-color 0.15s;
+        }
+        .ncm-msg-text:hover, .ncm-msg-text:focus { border-color: rgba(124,58,237,0.4); }
+        .ncm-msg-btn {
+            display: inline-block; background: #111; color: #fff;
+            padding: 7px 16px; border-radius: 100px; font-size: 12px;
+            font-weight: 700; font-family: 'Inter', sans-serif; cursor: default;
+        }
+
+        /* Preview ACTUS — calque le secret-bulletin */
+        .ncm-actus-preview {
+            border-radius: 16px; overflow: hidden;
+            background: linear-gradient(135deg, #fff 0%, #fff9f9 100%);
+            border-left: 8px solid #ff1a1a;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+            padding: 20px; position: relative;
+        }
+        .ncm-actus-preview::before {
+            content: 'TOP SECRET'; position: absolute; bottom: 12px; right: 12px;
+            color: rgba(255,26,26,0.07); font-size: 28px; font-weight: 900;
+            transform: rotate(12deg); pointer-events: none;
+            font-family: 'LuckiestGuy Regular', cursive;
+            border: 3px solid rgba(255,26,26,0.07); padding: 6px 12px; border-radius: 8px;
+        }
+        .ncm-actus-header {
+            display: flex; justify-content: space-between; align-items: flex-start;
+            gap: 12px; border-bottom: 2px dashed #e0e0e0; padding-bottom: 12px; margin-bottom: 14px;
+        }
+        .ncm-actus-h2 {
+            font-family: 'LuckiestGuy Regular', cursive; font-size: 16px; color: #111;
+            line-height: 1.2; flex: 1; min-width: 0; outline: none;
+            border: 1.5px dashed transparent; border-radius: 6px; padding: 2px 4px;
+            transition: border-color 0.15s;
+        }
+        .ncm-actus-h2:hover, .ncm-actus-h2:focus { border-color: rgba(124,58,237,0.4); }
+        .ncm-actus-meta {
+            font-size: 10px; font-weight: 700; color: #999; text-align: right;
+            text-transform: uppercase; line-height: 1.7; flex-shrink: 0;
+            background: rgba(255,26,26,0.04); border: 1px solid rgba(255,26,26,0.1);
+            border-radius: 8px; padding: 5px 8px;
+        }
+        .ncm-actus-text {
+            font-size: 12px; color: #333; line-height: 1.6; outline: none;
+            border: 1.5px dashed transparent; border-radius: 6px; padding: 2px 4px;
+            transition: border-color 0.15s; min-height: 44px;
+        }
+        .ncm-actus-text:hover, .ncm-actus-text:focus { border-color: rgba(124,58,237,0.4); }
+        .ncm-actus-comments {
+            margin-top: 14px; display: flex; align-items: center; gap: 10px;
+            padding: 10px 14px; background: #f8f8f8; border-radius: 12px;
+            border: 1px solid #eee; font-size: 12px; color: #555;
+        }
+        .ncm-actus-comments-icon {
+            width: 28px; height: 28px; border-radius: 8px;
+            background: linear-gradient(135deg, #ff1a1a, #ff5555);
+            display: flex; align-items: center; justify-content: center; color: #fff; font-size: 12px;
+        }
 
         /* Colonne droite — Formulaire */
         #newCardModal .ncm-form-col {
@@ -2698,22 +2768,57 @@
                 <!-- Colonne prévisualisation -->
                 <div class="ncm-preview-col">
                     <div class="ncm-preview-label">Aperçu</div>
-                    <div class="ncm-card">
-                        <div class="ncm-card-img" id="ncmDropZone" onclick="document.getElementById('ncmFileInput').click()">
-                            <div class="ncm-card-empty" id="ncmDropHint">
-                                <div class="ncm-card-empty-icon">🖼️</div>
-                                <div class="ncm-card-empty-text">Glisse une image<br>ou clique ici</div>
+
+                    <!-- Preview STANDARD (leak) -->
+                    <div id="ncmPreviewStandard">
+                        <div class="ncm-card">
+                            <div class="ncm-card-img" id="ncmDropZone" onclick="document.getElementById('ncmFileInput').click()">
+                                <div class="ncm-card-empty" id="ncmDropHint">
+                                    <div class="ncm-card-empty-icon">🖼️</div>
+                                    <div class="ncm-card-empty-text">Glisse une image<br>ou clique ici</div>
+                                </div>
+                                <div class="ncm-card-badge" contenteditable="true" id="ncmEditBadge" spellcheck="false">EXCLU</div>
                             </div>
-                            <div class="ncm-card-badge" contenteditable="true" id="ncmEditBadge" spellcheck="false">EXCLU</div>
-                        </div>
-                        <input type="file" id="ncmFileInput" accept="image/*" style="display:none" onchange="_ncmFileSelected(this)">
-                        <div class="ncm-card-body">
-                            <div class="ncm-card-eyebrow" contenteditable="true" id="ncmEditEyebrow" spellcheck="false">Leak</div>
-                            <h2 class="ncm-card-title" contenteditable="true" id="ncmEditTitle" spellcheck="false">Titre de la carte</h2>
-                            <div class="ncm-card-btn" contenteditable="true" id="ncmEditBtn" spellcheck="false">Voir l'image →</div>
+                            <input type="file" id="ncmFileInput" accept="image/*" style="display:none" onchange="_ncmFileSelected(this)">
+                            <div class="ncm-card-body">
+                                <div class="ncm-card-eyebrow" contenteditable="true" id="ncmEditEyebrow" spellcheck="false">Leak</div>
+                                <h2 class="ncm-card-title" contenteditable="true" id="ncmEditTitle" spellcheck="false">Titre de la carte</h2>
+                                <div class="ncm-card-btn" contenteditable="true" id="ncmEditBtn" spellcheck="false">Voir l'image →</div>
+                            </div>
                         </div>
                     </div>
-                    <div class="ncm-preview-hint">
+
+                    <!-- Preview MESSAGE -->
+                    <div id="ncmPreviewMessage">
+                        <div class="ncm-msg-preview">
+                            <div class="ncm-msg-header" contenteditable="true" id="ncmMsgInitials" spellcheck="false">E.</div>
+                            <div class="ncm-msg-body">
+                                <div class="ncm-msg-eyebrow">Cryptage</div>
+                                <div class="ncm-msg-title" contenteditable="true" id="ncmMsgTitle" spellcheck="false">Message de E. - Quake</div>
+                                <div class="ncm-msg-text" contenteditable="true" id="ncmMsgText" spellcheck="false">Écris le contenu du message ici…</div>
+                                <div class="ncm-msg-btn">Décrypter →</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Preview ACTUS -->
+                    <div id="ncmPreviewActus">
+                        <div class="ncm-actus-preview">
+                            <div class="ncm-actus-header">
+                                <div class="ncm-actus-h2" contenteditable="true" id="ncmActusTitle" spellcheck="false">DOSSIER #001 : TITRE DU DOSSIER</div>
+                                <div class="ncm-actus-meta">STATUT : ACTIF<br>DATE : MAI 2026</div>
+                            </div>
+                            <div class="ncm-actus-text" contenteditable="true" id="ncmActusText" spellcheck="false">Écris le contenu du dossier ici. Tu peux utiliser **gras**, ==surligné==, __souligné__…</div>
+                            <div class="ncm-actus-comments">
+                                <div class="ncm-actus-comments-icon">
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.002.022.015.043.033.055a19.91 19.91 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
+                                </div>
+                                Commentaires — section incluse automatiquement
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ncm-preview-hint" id="ncmPreviewHint">
                         Clique sur le <strong>badge</strong>, le <strong>titre</strong> ou le <strong>bouton</strong> pour les modifier directement.
                     </div>
                 </div>
@@ -4396,7 +4501,6 @@
     function _renderOneCard(card) {
         const section = document.getElementById(card.sectionId);
         if (!section) return;
-        // Évite les doublons
         if (document.querySelector(`[data-cc-id="${card.id}"]`)) return;
         let grid = section.querySelector('.news-grid');
         if (!grid) {
@@ -4406,41 +4510,89 @@
             if (ref) ref.after(grid); else section.appendChild(grid);
         }
         const e = _ccEsc;
-        const mediaTag = card.mediaType === 'video'
-            ? `<video src="${e(card.src)}#t=1" class="news-card__image" preload="metadata" muted playsinline></video>`
-            : `<img src="${e(card.src)}" class="news-card__image" alt="${e(card.title)}">`;
-        const btnLabel = e(card.btnLabel || "Voir l'image →");
-        const btnHtml = card.mediaType === 'video'
-            ? `<button class="news-card__button open-modal-btn" data-type="video" data-src="${e(card.src)}">${btnLabel}</button>`
-            : `<button class="news-card__button open-modal-btn" data-type="image" data-src="${e(card.src)}">${btnLabel}</button>`;
-        const html = `<article class="news-card" data-cc-id="${card.id}">
-            <div class="news-card__image-wrapper">
-                ${mediaTag}
-                <div class="news-card__badge">${e(card.badge)}</div>
-            </div>
-            <div class="news-card__content">
-                <div class="news-card__eyebrow">${e(card.eyebrow)}</div>
-                <h2 class="news-card__title">${e(card.title)}</h2>
-                ${btnHtml}
-            </div>
-        </article>`;
+        let html = '';
+
+        if (card.kind === 'message') {
+            // ── Carte MESSAGE (style existant des cartes message) ──────
+            const initials = e(card.msgInitials || card.badge || '?');
+            html = `<article class="news-card" data-cc-id="${card.id}">
+                <div class="news-card__image-wrapper" style="padding-top:30%;">
+                    <div style="position:absolute;inset:0;background:#111;display:flex;align-items:center;justify-content:center;color:#ff8800;font-family:'LuckiestGuy Regular',cursive;font-size:40px;">${initials}</div>
+                </div>
+                <div class="news-card__content">
+                    <div class="news-card__eyebrow">Cryptage</div>
+                    <h2 class="news-card__title">${e(card.title)}</h2>
+                    <p style="color:#555;margin-bottom:15px;font-size:14px;">${e(card.msgText || '')}</p>
+                    <button class="news-card__button news-card__button--disabled">Décrypter →</button>
+                </div>
+                <div class="news-card__bar"></div>
+            </article>`;
+
+        } else if (card.kind === 'actus') {
+            // ── Carte ACTUS (style secret-bulletin) ───────────────────
+            const now = new Date();
+            const mois = ['JAN','FÉV','MAR','AVR','MAI','JUN','JUL','AOÛ','SEP','OCT','NOV','DÉC'][now.getMonth()];
+            const date = `${mois} ${now.getFullYear()}`;
+            const contentRendered = typeof renderMarkdown === 'function'
+                ? renderMarkdown(card.actusText || card.msgText || '')
+                : e(card.actusText || '');
+            html = `<div class="secret-bulletin" data-cc-id="${card.id}" style="margin-bottom:24px;">
+                <div class="bulletin-header">
+                    <h2>${e(card.title)}</h2>
+                    <div class="bulletin-meta">STATUT : ACTIF<br>DATE : ${date}</div>
+                </div>
+                <div class="bulletin-content">
+                    <p>${contentRendered}</p>
+                </div>
+            </div>`;
+            // Pour les actus on insère dans la section (pas dans une grid)
+            const tmp2 = document.createElement('div');
+            tmp2.innerHTML = html.trim();
+            const actusEl = tmp2.firstChild;
+            section.appendChild(actusEl);
+            return; // sortie anticipée, pas de like card footer
+
+        } else {
+            // ── Carte STANDARD (leak / image / vidéo) ─────────────────
+            const mediaTag = card.mediaType === 'video'
+                ? `<video src="${e(card.src)}#t=1" class="news-card__image" preload="metadata" muted playsinline></video>`
+                : `<img src="${e(card.src)}" class="news-card__image" alt="${e(card.title)}">`;
+            const btnLabel = e(card.btnLabel || "Voir l'image →");
+            const btnHtml  = card.mediaType === 'video'
+                ? `<button class="news-card__button open-modal-btn" data-type="video" data-src="${e(card.src)}">${btnLabel}</button>`
+                : `<button class="news-card__button open-modal-btn" data-type="image" data-src="${e(card.src)}">${btnLabel}</button>`;
+            html = `<article class="news-card" data-cc-id="${card.id}">
+                <div class="news-card__image-wrapper">
+                    ${mediaTag}
+                    <div class="news-card__badge">${e(card.badge)}</div>
+                </div>
+                <div class="news-card__content">
+                    <div class="news-card__eyebrow">${e(card.eyebrow)}</div>
+                    <h2 class="news-card__title">${e(card.title)}</h2>
+                    ${btnHtml}
+                </div>
+                <div class="news-card__bar"></div>
+            </article>`;
+        }
+
         const tmp = document.createElement('div');
         tmp.innerHTML = html.trim();
         const el = tmp.firstChild;
         if (grid.firstChild) grid.insertBefore(el, grid.firstChild);
         else grid.appendChild(el);
-        // Like button
-        const imgEl = el.querySelector('.news-card__image');
-        const srcAttr = imgEl ? (imgEl.getAttribute('src') || '') : '';
-        const likeId = 'card-' + _plSlug(card.title + '-' + srcAttr);
-        const local = _plLoadLocal();
-        const liked = (local[likeId] || {}).liked || false;
+
+        // Like button (cartes standard et message seulement)
+        const likeId = 'card-' + _plSlug(card.title + '-' + (card.src || card.id));
+        const local  = _plLoadLocal();
+        const liked  = (local[likeId] || {}).liked || false;
         const btnLike = _plMakeBtn(likeId, liked, _plGlobalCounts[likeId] || 0);
         const content = el.querySelector('.news-card__content');
-        const footer = document.createElement('div');
-        footer.className = 'post-like-card-footer';
-        footer.appendChild(btnLike);
-        content.appendChild(footer);
+        if (content) {
+            const footer = document.createElement('div');
+            footer.className = 'post-like-card-footer';
+            footer.appendChild(btnLike);
+            content.appendChild(footer);
+        }
         // Rebind modale
         el.querySelectorAll('.open-modal-btn').forEach(btn => {
             btn.addEventListener('click', _modalBtnHandler);
@@ -4547,27 +4699,45 @@
         document.getElementById('ncmPillVideo')?.classList.toggle('active', isVideo);
     }
     function _ncmKindChange() {
-        const kind = document.querySelector('#newCardModal input[name="ncmKind"]:checked')?.value || 'standard';
+        const kind      = document.querySelector('#newCardModal input[name="ncmKind"]:checked')?.value || 'standard';
         const isActus   = kind === 'actus';
         const isMessage = kind === 'message';
-        const isSpecial = isActus || isMessage;
 
-        // Section : fixe pour actus/message, choisissable pour standard
+        // Afficher le bon preview
+        document.getElementById('ncmPreviewStandard').style.display = (!isActus && !isMessage) ? '' : 'none';
+        document.getElementById('ncmPreviewMessage').style.display  = isMessage ? '' : 'none';
+        document.getElementById('ncmPreviewActus').style.display    = isActus   ? '' : 'none';
+
+        // Champ section : masqué si actus/message (section fixe)
         const secField = document.getElementById('ncmSectionField');
-        if (secField) secField.style.display = isSpecial ? 'none' : '';
+        if (secField) secField.style.display = (isActus || isMessage) ? 'none' : '';
 
-        // Champ contenu texte (actus only)
+        // Champ contenu texte : visible si actus
         const actusField = document.getElementById('ncmActusField');
         if (actusField) actusField.style.display = isActus ? '' : 'none';
 
-        // Mise à jour label preview
-        document.getElementById('ncmEditEyebrow').textContent = isActus ? 'Actus' : (isMessage ? 'Message' : 'Leak');
-        document.getElementById('ncmEditBtn').textContent = isActus ? 'Lire →' : (isMessage ? 'Voir le message →' : "Voir l'image →");
+        // Hint différent selon le type
+        const hint = document.getElementById('ncmPreviewHint');
+        if (hint) {
+            if (isMessage) hint.innerHTML = 'Clique sur les <strong>initiales</strong>, le <strong>titre</strong> ou le <strong>texte</strong> pour les modifier.';
+            else if (isActus) hint.innerHTML = 'Clique sur le <strong>titre</strong> ou le <strong>texte</strong> pour les modifier. Les commentaires sont ajoutés automatiquement.';
+            else hint.innerHTML = 'Clique sur le <strong>badge</strong>, le <strong>titre</strong> ou le <strong>bouton</strong> pour les modifier directement.';
+        }
 
         // Adapter les pills Kind
         document.querySelectorAll('#newCardModal label[id^="ncmKind"]').forEach(l => l.classList.remove('active'));
-        const activeKind = document.getElementById('ncmKind' + kind.charAt(0).toUpperCase() + kind.slice(1));
-        if (activeKind) activeKind.classList.add('active');
+        const k = kind.charAt(0).toUpperCase() + kind.slice(1);
+        document.getElementById('ncmKind' + k)?.classList.add('active');
+
+        // Sync les champs "badge" et "titre" vers l'input de droite (pour submit)
+        if (isMessage) {
+            // Pour message, le titre vient de ncmMsgTitle
+            const inp = document.getElementById('ncmTitleInput');
+            if (inp) inp.value = document.getElementById('ncmMsgTitle')?.textContent || '';
+        } else if (isActus) {
+            const inp = document.getElementById('ncmTitleInput');
+            if (inp) inp.value = document.getElementById('ncmActusTitle')?.textContent || '';
+        }
     }
 
     function _cmdNew() {
@@ -4580,33 +4750,41 @@
             document.querySelectorAll('.category-section:not(#cat-actus):not(#cat-messages)').forEach(sec => {
                 const opt = document.createElement('option');
                 opt.value = sec.id;
-                opt.textContent = sec.id.replace('cat-','');
+                opt.textContent = sec.id.replace('cat-', '');
                 sel.appendChild(opt);
             });
             if (prev && [...sel.options].some(o => o.value === prev)) sel.value = prev;
         }
-        // Reset kind to standard
+        // Reset kind → standard
         const kindRadio = document.querySelector('#newCardModal input[name="ncmKind"][value="standard"]');
-        if (kindRadio) kindRadio.checked = true;
-        _ncmKindChange();
+        if (kindRadio) { kindRadio.checked = true; _ncmKindChange(); }
 
+        // Reset media type → image
         const imgRadio = document.querySelector('#newCardModal input[name="ncmType"][value="image"]');
         if (imgRadio) imgRadio.checked = true;
         _ncmTypeChange();
-        document.getElementById('ncmEditBadge').textContent = 'EXCLU';
-        document.getElementById('ncmEditEyebrow').textContent = 'Leak';
-        document.getElementById('ncmEditTitle').textContent = 'Titre de la carte';
-        document.getElementById('ncmEditBtn').textContent = "Voir l'image →";
-        const badgeInput = document.getElementById('ncmBadgeInput');
-        const titleInput = document.getElementById('ncmTitleInput');
-        if (badgeInput) badgeInput.value = '';
-        if (titleInput) titleInput.value = '';
-        const videoInput = document.getElementById('ncmSrc');
-        if (videoInput) videoInput.value = '';
-        const actusContent = document.getElementById('ncmActusContent');
-        if (actusContent) actusContent.value = '';
+
+        // Reset champs standard
+        const badge = document.getElementById('ncmEditBadge'); if (badge) badge.textContent = 'EXCLU';
+        const eye   = document.getElementById('ncmEditEyebrow'); if (eye) eye.textContent = 'Leak';
+        const tit   = document.getElementById('ncmEditTitle'); if (tit) tit.textContent = 'Titre de la carte';
+        const btn   = document.getElementById('ncmEditBtn'); if (btn) btn.textContent = "Voir l'image →";
+
+        // Reset champs message
+        const msgInit = document.getElementById('ncmMsgInitials'); if (msgInit) msgInit.textContent = 'E.';
+        const msgTit  = document.getElementById('ncmMsgTitle'); if (msgTit) msgTit.textContent = 'Message de E. - Quake';
+        const msgTxt  = document.getElementById('ncmMsgText'); if (msgTxt) msgTxt.textContent = 'Écris le contenu du message ici…';
+
+        // Reset champs actus
+        const actTit  = document.getElementById('ncmActusTitle'); if (actTit) actTit.textContent = 'DOSSIER #001 : TITRE DU DOSSIER';
+        const actTxt  = document.getElementById('ncmActusText'); if (actTxt) actTxt.textContent = 'Écris le contenu du dossier ici…';
+        const actCont = document.getElementById('ncmActusContent'); if (actCont) actCont.value = '';
+
+        const videoInput = document.getElementById('ncmSrc'); if (videoInput) videoInput.value = '';
+        const bi = document.getElementById('ncmBadgeInput'); if (bi) bi.value = '';
+        const ti = document.getElementById('ncmTitleInput'); if (ti) ti.value = '';
+
         _ncmInitDropZone();
-        setTimeout(() => document.getElementById('ncmEditBadge')?.focus(), 100);
         document.getElementById('newCardModal')?.classList.add('is-open');
     }
 
@@ -4621,21 +4799,48 @@
         else if (isMessage) sectionId = 'cat-messages';
         else                sectionId = document.getElementById('ncmSection')?.value;
 
-        const badge     = document.getElementById('ncmEditBadge')?.textContent?.trim();
-        const title     = document.getElementById('ncmEditTitle')?.textContent?.trim();
-        const eyebrow   = document.getElementById('ncmEditEyebrow')?.textContent?.trim() || (isActus ? 'Actus' : 'Leak');
-        const btnLabel  = document.getElementById('ncmEditBtn')?.textContent?.trim() || "Voir l'image →";
         const mediaType = document.querySelector('#newCardModal input[name="ncmType"]:checked')?.value || 'image';
-        const src       = mediaType === 'video' ? (document.getElementById('ncmSrc')?.value?.trim() || '') : _ncmImageData;
-        const actusText = document.getElementById('ncmActusContent')?.value?.trim() || '';
 
-        if (!sectionId || !badge || !title || (!src && !isActus)) {
-            editLog('err', isActus ? 'Remplis au moins Badge et Titre.' : 'Remplis au moins Badge, Titre et Image.'); return;
+        // Lire les données selon le type
+        let badge, title, eyebrow, btnLabel, src, actusText, msgInitials, msgText;
+
+        if (isMessage) {
+            msgInitials = document.getElementById('ncmMsgInitials')?.textContent?.trim() || 'E.';
+            title       = document.getElementById('ncmMsgTitle')?.textContent?.trim() || 'Message';
+            msgText     = document.getElementById('ncmMsgText')?.textContent?.trim() || '';
+            badge       = 'Cryptage';
+            eyebrow     = 'Cryptage';
+            btnLabel    = 'Décrypter →';
+            src         = '';
+        } else if (isActus) {
+            title       = document.getElementById('ncmActusTitle')?.textContent?.trim() || 'Dossier';
+            actusText   = document.getElementById('ncmActusText')?.textContent?.trim()
+                       || document.getElementById('ncmActusContent')?.value?.trim() || '';
+            badge       = document.getElementById('ncmEditBadge')?.textContent?.trim() || 'ACTUS';
+            eyebrow     = 'Actus';
+            btnLabel    = 'Lire →';
+            src         = '';
+        } else {
+            badge    = document.getElementById('ncmEditBadge')?.textContent?.trim();
+            title    = document.getElementById('ncmEditTitle')?.textContent?.trim();
+            eyebrow  = document.getElementById('ncmEditEyebrow')?.textContent?.trim() || 'Leak';
+            btnLabel = document.getElementById('ncmEditBtn')?.textContent?.trim() || "Voir l'image →";
+            src      = mediaType === 'video' ? (document.getElementById('ncmSrc')?.value?.trim() || '') : _ncmImageData;
         }
+
+        if (!sectionId)             { editLog('err', 'Section introuvable.'); return; }
+        if (!title)                 { editLog('err', 'Le titre est requis.'); return; }
+        if (!isActus && !isMessage && !src) { editLog('err', 'Image ou URL vidéo requise.'); return; }
         if (!document.getElementById(sectionId)) { editLog('err', 'Section introuvable.'); return; }
 
         const cardId  = 'cc_' + Date.now();
-        const newCard = { id: cardId, sectionId, badge, title, src: src || '', eyebrow, btnLabel, mediaType, kind, actusText };
+        const newCard = {
+            id: cardId, sectionId, badge, title, src: src || '',
+            eyebrow, btnLabel, mediaType, kind,
+            actusText: actusText || '',
+            msgInitials: msgInitials || '',
+            msgText: msgText || ''
+        };
 
         if (FB_CC_REF) {
             FB_CC_REF.transaction(current => {
@@ -4652,10 +4857,10 @@
         _sortAllSections();
 
         const e = _ccEsc;
-        editLog('ok', `Nouvelle carte "${kind}" créée dans ${sectionId} : ${title}`);
+        editLog('ok', `Carte "${kind}" créée dans ${sectionId} : ${title}`);
         const toast = document.getElementById('newCardToast');
         if (toast) {
-            toast.innerHTML = `<span class="toast-badge">${e(badge)}</span><span class="toast-title">${e(title)}</span>`;
+            toast.innerHTML = `<span class="toast-badge">${e(badge || kind)}</span><span class="toast-title">${e(title)}</span>`;
             toast.classList.add('is-visible');
             clearTimeout(toast._hide);
             toast._hide = setTimeout(() => toast.classList.remove('is-visible'), 2500);
