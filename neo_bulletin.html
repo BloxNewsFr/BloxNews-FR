@@ -38,8 +38,136 @@
         /* ── FOND DU SITE ── */
         .site-background { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; z-index: -1; pointer-events: none; }
         .site-background img { width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; }
-        @media (max-width: 768px) { .site-background { display: none; } }
+        /* ═══════════════════════════════════════════════════
+           ADAPTATION MOBILE — REFONTE COMPLÈTE
+        ═══════════════════════════════════════════════════ */
+        @media (max-width: 768px) {
+            /* ── Layout global ── */
+            .site-background { display: none; }
+            .site-header { padding: 10px 16px; }
+            .site-nav, .desktop-tabs { display: none; }
+            .mobile-menu-btn { display: block; }
+            .mobile-nav-dropdown { display: flex; }
+            .main-content { padding: 14px 12px 100px; }
+            .mobile-nav-dropdown a.nav-news { color: #1a73e8; }
+            .mobile-nav-dropdown a.nav-leaks { color: #d93025; }
 
+            /* ── Secret bulletin / actus ── */
+            .secret-bulletin { padding: 22px 18px; border-radius: 16px; }
+            .secret-bulletin::before { font-size: 30px; bottom: 10px; right: 10px; }
+            .bulletin-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+            .bulletin-header h2 { font-size: 22px; }
+            .bulletin-meta { text-align: left; white-space: normal; font-size: 11px; }
+            .bulletin-content p { font-size: 14px; }
+
+            /* ── Grille de cartes ── */
+            .news-grid { grid-template-columns: 1fr; gap: 16px; padding: 0; }
+            .news-card { border-radius: 18px; }
+
+            /* ── MODAL / LIGHTBOX — centrage corrigé ── */
+            .modal-overlay {
+                padding: 0;
+                align-items: flex-end;          /* sheet du bas sur mobile */
+            }
+            .modal-content {
+                width: 100%; max-width: 100%;
+                border-radius: 20px 20px 0 0;   /* feuille du bas */
+                margin: 0;
+                max-height: 92dvh; overflow-y: auto;
+                transform: translateY(20px);
+            }
+            .modal-overlay.is-active .modal-content { transform: translateY(0); }
+            .modal-media-zone { aspect-ratio: 4/3; min-height: 180px; }
+            .modal-media-zone img { object-fit: contain; max-height: 45vh; }
+            .modal-info-footer { flex-direction: column; align-items: flex-start; gap: 8px; padding: 12px 16px; }
+            .modal-close-float { top: 10px; right: 10px; width: 30px; height: 30px; }
+            .modal-content-display { padding: 14px 16px 4px; }
+
+            /* ── Lightbox modale commentaires ── */
+            .comments-modal-overlay { align-items: flex-end; padding: 0; }
+            .comments-modal { width: 100%; max-width: 100%; max-height: 92dvh; border-radius: 20px 20px 0 0; }
+            .comments-modal__header { padding: 14px 16px; }
+            .comments-modal__title { font-size: 15px; }
+            .comments-modal__body { padding: 12px 12px; gap: 10px; }
+
+            /* ── Leaks banner & tabs ── */
+            .leaks-banner { font-size: 20px; padding: 10px 20px; margin: 12px 0 6px; }
+            .category-section { margin-bottom: 32px; }
+
+            /* ── Sort toggle ── */
+            .category-title { font-size: 22px; gap: 12px; margin-bottom: 20px; }
+            .sort-toggle button { padding: 4px 10px; font-size: 10px; }
+
+            /* ── Commentaires ── */
+            .comment-section { margin-top: 14px; }
+            .comment-toggle-bar { padding: 10px 14px; gap: 10px; }
+            .comment-toggle-bar__label { font-size: 13px; }
+            .comment-toggle-bar__icon { width: 32px; height: 32px; border-radius: 10px; }
+            .comment-body { padding: 14px 12px; }
+            .comment-write-box { gap: 8px; }
+            .comment-input { padding: 9px 72px 9px 12px; font-size: 13px; min-height: 40px; }
+            .comment-submit { padding: 5px 12px; font-size: 11px; right: 6px; bottom: 6px; }
+            .comment-item { gap: 8px; }
+            .comment-item__body { padding: 10px 12px 9px; }
+            .comment-item__header { flex-wrap: wrap; gap: 3px; }
+            .comment-item__time { font-size: 10px; margin-left: 0; width: 100%; order: 5; }
+            .comment-item__text { font-size: 13px; }
+            .comment-item__actions { gap: 4px; }
+            .comment-btn { font-size: 11px; padding: 3px 8px; }
+            .comment-login-banner { flex-wrap: wrap; gap: 8px; padding: 10px 12px; margin-bottom: 14px; }
+            .comment-login-banner__title { font-size: 13px; }
+            .comment-login-banner__sub { font-size: 11px; }
+            .comment-discord-btn { width: 100%; text-align: center; padding: 7px 14px; font-size: 11px; }
+            .comment-see-more-btn { font-size: 12px; padding: 10px; }
+            .comment-replies { padding-left: 8px; }
+            .comment-reply { gap: 6px; }
+            .comment-reply__body { padding: 8px 10px; }
+            .comment-reply__text { font-size: 12px; }
+            .comment-reply__header { flex-wrap: wrap; gap: 3px; }
+            .comment-reply-write { gap: 6px; }
+            .comment-reply-input { font-size: 12px; padding: 7px 9px; }
+            .comment-reply-submit { font-size: 11px; padding: 5px 11px; }
+            .comment-divider { font-size: 9px; }
+
+            /* ── Search overlay ── */
+            .search-overlay { padding-top: 60px; }
+            .search-container { width: 94%; }
+            .search-bar { gap: 4px; padding: 4px 4px 4px 14px; }
+            .search-bar .search-icon { display: none; }
+            .search-bar input { font-size: 15px; padding: 10px 0; }
+            .search-go-btn { padding: 8px 12px; font-size: 11px; }
+            .search-close-btn { width: 32px; height: 32px; font-size: 17px; }
+            #neoSearchFilterBar { flex-wrap: wrap; gap: 8px; }
+            #neoSearchResults { grid-template-columns: 1fr; }
+
+            /* ── Panneau admin ── */
+            #editModePanel {
+                bottom: 80px; width: calc(100vw - 24px);
+                left: 12px; transform: translateY(20px);
+            }
+            #editModePanel.is-open { transform: translateY(0); }
+            /* quand déplacé par drag on override avec style inline */
+
+            /* ── Modaux création / suppression carte ── */
+            #newCardModal .ncm-panel {
+                width: 100%; max-width: 100%; height: 100dvh;
+                border-radius: 0; flex-direction: column; max-height: 100dvh;
+            }
+            #newCardModal .ncm-body { flex-direction: column; overflow-y: auto; }
+            #newCardModal .ncm-preview-col { min-width: 0; }
+            #newCardModal .ncm-form-col { border-left: none; border-top: 1px solid rgba(255,255,255,0.08); max-height: none; }
+            #deleteCardModal .dcm-panel {
+                width: 100%; max-width: 100%; height: 100dvh;
+                border-radius: 0; max-height: 100dvh;
+            }
+
+            /* ── Social share ── */
+            .social-share { gap: 8px; flex-wrap: wrap; padding: 0 16px; }
+            .social-share a { font-size: 11px; padding: 8px 14px; }
+
+            /* ── Edit inline popup ── */
+            #editInlinePopup { width: calc(100vw - 24px) !important; left: 12px !important; }
+        }
         /* ── NAVBAR ── */
         .site-header {
     display: flex; 
@@ -536,22 +664,7 @@
         .modal-editor-saved-tag.is-visible { opacity: 1; }
 
         /* ── RESPONSIVE RESPONSIVE ── */
-        @media (max-width: 768px) { 
-            .site-header { padding: 12px 20px; }
-            .site-nav, .desktop-tabs { display: none; }
-            .mobile-menu-btn { display: block; }
-            .mobile-nav-dropdown { display: flex; }
-            .bulletin-header { flex-direction: column; align-items: flex-start; gap: 10px; }
-            .bulletin-meta { text-align: left; white-space: normal; }
-            .secret-bulletin::before { font-size: 38px; bottom: 12px; right: 12px; }
-            .leaks-banner { font-size: 24px; padding: 12px 30px; margin: 16px 0 8px; }
-            .news-grid { gap: 20px; padding: 0 12px; }
-            .news-card { margin: 0; }
-            .modal-content { width: 92%; max-width: none; border-radius: 16px; margin: 12px; }
-            .modal-media-zone { aspect-ratio: auto; min-height: 200px; }
-            .modal-media-zone img { object-fit: contain; max-height: 50vh; }
-            .modal-info-footer { padding: 10px 14px; }
-        .mobile-nav-dropdown a.nav-news { color: #1a73e8; } .mobile-nav-dropdown a.nav-leaks { color: #d93025; } }
+        /* mobile: voir bloc @media unique en haut de fichier */
 
         /* ══════════════════════════════════════════════
            SYSTÈME DE COMMENTAIRES — BLOX LEAKS  v2
@@ -802,43 +915,7 @@
         .comments-modal__body::-webkit-scrollbar-thumb { background: #e0e0e0; border-radius: 3px; }
         .comments-modal__body::-webkit-scrollbar-thumb:hover { background: #ff1a1a; }
 
-        @media (max-width: 768px) {
-            .main-content { padding: 16px 12px 50px; }
-            .comment-toggle-bar { padding: 10px 12px; gap: 10px; }
-            .comment-toggle-bar__label { font-size: 13px; }
-            .comment-toggle-bar__count { font-size: 10px; padding: 2px 7px; }
-            .comment-body { padding: 14px 10px; }
-            .comment-item { gap: 8px; }
-            .comment-item__body { padding: 10px 12px 9px; }
-            .comment-item__header { flex-wrap: wrap; gap: 3px; }
-            .comment-item__username { font-size: 12px; }
-            .comment-item__time { font-size: 10px; margin-left: 0; width: 100%; }
-            .comment-item__text { font-size: 13px; }
-            .comment-item__actions { gap: 4px; }
-            .comment-btn { font-size: 11px; padding: 3px 8px; }
-            .comment-write-box { gap: 8px; }
-            .comment-input { padding: 9px 72px 9px 10px; font-size: 13px; min-height: 40px; }
-            .comment-submit { padding: 5px 12px; font-size: 11px; right: 6px; bottom: 6px; }
-            .comment-login-banner { flex-wrap: wrap; gap: 8px; padding: 10px 12px; margin-bottom: 16px; }
-            .comment-login-banner__title { font-size: 13px; }
-            .comment-login-banner__sub { font-size: 11px; }
-            .comment-discord-btn { width: 100%; text-align: center; padding: 7px 14px; font-size: 11px; }
-            .comment-see-more-btn { font-size: 12px; padding: 10px; }
-            .comment-replies { padding-left: 6px; }
-            .comment-reply { gap: 6px; }
-            .comment-reply__body { padding: 8px 10px; min-width: 0; }
-            .comment-reply__text { font-size: 12px; }
-            .comment-reply__header { flex-wrap: wrap; gap: 3px; }
-            .comment-reply-write { gap: 6px; }
-            .comment-reply-input { font-size: 12px; padding: 7px 9px; }
-            .comment-reply-submit { font-size: 11px; padding: 5px 11px; }
-            .comments-modal { width: 96%; max-height: 90vh; }
-            .comments-modal__header { padding: 12px 14px; }
-            .comments-modal__title { font-size: 15px; }
-            .comments-modal__body { padding: 12px; gap: 10px; }
-            .comment-section { margin-top: 16px; }
-            .comment-divider { font-size: 9px; }
-        }
+
 
 
         /* ── Animation like TikTok ─────────────────────── */
@@ -986,16 +1063,7 @@
             color: #fff; border-radius: 3px; padding: 1px 4px;
             box-shadow: 0 1px 10px rgba(255,107,53,0.5);
         }
-        @media (max-width: 768px) {
-            .search-overlay { padding-top: 60px; }
-            .search-container { width: 94%; }
-            .search-bar { gap: 4px; padding: 4px 4px 4px 14px; }
-            .search-bar .search-icon { display: none; }
-            .search-bar input { font-size: 15px; padding: 10px 0; }
-            .search-go-btn { padding: 8px 12px; font-size: 11px; }
-            .search-nav-btn { width: 32px; height: 32px; font-size: 14px; }
-            .search-close-btn { width: 32px; height: 32px; font-size: 17px; }
-        }
+
 
         /* ── SOCIAL SHARE ── */
         .social-share {
@@ -1312,7 +1380,9 @@
             display: flex; align-items: center; gap: 10px;
             padding: 12px 16px; background: rgba(255,255,255,0.04);
             border-bottom: 1px solid rgba(255,255,255,0.08);
+            cursor: grab; user-select: none;
         }
+        .edit-panel__header:active { cursor: grabbing; }
         .edit-panel__title {
             flex: 1; font-family: 'LuckiestGuy Regular', cursive;
             font-size: 14px; color: #fff; letter-spacing: 0.5px;
@@ -2652,7 +2722,33 @@
                 <div class="ncm-form-col">
                     <div class="ncm-section-title">Configuration</div>
 
+                    <!-- TYPE DE CARTE -->
                     <div class="ncm-field">
+                        <label><span class="ncm-lbl-icon">🗂️</span> Type de carte</label>
+                        <div class="ncm-type-group">
+                            <label class="ncm-type-pill active" id="ncmKindStandard">
+                                <input type="radio" name="ncmKind" value="standard" checked onchange="_ncmKindChange()">
+                                <span class="ncm-type-dot"></span>
+                                <span class="ncm-type-emoji">📌</span>
+                                <span class="ncm-type-name">Leak</span>
+                            </label>
+                            <label class="ncm-type-pill" id="ncmKindActus">
+                                <input type="radio" name="ncmKind" value="actus" onchange="_ncmKindChange()">
+                                <span class="ncm-type-dot"></span>
+                                <span class="ncm-type-emoji">📰</span>
+                                <span class="ncm-type-name">Actus</span>
+                            </label>
+                            <label class="ncm-type-pill" id="ncmKindMessage">
+                                <input type="radio" name="ncmKind" value="message" onchange="_ncmKindChange()">
+                                <span class="ncm-type-dot"></span>
+                                <span class="ncm-type-emoji">✉️</span>
+                                <span class="ncm-type-name">Message</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Section (masquée si actus/message car fixe) -->
+                    <div class="ncm-field" id="ncmSectionField">
                         <label><span class="ncm-lbl-icon">📂</span> Section</label>
                         <select id="ncmSection"></select>
                     </div>
@@ -2678,6 +2774,13 @@
                     <div class="ncm-field" id="ncmVideoField" style="display:none">
                         <label><span class="ncm-lbl-icon">🔗</span> URL de la vidéo</label>
                         <input id="ncmSrc" type="text" placeholder="https://…">
+                    </div>
+
+                    <!-- Champ contenu texte (actus uniquement) -->
+                    <div class="ncm-field" id="ncmActusField" style="display:none">
+                        <label><span class="ncm-lbl-icon">📝</span> Contenu de l'actus</label>
+                        <textarea id="ncmActusContent" rows="4" placeholder="Texte du dossier, avec **gras**, ==surligné==, etc." style="width:100%;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);border-radius:10px;padding:8px 12px;color:#fff;font-size:13px;font-family:monospace;outline:none;resize:vertical;"></textarea>
+                        <div style="font-size:11px;color:rgba(255,255,255,0.3);margin-top:4px;">Markdown léger : **gras** ==surligné== __souligné__ ~~barré~~</div>
                     </div>
 
                     <div class="ncm-divider"></div>
@@ -3947,7 +4050,56 @@
         });
     }
 
-    // ─── Init immédiat au chargement ──────────────────────────────
+    // ── Panneau admin déplaçable ─────────────────────────────────────
+    (function _makePanelDraggable() {
+        const panel  = document.getElementById('editModePanel');
+        const header = panel?.querySelector('.edit-panel__header');
+        if (!panel || !header) return;
+        let dragging = false, ox = 0, oy = 0;
+
+        function startDrag(cx, cy) {
+            dragging = true;
+            const rect = panel.getBoundingClientRect();
+            // Passer de bottom/left/transform à top/left absolus
+            panel.style.transition = 'none';
+            panel.style.bottom = 'auto';
+            panel.style.transform = 'none';
+            panel.style.left = rect.left + 'px';
+            panel.style.top  = rect.top  + 'px';
+            ox = cx - rect.left;
+            oy = cy - rect.top;
+        }
+        function moveDrag(cx, cy) {
+            if (!dragging) return;
+            const maxX = window.innerWidth  - panel.offsetWidth;
+            const maxY = window.innerHeight - panel.offsetHeight;
+            panel.style.left = Math.max(0, Math.min(maxX, cx - ox)) + 'px';
+            panel.style.top  = Math.max(0, Math.min(maxY, cy - oy)) + 'px';
+        }
+        function endDrag() { dragging = false; panel.style.transition = ''; }
+
+        header.addEventListener('mousedown', e => {
+            if (e.target.closest('.edit-panel__close')) return;
+            e.preventDefault(); startDrag(e.clientX, e.clientY);
+        });
+        document.addEventListener('mousemove', e => moveDrag(e.clientX, e.clientY));
+        document.addEventListener('mouseup', endDrag);
+
+        // Touch
+        header.addEventListener('touchstart', e => {
+            if (e.target.closest('.edit-panel__close')) return;
+            const t = e.touches[0]; startDrag(t.clientX, t.clientY);
+        }, { passive: true });
+        document.addEventListener('touchmove', e => {
+            if (!dragging) return;
+            e.preventDefault();
+            const t = e.touches[0]; moveDrag(t.clientX, t.clientY);
+        }, { passive: false });
+        document.addEventListener('touchend', endDrag);
+
+        // Réinitialiser la position au fermeture
+        const origClose = window.toggleEditMode;
+    })();
     function _initAll() {
         _injectSortToggles();
         initPostLikes();
@@ -4394,6 +4546,30 @@
         document.getElementById('ncmPillImage')?.classList.toggle('active', !isVideo);
         document.getElementById('ncmPillVideo')?.classList.toggle('active', isVideo);
     }
+    function _ncmKindChange() {
+        const kind = document.querySelector('#newCardModal input[name="ncmKind"]:checked')?.value || 'standard';
+        const isActus   = kind === 'actus';
+        const isMessage = kind === 'message';
+        const isSpecial = isActus || isMessage;
+
+        // Section : fixe pour actus/message, choisissable pour standard
+        const secField = document.getElementById('ncmSectionField');
+        if (secField) secField.style.display = isSpecial ? 'none' : '';
+
+        // Champ contenu texte (actus only)
+        const actusField = document.getElementById('ncmActusField');
+        if (actusField) actusField.style.display = isActus ? '' : 'none';
+
+        // Mise à jour label preview
+        document.getElementById('ncmEditEyebrow').textContent = isActus ? 'Actus' : (isMessage ? 'Message' : 'Leak');
+        document.getElementById('ncmEditBtn').textContent = isActus ? 'Lire →' : (isMessage ? 'Voir le message →' : "Voir l'image →");
+
+        // Adapter les pills Kind
+        document.querySelectorAll('#newCardModal label[id^="ncmKind"]').forEach(l => l.classList.remove('active'));
+        const activeKind = document.getElementById('ncmKind' + kind.charAt(0).toUpperCase() + kind.slice(1));
+        if (activeKind) activeKind.classList.add('active');
+    }
+
     function _cmdNew() {
         _ncmImageData = null;
         _ncmShowImage(null);
@@ -4401,7 +4577,7 @@
         if (sel) {
             const prev = sel.value;
             sel.innerHTML = '';
-            document.querySelectorAll('.category-section').forEach(sec => {
+            document.querySelectorAll('.category-section:not(#cat-actus):not(#cat-messages)').forEach(sec => {
                 const opt = document.createElement('option');
                 opt.value = sec.id;
                 opt.textContent = sec.id.replace('cat-','');
@@ -4409,6 +4585,11 @@
             });
             if (prev && [...sel.options].some(o => o.value === prev)) sel.value = prev;
         }
+        // Reset kind to standard
+        const kindRadio = document.querySelector('#newCardModal input[name="ncmKind"][value="standard"]');
+        if (kindRadio) kindRadio.checked = true;
+        _ncmKindChange();
+
         const imgRadio = document.querySelector('#newCardModal input[name="ncmType"][value="image"]');
         if (imgRadio) imgRadio.checked = true;
         _ncmTypeChange();
@@ -4416,40 +4597,52 @@
         document.getElementById('ncmEditEyebrow').textContent = 'Leak';
         document.getElementById('ncmEditTitle').textContent = 'Titre de la carte';
         document.getElementById('ncmEditBtn').textContent = "Voir l'image →";
-        // Reset mirror inputs
         const badgeInput = document.getElementById('ncmBadgeInput');
         const titleInput = document.getElementById('ncmTitleInput');
         if (badgeInput) badgeInput.value = '';
         if (titleInput) titleInput.value = '';
         const videoInput = document.getElementById('ncmSrc');
         if (videoInput) videoInput.value = '';
+        const actusContent = document.getElementById('ncmActusContent');
+        if (actusContent) actusContent.value = '';
         _ncmInitDropZone();
         setTimeout(() => document.getElementById('ncmEditBadge')?.focus(), 100);
         document.getElementById('newCardModal')?.classList.add('is-open');
     }
+
     function _cmdNewSubmit() {
-        const sectionId = document.getElementById('ncmSection')?.value;
+        const kind      = document.querySelector('#newCardModal input[name="ncmKind"]:checked')?.value || 'standard';
+        const isActus   = kind === 'actus';
+        const isMessage = kind === 'message';
+
+        // Section cible
+        let sectionId;
+        if (isActus)        sectionId = 'cat-actus';
+        else if (isMessage) sectionId = 'cat-messages';
+        else                sectionId = document.getElementById('ncmSection')?.value;
+
         const badge     = document.getElementById('ncmEditBadge')?.textContent?.trim();
         const title     = document.getElementById('ncmEditTitle')?.textContent?.trim();
-        const eyebrow   = document.getElementById('ncmEditEyebrow')?.textContent?.trim() || 'Leak';
+        const eyebrow   = document.getElementById('ncmEditEyebrow')?.textContent?.trim() || (isActus ? 'Actus' : 'Leak');
         const btnLabel  = document.getElementById('ncmEditBtn')?.textContent?.trim() || "Voir l'image →";
         const mediaType = document.querySelector('#newCardModal input[name="ncmType"]:checked')?.value || 'image';
         const src       = mediaType === 'video' ? (document.getElementById('ncmSrc')?.value?.trim() || '') : _ncmImageData;
+        const actusText = document.getElementById('ncmActusContent')?.value?.trim() || '';
 
-        if (!sectionId || !badge || !title || !src) { editLog('err', 'Remplis au moins Badge, Titre et Image.'); return; }
+        if (!sectionId || !badge || !title || (!src && !isActus)) {
+            editLog('err', isActus ? 'Remplis au moins Badge et Titre.' : 'Remplis au moins Badge, Titre et Image.'); return;
+        }
         if (!document.getElementById(sectionId)) { editLog('err', 'Section introuvable.'); return; }
 
-        const cardId = 'cc_' + Date.now();
-        const newCard = { id: cardId, sectionId, badge, title, src, eyebrow, btnLabel, mediaType };
+        const cardId  = 'cc_' + Date.now();
+        const newCard = { id: cardId, sectionId, badge, title, src: src || '', eyebrow, btnLabel, mediaType, kind, actusText };
 
-        // Pousser sur Firebase (source de vérité partagée)
         if (FB_CC_REF) {
             FB_CC_REF.transaction(current => {
                 const list = Array.isArray(current) ? current : [];
                 return [...list, newCard];
             });
         }
-        // Fallback local + rendu immédiat si pas de Firebase
         _ccAdd(newCard);
         if (!FB_CC_REF) _renderOneCard(newCard);
 
@@ -4459,7 +4652,7 @@
         _sortAllSections();
 
         const e = _ccEsc;
-        editLog('ok', 'Nouvelle carte créée dans ' + sectionId + ' : ' + title);
+        editLog('ok', `Nouvelle carte "${kind}" créée dans ${sectionId} : ${title}`);
         const toast = document.getElementById('newCardToast');
         if (toast) {
             toast.innerHTML = `<span class="toast-badge">${e(badge)}</span><span class="toast-title">${e(title)}</span>`;
@@ -4661,14 +4854,20 @@
          4. Dans OAuth2 → Redirects : ajoute l'URL exacte de cette page
             (ex: https://tonsite.com/neo_bulletin.html)
     ════════════════════════════════════════════════════════════════ */
-    const DISCORD_CLIENT_ID   = '1517793695573999646';       // ← à remplir
-    const DISCORD_REDIRECT_URI = window.location.href.split('#')[0].split('?')[0]; // URL de la page actuelle
+    const DISCORD_CLIENT_ID   = '1517793695573999646';
+    // ⚠️ Cette URI DOIT être enregistrée dans Discord Developer Portal → OAuth2 → Redirects
+    // Elle doit correspondre exactement à l'URL de cette page (sans hash ni query string)
+    const DISCORD_REDIRECT_URI = window.location.origin + window.location.pathname;
     const DISCORD_SCOPE        = 'identify';
     const DISCORD_TOKEN_KEY    = 'bloxbulletin_discord_token';
     const DISCORD_USER_KEY     = 'bloxbulletin_discord_user';
+    // Clé pour savoir si LE FLUX OAUTH a été lancé depuis CETTE page
+    const DISCORD_PENDING_KEY  = 'bloxbulletin_oauth_pending_page';
 
     // ── Lancer le flux OAuth ─────────────────────────────────────
     function _discordLogin() {
+        // Marquer que LE FLUX A ÉTÉ LANCÉ depuis cette page
+        sessionStorage.setItem(DISCORD_PENDING_KEY, window.location.pathname);
         const params = new URLSearchParams({
             client_id:     DISCORD_CLIENT_ID,
             redirect_uri:  DISCORD_REDIRECT_URI,
@@ -4781,26 +4980,36 @@
         // 1. Vérifier si on revient du flux OAuth (token dans le hash)
         const hash = window.location.hash;
         if (hash.includes('access_token=')) {
-            const params     = new URLSearchParams(hash.slice(1));
-            const token      = params.get('access_token');
-            const expiresIn  = parseInt(params.get('expires_in') || '604800');
-            const expiresAt  = Date.now() + expiresIn * 1000;
+            // Ne traiter le token que si LE FLUX a été lancé depuis CETTE page
+            const pendingPage = sessionStorage.getItem(DISCORD_PENDING_KEY);
+            const isOwnCallback = !pendingPage || pendingPage === window.location.pathname;
 
-            history.replaceState(null, '', window.location.pathname + window.location.search);
+            // Nettoyer l'URL immédiatement (push pour ne pas casser le bouton retour)
+            history.pushState(null, '', window.location.pathname + window.location.search);
+            sessionStorage.removeItem(DISCORD_PENDING_KEY);
 
-            if (token) {
-                skeleton.classList.add('is-visible');
-                try {
-                    const user = await _discordFetchUser(token);
-                    localStorage.setItem(DISCORD_TOKEN_KEY, JSON.stringify({ token, expiresAt }));
-                    localStorage.setItem(DISCORD_USER_KEY, JSON.stringify(user));
-                    showUserInNavbar(user);
-                    if (typeof discordLogin === 'function') discordLogin({ username: user.username, avatar: _discordAvatarUrl(user) });
-                } catch(e) {
-                    skeleton.classList.remove('is-visible');
-                    loginBtn.style.display = '';
+            if (!isOwnCallback) {
+                // Token d'une autre page (ex : arrivée depuis index.html#access_token=…)
+                // On l'ignore et on affiche juste l'état depuis le cache
+            } else {
+                const params    = new URLSearchParams(hash.slice(1));
+                const token     = params.get('access_token');
+                const expiresIn = parseInt(params.get('expires_in') || '604800');
+                const expiresAt = Date.now() + expiresIn * 1000;
+                if (token) {
+                    skeleton.classList.add('is-visible');
+                    try {
+                        const user = await _discordFetchUser(token);
+                        localStorage.setItem(DISCORD_TOKEN_KEY, JSON.stringify({ token, expiresAt }));
+                        localStorage.setItem(DISCORD_USER_KEY, JSON.stringify(user));
+                        showUserInNavbar(user);
+                        if (typeof discordLogin === 'function') discordLogin({ username: user.username, avatar: _discordAvatarUrl(user) });
+                    } catch(e) {
+                        skeleton.classList.remove('is-visible');
+                        loginBtn.style.display = '';
+                    }
+                    return;
                 }
-                return;
             }
         }
 
