@@ -4763,6 +4763,31 @@
             if (img) img.remove();
         }
     }
+    function _ncmShowImage(src) {
+        const dz   = document.getElementById('ncmDropZone');
+        const hint = document.getElementById('ncmDropHint');
+        if (!dz) return;
+        // Nettoyer
+        dz.querySelectorAll('.ncm-card-img-loaded,.ncm-card-vid-loaded').forEach(el => el.remove());
+        if (src) {
+            if (hint) hint.style.display = 'none';
+            const isVid = src.startsWith('data:video') || /\.(mp4|mov|webm|ogg)$/i.test(src);
+            if (isVid) {
+                const vid = document.createElement('video');
+                vid.className = 'ncm-card-vid-loaded';
+                vid.src = src; vid.autoplay = false; vid.muted = true; vid.controls = true;
+                vid.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;border-radius:12px;';
+                dz.prepend(vid);
+            } else {
+                const img = document.createElement('img');
+                img.className = 'ncm-card-img-loaded';
+                img.src = src;
+                dz.prepend(img);
+            }
+        } else {
+            if (hint) hint.style.display = '';
+        }
+    }
     function _ncmInitDropZone() {
         const dz = document.getElementById('ncmDropZone');
         if (!dz || dz._init) return;
@@ -4772,30 +4797,52 @@
         dz.addEventListener('drop', e => {
             e.preventDefault(); dz.classList.remove('drag-over');
             const file = e.dataTransfer.files[0];
-            if (file && file.type.startsWith('image/')) {
-                const reader = new FileReader();
-                reader.onload = ev => { _ncmImageData = ev.target.result; _ncmShowImage(_ncmImageData); };
-                reader.readAsDataURL(file);
+            if (!file) return;
+            const isImg = file.type.startsWith('image/');
+            const isVid = file.type.startsWith('video/');
+            if (!isImg && !isVid) return;
+            // Sélectionner automatiquement le bon type
+            if (isVid) {
+                const radio = document.querySelector('#newCardModal input[name="ncmType"][value="video"]');
+                if (radio) { radio.checked = true; _ncmTypeChange(); }
+            } else {
+                const radio = document.querySelector('#newCardModal input[name="ncmType"][value="image"]');
+                if (radio) { radio.checked = true; _ncmTypeChange(); }
             }
+            const reader = new FileReader();
+            reader.onload = ev => { _ncmImageData = ev.target.result; _ncmShowImage(_ncmImageData); };
+            reader.readAsDataURL(file);
         });
     }
     function _ncmTypeChange() {
         const isVideo = document.querySelector('#newCardModal input[name="ncmType"]:checked')?.value === 'video';
+        // Le champ URL reste disponible pour vidéos sans drag (optionnel)
         const vf = document.getElementById('ncmVideoField');
         if (vf) vf.style.display = isVideo ? '' : 'none';
         // Sync pills
         document.getElementById('ncmPillImage')?.classList.toggle('active', !isVideo);
         document.getElementById('ncmPillVideo')?.classList.toggle('active', isVideo);
+        // Mettre à jour le hint de la drop zone
+        const hint = document.getElementById('ncmDropHint');
+        if (hint) {
+            const icon = hint.querySelector('.ncm-card-empty-icon');
+            const txt  = hint.querySelector('.ncm-card-empty-text');
+            if (icon) icon.textContent = isVideo ? '🎬' : '🖼️';
+            if (txt)  txt.innerHTML    = isVideo ? 'Glisse une vidéo<br>ou entre un lien ci-dessous' : 'Glisse une image<br>ou clique ici';
+        }
+        // Fichier input
+        const fi = document.getElementById('ncmFileInput');
+        if (fi) fi.accept = isVideo ? 'image/*,video/*' : 'image/*';
     }
     function _ncmKindChange() {
         const kind      = document.querySelector('#newCardModal input[name="ncmKind"]:checked')?.value || 'standard';
         const isActus   = kind === 'actus';
         const isMessage = kind === 'message';
 
-        // Afficher le bon preview
-        document.getElementById('ncmPreviewStandard').style.display = (!isActus && !isMessage) ? '' : 'none';
-        document.getElementById('ncmPreviewMessage').style.display  = isMessage ? '' : 'none';
-        document.getElementById('ncmPreviewActus').style.display    = isActus   ? '' : 'none';
+        // Afficher le bon preview — IMPORTANT : 'block' et pas '' car le CSS par défaut peut être 'none'
+        document.getElementById('ncmPreviewStandard').style.display = (!isActus && !isMessage) ? 'block' : 'none';
+        document.getElementById('ncmPreviewMessage').style.display  = isMessage ? 'block' : 'none';
+        document.getElementById('ncmPreviewActus').style.display    = isActus   ? 'block' : 'none';
 
         // Champ section : masqué si actus/message (section fixe)
         const secField = document.getElementById('ncmSectionField');
@@ -4914,7 +4961,8 @@
             title    = document.getElementById('ncmEditTitle')?.textContent?.trim();
             eyebrow  = document.getElementById('ncmEditEyebrow')?.textContent?.trim() || 'Leak';
             btnLabel = document.getElementById('ncmEditBtn')?.textContent?.trim() || "Voir l'image →";
-            src      = mediaType === 'video' ? (document.getElementById('ncmSrc')?.value?.trim() || '') : _ncmImageData;
+            src      = _ncmImageData ||                                      // drag-drop (image ou vidéo)
+                       (document.getElementById('ncmSrc')?.value?.trim() || ''); // URL de secours pour vidéo
         }
 
         if (!sectionId)             { editLog('err', 'Section introuvable.'); return; }
@@ -4932,13 +4980,16 @@
         };
 
         if (FB_CC_REF) {
-            FB_CC_REF.transaction(current => {
-                const list = Array.isArray(current) ? current : [];
-                return [...list, newCard];
+            // .push() ajoute la card comme nœud Firebase avec ID unique — visible par tous immédiatement
+            FB_CC_REF.push(newCard).catch(err => {
+                editLog('err', 'Firebase: ' + (err?.message || 'erreur écriture'));
+                // Fallback local si Firebase échoue
+                _renderOneCard(newCard);
             });
+        } else {
+            _ccAdd(newCard);
+            _renderOneCard(newCard);
         }
-        _ccAdd(newCard);
-        if (!FB_CC_REF) _renderOneCard(newCard);
 
         document.querySelectorAll('.category-section:not(#cat-actus)').forEach(s => {
             _originalOrder.set(s.id, [...s.querySelectorAll('.news-card')]);
@@ -5021,7 +5072,22 @@
             return;
         }
         if (ccId) {
-            if (FB_CC_REF) { FB_CC_REF.transaction(c => Array.isArray(c) ? c.filter(x => x.id !== ccId) : []); }
+            if (FB_CC_REF) {
+                // Avec push(), trouver la clé Firebase correspondant à card.id
+                FB_CC_REF.once('value', snap => {
+                    const raw = snap.val();
+                    if (!raw) return;
+                    if (Array.isArray(raw)) {
+                        // Ancienne structure (array) : transaction
+                        FB_CC_REF.transaction(c => Array.isArray(c) ? c.filter(x => x.id !== ccId) : []);
+                    } else {
+                        // Nouvelle structure (push) : supprimer le nœud enfant
+                        Object.entries(raw).forEach(([fbKey, card]) => {
+                            if (card.id === ccId) FB_CC_REF.child(fbKey).remove();
+                        });
+                    }
+                });
+            }
             _ccRemove(ccId);
             const el = document.querySelector(`[data-cc-id="${ccId}"]`);
             if (el) el.remove();
@@ -5103,19 +5169,20 @@
         //    → on rend uniquement depuis Firebase (pas depuis localStorage)
         if (FB_CC_REF) {
             FB_CC_REF.on('value', snap => {
-                const fbCards = Array.isArray(snap.val()) ? snap.val() : [];
-                // Mettre à jour le cache local
+                const raw = snap.val();
+                // push() stocke un objet {firebaseKey: card}, pas un array
+                const fbCards = raw
+                    ? (Array.isArray(raw) ? raw : Object.values(raw))
+                    : [];
                 _ccSave(fbCards);
-                // Rendre les nouvelles cards pas encore dans le DOM
                 fbCards.forEach(_renderOneCard);
-                // Retirer les cards supprimées du DOM
+                // Retirer du DOM les cards supprimées
                 const fbIds = new Set(fbCards.map(c => c.id));
                 document.querySelectorAll('[data-cc-id]').forEach(el => {
                     if (!fbIds.has(el.dataset.ccId)) el.remove();
                 });
             });
         } else {
-            // Pas de Firebase : rendu depuis localStorage
             _renderCustomCards();
         }
 
@@ -5149,13 +5216,12 @@
             (ex: https://tonsite.com/neo_bulletin.html)
     ════════════════════════════════════════════════════════════════ */
     const DISCORD_CLIENT_ID   = '1517793695573999646';
-    // ⚠️ Cette URI DOIT être enregistrée dans Discord Developer Portal → OAuth2 → Redirects
-    // Elle doit correspondre exactement à l'URL de cette page (sans hash ni query string)
-    const DISCORD_REDIRECT_URI = window.location.origin + window.location.pathname;
+    // URI exacte enregistrée dans Discord Developer Portal → OAuth2 → Redirects
+    // Doit correspondre EXACTEMENT à ce qui est affiché dans le portail
+    const DISCORD_REDIRECT_URI = 'https://bloxnewsfr.github.io/BloxNews-FR/neo_bulletin.html';
     const DISCORD_SCOPE        = 'identify';
     const DISCORD_TOKEN_KEY    = 'bloxbulletin_discord_token';
     const DISCORD_USER_KEY     = 'bloxbulletin_discord_user';
-    // Clé pour savoir si LE FLUX OAUTH a été lancé depuis CETTE page
     const DISCORD_PENDING_KEY  = 'bloxbulletin_oauth_pending_page';
 
     // ── Lancer le flux OAuth ─────────────────────────────────────
