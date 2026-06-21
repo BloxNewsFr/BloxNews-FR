@@ -41,133 +41,7 @@
         /* ═══════════════════════════════════════════════════
            ADAPTATION MOBILE — REFONTE COMPLÈTE
         ═══════════════════════════════════════════════════ */
-        @media (max-width: 768px) {
-            /* ── Layout global ── */
-            .site-background { display: none; }
-            .site-header { padding: 10px 16px; }
-            .site-nav, .desktop-tabs { display: none; }
-            .mobile-menu-btn { display: block; }
-            .mobile-nav-dropdown { display: flex; }
-            .main-content { padding: 14px 12px 100px; }
-            .mobile-nav-dropdown a.nav-news { color: #1a73e8; }
-            .mobile-nav-dropdown a.nav-leaks { color: #d93025; }
-
-            /* ── Secret bulletin / actus ── */
-            .secret-bulletin { padding: 22px 18px; border-radius: 16px; }
-            .secret-bulletin::before { font-size: 30px; bottom: 10px; right: 10px; }
-            .bulletin-header { flex-direction: column; align-items: flex-start; gap: 10px; }
-            .bulletin-header h2 { font-size: 22px; }
-            .bulletin-meta { text-align: left; white-space: normal; font-size: 11px; }
-            .bulletin-content p { font-size: 14px; }
-
-            /* ── Grille de cartes ── */
-            .news-grid { grid-template-columns: 1fr; gap: 16px; padding: 0; }
-            .news-card { border-radius: 18px; }
-
-            /* ── MODAL / LIGHTBOX — centrage corrigé ── */
-            .modal-overlay {
-                padding: 0;
-                align-items: flex-end;          /* sheet du bas sur mobile */
-            }
-            .modal-content {
-                width: 100%; max-width: 100%;
-                border-radius: 20px 20px 0 0;   /* feuille du bas */
-                margin: 0;
-                max-height: 92dvh; overflow-y: auto;
-                transform: translateY(20px);
-            }
-            .modal-overlay.is-active .modal-content { transform: translateY(0); }
-            .modal-media-zone { aspect-ratio: 4/3; min-height: 180px; }
-            .modal-media-zone img { object-fit: contain; max-height: 45vh; }
-            .modal-info-footer { flex-direction: column; align-items: flex-start; gap: 8px; padding: 12px 16px; }
-            .modal-close-float { top: 10px; right: 10px; width: 30px; height: 30px; }
-            .modal-content-display { padding: 14px 16px 4px; }
-
-            /* ── Lightbox modale commentaires ── */
-            .comments-modal-overlay { align-items: flex-end; padding: 0; }
-            .comments-modal { width: 100%; max-width: 100%; max-height: 92dvh; border-radius: 20px 20px 0 0; }
-            .comments-modal__header { padding: 14px 16px; }
-            .comments-modal__title { font-size: 15px; }
-            .comments-modal__body { padding: 12px 12px; gap: 10px; }
-
-            /* ── Leaks banner & tabs ── */
-            .leaks-banner { font-size: 20px; padding: 10px 20px; margin: 12px 0 6px; }
-            .category-section { margin-bottom: 32px; }
-
-            /* ── Sort toggle ── */
-            .category-title { font-size: 22px; gap: 12px; margin-bottom: 20px; }
-            .sort-toggle button { padding: 4px 10px; font-size: 10px; }
-
-            /* ── Commentaires ── */
-            .comment-section { margin-top: 14px; }
-            .comment-toggle-bar { padding: 10px 14px; gap: 10px; }
-            .comment-toggle-bar__label { font-size: 13px; }
-            .comment-toggle-bar__icon { width: 32px; height: 32px; border-radius: 10px; }
-            .comment-body { padding: 14px 12px; }
-            .comment-write-box { gap: 8px; }
-            .comment-input { padding: 9px 72px 9px 12px; font-size: 13px; min-height: 40px; }
-            .comment-submit { padding: 5px 12px; font-size: 11px; right: 6px; bottom: 6px; }
-            .comment-item { gap: 8px; }
-            .comment-item__body { padding: 10px 12px 9px; }
-            .comment-item__header { flex-wrap: wrap; gap: 3px; }
-            .comment-item__time { font-size: 10px; margin-left: 0; width: 100%; order: 5; }
-            .comment-item__text { font-size: 13px; }
-            .comment-item__actions { gap: 4px; }
-            .comment-btn { font-size: 11px; padding: 3px 8px; }
-            .comment-login-banner { flex-wrap: wrap; gap: 8px; padding: 10px 12px; margin-bottom: 14px; }
-            .comment-login-banner__title { font-size: 13px; }
-            .comment-login-banner__sub { font-size: 11px; }
-            .comment-discord-btn { width: 100%; text-align: center; padding: 7px 14px; font-size: 11px; }
-            .comment-see-more-btn { font-size: 12px; padding: 10px; }
-            .comment-replies { padding-left: 8px; }
-            .comment-reply { gap: 6px; }
-            .comment-reply__body { padding: 8px 10px; }
-            .comment-reply__text { font-size: 12px; }
-            .comment-reply__header { flex-wrap: wrap; gap: 3px; }
-            .comment-reply-write { gap: 6px; }
-            .comment-reply-input { font-size: 12px; padding: 7px 9px; }
-            .comment-reply-submit { font-size: 11px; padding: 5px 11px; }
-            .comment-divider { font-size: 9px; }
-
-            /* ── Search overlay ── */
-            .search-overlay { padding-top: 60px; }
-            .search-container { width: 94%; }
-            .search-bar { gap: 4px; padding: 4px 4px 4px 14px; }
-            .search-bar .search-icon { display: none; }
-            .search-bar input { font-size: 15px; padding: 10px 0; }
-            .search-go-btn { padding: 8px 12px; font-size: 11px; }
-            .search-close-btn { width: 32px; height: 32px; font-size: 17px; }
-            #neoSearchFilterBar { flex-wrap: wrap; gap: 8px; }
-            #neoSearchResults { grid-template-columns: 1fr; }
-
-            /* ── Panneau admin ── */
-            #editModePanel {
-                bottom: 80px; width: calc(100vw - 24px);
-                left: 12px; transform: translateY(20px);
-            }
-            #editModePanel.is-open { transform: translateY(0); }
-            /* quand déplacé par drag on override avec style inline */
-
-            /* ── Modaux création / suppression carte ── */
-            #newCardModal .ncm-panel {
-                width: 100%; max-width: 100%; height: 100dvh;
-                border-radius: 0; flex-direction: column; max-height: 100dvh;
-            }
-            #newCardModal .ncm-body { flex-direction: column; overflow-y: auto; }
-            #newCardModal .ncm-preview-col { min-width: 0; }
-            #newCardModal .ncm-form-col { border-left: none; border-top: 1px solid rgba(255,255,255,0.08); max-height: none; }
-            #deleteCardModal .dcm-panel {
-                width: 100%; max-width: 100%; height: 100dvh;
-                border-radius: 0; max-height: 100dvh;
-            }
-
-            /* ── Social share ── */
-            .social-share { gap: 8px; flex-wrap: wrap; padding: 0 16px; }
-            .social-share a { font-size: 11px; padding: 8px 14px; }
-
-            /* ── Edit inline popup ── */
-            #editInlinePopup { width: calc(100vw - 24px) !important; left: 12px !important; }
-        }
+        /* mobile: voir bloc @media en fin de stylesheet */
         /* ── NAVBAR ── */
         .site-header {
     display: flex; 
@@ -2164,6 +2038,170 @@
             border: 1px solid rgba(255,215,0,0.3);
         }
 
+
+        /* ═══════════════════════════════════════════════════════════════
+           MOBILE — bloc unique en FIN DE STYLESHEET pour override correct
+        ═══════════════════════════════════════════════════════════════ */
+        @media (max-width: 768px) {
+            /* ── Layout global ── */
+            .site-background { display: none; }
+            .site-header { padding: 10px 16px; }
+            .site-nav, .desktop-tabs { display: none; }
+            .mobile-menu-btn { display: block; }
+            .mobile-nav-dropdown { display: flex; }
+            .mobile-nav-dropdown a.nav-news { color: #1a73e8; }
+            .mobile-nav-dropdown a.nav-leaks { color: #d93025; }
+            .main-content { padding: 14px 12px 110px !important; overflow: visible !important; }
+
+            /* ── Secret bulletin ── */
+            .secret-bulletin { padding: 20px 16px; border-radius: 16px; }
+            .secret-bulletin::before { font-size: 24px; bottom: 8px; right: 8px; }
+            .bulletin-header { flex-direction: column; align-items: flex-start; gap: 8px; }
+            .bulletin-header h2 { font-size: 20px; }
+            .bulletin-meta { text-align: left; white-space: normal; font-size: 11px; }
+            .bulletin-content p { font-size: 13px; }
+
+            /* ── Grille de cartes ── */
+            .news-grid { grid-template-columns: 1fr !important; gap: 14px !important; padding: 0 !important; }
+            .news-card { border-radius: 16px; }
+            .news-card__title { font-size: 16px; }
+
+            /* ── MODAL LIGHTBOX — bottom sheet corrigé ── */
+            .modal-overlay {
+                padding: 0 !important;
+                align-items: flex-end !important;
+                background: rgba(0,0,0,0.7);
+            }
+            .modal-content {
+                width: 100% !important;
+                max-width: 100% !important;
+                border-radius: 22px 22px 0 0 !important;
+                margin: 0 !important;
+                max-height: 93dvh !important;
+                overflow-y: auto !important;
+                transform: translateY(100%) !important;
+                transition: transform 0.38s cubic-bezier(0.32, 0.72, 0, 1) !important;
+            }
+            .modal-overlay.is-active .modal-content {
+                transform: translateY(0) !important;
+            }
+            /* Zone image : block, pas flex, pour éviter le pillarbox */
+            .modal-media-zone {
+                width: 100% !important;
+                aspect-ratio: auto !important;
+                min-height: unset !important;
+                display: block !important;
+                background: #000;
+            }
+            .modal-media-zone img {
+                display: block !important;
+                width: 100% !important;
+                height: auto !important;
+                max-height: 62dvh !important;
+                object-fit: contain !important;
+            }
+            .modal-media-zone video {
+                display: block !important;
+                width: 100% !important;
+                height: auto !important;
+                max-height: 62dvh !important;
+                object-fit: contain !important;
+            }
+            /* JS toggle override : inline style l'emporte sur ces règles de base
+               mais on force les éléments cachés par JS via attribut data */
+            .modal-close-float {
+                top: 10px !important; right: 10px !important;
+                width: 32px !important; height: 32px !important; font-size: 14px !important;
+            }
+            .modal-info-footer {
+                flex-direction: column !important;
+                align-items: flex-start !important;
+                gap: 6px !important; padding: 12px 16px !important;
+            }
+            .modal-content-display { padding: 12px 14px 4px !important; }
+
+            /* ── Modaux commentaires ── */
+            .comments-modal-overlay { align-items: flex-end !important; padding: 0 !important; }
+            .comments-modal {
+                width: 100% !important; max-width: 100% !important;
+                max-height: 93dvh !important;
+                border-radius: 22px 22px 0 0 !important;
+            }
+
+            /* ── Tabs / sections ── */
+            .leaks-banner { font-size: 20px; padding: 10px 18px; margin: 10px 0 4px; }
+            .category-section { margin-bottom: 28px; }
+            .category-title { font-size: 20px !important; gap: 10px !important; margin-bottom: 16px !important; }
+            .sort-toggle button { padding: 4px 10px !important; font-size: 10px !important; }
+            .sort-toggle .st-icon svg { width: 9px; height: 9px; }
+
+            /* ── Commentaires ── */
+            .comment-section { margin-top: 12px; }
+            .comment-toggle-bar { padding: 10px 12px; gap: 8px; }
+            .comment-toggle-bar__icon { width: 30px !important; height: 30px !important; border-radius: 9px !important; }
+            .comment-toggle-bar__label { font-size: 13px; }
+            .comment-body { padding: 12px 10px; }
+            .comment-write-box { gap: 7px; }
+            .comment-input { padding: 9px 68px 9px 11px; font-size: 13px; min-height: 38px; }
+            .comment-submit { padding: 5px 10px; font-size: 11px; right: 5px; bottom: 5px; }
+            .comment-item { gap: 7px; }
+            .comment-item__body { padding: 9px 11px 8px; }
+            .comment-item__header { flex-wrap: wrap; gap: 3px; }
+            .comment-item__time { font-size: 10px; margin-left: 0; width: 100%; order: 5; }
+            .comment-item__text { font-size: 13px; }
+            .comment-item__actions { gap: 3px; }
+            .comment-btn { font-size: 11px; padding: 3px 7px; }
+            .comment-login-banner { flex-wrap: wrap; gap: 7px; padding: 10px 11px; margin-bottom: 12px; }
+            .comment-discord-btn { width: 100%; text-align: center; padding: 8px 14px; }
+            .comment-replies { padding-left: 6px; }
+            .comment-reply__body { padding: 8px 10px; }
+            .comment-reply__text { font-size: 12px; }
+            .comment-reply__header { flex-wrap: wrap; gap: 3px; }
+            .comment-reply-input { font-size: 12px; }
+
+            /* ── Search overlay ── */
+            .search-overlay { padding-top: 55px; }
+            .search-container { width: 96%; }
+            .search-bar .search-icon { display: none; }
+            .search-bar input { font-size: 15px; }
+            .search-go-btn { padding: 7px 12px; font-size: 11px; }
+            .search-close-btn { width: 32px; height: 32px; }
+            #neoSearchFilterBar { flex-wrap: wrap; gap: 8px; }
+            #neoSearchResults { grid-template-columns: 1fr !important; }
+
+            /* ── Panneau admin ── */
+            #editModePanel {
+                bottom: 85px !important; width: calc(100vw - 20px) !important;
+                left: 10px !important; right: 10px !important;
+                transform: translateY(20px) !important;
+            }
+            #editModePanel.is-open { transform: translateY(0) !important; }
+
+            /* ── Modaux admin ── */
+            #newCardModal .ncm-panel {
+                width: 100% !important; max-width: 100% !important;
+                height: 100dvh !important; border-radius: 0 !important;
+                flex-direction: column !important; max-height: 100dvh !important;
+            }
+            #newCardModal .ncm-body { flex-direction: column !important; overflow-y: auto !important; }
+            #newCardModal .ncm-form-col { border-left: none !important; border-top: 1px solid rgba(255,255,255,0.08) !important; max-height: none !important; }
+            #deleteCardModal .dcm-panel {
+                width: 100% !important; max-width: 100% !important;
+                height: 100dvh !important; border-radius: 0 !important;
+            }
+
+            /* ── Edit inline popup ── */
+            #editInlinePopup {
+                width: calc(100vw - 20px) !important;
+                left: 10px !important;
+                top: auto !important;
+                bottom: 100px !important;
+            }
+
+            /* ── Social share ── */
+            .social-share { gap: 7px; flex-wrap: wrap; padding: 0 14px; }
+            .social-share a { font-size: 11px; padding: 7px 12px; }
+        }
     </style>
 </head>
 <body>
