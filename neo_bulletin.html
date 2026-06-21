@@ -2093,22 +2093,19 @@
                 display: block !important;
                 background: #000;
             }
+            /* Ne PAS forcer display sur img/video — le JS gère via inline style */
             .modal-media-zone img {
-                display: block !important;
                 width: 100% !important;
                 height: auto !important;
                 max-height: 62dvh !important;
                 object-fit: contain !important;
             }
             .modal-media-zone video {
-                display: block !important;
                 width: 100% !important;
                 height: auto !important;
                 max-height: 62dvh !important;
                 object-fit: contain !important;
             }
-            /* JS toggle override : inline style l'emporte sur ces règles de base
-               mais on force les éléments cachés par JS via attribut data */
             .modal-close-float {
                 top: 10px !important; right: 10px !important;
                 width: 32px !important; height: 32px !important; font-size: 14px !important;
@@ -4671,17 +4668,19 @@
         else grid.appendChild(el);
 
         // Like button (cartes standard et message seulement)
-        const likeId = 'card-' + _plSlug(card.title + '-' + (card.src || card.id));
-        const local  = _plLoadLocal();
-        const liked  = (local[likeId] || {}).liked || false;
-        const btnLike = _plMakeBtn(likeId, liked, _plGlobalCounts[likeId] || 0);
-        const content = el.querySelector('.news-card__content');
-        if (content) {
-            const footer = document.createElement('div');
-            footer.className = 'post-like-card-footer';
-            footer.appendChild(btnLike);
-            content.appendChild(footer);
-        }
+        try {
+            const likeId = 'card-' + _plSlug(card.title + '-' + (card.src || card.id));
+            const local  = _plLoadLocal();
+            const liked  = (local[likeId] || {}).liked || false;
+            const btnLike = _plMakeBtn(likeId, liked, _plGlobalCounts[likeId] || 0);
+            const content = el.querySelector('.news-card__content');
+            if (content && btnLike) {
+                const footer = document.createElement('div');
+                footer.className = 'post-like-card-footer';
+                footer.appendChild(btnLike);
+                content.appendChild(footer);
+            }
+        } catch(e) { console.warn('[_renderOneCard] like button error:', e); }
         // Rebind modale
         el.querySelectorAll('.open-modal-btn').forEach(btn => {
             btn.addEventListener('click', _modalBtnHandler);
@@ -4979,16 +4978,16 @@
             msgText: msgText || ''
         };
 
+        // ── Rendu immédiat (UX) ──────────────────────────────────────
+        try { _renderOneCard(newCard); } catch(err) { console.error('[_cmdNewSubmit] render error:', err); }
+
+        // ── Sauvegarde Firebase en arrière-plan (partage pour tout le monde) ──
         if (FB_CC_REF) {
-            // .push() ajoute la card comme nœud Firebase avec ID unique — visible par tous immédiatement
-            FB_CC_REF.push(newCard).catch(err => {
-                editLog('err', 'Firebase: ' + (err?.message || 'erreur écriture'));
-                // Fallback local si Firebase échoue
-                _renderOneCard(newCard);
-            });
+            FB_CC_REF.push(newCard)
+                .then(() => { /* Firebase listener re-rendra si besoin, doublon évité par data-cc-id */ })
+                .catch(err => editLog('err', 'Firebase: ' + (err?.message || 'erreur écriture')));
         } else {
-            _ccAdd(newCard);
-            _renderOneCard(newCard);
+            _ccAdd(newCard); // fallback localStorage
         }
 
         document.querySelectorAll('.category-section:not(#cat-actus)').forEach(s => {
