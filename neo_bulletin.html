@@ -3563,9 +3563,13 @@
     /* ─── Poster commentaire ─── */
     function postComment() {
         if (!window.currentUser) { console.warn('postComment: no currentUser', window.currentUser); return; }
-        console.log('postComment: posting as', window.currentUser.username);
         const inp = document.getElementById("commentInput");
         const txt = inp.value.trim(); if (!txt) return;
+        const check = _filterComment(txt);
+        if (check.blocked) {
+            _showCommentWarning('Ce message contient du contenu inapproprié et ne peut pas être publié.');
+            return;
+        }
         COMMENTS_DB.unshift({ id: uid(), username: window.currentUser.username,
             avatar: window.currentUser.avatar, text: txt, time: isoNow(),
             likes: 0, likedByMe: false, reactions: {}, myReactions: {}, replies: [] });
@@ -3671,6 +3675,11 @@
         const box = document.getElementById(boxId);
         const inp = box?.querySelector("textarea");
         const txt = inp?.value.trim(); if (!txt) return;
+        const check = _filterComment(txt);
+        if (check.blocked) {
+            _showCommentWarning('Ce message contient du contenu inapproprié et ne peut pas être publié.');
+            return;
+        }
         const c = COMMENTS_DB.find(x=>x.id===cid); if (!c) return;
         c.replies.push({ id: uid(), username: window.currentUser.username,
             avatar: window.currentUser.avatar, text: txt, time: isoNow(),
@@ -3687,7 +3696,49 @@
     function closeAllComments(e)  { if(e&&e.currentTarget!==e.target) return; document.getElementById("commentsModal").classList.remove("is-active"); document.body.style.overflow=""; }
 
     /* ─── Auto-resize textarea ─── */
-    function autoResize(el) { el.style.height="auto"; el.style.height=Math.min(el.scrollHeight,150)+"px"; }
+    // ── Filtre de mots — commentaires ──────────────────────────────
+    const _BAD_WORDS = [
+        // Insultes françaises courantes
+        'connard','connards','connasse','connasses','enculé','enculés','enculée',
+        'enculer','encule','fdp','fils de pute','salope','salopes','pute','putes',
+        'putain','merde','chier','chieur','chieuse','bâtard','batard','batards',
+        'bâtards','cul','couille','couilles','bite','bites','niquer','nique',
+        'ta mère','tamere','ta mere','va te faire','vtff','ntm','nique ta mere',
+        'nique ta mère','pd','pédé','pede','pédale','pedalo','faggot',
+        'idiot','idiots','imbécile','imbecile','abruti','abrutis','crétin','cretin',
+        'crétins','cretins','débile','debile','demeuré','demeure','attardé','attarde',
+        'trou du cul','trouduc','trouduc','baltringue','raté','loser','nul','nulle',
+        // Insultes à caractère discriminatoire
+        'nègre','negre','négro','negro','youpin','youpins','bougnoule','bougnoules',
+        'bicot','melon','feuj','sale arabe','sale noir','sale juif',
+        // Menaces
+        'je vais te tuer','je te tue','je vais te niquer','je te nique',
+        // Mots anglais courants dans le gaming
+        'nigger','nigga','faggot','fag','retard','kys','kill yourself'
+    ];
+
+    function _filterComment(text) {
+        const lower = text.toLowerCase();
+        for (const word of _BAD_WORDS) {
+            if (lower.includes(word)) return { blocked: true, word };
+        }
+        return { blocked: false };
+    }
+
+    function _showCommentWarning(msg) {
+        const area = document.querySelector('.comment-write-box') || document.body;
+        let warn = document.getElementById('_commentWarn');
+        if (!warn) {
+            warn = document.createElement('div');
+            warn.id = '_commentWarn';
+            warn.style.cssText = 'background:rgba(255,30,30,0.12);border:1px solid rgba(255,30,30,0.3);border-radius:10px;padding:8px 12px;font-size:12px;font-family:Inter,sans-serif;color:#ff6060;margin-top:6px;display:none;';
+            area.after(warn);
+        }
+        warn.textContent = '⚠️ ' + msg;
+        warn.style.display = 'block';
+        clearTimeout(warn._t);
+        warn._t = setTimeout(() => { warn.style.display = 'none'; }, 4000);
+    }
 
 
     /* ─── SEARCH SYSTEM ────────────────────────────────────────────────── */
@@ -3939,9 +3990,9 @@
     // document.addEventListener('DOMContentLoaded', () => { setTimeout(initDepth, 50); });
     </script>
 
-    <!-- Pilule switcher mobile -->
+    <!-- Pilule switcher mobile — navigation directe sans JS interception -->
     <div class="mobile-switcher-pill" aria-label="Navigation">
-        <a href="./index.html">News</a>
+        <a href="./index.html" onclick="event.preventDefault();window.location.href='./index.html'">News</a>
         <a href="./neo_bulletin.html" class="active">Leaks</a>
     </div>
 
