@@ -4640,8 +4640,10 @@
 
         } else {
             // ── Carte STANDARD (leak / image / vidéo) ─────────────────
-            const mediaTag = card.mediaType === 'video'
-                ? `<video src="${e(card.src)}#t=1" class="news-card__image" preload="metadata" muted playsinline></video>`
+            const isDataUrl = (card.src || '').startsWith('data:');
+            const videoSrc  = isDataUrl ? e(card.src) : e(card.src) + '#t=0.001';
+            const mediaTag  = card.mediaType === 'video'
+                ? `<video src="${videoSrc}" class="news-card__image" preload="metadata" muted playsinline></video>`
                 : `<img src="${e(card.src)}" class="news-card__image" alt="${e(card.title)}">`;
             const btnLabel = e(card.btnLabel || "Voir l'image →");
             const btnHtml  = card.mediaType === 'video'
@@ -4742,25 +4744,15 @@
     function _ncmFileSelected(input) {
         const file = input.files[0];
         if (!file) return;
+        const isVid = file.type.startsWith('video/');
+        if (isVid) {
+            const radio = document.querySelector('#newCardModal input[name="ncmType"][value="video"]');
+            if (radio) { radio.checked = true; _ncmTypeChange(); }
+        }
         const reader = new FileReader();
         reader.onload = e => { _ncmImageData = e.target.result; _ncmShowImage(_ncmImageData); };
         reader.readAsDataURL(file);
         input.value = '';
-    }
-    function _ncmShowImage(src) {
-        const dz = document.getElementById('ncmDropZone');
-        const hint = document.getElementById('ncmDropHint');
-        if (!dz) return;
-        if (src) {
-            if (hint) hint.style.display = 'none';
-            let img = dz.querySelector('.ncm-card-img-loaded');
-            if (!img) { img = document.createElement('img'); img.className = 'ncm-card-img-loaded'; dz.prepend(img); }
-            img.src = src;
-        } else {
-            if (hint) hint.style.display = '';
-            const img = dz.querySelector('.ncm-card-img-loaded');
-            if (img) img.remove();
-        }
     }
     function _ncmShowImage(src) {
         const dz   = document.getElementById('ncmDropZone');
@@ -4815,23 +4807,32 @@
     }
     function _ncmTypeChange() {
         const isVideo = document.querySelector('#newCardModal input[name="ncmType"]:checked')?.value === 'video';
-        // Le champ URL reste disponible pour vidéos sans drag (optionnel)
         const vf = document.getElementById('ncmVideoField');
         if (vf) vf.style.display = isVideo ? '' : 'none';
-        // Sync pills
         document.getElementById('ncmPillImage')?.classList.toggle('active', !isVideo);
         document.getElementById('ncmPillVideo')?.classList.toggle('active', isVideo);
-        // Mettre à jour le hint de la drop zone
         const hint = document.getElementById('ncmDropHint');
         if (hint) {
             const icon = hint.querySelector('.ncm-card-empty-icon');
             const txt  = hint.querySelector('.ncm-card-empty-text');
             if (icon) icon.textContent = isVideo ? '🎬' : '🖼️';
-            if (txt)  txt.innerHTML    = isVideo ? 'Glisse une vidéo<br>ou entre un lien ci-dessous' : 'Glisse une image<br>ou clique ici';
+            if (txt)  txt.innerHTML    = isVideo
+                ? 'Glisse une vidéo ici<br><span style="opacity:.5;font-size:11px">ou entre un lien ci-dessous</span>'
+                : 'Glisse une image<br>ou clique ici';
         }
-        // Fichier input
         const fi = document.getElementById('ncmFileInput');
         if (fi) fi.accept = isVideo ? 'image/*,video/*' : 'image/*';
+        // Lier le champ URL : quand l'utilisateur tape dedans, ça annule le drag-drop
+        const urlInput = document.getElementById('ncmSrc');
+        if (urlInput && !urlInput._bound) {
+            urlInput._bound = true;
+            urlInput.addEventListener('input', () => {
+                if (urlInput.value.trim()) {
+                    _ncmImageData = null; // URL prime sur le drag
+                    _ncmShowImage(null);  // effacer le preview drag
+                }
+            });
+        }
     }
     function _ncmKindChange() {
         const kind      = document.querySelector('#newCardModal input[name="ncmKind"]:checked')?.value || 'standard';
@@ -4928,83 +4929,81 @@
         const isActus   = kind === 'actus';
         const isMessage = kind === 'message';
 
-        // Section cible
         let sectionId;
         if (isActus)        sectionId = 'cat-actus';
         else if (isMessage) sectionId = 'cat-messages';
         else                sectionId = document.getElementById('ncmSection')?.value;
 
         const mediaType = document.querySelector('#newCardModal input[name="ncmType"]:checked')?.value || 'image';
-
-        // Lire les données selon le type
         let badge, title, eyebrow, btnLabel, src, actusText, msgInitials, msgText;
 
         if (isMessage) {
             msgInitials = document.getElementById('ncmMsgInitials')?.textContent?.trim() || 'E.';
             title       = document.getElementById('ncmMsgTitle')?.textContent?.trim() || 'Message';
             msgText     = document.getElementById('ncmMsgText')?.textContent?.trim() || '';
-            badge       = 'Cryptage';
-            eyebrow     = 'Cryptage';
-            btnLabel    = 'Décrypter →';
-            src         = '';
+            badge = 'Cryptage'; eyebrow = 'Cryptage'; btnLabel = 'Décrypter →'; src = '';
         } else if (isActus) {
-            title       = document.getElementById('ncmActusTitle')?.textContent?.trim() || 'Dossier';
-            actusText   = document.getElementById('ncmActusText')?.textContent?.trim()
-                       || document.getElementById('ncmActusContent')?.value?.trim() || '';
-            badge       = document.getElementById('ncmEditBadge')?.textContent?.trim() || 'ACTUS';
-            eyebrow     = 'Actus';
-            btnLabel    = 'Lire →';
-            src         = '';
+            title     = document.getElementById('ncmActusTitle')?.textContent?.trim() || 'Dossier';
+            actusText = document.getElementById('ncmActusText')?.textContent?.trim()
+                     || document.getElementById('ncmActusContent')?.value?.trim() || '';
+            badge = document.getElementById('ncmEditBadge')?.textContent?.trim() || 'ACTUS';
+            eyebrow = 'Actus'; btnLabel = 'Lire →'; src = '';
         } else {
-            badge    = document.getElementById('ncmEditBadge')?.textContent?.trim();
-            title    = document.getElementById('ncmEditTitle')?.textContent?.trim();
+            badge    = document.getElementById('ncmEditBadge')?.textContent?.trim() || 'EXCLU';
+            title    = document.getElementById('ncmEditTitle')?.textContent?.trim() || 'Sans titre';
             eyebrow  = document.getElementById('ncmEditEyebrow')?.textContent?.trim() || 'Leak';
-            btnLabel = document.getElementById('ncmEditBtn')?.textContent?.trim() || "Voir l'image →";
-            src      = _ncmImageData ||                                      // drag-drop (image ou vidéo)
-                       (document.getElementById('ncmSrc')?.value?.trim() || ''); // URL de secours pour vidéo
+            btnLabel = document.getElementById('ncmEditBtn')?.textContent?.trim() || "Voir →";
+            const urlField = document.getElementById('ncmSrc')?.value?.trim() || '';
+            // Priorité : URL tapée > drag-drop (si URL non vide, elle prime)
+            src = urlField || _ncmImageData || '';
         }
 
-        if (!sectionId)             { editLog('err', 'Section introuvable.'); return; }
-        if (!title)                 { editLog('err', 'Le titre est requis.'); return; }
-        if (!isActus && !isMessage && !src) { editLog('err', 'Image ou URL vidéo requise.'); return; }
-        if (!document.getElementById(sectionId)) { editLog('err', 'Section introuvable.'); return; }
+        // Validations
+        if (!sectionId || !document.getElementById(sectionId)) {
+            editLog('err', 'Section introuvable.'); return;
+        }
+        if (!title) { editLog('err', 'Le titre est requis.'); return; }
+        if (!isActus && !isMessage && !src) { editLog('err', 'Image, vidéo ou lien requis.'); return; }
 
-        const cardId  = 'cc_' + Date.now();
+        // ── Fermer le modal IMMÉDIATEMENT pour ne pas bloquer l'UX ──
+        document.getElementById('newCardModal')?.classList.remove('is-open');
+
+        const cardId = 'cc_' + Date.now();
         const newCard = {
-            id: cardId, sectionId, badge, title, src: src || '',
-            eyebrow, btnLabel, mediaType, kind,
-            actusText: actusText || '',
-            msgInitials: msgInitials || '',
-            msgText: msgText || ''
+            id: cardId, sectionId, badge, title,
+            src: src || '', eyebrow, btnLabel, mediaType, kind,
+            actusText: actusText || '', msgInitials: msgInitials || '', msgText: msgText || ''
         };
 
-        // ── Rendu immédiat (UX) ──────────────────────────────────────
-        try { _renderOneCard(newCard); } catch(err) { console.error('[_cmdNewSubmit] render error:', err); }
+        // Rendu immédiat
+        try { _renderOneCard(newCard); } catch(err) { console.error('[render]', err); }
 
-        // ── Sauvegarde Firebase en arrière-plan (partage pour tout le monde) ──
+        // Firebase en arrière-plan
         if (FB_CC_REF) {
-            FB_CC_REF.push(newCard)
-                .then(() => { /* Firebase listener re-rendra si besoin, doublon évité par data-cc-id */ })
-                .catch(err => editLog('err', 'Firebase: ' + (err?.message || 'erreur écriture')));
+            FB_CC_REF.push(newCard).catch(err =>
+                editLog('err', 'Firebase: ' + (err?.message || 'erreur écriture'))
+            );
         } else {
-            _ccAdd(newCard); // fallback localStorage
+            _ccAdd(newCard);
         }
 
-        document.querySelectorAll('.category-section:not(#cat-actus)').forEach(s => {
-            _originalOrder.set(s.id, [...s.querySelectorAll('.news-card')]);
-        });
-        _sortAllSections();
+        // Tri + toast
+        try {
+            document.querySelectorAll('.category-section:not(#cat-actus)').forEach(s => {
+                _originalOrder.set(s.id, [...s.querySelectorAll('.news-card')]);
+            });
+            _sortAllSections();
+        } catch(e) { console.warn('[sort]', e); }
 
-        const e = _ccEsc;
+        const escFn = _ccEsc;
         editLog('ok', `Carte "${kind}" créée dans ${sectionId} : ${title}`);
         const toast = document.getElementById('newCardToast');
         if (toast) {
-            toast.innerHTML = `<span class="toast-badge">${e(badge || kind)}</span><span class="toast-title">${e(title)}</span>`;
+            toast.innerHTML = `<span class="toast-badge">${escFn(badge || kind)}</span><span class="toast-title">${escFn(title)}</span>`;
             toast.classList.add('is-visible');
             clearTimeout(toast._hide);
             toast._hide = setTimeout(() => toast.classList.remove('is-visible'), 2500);
         }
-        document.getElementById('newCardModal')?.classList.remove('is-open');
     }
 
     // ══════════════════════════════════════════════════════════════
