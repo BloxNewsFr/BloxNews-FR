@@ -3504,6 +3504,8 @@
         saveLocal();
         if (document.getElementById("commentBody")?.classList.contains("is-open")) renderList();
         if (document.getElementById("commentsModal")?.classList.contains("is-active")) renderModal();
+    }, err => {
+        console.error('[commentaires] Firebase inaccessible en lecture :', err);
     });
 
     (function initLocal() {
@@ -4123,7 +4125,11 @@
                 if (countEl) countEl.textContent = _plGlobalCounts[btn.dataset.postId] || 0;
             });
             _sortAllSections();
+        }, err => {
+            console.error('[likes] Firebase inaccessible en lecture (vérifie les règles de la base et le quota) :', err);
         });
+    } else {
+        console.warn('[likes] Firebase non initialisé — les likes resteront locaux à cet appareil uniquement.');
     }
 
     // ─── Construction SVG cœur ─────────────────────────────────────
@@ -4165,7 +4171,26 @@
 
         // ── Firebase est le SEUL à mettre à jour le compteur ──────
         // Pas d'update optimiste du nombre → zéro double-comptage
-        if (FB_LIKES_REF) FB_LIKES_REF.child(id).transaction(cur => Math.max(0, (cur || 0) + (entry.liked ? 1 : -1)));
+        // (sauf si Firebase échoue : on bascule alors en repli local
+        //  pour que le bouton reste fonctionnel plutôt que "mort")
+        const countEl = btn.querySelector('.post-like-count');
+        if (FB_LIKES_REF) {
+            FB_LIKES_REF.child(id).transaction(
+                cur => Math.max(0, (cur || 0) + (entry.liked ? 1 : -1)),
+                (error) => {
+                    if (error) {
+                        console.error('[likes] échec de synchronisation Firebase pour "' + id + '" :', error);
+                        if (countEl) {
+                            const current = parseInt(countEl.textContent, 10) || 0;
+                            countEl.textContent = Math.max(0, current + (entry.liked ? 1 : -1));
+                        }
+                    }
+                }
+            );
+        } else if (countEl) {
+            const current = parseInt(countEl.textContent, 10) || 0;
+            countEl.textContent = Math.max(0, current + (entry.liked ? 1 : -1));
+        }
 
         // ── Feedback visuel immédiat (cœur + particules) ──────────
         btn.classList.toggle('liked', entry.liked);
@@ -4678,6 +4703,26 @@
     function _ccRemove(id) { _ccSave(_ccLoad().filter(c => c.id !== id)); }
     function _ccEsc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
+    // ── Miniature vidéo forcée en JS ─────────────────────────────────
+    // (fonctionne aussi bien pour un lien classique que pour un data:URL,
+    //  contrairement à l'astuce d'URL "#t=0.001" qui ne marche pas sur les data:)
+    function _ensureVideoThumbnail(video) {
+        if (!video || video.dataset.thumbFixed) return;
+        video.dataset.thumbFixed = '1';
+        const seek = () => {
+            try {
+                if (video.duration && isFinite(video.duration)) {
+                    video.currentTime = Math.min(0.2, video.duration / 2);
+                }
+            } catch(e) {}
+        };
+        if (video.readyState >= 1) seek();
+        else video.addEventListener('loadedmetadata', seek, { once: true });
+    }
+    function _ensureAllVideoThumbnails(root) {
+        (root || document).querySelectorAll('video.news-card__image').forEach(_ensureVideoThumbnail);
+    }
+
     // ── Rendu d'une card custom (depuis Firebase) ───────────────────
     function _renderOneCard(card) {
         const section = document.getElementById(card.sectionId);
@@ -4735,10 +4780,8 @@
 
         } else {
             // ── Carte STANDARD (leak / image / vidéo) ─────────────────
-            const isDataUrl = (card.src || '').startsWith('data:');
-            const videoSrc  = isDataUrl ? e(card.src) : e(card.src) + '#t=0.001';
             const mediaTag  = card.mediaType === 'video'
-                ? `<video src="${videoSrc}" class="news-card__image" preload="metadata" muted playsinline></video>`
+                ? `<video src="${e(card.src)}" class="news-card__image" preload="metadata" muted playsinline></video>`
                 : `<img src="${e(card.src)}" class="news-card__image" alt="${e(card.title)}">`;
             const btnLabel = e(card.btnLabel || "Voir l'image →");
             const btnHtml  = card.mediaType === 'video'
@@ -4763,6 +4806,7 @@
         const el = tmp.firstChild;
         if (grid.firstChild) grid.insertBefore(el, grid.firstChild);
         else grid.appendChild(el);
+        _ensureAllVideoThumbnails(el);
 
         // Like button (cartes standard et message seulement)
         try {
@@ -4835,14 +4879,36 @@
     //  COMMANDE /NEW — Card éditable WYSIWYG + drag & drop
     // ══════════════════════════════════════════════════════════════
     let _ncmImageData = null;
+    // Limite de sécurité : Firebase Realtime Database n'est pas fait pour stocker
+    // de gros fichiers en base64 (une vidéo peut faire des dizaines de Mo une fois
+    // encodée). Au-delà, l'écriture peut échouer silencieusement et la carte
+    // disparaît au rechargement. On plafonne donc les images, et on interdit
+    // complètement le dépôt de fichiers vidéo (il faut un lien hébergé ailleurs).
+    const NCM_MAX_IMAGE_BYTES = 900 * 1024; // ~900 Ko
+
+    function _ncmRejectFile(msg) {
+        editLog('err', msg);
+        const toast = document.getElementById('newCardToast');
+        if (toast) {
+            toast.innerHTML = `<span class="toast-badge">⚠️ Fichier refusé</span><span class="toast-title">${msg}</span>`;
+            toast.classList.add('is-visible');
+            clearTimeout(toast._hide);
+            toast._hide = setTimeout(() => toast.classList.remove('is-visible'), 3200);
+        }
+    }
 
     function _ncmFileSelected(input) {
         const file = input.files[0];
         if (!file) return;
-        const isVid = file.type.startsWith('video/');
-        if (isVid) {
-            const radio = document.querySelector('#newCardModal input[name="ncmType"][value="video"]');
-            if (radio) { radio.checked = true; _ncmTypeChange(); }
+        if (file.type.startsWith('video/')) {
+            _ncmRejectFile("Les vidéos ne peuvent pas être déposées en fichier : colle un lien hébergé dans le champ « URL de la vidéo » ci-dessous.");
+            input.value = '';
+            return;
+        }
+        if (file.size > NCM_MAX_IMAGE_BYTES) {
+            _ncmRejectFile(`Image trop lourde (${(file.size/1024/1024).toFixed(1)} Mo) : compresse-la ou utilise un lien direct.`);
+            input.value = '';
+            return;
         }
         const reader = new FileReader();
         reader.onload = e => { _ncmImageData = e.target.result; _ncmShowImage(_ncmImageData); };
@@ -4887,13 +4953,18 @@
             const isImg = file.type.startsWith('image/');
             const isVid = file.type.startsWith('video/');
             if (!isImg && !isVid) return;
-            // Sélectionner automatiquement le bon type
             if (isVid) {
                 const radio = document.querySelector('#newCardModal input[name="ncmType"][value="video"]');
                 if (radio) { radio.checked = true; _ncmTypeChange(); }
-            } else {
-                const radio = document.querySelector('#newCardModal input[name="ncmType"][value="image"]');
-                if (radio) { radio.checked = true; _ncmTypeChange(); }
+                _ncmRejectFile("Les vidéos ne peuvent pas être déposées en fichier : colle un lien hébergé dans le champ « URL de la vidéo » ci-dessous.");
+                return;
+            }
+            // Sélectionner automatiquement le type image
+            const radio = document.querySelector('#newCardModal input[name="ncmType"][value="image"]');
+            if (radio) { radio.checked = true; _ncmTypeChange(); }
+            if (file.size > NCM_MAX_IMAGE_BYTES) {
+                _ncmRejectFile(`Image trop lourde (${(file.size/1024/1024).toFixed(1)} Mo) : compresse-la ou utilise un lien direct.`);
+                return;
             }
             const reader = new FileReader();
             reader.onload = ev => { _ncmImageData = ev.target.result; _ncmShowImage(_ncmImageData); };
@@ -4910,13 +4981,13 @@
         if (hint) {
             const icon = hint.querySelector('.ncm-card-empty-icon');
             const txt  = hint.querySelector('.ncm-card-empty-text');
-            if (icon) icon.textContent = isVideo ? '🎬' : '🖼️';
+            if (icon) icon.textContent = isVideo ? '🔗' : '🖼️';
             if (txt)  txt.innerHTML    = isVideo
-                ? 'Glisse une vidéo ici<br><span style="opacity:.5;font-size:11px">ou entre un lien ci-dessous</span>'
+                ? 'Colle un lien vidéo hébergé<br><span style="opacity:.5;font-size:11px">ci-dessous (pas de dépôt de fichier)</span>'
                 : 'Glisse une image<br>ou clique ici';
         }
         const fi = document.getElementById('ncmFileInput');
-        if (fi) fi.accept = isVideo ? 'image/*,video/*' : 'image/*';
+        if (fi) fi.accept = 'image/*';
         // Lier le champ URL : quand l'utilisateur tape dedans, ça annule le drag-drop
         const urlInput = document.getElementById('ncmSrc');
         if (urlInput && !urlInput._bound) {
@@ -5049,8 +5120,13 @@
             eyebrow  = document.getElementById('ncmEditEyebrow')?.textContent?.trim() || 'Leak';
             btnLabel = document.getElementById('ncmEditBtn')?.textContent?.trim() || "Voir →";
             const urlField = document.getElementById('ncmSrc')?.value?.trim() || '';
-            // Priorité : URL tapée > drag-drop (si URL non vide, elle prime)
-            src = urlField || _ncmImageData || '';
+            if (mediaType === 'video') {
+                // Une vidéo DOIT être un lien hébergé : jamais de base64 dans Firebase
+                src = urlField;
+            } else {
+                // Priorité : URL tapée > drag-drop (si URL non vide, elle prime)
+                src = urlField || _ncmImageData || '';
+            }
         }
 
         // Validations
@@ -5058,7 +5134,15 @@
             editLog('err', 'Section introuvable.'); return;
         }
         if (!title) { editLog('err', 'Le titre est requis.'); return; }
+        if (!isActus && !isMessage && mediaType === 'video' && !src) {
+            editLog('err', 'Une vidéo nécessite un lien (URL) hébergé — pas de dépôt de fichier.');
+            return;
+        }
         if (!isActus && !isMessage && !src) { editLog('err', 'Image, vidéo ou lien requis.'); return; }
+        if (src && src.startsWith('data:') && src.length > 1300000) {
+            editLog('err', 'Le fichier est trop volumineux pour être sauvegardé (Firebase). Utilise un lien direct.');
+            return;
+        }
 
         // ── Fermer le modal IMMÉDIATEMENT pour ne pas bloquer l'UX ──
         document.getElementById('newCardModal')?.classList.remove('is-open');
@@ -5073,16 +5157,17 @@
         // Rendu immédiat
         try { _renderOneCard(newCard); } catch(err) { console.error('[render]', err); }
 
-        // Firebase en arrière-plan
-        if (FB_CC_REF) {
-            FB_CC_REF.push(newCard).catch(err =>
-                editLog('err', 'Firebase: ' + (err?.message || 'erreur écriture'))
-            );
-        } else {
-            _ccAdd(newCard);
+        const escFn = _ccEsc;
+        const toast = document.getElementById('newCardToast');
+        function _ncmShowToast(label, text) {
+            if (!toast) return;
+            toast.innerHTML = `<span class="toast-badge">${escFn(label)}</span><span class="toast-title">${escFn(text)}</span>`;
+            toast.classList.add('is-visible');
+            clearTimeout(toast._hide);
+            toast._hide = setTimeout(() => toast.classList.remove('is-visible'), 3200);
         }
 
-        // Tri + toast
+        // Tri immédiat (affichage local, avant même la confirmation Firebase)
         try {
             document.querySelectorAll('.category-section:not(#cat-actus)').forEach(s => {
                 _originalOrder.set(s.id, [...s.querySelectorAll('.news-card')]);
@@ -5090,14 +5175,25 @@
             _sortAllSections();
         } catch(e) { console.warn('[sort]', e); }
 
-        const escFn = _ccEsc;
-        editLog('ok', `Carte "${kind}" créée dans ${sectionId} : ${title}`);
-        const toast = document.getElementById('newCardToast');
-        if (toast) {
-            toast.innerHTML = `<span class="toast-badge">${escFn(badge || kind)}</span><span class="toast-title">${escFn(title)}</span>`;
-            toast.classList.add('is-visible');
-            clearTimeout(toast._hide);
-            toast._hide = setTimeout(() => toast.classList.remove('is-visible'), 2500);
+        // Sauvegarde Firebase — la carte affichée doit refléter la vraie sauvegarde
+        if (FB_CC_REF) {
+            FB_CC_REF.push(newCard).then(() => {
+                editLog('ok', `Carte "${kind}" créée dans ${sectionId} : ${title}`);
+                _ncmShowToast(badge || kind, title);
+            }).catch(err => {
+                const reason = err?.message || 'erreur inconnue';
+                editLog('err', 'Firebase a refusé la sauvegarde : ' + reason);
+                console.error('[custom_cards] échec de sauvegarde :', err, newCard);
+                // La carte ne sera pas là au rechargement : on le dit clairement
+                // et on la retire pour ne pas laisser croire qu'elle est sauvegardée.
+                const el = document.querySelector(`[data-cc-id="${cardId}"]`);
+                if (el) el.remove();
+                _ncmShowToast('⚠️ Non sauvegardée', 'Échec Firebase : ' + reason);
+            });
+        } else {
+            _ccAdd(newCard);
+            editLog('ok', `Carte "${kind}" créée dans ${sectionId} : ${title} (stockage local uniquement)`);
+            _ncmShowToast(badge || kind, title);
         }
     }
 
@@ -5246,6 +5342,7 @@
 
         // 1. Assigner des IDs stables aux cards statiques (avant tout)
         _assignStaticIds();
+        _ensureAllVideoThumbnails(document);
 
         // 2. Appliquer les suppressions de cards statiques depuis Firebase
         if (FB_DELETED_REF) {
