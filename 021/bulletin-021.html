@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>DC Bulletin #021 – Blox Fruits</title>
+
+    <link rel="icon" type="image/png" href="./shared/favicon.png">
+    <link rel="shortcut icon" href="../shared/bf_logo.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
+
+    <style>
+        @font-face {
+            font-family: 'LuckiestGuy Regular';
+            src: url('../fonts/LuckiestGuy-Regular.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        :root {
+            --color-text: #333132;
+            --color-border: #ebebeb;
+            --font-stack-body: 'Inter', sans-serif;
+            --color-primary: #ffda00;
+        }
+
+        * { box-sizing: border-box; }
+        body { margin: 0; font-family: var(--font-stack-body); color: var(--color-text); background-color: #f5f6fa; line-height: 1.6; }
+
+        .site-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            z-index: -1;
+            pointer-events: none;
+        }
+        .site-background img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .site-background { display: none; }
+        }
+
+        .site-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 55px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            height: 72px;
+            background-color: rgba(255, 255, 255, 0.08); background-image: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.05) 50%, transparent 100%); background-size: 200% 100%;
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255,255,255,0.2);
+            transition: background 0.5s cubic-bezier(0.4, 0, 0.2, 1), backdrop-filter 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: navbarSheen 6s ease-in-out infinite;
+        }
+
+        @keyframes navbarSheen {
+            0%, 100% { background-position: 200% 0; }
+            50% { background-position: 0% 0; }
+        }
+
+        .site-nav { display: flex; gap: 8px; padding: 0; margin: 0; list-style: none; font-weight: 900; }
+        .site-header__logo { position: absolute; left: 55px; }
+        .site-nav a, .site-header__icons {
+            color: var(--color-text);
+            transition: color 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .site-header.nav-light-text .site-nav a,
+        .site-header.nav-light-text .site-header__icons {
+            color: #fff;
+            -webkit-text-stroke: 1.2px rgba(0,0,0,0.7);
+            text-shadow: 0 2px 8px rgba(0,0,0,0.35);
+        }
+
+        .site-header__logo img {
+            height: 42px; width: auto; display: block;
+            filter: none !important;
+        }
+        .site-header.nav-light-text .site-header__logo img {
+            filter: brightness(0) invert(1);
+        }
+
+        .site-nav a { color: var(--color-text); text-decoration: none; font-weight: 900; font-size: 17px; text-transform: uppercase; font-family: 'LuckiestGuy Regular', cursive; padding: 8px 16px; border-radius: 10px; transition: background 0.2s, color 0.2s; }
+        .site-nav a:hover { background: var(--color-primary); color: #000; }
+        .site-header__icons { display: flex; gap: 12px; color: var(--color-text); cursor: pointer; align-items: center; position: absolute; right: 55px; }
+        .site-header__icons span { padding: 8px; border-radius: 10px; transition: background 0.2s; }
+        .site-header__icons span:hover { background: rgba(0,0,0,0.06); }
+        .mobile-menu-btn { display: none; }
+        .mobile-nav-dropdown { display: none; }
+
+        .bulletin-container { max-width: 1100px; margin: 40px auto; padding: 0 24px; }
+
+        @keyframes shimmerBanner { 0%{background-position:0% center} 100%{background-position:200% center} }
+
+        .blue-banner {
+            display: center;
+            background: linear-gradient(135deg, #175ec2, #2980d4, #175ec2); background-size: 200% auto;
+            color: #fff; padding: 16px 60px; font-size: 36px;
+            text-transform: uppercase; letter-spacing: 3px;
+            border-radius: 100px; font-family: 'LuckiestGuy Regular', cursive;
+            box-shadow: 0 8px 32px rgba(23,94,194,0.45), 0 2px 8px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.2);
+            animation: shimmerBanner 3s linear infinite; margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .hero-image-wrapper { width: 100%; margin-bottom: 15px; }
+        .fade-in { animation: fadeInUp 0.5s ease both; }
+        .hero-image { width: 100%; height: auto; display: block; border-radius: 20px; box-shadow: 0 8px 30px rgba(0,0,0,0.1); }
+        .publish-date { font-size: 15px; font-weight: bold; color: #222222; margin-bottom: 25px; }
+
+        .journal-header { text-align: center; margin-top: 30px; }
+        .journal-title { font-family: 'LuckiestGuy Regular', cursive; font-size: 38px; font-weight: bold; color: #111111; margin: 0 0 10px 0; letter-spacing: -1px; }
+        .journal-subtitle { font-family: 'Inter', sans-serif; font-style: italic; font-size: 18px; color: #555555; margin: 0 0 25px 0; }
+        .journal-meta { font-weight: bold; font-size: 14px; color: #111111; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .dashed-line { border-top: 1px dashed #ccc; margin: 20px 0 35px 0; }
+
+        .wanted-box { background-color: #fff; border: 1px solid #f0f0f0; border-left: 4px solid #c53929; padding: 24px; margin-bottom: 40px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
+        .wanted-title { color: #c53929; font-size: 22px; font-weight: 900; margin: 0 0 5px 0; font-family: 'LuckiestGuy Regular', cursive; letter-spacing: 0.5px; }
+        .wanted-subtitle { font-style: italic; font-size: 13px; color: #555555; margin-bottom: 20px; display: block; }
+        .wanted-img { width: 100%; height: auto; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+        .wanted-text p { margin: 0 0 15px 0; font-size: 14.5px; }
+
+        .summary {
+            background: rgba(88, 101, 242, 0.09);
+            border-left: 4px solid #5865f2;
+            padding: 12px 16px;
+            margin-top: 15px;
+            font-size: 13.5px;
+            font-style: italic;
+            color: #2c3e50;
+            border-radius: 0 6px 6px 0;
+        }
+        .summary b {
+            color: #5865f2;
+            text-transform: uppercase;
+            font-size: 11px;
+            font-style: normal;
+            display: block;
+            margin-bottom: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        .content-columns { display: flex; gap: 30px; margin-bottom: 40px; }
+        .left-col { flex: 1.9; }
+        .right-col { flex: 1.1; background-color: #fff; padding: 24px; border-radius: 16px; height: fit-content; box-shadow: 0 4px 20px rgba(0,0,0,0.06); border: 1px solid #e8e8f0; }
+
+        h2 { border-bottom: 2px solid #111111; padding-bottom: 5px; font-size: 22px; font-weight: 900; margin: 0 0 20px 0; color: #111111; }
+        .section-subtext { font-style: italic; font-size: 13.5px; color: #555555; margin-bottom: 20px; display: block; margin-top: -15px; }
+
+        .side-img { width: 100%; height: auto; border-radius: 12px; margin: 15px 0; box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+        .side-text p { font-size: 14px; margin-bottom: 12px; }
+
+        .dragon-section { border-top: 2px solid #111; padding-top: 25px; margin-bottom: 40px; }
+        .dragon-inner { display: flex; gap: 20px; align-items: flex-start; margin-top: 15px; }
+        .dragon-text { flex: 1; }
+        .dragon-text p { font-size: 14.5px; margin-bottom: 12px; }
+        .dragon-img { width: 260px; flex-shrink: 0; height: auto; border: 3px solid #000; border-radius: 8px; }
+
+        .social-share {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin: 30px 0;
+            width: 100%;
+        }
+        .social-share a {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 18px;
+            border-radius: 100px;
+            font-size: 13px;
+            font-weight: 900;
+            text-decoration: none;
+            text-transform: uppercase;
+            transition: all 0.25s ease;
+            border: none;
+        }
+        .social-share a:hover { transform: translateY(-3px); }
+        .social-share a.td { background: #5865F2; color: #fff; box-shadow: 0 4px 15px rgba(88,101,242,0.4); }
+        .social-share a.tt { background: linear-gradient(135deg, #1d56f2, #f21de4); color: #fff; box-shadow: 0 4px 15px rgba(29,86,242,0.4); }
+        .social-share a.ty { background: #ec1717e0; color: #fff; box-shadow: 0 4px 15px rgba(236,23,23,0.4); }
+        .social-share a img { width: 18px; height: 18px; vertical-align: middle; }
+
+        .back-button-container { text-align: center; margin: 40px 0 50px 0; }
+        .back-button {
+            align-self: flex-start;
+            background: linear-gradient(135deg, #ffda00, #ffc200);
+            color: #000; text-decoration: none;
+            font-weight: 900; padding: 11px 24px;
+            border-radius: 100px; font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 15px rgba(255,218,0,0.4);
+            border: 2px solid rgba(0,0,0,0.08);
+            position: relative; overflow: hidden;
+            display: inline-block;
+            transition: transform 0.1s;
+        }
+        .back-button:hover { transform: scale(1.05); box-shadow: 0 6px 20px rgba(255,218,0,0.5); }
+
+        .site-footer {
+            background-color: #f0f0f0;
+            border-top: 1px solid #cccccc;
+            padding: 40px 55px;
+            display: flex;
+            gap: 60px;
+        }
+        .footer-col h3 { font-size: 15px; font-weight: 900; text-transform: uppercase; margin: 0 0 14px 0; }
+        .footer-col ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+        .footer-col ul li a { color: #333; text-decoration: none; font-size: 14px; }
+        .footer-col p { font-size: 13px; color: #555; margin: 0 0 10px 0; }
+        .footer-community-links { display: flex; flex-direction: column; gap: 8px; }
+        .footer-community-links a { color: #175ec2; text-decoration: none; font-weight: 700; font-size: 14px; transition: color 0.2s; } .footer-community-links a:hover { color: #0d47a1; }
+
+        @media (max-width: 768px) {
+            .site-header { padding: 12px 20px; }
+            .site-nav { display: none; }
+            .content-columns { flex-direction: column; }
+            .dragon-inner { flex-direction: column; }
+            .dragon-img { width: 100%; }
+            .site-footer { flex-direction: column; gap: 30px; padding: 30px 20px; }
+            @keyframes shimmerBanner { 0%{background-position:0% center} 100%{background-position:200% center} }
+
+            .blue-banner { font-size: 24px; padding: 12px 30px; }
+            .mobile-menu-btn { display: block; }
+            .mobile-nav-dropdown {
+                display: flex; flex-direction: column; gap: 12px;
+                position: fixed; top: 60px; right: -280px; width: 250px;
+                background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+                padding: 24px; border-radius: 0 0 0 20px; box-shadow: -5px 10px 30px rgba(0,0,0,0.1);
+                transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 999; border: 1px solid rgba(0,0,0,0.05); border-right: none;
+            }
+            .mobile-nav-dropdown.is-open { right: 0; }
+            .mobile-nav-dropdown a {
+                text-decoration: none; font-family: 'LuckiestGuy Regular', cursive; font-size: 18px;
+                color: #111; text-align: center; padding: 12px; border-radius: 100px; border: 2px solid #e8e8f0;
+                text-transform: uppercase; transition: all 0.2s;
+            }
+            .mobile-nav-dropdown a.active {
+                background: #175ec2; color: #fff; border-color: transparent;
+            }
+            .mobile-nav-dropdown a.nav-news { color: #1a73e8; } .mobile-nav-dropdown a.nav-leaks { color: #d93025; } .mobile-nav-dropdown a:hover {
+                background: var(--color-primary); color: #000; border-color: transparent;
+            }
+        }
+
+        .search-overlay {
+            position: fixed; inset: 0;
+            background: linear-gradient(135deg, rgba(5,5,15,0.88), rgba(15,10,25,0.82));
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            z-index: 99999; display: flex; flex-direction: column;
+            align-items: center; padding-top: 120px;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .search-overlay.is-active { opacity: 1; pointer-events: auto; }
+        .search-container {
+            width: 92%; max-width: 560px;
+            transform: translateY(-24px) scale(0.94);
+            transition: transform 0.45s cubic-bezier(0.34,1.56,0.64,1);
+        }
+        .search-overlay.is-active .search-container { transform: translateY(0) scale(1); }
+        .search-bar {
+            display: flex; align-items: center; gap: 8px;
+            background: rgba(255,255,255,0.97);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 4px 4px 4px 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.06);
+            transition: box-shadow 0.25s;
+        }
+        .search-bar:focus-within {
+            box-shadow: 0 8px 48px rgba(0,0,0,0.4), 0 0 0 2px rgba(255,255,255,0.1);
+        }
+        .search-bar input {
+            flex: 1; border: none; outline: none; font-size: 17px;
+            font-family: 'Inter', sans-serif; color: #111;
+            background: transparent; padding: 14px 0;
+            letter-spacing: 0.1px;
+        }
+        .search-bar input::placeholder { color: #aaa; }
+        .search-go-btn {
+            padding: 10px 22px; border-radius: 12px; border: none;
+            background: linear-gradient(135deg, #111, #333);
+            color: #fff; font-weight: 800; font-size: 13px;
+            cursor: pointer; font-family: 'Inter', sans-serif;
+            transition: all 0.25s ease; letter-spacing: 0.3px;
+            text-transform: uppercase; flex-shrink: 0;
+        }
+        .search-go-btn:hover { transform: scale(1.04); background: linear-gradient(135deg, #222, #444); box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+        .search-nav-btn {
+            width: 36px; height: 36px; border-radius: 10px; border: none;
+            background: #f2f2f6; color: #555; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px; transition: all 0.2s; flex-shrink: 0;
+            font-family: 'Inter', sans-serif; font-weight: 700;
+        }
+        .search-nav-btn:hover { background: #e5e5ea; color: #000; }
+        .search-nav-btn:disabled { opacity: 0.2; cursor: default; }
+        .search-close-btn {
+            width: 38px; height: 38px; border-radius: 10px; border: none;
+            background: #f2f2f6; color: #888; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px; transition: all 0.2s; flex-shrink: 0;
+        }
+        .search-close-btn:hover { background: #ff1a1a; color: #fff; }
+        .search-stats {
+            color: rgba(255,255,255,0.45); font-size: 14px; margin-top: 18px;
+            font-family: 'Inter', sans-serif; font-weight: 500;
+            letter-spacing: 0.3px; text-align: center;
+        }
+        mark.search-hl {
+            background: linear-gradient(135deg, #fce83a, #ffd700);
+            color: #000; border-radius: 3px; padding: 1px 4px;
+            box-shadow: 0 1px 6px rgba(252,232,58,0.4);
+            transition: all 0.2s;
+        }
+        mark.search-hl.active {
+            background: linear-gradient(135deg, #ff6b35, #ff4500);
+            color: #fff; border-radius: 3px; padding: 1px 4px;
+            box-shadow: 0 1px 10px rgba(255,107,53,0.5);
+        }
+        @media (max-width: 768px) {
+            .search-overlay { padding-top: 60px; }
+            .search-bar { gap: 4px; padding: 4px 4px 4px 14px; }
+            .search-bar .search-icon { display: none; }
+            .search-bar input { font-size: 15px; padding: 10px 0; }
+            .search-go-btn { padding: 8px 12px; font-size: 11px; }
+            .search-nav-btn { width: 32px; height: 32px; font-size: 14px; }
+            .search-close-btn { width: 32px; height: 32px; font-size: 17px; }
+        }
+
+        .discord-login-btn {
+            display: flex; align-items: center; gap: 8px;
+            padding: 7px 14px; border-radius: 20px; border: none; cursor: pointer;
+            background: #5865F2; color: #fff;
+            font-size: 13px; font-weight: 700; font-family: 'Inter', sans-serif;
+            transition: all 0.22s cubic-bezier(0.34,1.56,0.64,1);
+            box-shadow: 0 2px 12px rgba(88,101,242,0.35);
+            white-space: nowrap; user-select: none;
+        }
+        .discord-login-btn:hover {
+            background: #4752c4; transform: translateY(-1px);
+            box-shadow: 0 4px 20px rgba(88,101,242,0.5);
+        }
+        .discord-login-btn:active { transform: translateY(0); }
+        .discord-login-btn svg { flex-shrink: 0; }
+        .discord-user-pill {
+            display: none; align-items: center; gap: 8px;
+            padding: 4px 12px 4px 4px; border-radius: 20px; cursor: pointer;
+            background: rgba(88,101,242,0.12);
+            border: 1px solid rgba(88,101,242,0.25);
+            transition: all 0.2s; user-select: none; position: relative;
+        }
+        .discord-user-pill:hover {
+            background: rgba(88,101,242,0.2);
+            border-color: rgba(88,101,242,0.4);
+        }
+        .discord-user-pill.is-visible { display: flex; }
+        .discord-avatar {
+            width: 30px; height: 30px; border-radius: 50%;
+            object-fit: cover; flex-shrink: 0;
+            border: 2px solid rgba(88,101,242,0.5);
+            background: rgba(88,101,242,0.2);
+        }
+        .discord-username {
+            font-size: 13px; font-weight: 700; color: var(--color-text);
+            max-width: 110px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+        }
+        .discord-chevron {
+            font-size: 10px; color: rgba(88,101,242,0.7); margin-left: 2px;
+            transition: transform 0.2s;
+        }
+        .discord-user-pill.dropdown-open .discord-chevron { transform: rotate(180deg); }
+        .discord-dropdown {
+            position: absolute; top: calc(100% + 10px); right: 0;
+            background: rgba(12,12,20,0.98); backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 16px;
+            width: 220px; overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(88,101,242,0.1);
+            opacity: 0; pointer-events: none; transform: translateY(-6px);
+            transition: opacity 0.2s, transform 0.2s;
+            z-index: 9999;
+        }
+        .discord-user-pill.dropdown-open .discord-dropdown {
+            opacity: 1; pointer-events: all; transform: translateY(0);
+        }
+        .discord-dropdown-header {
+            padding: 14px 16px; background: rgba(88,101,242,0.08);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            display: flex; align-items: center; gap: 10px;
+        }
+        .discord-dropdown-avatar {
+            width: 38px; height: 38px; border-radius: 50%; object-fit: cover;
+            border: 2px solid rgba(88,101,242,0.5); flex-shrink: 0;
+        }
+        .discord-dropdown-name {
+            font-size: 13px; font-weight: 700; color: #fff; line-height: 1.2;
+        }
+        .discord-dropdown-tag {
+            font-size: 11px; color: rgba(88,101,242,0.8); margin-top: 1px;
+        }
+        .discord-dropdown-body { padding: 8px; }
+        .discord-dropdown-item {
+            display: flex; align-items: center; gap: 8px;
+            padding: 9px 10px; border-radius: 8px; cursor: pointer;
+            color: rgba(255,255,255,0.55); font-size: 13px; font-weight: 600;
+            transition: all 0.15s; font-family: 'Inter', sans-serif;
+        }
+        .discord-dropdown-item:hover { background: rgba(255,255,255,0.06); color: #fff; }
+        .discord-dropdown-item span { font-size: 15px; }
+        .discord-skeleton {
+            width: 120px; height: 30px; border-radius: 20px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.06) 25%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.06) 75%);
+            background-size: 200% 100%; animation: skeletonShimmer 1.4s infinite;
+            display: none;
+        }
+        .discord-skeleton.is-visible { display: block; }
+        @keyframes skeletonShimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+    </style>
+</head>
+<body>
+
+    <header class="site-header">
+        <div class="site-header__logo">
+            <img src="../BF_news.png" alt="Blox Fruits">
+        </div>
+        <nav>
+            <ul class="site-nav">
+                <li><a href="https://www.roblox.com/fr/games/2753915549/Blox-Fruits">Game</a></li>
+                <li><a href="../index.html" class="nav-news">News</a></li>
+                <li><a href="../neo_bulletin.html" class="nav-leaks">Leaks</a></li>
+            </ul>
+        </nav>
+        <div class="site-header__icons">
+            <span class="material-symbols-outlined" onclick="openSearch()">search</span>
+            <div class="discord-skeleton" id="discordSkeleton"></div>
+            <button class="discord-login-btn" id="discordLoginBtn" onclick="_discordLogin()" style="display:none">
+                <svg width="16" height="12" viewBox="0 0 71 55" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M60.1045 4.8978C55.5792 2.8214 50.7265 1.2916 45.6527 0.41542C45.5603 0.39851 45.468 0.44077 45.4204 0.52529C44.7963 1.6353 44.105 3.0834 43.6209 4.2216C38.1637 3.4046 32.7345 3.4046 27.3892 4.2216C26.905 3.0581 26.1886 1.6353 25.5617 0.52529C25.5141 0.44359 25.4218 0.40133 25.3294 0.41542C20.2584 1.2888 15.4057 2.8186 10.8776 4.8978C10.8384 4.9147 10.8048 4.9429 10.7825 4.9795C1.57795 18.7309 -0.943561 32.1443 0.293408 45.3914C0.299005 45.4562 0.335386 45.5182 0.385761 45.5576C6.45866 50.0174 12.3413 52.7249 18.1147 54.5195C18.2071 54.5477 18.305 54.5139 18.3638 54.4378C19.7295 52.5728 20.9469 50.6063 21.9907 48.5383C22.0523 48.4172 21.9935 48.2735 21.8676 48.2256C19.9366 47.4931 18.0979 46.6 16.3292 45.5858C16.1893 45.5041 16.1781 45.304 16.3068 45.2082C16.679 44.9293 17.0513 44.6391 17.4067 44.3461C17.471 44.2926 17.5606 44.2813 17.6362 44.3151C29.2558 49.6202 41.8354 49.6202 53.3179 44.3151C53.3935 44.2785 53.4831 44.2898 53.5502 44.3433C53.9057 44.6363 54.2779 44.9293 54.6529 45.2082C54.7816 45.304 54.7732 45.5041 54.6333 45.5858C52.8646 46.6197 51.0259 47.4931 49.0921 48.2228C48.9662 48.2707 48.9102 48.4172 48.9718 48.5383C50.038 50.6034 51.2554 52.5699 52.5959 54.435C52.6519 54.5139 52.7526 54.5477 52.845 54.5195C58.6464 52.7249 64.529 50.0174 70.6019 45.5576C70.6551 45.5182 70.6887 45.459 70.6943 45.3942C72.1747 30.0791 68.2147 16.7757 60.1968 4.9823C60.1772 4.9429 60.1437 4.9147 60.1045 4.8978ZM23.7259 37.3253C20.2276 37.3253 17.3451 34.1136 17.3451 30.1693C17.3451 26.225 20.1717 23.0133 23.7259 23.0133C27.308 23.0133 30.1626 26.2532 30.1066 30.1693C30.1066 34.1136 27.28 37.3253 23.7259 37.3253ZM47.3178 37.3253C43.8196 37.3253 40.9371 34.1136 40.9371 30.1693C40.9371 26.225 43.7636 23.0133 47.3178 23.0133C50.9 23.0133 53.7545 26.2532 53.6986 30.1693C53.6986 34.1136 50.9 37.3253 47.3178 37.3253Z" fill="white"/>
+                </svg>
+                Connexion
+            </button>
+            <div class="discord-user-pill" id="discordUserPill">
+                <img class="discord-avatar" id="discordAvatar" src="" alt="Avatar">
+                <span class="discord-username" id="discordUsername"></span>
+                <span class="discord-chevron">&#9660;</span>
+                <div class="discord-dropdown" id="discordDropdown">
+                    <div class="discord-dropdown-header">
+                        <img class="discord-dropdown-avatar" id="discordDropdownAvatar" src="" alt="">
+                        <div>
+                            <div class="discord-dropdown-name" id="discordDropdownName"></div>
+                            <div class="discord-dropdown-tag" id="discordDropdownTag">Connect&#233; via Discord</div>
+                        </div>
+                    </div>
+                    <div class="discord-dropdown-body">
+                        <div class="discord-dropdown-item" onclick="_discordLogout()">
+                            <span>&#128682;</span> Se d&#233;connecter
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <span class="material-symbols-outlined mobile-menu-btn" id="menuToggle">menu</span>
+        </div>
+    </header>
+
+    <div class="mobile-nav-dropdown" id="mobileNav">
+        <a href="https://www.roblox.com/fr/games/2753915549/Blox-Fruits">Game</a>
+        <a href="../index.html" class="nav-news">News</a>
+        <a href="../neo_bulletin.html" class="nav-leaks">Leaks</a>
+    </div>
+
+    <main class="bulletin-container">
+
+        <div class="blue-banner">The Blox Bulletin #021</div>
+
+        <div class="hero-image-wrapper">
+            <img src="../021/img/scrapyard_titan.png" class="hero-image" alt="The Blox Bulletin 021">
+        </div>
+
+        <div class="publish-date">9 Juillet 2026</div>
+
+        <div class="journal-header">
+            <h1 class="journal-title">The Blox Bulletin</h1>
+            <p class="journal-subtitle">Magnet Mystery Revealed, Summer Approaches, New Discoveries, and More!</p>
+            <div class="journal-meta">Numéro : 021 | 9 Juillet 2026</div>
+        </div>
+
+        <div class="dashed-line"></div>
+
+        <!-- À LA UNE : SCRAPYARD TITAN -->
+        <div class="wanted-box">
+            <h2 class="wanted-title">THE SCRAPYARD TITAN : OUR PERPETRATOR REVEALED !</h2>
+            <span class="wanted-subtitle">By Bieg Jeuceclap, Island Correspondent</span>
+            <img src="../021/img/scrapyard_titan_full.png" alt="The Scrapyard Titan" class="wanted-img">
+            <div class="wanted-text">
+                <p>En continuité de mon précédent rapport dans le Bulletin #020, j'ai continué à traquer les forces à l'origine des perturbations magnétiques observées sur les îles locales. Mes découvertes se sont révélées... inattendues. J'ai suivi ces perturbations à chaque nouvelle apparition, jusqu'à ce qu'elles me mènent à un chantier naval abandonné. C'est là que j'ai été témoin, en personne, du coupable derrière tout cela.</p>
+                <p>En l'espace de quelques secondes, ferraille éparpillée, plaques de coque brisées, vieilles machines et engrenages abandonnés ont été arrachés de chaque recoin du chantier pour s'imbriquer les uns dans les autres, engloutissant l'utilisateur du fruit <strong>Magnet</strong>. Morceau par morceau, avec une précision troublante, une <strong>machine de guerre colossale</strong> a émergé. Chaque articulation et chaque plaque se sont soudées parfaitement, dégageant une puissance à peine contenue.</p>
+                <p>Incertain de ma propre sécurité, j'ai pris la fuite rapidement. J'ai appris de cet incident que, qui que soit cette personne, elle ne se cache clairement plus. En un instant, elle peut utiliser n'importe quel morceau de métal alentour pour construire une machine dangereusement armée. Et si cette machine est un signe de ce qui nous attend, les mers devraient rester très prudentes...</p>
+                <div class="summary"><b>📌 Résumé :</b>Un utilisateur du fruit Magnet a été aperçu fusionnant de la ferraille en une gigantesque machine de guerre sur un chantier naval abandonné.</div>
+            </div>
+        </div>
+
+        <!-- DEUX COLONNES -->
+        <div class="content-columns">
+            <div class="left-col">
+                <h2>The Summer Expansion Draws Near !</h2>
+                <span class="section-subtext">By Moakoa Shellspine</span>
+                <img src="../021/img/summer_expansion.png" class="side-img" alt="The Summer Expansion Draws Near">
+                <div class="side-text">
+                    <p>Il y a un changement dans les vents à travers les mers, et pour une fois ce n'est pas une tempête. Un message est parvenu directement au bureau du Bulletin de la part des organisateurs de l'événement : la tant attendue <strong>Summer Expansion</strong> est enfin en chemin !</p>
+                    <p>La rumeur dit qu'avant la sortie majeure de l'été, les mers seront témoins d'un <strong>tout nouvel événement</strong>. Tous les joueurs seront les bienvenus pour y participer et lancer les festivités ! Ensuite, un <strong>rééquilibrage PvP majeur</strong> sera déployé et viendra bouleverser la méta actuelle.</p>
+                    <p>Une fois ces deux mises à jour arrivées, le compte à rebours vers notre prochaine expansion majeure débutera ! Si les rumeurs venues des quais sont fiables, elle s'annonce comme l'un des plus grands événements saisonniers que ce monde ait connu. Ce sera littéralement <strong>bouleversant</strong>. Alors, préparez-vous soigneusement ! Cette expansion n'est vraiment pas à manquer !</p>
+                </div>
+                <div class="summary"><b>📌 Résumé :</b>Un nouvel événement saisonnier et un rééquilibrage PvP majeur précéderont une expansion d'été décrite comme "bouleversante".</div>
+            </div>
+
+            <div class="right-col">
+                <h2 style="font-size: 18px; border-bottom: 2px solid #111; padding-bottom: 10px;">A New Splash of Style hits the Seas !</h2>
+                <span class="section-subtext" style="margin-top: 5px;">By Sirtet Thornside</span>
+                <img src="../021/img/profile_backgrounds.png" class="side-img" alt="A New Splash of Style">
+                <div class="side-text">
+                    <p>Toutes les forces ne se mesurent pas dans un combat physique. La dernière fonctionnalité qui arrivera bientôt sur les profils joueurs le prouve. Une toute nouvelle ligne de <strong>fonds de profil cosmétiques</strong> va être déployée, permettant aux pirates, marines et citoyens de faire plus que soigner leur cadre de vue !</p>
+                    <p>Ce ne sont pas de simples décors : pensez à des paysages marins animés, des brasiers rugissants, de magnifiques pluies de météores, et d'autres effets qui bougeront et scintilleront bien au-delà du cadre !</p>
+                    <p>Pourquoi cela compte-t-il si votre ami a maîtrisé tous les fruits ? Comment cet exploit se compare-t-il au visuel de profil bien animé et scintillant que vous pourrez afficher ? Si vous avez toujours voulu que votre profil se démarque, c'est le moment de surveiller ces nouveaux fonds à venir dans les mers !</p>
+                </div>
+                <div class="summary"><b>📌 Résumé :</b>De nouveaux fonds de profil animés et cosmétiques arrivent prochainement.</div>
+            </div>
+        </div>
+
+        <!-- DUEL BETWEEN STEEL & RUBBER -->
+        <div class="dragon-section">
+            <h2>A DUEL BETWEEN STEEL & RUBBER</h2>
+            <span class="section-subtext">By Renlo Ashworth</span>
+            <div class="dragon-inner">
+                <div class="dragon-text">
+                    <p>J'ai couvert beaucoup de combats auparavant, mais aucun comme celui-ci ! Tout a commencé par une dispute sur qui était le meilleur épéiste, et s'est terminé avec deux lames tirées qui n'avaient rien à faire dans le même combat.</p>
+                    <p>Un utilisateur maniait un <strong>Dark Blade</strong>, l'une des épées les plus puissantes qui existent, assez rare pour que la plupart des gens passent leur vie entière à la rechercher sans jamais la trouver. L'épée du second utilisateur, en revanche, m'a arrêté net...</p>
+                    <p>À première vue, <strong>elle avait la forme du Dark Blade</strong>. Mais elle n'était pas faite du même matériau, loin de là. C'était <strong>un ballon</strong>. Étiré et façonné en forme d'arme, tenant on ne sait comment son tranchant, l'arme a encaissé coup après coup dans cet affrontement légendaire entre épéistes. Selon toute logique, elle aurait dû éclater au premier contact. Interrogé sur son épée lors d'une interview d'après-match, l'épéiste a déclaré : "Ouais, on me l'a donnée il n'y a pas si longtemps. Je n'avais jamais tenu d'épée avant, jusqu'à ce qu'une étrange <strong>niche à chien en colère me la donne</strong>. C'est presque comme s'il me donnait le pouvoir de me venger, tu vois ?".</p>
+                    <p>Je ne sais pas trop quoi penser de cette histoire ridicule, mais si elle est à croire, gardez un œil sur une niche à chien toute-puissante en liberté !</p>
+                </div>
+                <img src="../021/img/steel_rubber_duel.png" class="dragon-img" alt="Duel Between Steel and Rubber">
+            </div>
+            <div class="summary"><b>📌 Résumé :</b>Un duel opposant un Dark Blade à une épée-ballon indestructible, offerte par une mystérieuse "niche à chien".</div>
+        </div>
+
+        <p style="text-align:center; font-style: italic; color:#555; margin: 30px 0;">Nous espérons que vous avez apprécié le bulletin de cette semaine ! Revenez pour le Bulletin #022 où nous continuerons à vous livrer les nouvelles de partout dans le monde !</p>
+
+        <div class="social-share">
+            <a href="https://discord.gg/a6S6eugPn" class="td">
+                <img src="../shared/discord.png" class="discord-icon" alt="Discord"> Discord
+            </a>
+            <a href="https://tiktok.com/@dc_neolixx" class="tt">
+                <img src="../shared/tiktok.png" class="tiktok-icon" alt="TikTok"> TikTok
+            </a>
+            <a href="https://www.youtube.com/@Dc_neolixx" class="ty">
+                <img src="../shared/youtube.png" class="youtube-icon" alt="Youtube"> Youtube
+            </a>
+        </div>
+
+        <div class="back-button-container">
+            <a href="../index.html#bulletin-021" class="back-button">← Retour aux Actualités</a>
+        </div>
+
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-col">
+            <h3>Rejoindre la Communauté</h3>
+            <p>Restez connecté !</p>
+            <div class="footer-community-links">
+                <a href="#">🎮 Discord</a>
+                <a href="#">🐦 Twitter / X</a>
+                <a href="#">▶️ YouTube</a>
+            </div>
+        </div>
+    </footer>
+
+<script>
+    const menuBtn = document.getElementById('menuToggle');
+    const mobileNav = document.getElementById('mobileNav');
+    if (menuBtn && mobileNav) {
+        menuBtn.addEventListener('click', () => {
+            mobileNav.classList.toggle('is-open');
+            menuBtn.textContent = mobileNav.classList.contains('is-open') ? 'close' : 'menu';
+        });
+    }
+
+    window.addEventListener('scroll', () => {
+        const header = document.querySelector('.site-header');
+        const darkZones = document.querySelectorAll('.blue-banner, .hero-image');
+
+        let isOverDarkZone = false;
+        const headerCenter = header.getBoundingClientRect().top + (header.offsetHeight / 2);
+
+        darkZones.forEach(zone => {
+            const rect = zone.getBoundingClientRect();
+            if (headerCenter >= rect.top && headerCenter <= rect.bottom) {
+                isOverDarkZone = true;
+            }
+        });
+
+        if (isOverDarkZone) {
+            header.classList.add('nav-light-text');
+        } else {
+            header.classList.remove('nav-light-text');
+        }
+    });
+
+    window.dispatchEvent(new Event('scroll'));
+
+    let searchMatches = [];
+    let searchCurrent = -1;
+    function openSearch() {
+        document.getElementById('searchOverlay').classList.add('is-active');
+        const inp = document.getElementById('searchInput');
+        inp.value = '';
+        document.getElementById('searchStats').textContent = '';
+        searchMatches = []; searchCurrent = -1;
+        removeHighlights();
+        setTimeout(() => inp.focus(), 200);
+    }
+    function closeSearch(keepHl) {
+        document.getElementById('searchOverlay').classList.remove('is-active');
+        if (!keepHl) removeHighlights();
+        if (!keepHl) { searchMatches = []; searchCurrent = -1; }
+    }
+    function removeHighlights() {
+        document.querySelectorAll('mark.search-hl').forEach(m => {
+            const p = m.parentNode;
+            p.replaceChild(document.createTextNode(m.textContent), m);
+            p.normalize();
+        });
+    }
+    function executeSearch() {
+        const q = document.getElementById('searchInput').value.trim().toLowerCase();
+        removeHighlights();
+        searchMatches = []; searchCurrent = -1;
+        document.getElementById('searchPrevBtn').disabled = true;
+        document.getElementById('searchNextBtn').disabled = true;
+        const stats = document.getElementById('searchStats');
+        stats.textContent = '';
+        if (!q) return;
+        const root = document.querySelector('.bulletin-container') || document.body;
+        const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+            acceptNode: n => {
+                const p = n.parentNode;
+                if (!p || p.nodeName === 'SCRIPT' || p.nodeName === 'STYLE') return NodeFilter.FILTER_REJECT;
+                if (p.closest('.search-overlay, .material-symbols-outlined, .mobile-menu-btn')) return NodeFilter.FILTER_REJECT;
+                return NodeFilter.FILTER_ACCEPT;
+            }
+        });
+        const nodes = []; let n;
+        while (n = walker.nextNode()) nodes.push(n);
+        nodes.forEach(textNode => {
+            const text = textNode.textContent;
+            const lower = text.toLowerCase();
+            let idx = lower.indexOf(q);
+            if (idx === -1) return;
+            const frag = document.createDocumentFragment();
+            let last = 0;
+            while (idx !== -1) {
+                if (idx > last) frag.appendChild(document.createTextNode(text.slice(last, idx)));
+                const mark = document.createElement('mark');
+                mark.className = 'search-hl';
+                mark.textContent = text.slice(idx, idx + q.length);
+                frag.appendChild(mark);
+                searchMatches.push(mark);
+                last = idx + q.length;
+                idx = lower.indexOf(q, last);
+            }
+            if (last < text.length) frag.appendChild(document.createTextNode(text.slice(last)));
+            textNode.parentNode.replaceChild(frag, textNode);
+        });
+        const c = searchMatches.length;
+        if (c > 0) {
+            searchCurrent = 0;
+            searchMatches[0].classList.add('active');
+            searchMatches[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+            stats.textContent = c + ' r\u00e9sultat' + (c > 1 ? 's' : '');
+            document.getElementById('searchPrevBtn').disabled = false;
+            document.getElementById('searchNextBtn').disabled = false;
+            closeSearch(true);
+        } else {
+            stats.textContent = 'Aucun r\u00e9sultat';
+        }
+    }
+    function nextMatch() {
+        if (searchMatches.length === 0) return;
+        searchMatches[searchCurrent]?.classList.remove('active');
+        searchCurrent = (searchCurrent + 1) % searchMatches.length;
+        searchMatches[searchCurrent].classList.add('active');
+        searchMatches[searchCurrent].scrollIntoView({ behavior: 'smooth', block: 'center' });
+        document.getElementById('searchStats').textContent = (searchCurrent+1) + '/' + searchMatches.length;
+    }
+    function prevMatch() {
+        if (searchMatches.length === 0) return;
+        searchMatches[searchCurrent]?.classList.remove('active');
+        searchCurrent = (searchCurrent - 1 + searchMatches.length) % searchMatches.length;
+        searchMatches[searchCurrent].classList.add('active');
+        searchMatches[searchCurrent].scrollIntoView({ behavior: 'smooth', block: 'center' });
+        document.getElementById('searchStats').textContent = (searchCurrent+1) + '/' + searchMatches.length;
+    }
+</script>
+
+<div id="searchOverlay" class="search-overlay" onclick="if(event.target===this)closeSearch()">
+    <div class="search-container">
+        <div class="search-bar">
+            <span class="material-symbols-outlined search-icon" style="font-size:22px;color:#999;flex-shrink:0">search</span>
+            <input id="searchInput" type="text" placeholder="Rechercher&#8230;" autofocus onkeydown="if(event.key==='Escape')closeSearch();if(event.key==='Enter'){event.preventDefault();executeSearch()}">
+            <button class="search-go-btn" onclick="executeSearch()">Chercher</button>
+            <button class="search-nav-btn" onclick="prevMatch()" id="searchPrevBtn">&#9650;</button>
+            <button class="search-nav-btn" onclick="nextMatch()" id="searchNextBtn">&#9660;</button>
+            <button class="search-close-btn" onclick="closeSearch()">&#10005;</button>
+        </div>
+        <div id="searchStats" class="search-stats"></div>
+    </div>
+</div>
+
+    <script>
+    const DISCORD_CLIENT_ID   = '1517793695573999646';
+    const DISCORD_REDIRECT_URI = window.location.href.split('#')[0].split('?')[0];
+    const DISCORD_SCOPE        = 'identify';
+    const DISCORD_TOKEN_KEY    = 'bloxbulletin_discord_token';
+    const DISCORD_USER_KEY     = 'bloxbulletin_discord_user';
+
+    function _discordLogin() {
+        const params = new URLSearchParams({
+            client_id: DISCORD_CLIENT_ID, redirect_uri: DISCORD_REDIRECT_URI,
+            response_type: 'token', scope: DISCORD_SCOPE,
+        });
+        window.location.href = 'https://discord.com/api/oauth2/authorize?' + params.toString();
+    }
+    async function _discordFetchUser(token) {
+        const res = await fetch('https://discord.com/api/users/@me', { headers: { Authorization: 'Bearer ' + token } });
+        if (!res.ok) throw new Error('Token invalide');
+        return res.json();
+    }
+    function _discordAvatarUrl(user) {
+        if (user.avatar) return 'https://cdn.discordapp.com/avatars/' + user.id + '/' + user.avatar + '.webp?size=80';
+        const idx = user.discriminator !== '0' ? parseInt(user.discriminator) % 5 : parseInt(user.id) >> 22 % 6;
+        return 'https://cdn.discordapp.com/embed/avatars/' + idx + '.png';
+    }
+    function _discordShowUser(user) {
+        const avatarUrl = _discordAvatarUrl(user);
+        const displayName = user.global_name || user.username;
+        document.getElementById('discordLoginBtn').style.display = 'none';
+        document.getElementById('discordSkeleton').classList.remove('is-visible');
+        const pill = document.getElementById('discordUserPill');
+        document.getElementById('discordAvatar').src = avatarUrl;
+        document.getElementById('discordAvatar').onerror = function() { this.src = ''; };
+        document.getElementById('discordUsername').textContent = displayName;
+        pill.classList.add('is-visible');
+        document.getElementById('discordDropdownAvatar').src = avatarUrl;
+        document.getElementById('discordDropdownName').textContent = displayName;
+        document.getElementById('discordDropdownTag').textContent = '@' + user.username;
+        pill.onclick = function(e) { e.stopPropagation(); pill.classList.toggle('dropdown-open'); };
+        document.addEventListener('click', function() { pill.classList.remove('dropdown-open'); });
+    }
+    function _discordLogout() {
+        localStorage.removeItem(DISCORD_TOKEN_KEY);
+        localStorage.removeItem(DISCORD_USER_KEY);
+        document.getElementById('discordUserPill').classList.remove('is-visible', 'dropdown-open');
+        document.getElementById('discordLoginBtn').style.display = '';
+    }
+    (async function() {
+        var skeleton = document.getElementById('discordSkeleton');
+        var loginBtn = document.getElementById('discordLoginBtn');
+        var pill = document.getElementById('discordUserPill');
+        var hash = window.location.hash;
+        if (hash.includes('access_token=')) {
+            var params = new URLSearchParams(hash.slice(1));
+            var token = params.get('access_token');
+            var expiresIn = parseInt(params.get('expires_in') || '604800');
+            var expiresAt = Date.now() + expiresIn * 1000;
+            history.replaceState(null, '', window.location.pathname + window.location.search);
+            if (token) {
+                skeleton.classList.add('is-visible');
+                try {
+                    var user = await _discordFetchUser(token);
+                    localStorage.setItem(DISCORD_TOKEN_KEY, JSON.stringify({ token: token, expiresAt: expiresAt }));
+                    localStorage.setItem(DISCORD_USER_KEY, JSON.stringify(user));
+                    _discordShowUser(user);
+                } catch(e) { skeleton.classList.remove('is-visible'); loginBtn.style.display = ''; }
+                return;
+            }
+        }
+        try {
+            var stored = JSON.parse(localStorage.getItem(DISCORD_TOKEN_KEY) || 'null');
+            var cachedUser = JSON.parse(localStorage.getItem(DISCORD_USER_KEY) || 'null');
+            if (cachedUser) {
+                _discordShowUser(cachedUser);
+                if (stored && stored.expiresAt > Date.now()) {
+                    try {
+                        var freshUser = await _discordFetchUser(stored.token);
+                        localStorage.setItem(DISCORD_USER_KEY, JSON.stringify(freshUser));
+                        _discordShowUser(freshUser);
+                    } catch(e) {}
+                }
+                return;
+            }
+        } catch(e) {}
+        loginBtn.style.display = '';
+    })();
+    </script>
+</body>
+</html>
