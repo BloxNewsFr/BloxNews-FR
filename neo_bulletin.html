@@ -256,42 +256,72 @@
 
         /* ── MENU DÉROULANT (MOBILE) ── */
         .mobile-nav-backdrop {
-            display: none; position: fixed; inset: 0; z-index: 998;
-            background: rgba(10,5,5,0.35); backdrop-filter: blur(2px);
+            display: none; position: fixed; inset: 0; z-index: 9990;
+            background: rgba(10,5,5,0.45); backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px);
             opacity: 0; transition: opacity 0.3s ease;
         }
         .mobile-nav-backdrop.is-open { display: block; opacity: 1; }
 
         .mobile-nav-dropdown {
-            display: none; flex-direction: column; gap: 8px;
-            position: fixed; top: 0; right: -290px; width: 268px; height: 100%;
-            background: rgba(255,255,255,0.97); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            padding: 88px 20px 24px; border-radius: 20px 0 0 20px;
-            box-shadow: -12px 0 40px rgba(0,0,0,0.16);
-            transition: right 0.32s cubic-bezier(0.4, 0, 0.2, 1); z-index: 999;
-            border: 1px solid rgba(0,0,0,0.05); border-right: none;
+            display: none; flex-direction: column;
+            position: fixed; top: 0; right: -290px; bottom: 0; width: min(82vw, 300px);
+            background: rgba(255,255,255,0.94); backdrop-filter: blur(28px) saturate(180%); -webkit-backdrop-filter: blur(28px) saturate(180%);
+            box-shadow: -12px 0 50px rgba(0,0,0,0.28);
+            transition: right 0.35s cubic-bezier(0.4, 0, 0.2, 1); z-index: 9991;
             overflow-y: auto; overflow-x: hidden;
+            padding-bottom: env(safe-area-inset-bottom, 0);
         }
         .mobile-nav-dropdown.is-open { right: 0; }
 
-        .mobile-nav-dropdown a {
-            text-decoration: none; font-family: 'LuckiestGuy Regular', cursive; font-size: 15px;
-            color: #111; text-align: center; padding: 11px; border-radius: 100px;
-            border: 2px solid #e8e8f0; text-transform: uppercase; transition: all 0.2s;
+        .mnav-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 20px 18px 16px; flex-shrink: 0;
+            border-bottom: 1px solid rgba(0,0,0,0.07);
         }
-        .mobile-nav-dropdown a.active { color: #fff; border-color: transparent; }
-        .mobile-nav-dropdown a.nav-news { color: #1a73e8; }
-        .mobile-nav-dropdown a.nav-leaks { color: #d93025; }
-        .mobile-nav-dropdown a.nav-leaks.active { background: #d93025; color: #fff; }
+        .mnav-header__title {
+            font-family: 'LuckiestGuy Regular', cursive; font-size: 20px;
+            color: #111; text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .mnav-close {
+            width: 36px; height: 36px; border-radius: 50%; border: none;
+            background: rgba(0,0,0,0.06); color: #333; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: background 0.2s; flex-shrink: 0;
+        }
+        .mnav-close:hover { background: rgba(0,0,0,0.12); }
+        .mnav-close .material-symbols-outlined { font-size: 20px; }
+
+        .mnav-links { display: flex; flex-direction: column; gap: 6px; padding: 14px; }
+        .mobile-nav-dropdown a.mnav-link {
+            display: flex; align-items: center; gap: 14px;
+            text-decoration: none; color: #222; font-weight: 800;
+            font-family: 'Inter', sans-serif; font-size: 15px;
+            padding: 13px 16px; border-radius: 14px; border: none;
+            text-transform: none; letter-spacing: normal;
+            transition: background 0.2s, color 0.2s, transform 0.15s;
+        }
+        .mnav-link__icon { font-size: 20px; color: #999; transition: color 0.2s; flex-shrink: 0; }
+        .mobile-nav-dropdown a.mnav-link:active { transform: scale(0.98); }
+        .mobile-nav-dropdown a.mnav-link:hover { background: rgba(0,0,0,0.045); }
+        .mobile-nav-dropdown a.mnav-link.active {
+            background: linear-gradient(135deg, #175ec2, #2980d4); color: #fff;
+            box-shadow: 0 6px 18px rgba(23,94,194,0.35);
+        }
+        .mobile-nav-dropdown a.mnav-link.active .mnav-link__icon { color: #fff; }
+        .mobile-nav-dropdown a.mnav-link.nav-leaks.active {
+            background: linear-gradient(135deg, #d93025, #ff4d3d);
+            box-shadow: 0 6px 18px rgba(217,48,37,0.35);
+        }
 
         .mobile-nav-label {
             font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 800;
-            text-transform: uppercase; letter-spacing: 1.2px; color: rgba(0,0,0,0.32);
-            margin: 6px 4px 2px;
+            text-transform: uppercase; letter-spacing: 1.2px; color: rgba(0,0,0,0.35);
+            margin: 8px 4px 8px; padding: 0 14px;
         }
 
+        .mnav-chips { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 14px 20px; }
         .mobile-nav-dropdown .leaks-tab {
-            width: 100%; text-align: center; padding: 11px 20px; font-size: 14px;
+            width: auto; text-align: center; padding: 9px 16px; font-size: 13px;
             box-shadow: 0 3px 8px rgba(0,0,0,0.05);
         }
         .mobile-nav-dropdown .leaks-tab.active {
@@ -2395,25 +2425,43 @@
                 </div>
             </div>
 
-            <span class="material-symbols-outlined mobile-menu-btn" id="menuToggle">menu</span>
+            <span class="material-symbols-outlined mobile-menu-btn" id="menuToggle" role="button" tabindex="0" aria-label="Ouvrir le menu" aria-haspopup="true" aria-expanded="false" aria-controls="mobileNav">menu</span>
         </div>
     </header>
 
     <div class="mobile-nav-backdrop" id="mobileNavBackdrop"></div>
-    <div class="mobile-nav-dropdown" id="mobileNav">
-        <a href="https://www.roblox.com/fr/games/2753915549/Blox-Fruits">Game</a>
-        <a href="./index.html" class="nav-news">News</a>
-        <a href="./neo_bulletin.html" class="nav-leaks active">Leaks</a>
-        <a href="./archives.html">Archives</a>
+    <nav class="mobile-nav-dropdown" id="mobileNav" aria-hidden="true">
+        <div class="mnav-header">
+            <span class="mnav-header__title">Menu</span>
+            <button class="mnav-close" id="mobileNavClose" aria-label="Fermer le menu">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <div class="mnav-links">
+            <a href="https://www.roblox.com/fr/games/2753915549/Blox-Fruits" class="mnav-link">
+                <span class="material-symbols-outlined mnav-link__icon">sports_esports</span> Jouer
+            </a>
+            <a href="./index.html" class="mnav-link nav-news">
+                <span class="material-symbols-outlined mnav-link__icon">newspaper</span> News
+            </a>
+            <a href="./neo_bulletin.html" class="mnav-link nav-leaks active">
+                <span class="material-symbols-outlined mnav-link__icon">key</span> Leaks
+            </a>
+            <a href="./archives.html" class="mnav-link">
+                <span class="material-symbols-outlined mnav-link__icon">inventory_2</span> Archives
+            </a>
+        </div>
 
         <div class="mobile-nav-label">Catégories</div>
-        <button class="leaks-tab active" data-target="cat-actus" style="--cat-hex: #cc0000; --cat-rgb: 204, 0, 0;">Actus</button>
-        <button class="leaks-tab" data-target="cat-fruit" style="--cat-hex: #ff0055; --cat-rgb: 255, 0, 85;">Fruits</button>
-        <button class="leaks-tab" data-target="cat-vfx" style="--cat-hex: #a200ff; --cat-rgb: 162, 0, 255;">VFX</button>
-        <button class="leaks-tab" data-target="cat-map" style="--cat-hex: #00d238; --cat-rgb: 0, 210, 56;">Map</button>
-        <button class="leaks-tab" data-target="cat-gui" style="--cat-hex: #0088ff; --cat-rgb: 0, 136, 255;">GUI</button>
-        <button class="leaks-tab" data-target="cat-messages" style="--cat-hex: #ff8800; --cat-rgb: 255, 136, 0;">Messages</button>
-    </div>
+        <div class="mnav-chips">
+            <button class="leaks-tab active" data-target="cat-actus" style="--cat-hex: #cc0000; --cat-rgb: 204, 0, 0;">Actus</button>
+            <button class="leaks-tab" data-target="cat-fruit" style="--cat-hex: #ff0055; --cat-rgb: 255, 0, 85;">Fruits</button>
+            <button class="leaks-tab" data-target="cat-vfx" style="--cat-hex: #a200ff; --cat-rgb: 162, 0, 255;">VFX</button>
+            <button class="leaks-tab" data-target="cat-map" style="--cat-hex: #00d238; --cat-rgb: 0, 210, 56;">Map</button>
+            <button class="leaks-tab" data-target="cat-gui" style="--cat-hex: #0088ff; --cat-rgb: 0, 136, 255;">GUI</button>
+            <button class="leaks-tab" data-target="cat-messages" style="--cat-hex: #ff8800; --cat-rgb: 255, 136, 0;">Messages</button>
+        </div>
+    </nav>
 
     <main class="main-content">
         
@@ -3148,22 +3196,37 @@
             const menuBtn = document.getElementById('menuToggle');
             const mobileNav = document.getElementById('mobileNav');
             const mobileNavBackdrop = document.getElementById('mobileNavBackdrop');
+            const mobileNavClose = document.getElementById('mobileNavClose');
 
             // ── 1. SYSTÈME MENU DROPDOWN MOBILE ──
             function _closeMobileNav() {
                 mobileNav?.classList.remove('is-open');
                 mobileNavBackdrop?.classList.remove('is-open');
+                mobileNav?.setAttribute('aria-hidden', 'true');
+                menuBtn?.setAttribute('aria-expanded', 'false');
                 if (menuBtn) menuBtn.textContent = 'menu';
+                document.body.style.overflow = '';
+            }
+            function _openMobileNav() {
+                mobileNav?.classList.add('is-open');
+                mobileNavBackdrop?.classList.add('is-open');
+                mobileNav?.setAttribute('aria-hidden', 'false');
+                menuBtn?.setAttribute('aria-expanded', 'true');
+                if (menuBtn) menuBtn.textContent = 'close';
+                document.body.style.overflow = 'hidden';
             }
             if (menuBtn && mobileNav) {
                 menuBtn.addEventListener('click', () => {
-                    const willOpen = !mobileNav.classList.contains('is-open');
-                    mobileNav.classList.toggle('is-open', willOpen);
-                    mobileNavBackdrop?.classList.toggle('is-open', willOpen);
-                    menuBtn.textContent = willOpen ? 'close' : 'menu';
+                    mobileNav.classList.contains('is-open') ? _closeMobileNav() : _openMobileNav();
                 });
+                menuBtn.addEventListener('keydown', e => {
+                    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); menuBtn.click(); }
+                });
+                mobileNav.querySelectorAll('a.mnav-link').forEach(a => a.addEventListener('click', _closeMobileNav));
             }
             mobileNavBackdrop?.addEventListener('click', _closeMobileNav);
+            mobileNavClose?.addEventListener('click', _closeMobileNav);
+            document.addEventListener('keydown', e => { if (e.key === 'Escape') _closeMobileNav(); });
 
             // ── 2. SYSTÈME DE NAV PAR ONGLETS (TABS) ──
             tabs.forEach(tab => {
