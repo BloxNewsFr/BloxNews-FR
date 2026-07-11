@@ -4,6 +4,24 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>News – Blox Fruits</title>
+    <meta name="description" content="Toute l'actualité Blox Fruits : bulletins hebdomadaires, mises à jour, événements et news officielles du jeu Roblox Blox Fruits.">
+    <link rel="canonical" href="https://bloxnewsfr.github.io/BloxNews-FR/index.html">
+
+    <!-- Open Graph / Discord, Facebook, etc. -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Blox Fruits News">
+    <meta property="og:title" content="News – Blox Fruits">
+    <meta property="og:description" content="Toute l'actualité Blox Fruits : bulletins hebdomadaires, mises à jour, événements et news officielles du jeu Roblox Blox Fruits.">
+    <meta property="og:image" content="https://bloxnewsfr.github.io/BloxNews-FR/BF_news.png">
+    <meta property="og:url" content="https://bloxnewsfr.github.io/BloxNews-FR/index.html">
+    <meta property="og:locale" content="fr_FR">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="News – Blox Fruits">
+    <meta name="twitter:description" content="Toute l'actualité Blox Fruits : bulletins hebdomadaires, mises à jour, événements et news officielles du jeu Roblox Blox Fruits.">
+    <meta name="twitter:image" content="https://bloxnewsfr.github.io/BloxNews-FR/BF_news.png">
+
     <link rel="icon" type="image/png" href="./shared/favicon.png">
     <link rel="shortcut icon" href="./shared/bf_logo.png" type="image/png">
     <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
@@ -12,7 +30,17 @@
         @font-face { font-family: 'LuckiestGuy Regular'; src: url('./fonts/LuckiestGuy-Regular.ttf') format('truetype'); }
         :root { --color-text: #1a1a2e; --color-border: #e8e8f0; --color-primary: #ffda00; --color-accent: #175ec2; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        
+
+        /* ── ACCESSIBILITÉ : respecter "réduire les animations" du système ── */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.001ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.001ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+
         /* ── 3D LAYERED DEPTH SYSTEM ── */
         [data-depth] {
             will-change: translate, filter, opacity;
@@ -2023,7 +2051,7 @@
                     return `<article class="news-card ${special.className || ""}" id="bulletin-${b.num}" onclick="window.location='${b.href}'">
                         ${deco}
                         <div class="news-card__image-wrapper">
-                            <img src="${b.img}" class="news-card__image" alt="Bulletin #${b.num}">
+                            <img src="${b.img}" class="news-card__image" alt="Bulletin #${b.num}" loading="lazy" decoding="async">
                             <div class="news-card__badge">${special.badge || `#${b.num}`}</div>
                             ${statusLabel ? `<div class="news-card__new">${statusLabel}</div>` : ""}
                         </div>
@@ -2051,28 +2079,33 @@
             document.getElementById("next-mobile").disabled = currentPage === total;
 
             try { initCardTilt(); } catch (e) {}
-            // 015 — Fire canvas
-            document.querySelectorAll('.fire-canvas').forEach(cv => {
-                const eng = new GreenFlameEngine(cv);
-                _fireEngines.push(eng);
-                setTimeout(() => eng.start(), 40);
-            });
-            // 016 — Liquid tide dual canvas
-            document.querySelectorAll('.news-card.water-card').forEach(card => {
-                const fc = card.querySelector('.fluid-canvas');
-                const bc = card.querySelector('.bubble-canvas');
-                if (fc && bc) {
-                    const eng = new LiquidTideEngine(fc, bc);
-                    _waterEngines.push(eng);
+            // ── Accessibilité / perf : ne pas lancer les moteurs canvas décoratifs
+            // si l'utilisateur a activé "réduire les animations" sur son appareil.
+            const _prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            if (!_prefersReducedMotion) {
+                // 015 — Fire canvas
+                document.querySelectorAll('.fire-canvas').forEach(cv => {
+                    const eng = new GreenFlameEngine(cv);
+                    _fireEngines.push(eng);
                     setTimeout(() => eng.start(), 40);
-                }
-            });
-            // 018 — Crystal frost canvas
-            document.querySelectorAll('.frost-canvas').forEach(cv => {
-                const eng = new CrystalFrostEngine(cv);
-                _iceEngines.push(eng);
-                setTimeout(() => eng.start(), 40);
-            });
+                });
+                // 016 — Liquid tide dual canvas
+                document.querySelectorAll('.news-card.water-card').forEach(card => {
+                    const fc = card.querySelector('.fluid-canvas');
+                    const bc = card.querySelector('.bubble-canvas');
+                    if (fc && bc) {
+                        const eng = new LiquidTideEngine(fc, bc);
+                        _waterEngines.push(eng);
+                        setTimeout(() => eng.start(), 40);
+                    }
+                });
+                // 018 — Crystal frost canvas
+                document.querySelectorAll('.frost-canvas').forEach(cv => {
+                    const eng = new CrystalFrostEngine(cv);
+                    _iceEngines.push(eng);
+                    setTimeout(() => eng.start(), 40);
+                });
+            }
             assignDepth();
             initLiquidIce();
         }

@@ -4,6 +4,24 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Leaks – Blox Fruits</title>
+    <meta name="description" content="Tous les leaks Blox Fruits en un seul endroit : nouveaux fruits, VFX, reworks de map, GUI et messages exclusifs interceptés par notre équipe.">
+    <link rel="canonical" href="https://bloxnewsfr.github.io/BloxNews-FR/neo_bulletin.html">
+
+    <!-- Open Graph / Discord, Facebook, etc. -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Blox Fruits News">
+    <meta property="og:title" content="Leaks – Blox Fruits">
+    <meta property="og:description" content="Tous les leaks Blox Fruits en un seul endroit : nouveaux fruits, VFX, reworks de map, GUI et messages exclusifs interceptés par notre équipe.">
+    <meta property="og:image" content="https://bloxnewsfr.github.io/BloxNews-FR/BF_news.png">
+    <meta property="og:url" content="https://bloxnewsfr.github.io/BloxNews-FR/neo_bulletin.html">
+    <meta property="og:locale" content="fr_FR">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Leaks – Blox Fruits">
+    <meta name="twitter:description" content="Tous les leaks Blox Fruits en un seul endroit : nouveaux fruits, VFX, reworks de map, GUI et messages exclusifs interceptés par notre équipe.">
+    <meta name="twitter:image" content="https://bloxnewsfr.github.io/BloxNews-FR/BF_news.png">
+
     <link rel="icon" type="image/png" href="./shared/favicon.png">
     <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
@@ -13,7 +31,17 @@
         @font-face { font-family: 'LuckiestGuy Regular'; src: url('./fonts/LuckiestGuy-Regular.ttf') format('truetype'); }
         :root { --color-text: #1a1a2e; --color-border: #e8e8f0; --color-primary: #ffda00; --color-accent: #175ec2; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        
+
+        /* ── ACCESSIBILITÉ : respecter "réduire les animations" du système ── */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.001ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.001ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+
         /* ── 3D LAYERED DEPTH SYSTEM ── */
         [data-depth] {
             will-change: translate, filter, opacity;
@@ -2504,7 +2532,7 @@
             <div class="news-grid">
                 <article class="news-card">
                     <div class="news-card__image-wrapper">
-                        <img src="./shared/blox_leaks/magnet.png" class="news-card__image" alt="T-Rex">
+                        <img src="./shared/blox_leaks/magnet.png" class="news-card__image" alt="T-Rex" loading="lazy" decoding="async">
                         <div class="news-card__badge">MAGNET</div>
                     </div>
                     <div class="news-card__content">
@@ -2530,7 +2558,7 @@
 
                                 <article class="news-card">
                     <div class="news-card__image-wrapper">
-                        <img src="./shared/blox_leaks/magnet_ability 2.jpeg" class="news-card__image" alt="T-Rex">
+                        <img src="./shared/blox_leaks/magnet_ability 2.jpeg" class="news-card__image" alt="T-Rex" loading="lazy" decoding="async">
                         <div class="news-card__badge">MAGNET</div>
                     </div>
                     <div class="news-card__content">
@@ -2543,7 +2571,7 @@
 
                                 <article class="news-card">
                     <div class="news-card__image-wrapper">
-                        <img src="./shared/blox_leaks/celestial_physic.png" class="news-card__image" alt="T-Rex">
+                        <img src="./shared/blox_leaks/celestial_physic.png" class="news-card__image" alt="T-Rex" loading="lazy" decoding="async">
                         <div class="news-card__badge">CELESTIAL</div>
                     </div>
                     <div class="news-card__content">
@@ -2556,7 +2584,7 @@
 
                                 <article class="news-card">
                     <div class="news-card__image-wrapper">
-                        <img src="./shared/blox_leaks/celestial_shop.png" class="news-card__image" alt="T-Rex">
+                        <img src="./shared/blox_leaks/celestial_shop.png" class="news-card__image" alt="T-Rex" loading="lazy" decoding="async">
                         <div class="news-card__badge">CELESTIAL</div>
                     </div>
                     <div class="news-card__content">
@@ -2569,7 +2597,7 @@
 
                                 <article class="news-card">
                     <div class="news-card__image-wrapper">
-                        <img src="./shared/blox_leaks/oni_physic.png" class="news-card__image" alt="T-Rex">
+                        <img src="./shared/blox_leaks/oni_physic.png" class="news-card__image" alt="T-Rex" loading="lazy" decoding="async">
                         <div class="news-card__badge">ONI</div>
                     </div>
                     <div class="news-card__content">
@@ -2582,7 +2610,7 @@
 
                                 <article class="news-card">
                     <div class="news-card__image-wrapper">
-                        <img src="./shared/blox_leaks/oni_shop.png" class="news-card__image" alt="T-Rex">
+                        <img src="./shared/blox_leaks/oni_shop.png" class="news-card__image" alt="T-Rex" loading="lazy" decoding="async">
                         <div class="news-card__badge">ONI</div>
                     </div>
                     <div class="news-card__content">
@@ -2595,7 +2623,7 @@
 
                                                 <article class="news-card">
                     <div class="news-card__image-wrapper">
-                        <img src="./shared/blox_leaks/dark_rework.jpeg" class="news-card__image" alt="T-Rex">
+                        <img src="./shared/blox_leaks/dark_rework.jpeg" class="news-card__image" alt="T-Rex" loading="lazy" decoding="async">
                         <div class="news-card__badge">DARK</div>
                     </div>
                     <div class="news-card__content">
@@ -2615,7 +2643,7 @@
             <div class="news-grid">
                 <article class="news-card">
                     <div class="news-card__image-wrapper">
-                        <img src="./shared/blox_leaks/skull_guitar.jpeg" class="news-card__image" alt="VFX">
+                        <img src="./shared/blox_leaks/skull_guitar.jpeg" class="news-card__image" alt="VFX" loading="lazy" decoding="async">
                         <div class="news-card__badge">GUN</div>
                     </div>
                     <div class="news-card__content">
@@ -2637,7 +2665,7 @@
 
                 <article class="news-card">
                     <div class="news-card__image-wrapper">
-                        <img src="./shared/blox_leaks/island_reworks1.png" class="news-card__image" alt="Map">
+                        <img src="./shared/blox_leaks/island_reworks1.png" class="news-card__image" alt="Map" loading="lazy" decoding="async">
                         <div class="news-card__badge">Island</div>
                     </div>
                     <div class="news-card__content">
@@ -2650,7 +2678,7 @@
 
                                 <article class="news-card">
                     <div class="news-card__image-wrapper">
-                        <img src="./shared/blox_leaks/island_reworks2.png" class="news-card__image" alt="Map">
+                        <img src="./shared/blox_leaks/island_reworks2.png" class="news-card__image" alt="Map" loading="lazy" decoding="async">
                         <div class="news-card__badge">Island</div>
                     </div>
                     <div class="news-card__content">
@@ -2663,7 +2691,7 @@
 
                                 <article class="news-card">
                     <div class="news-card__image-wrapper">
-                        <img src="./shared/blox_leaks/islandreworks3.png" class="news-card__image" alt="Map">
+                        <img src="./shared/blox_leaks/islandreworks3.png" class="news-card__image" alt="Map" loading="lazy" decoding="async">
                         <div class="news-card__badge">Island</div>
                     </div>
                     <div class="news-card__content">
@@ -2676,7 +2704,7 @@
 
                                 <article class="news-card">
                     <div class="news-card__image-wrapper">
-                        <img src="./shared/blox_leaks/island_reworks4.png" class="news-card__image" alt="Map">
+                        <img src="./shared/blox_leaks/island_reworks4.png" class="news-card__image" alt="Map" loading="lazy" decoding="async">
                         <div class="news-card__badge">Island</div>
                     </div>
                     <div class="news-card__content">
@@ -2689,7 +2717,7 @@
 
                                 <article class="news-card">
                     <div class="news-card__image-wrapper">
-                        <img src="./shared/blox_leaks/island_reworks5.png" class="news-card__image" alt="Map">
+                        <img src="./shared/blox_leaks/island_reworks5.png" class="news-card__image" alt="Map" loading="lazy" decoding="async">
                         <div class="news-card__badge">Island</div>
                     </div>
                     <div class="news-card__content">
@@ -2702,7 +2730,7 @@
 
                                 <article class="news-card">
                     <div class="news-card__image-wrapper">
-                        <img src="./shared/blox_leaks/island_reworks6.png" class="news-card__image" alt="Map">
+                        <img src="./shared/blox_leaks/island_reworks6.png" class="news-card__image" alt="Map" loading="lazy" decoding="async">
                         <div class="news-card__badge">Island</div>
                     </div>
                     <div class="news-card__content">
@@ -2722,7 +2750,7 @@
             <div class="news-grid">
                 <article class="news-card">
                     <div class="news-card__image-wrapper">
-                        <img src="./shared/blox_leaks/enchantements_design.jpeg" class="news-card__image" alt="GUI">
+                        <img src="./shared/blox_leaks/enchantements_design.jpeg" class="news-card__image" alt="GUI" loading="lazy" decoding="async">
                         <div class="news-card__badge">INTERFACE</div>
                     </div>
                     <div class="news-card__content">
@@ -3884,7 +3912,7 @@
         const stats = document.getElementById('searchStats');
         if (!q) { stats.innerHTML = ''; return; }
         const results = _buildNeoIndex().filter(c =>
-            c.title.includes(q) || c.eyebrow.includes(q) || c.section.includes(q)
+            c.title.includes(q) || c.eyebrow.includes(q) || c.section.includes(q) || c.bodyText.includes(q)
         );
         if (results.length) {
             stats.innerHTML = results.map(c =>
@@ -3908,9 +3936,10 @@
             const sectionId    = section.id;
             const sectionLabel = (document.querySelector(`[data-target="${sectionId}"]`)?.textContent || sectionId).trim();
             section.querySelectorAll('.news-card').forEach(card => {
-                const titleEl  = card.querySelector('.news-card__title, h2');
-                const eyeEl    = card.querySelector('.news-card__eyebrow');
-                const titleRaw = titleEl?.textContent.trim() || '';
+                const titleEl   = card.querySelector('.news-card__title, h2');
+                const eyeEl     = card.querySelector('.news-card__eyebrow');
+                const contentEl = card.querySelector('.news-card__content');
+                const titleRaw  = titleEl?.textContent.trim() || '';
                 cards.push({
                     id:           card.id || '',
                     section:      sectionId.toLowerCase(),
@@ -3918,6 +3947,7 @@
                     titleRaw,
                     title:        titleRaw.toLowerCase(),
                     eyebrow:      (eyeEl?.textContent || '').toLowerCase(),
+                    bodyText:     (contentEl?.textContent || '').toLowerCase(),
                     card,
                     section_el:   section
                 });
@@ -3934,7 +3964,7 @@
 
         const all     = _buildNeoIndex();
         const results = all.filter(c =>
-            c.title.includes(q) || c.eyebrow.includes(q) || c.section.includes(q)
+            c.title.includes(q) || c.eyebrow.includes(q) || c.section.includes(q) || c.bodyText.includes(q)
         );
 
         // Masquer tabs + sections
@@ -4754,7 +4784,7 @@
             // ── Carte STANDARD (leak / image / vidéo) ─────────────────
             const mediaTag  = card.mediaType === 'video'
                 ? `<video src="${e(card.src)}" class="news-card__image" preload="metadata" muted playsinline></video>`
-                : `<img src="${e(card.src)}" class="news-card__image" alt="${e(card.title)}">`;
+                : `<img src="${e(card.src)}" class="news-card__image" alt="${e(card.title)}" loading="lazy" decoding="async">`;
             const btnLabel = e(card.btnLabel || "Voir l'image →");
             const btnHtml  = card.mediaType === 'video'
                 ? `<button class="news-card__button open-modal-btn" data-type="video" data-src="${e(card.src)}">${btnLabel}</button>`
