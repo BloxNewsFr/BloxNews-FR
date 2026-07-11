@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Page introuvable – Blox Fruits News</title>
+    <meta name="robots" content="noindex">
+    <link rel="icon" type="image/png" href="./shared/favicon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        @font-face { font-family: 'LuckiestGuy Regular'; src: url('./fonts/LuckiestGuy-Regular.ttf') format('truetype'); }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; }
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            text-align: center; padding: 24px;
+            background: linear-gradient(160deg, #175ec2 0%, #0f3f8a 55%, #0a2a5e 100%);
+            color: #fff;
+        }
+        .error-code {
+            font-family: 'LuckiestGuy Regular', cursive;
+            font-size: clamp(70px, 18vw, 150px);
+            line-height: 1;
+            letter-spacing: 2px;
+            text-shadow: 0 10px 40px rgba(0,0,0,0.35);
+            animation: bob 3.4s ease-in-out infinite;
+        }
+        @keyframes bob {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .error-title {
+            font-family: 'LuckiestGuy Regular', cursive;
+            font-size: clamp(20px, 4vw, 30px);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 8px;
+        }
+        .error-text {
+            margin-top: 16px;
+            font-size: 15px;
+            color: rgba(255,255,255,0.8);
+            max-width: 420px;
+            line-height: 1.6;
+        }
+        .error-actions {
+            margin-top: 32px;
+            display: flex; gap: 14px; flex-wrap: wrap; justify-content: center;
+        }
+        .error-btn {
+            font-family: 'LuckiestGuy Regular', cursive;
+            text-decoration: none;
+            padding: 12px 28px;
+            border-radius: 100px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .error-btn--primary {
+            background: linear-gradient(135deg, #ffda00, #ffc200);
+            color: #111;
+            box-shadow: 0 6px 22px rgba(255,218,0,0.35);
+        }
+        .error-btn--secondary {
+            background: rgba(255,255,255,0.12);
+            color: #fff;
+            border: 1.5px solid rgba(255,255,255,0.35);
+        }
+        .error-btn:hover { transform: translateY(-3px); }
+    </style>
+</head>
+<body>
+    <div class="error-code">404</div>
+    <div class="error-title">Cette île n'existe pas (encore)</div>
+    <p class="error-text">La page que tu cherches a peut-être été engloutie par les mers, renommée, ou n'a jamais existé. Retourne vers des eaux plus sûres !</p>
+    <div class="error-actions">
+        <a href="./index.html" class="error-btn error-btn--primary">← Retour aux Actualités</a>
+        <a href="./archives.html" class="error-btn error-btn--secondary">Voir les Archives</a>
+    </div>
+</body>
+</html>
