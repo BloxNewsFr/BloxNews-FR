@@ -1084,34 +1084,6 @@
 
 
 
-        /* ── Pilule mobile flottante (Neo Bulletin) ──── */
-        .mobile-switcher-pill { display: none; }
-        @media (max-width: 768px) {
-            .mobile-switcher-pill {
-                display: flex !important;
-                position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%);
-                z-index: 9999; align-items: center; gap: 0;
-                background: rgba(255,255,255,0.1);
-                backdrop-filter: blur(22px) saturate(160%);
-                -webkit-backdrop-filter: blur(22px) saturate(160%);
-                border: 1px solid rgba(255,255,255,0.18);
-                border-radius: 100px; padding: 5px;
-                box-shadow: 0 8px 32px rgba(0,0,0,0.14),
-                            inset 0 1px 0 rgba(255,255,255,0.12);
-            }
-            .mobile-switcher-pill a {
-                text-decoration: none; font-family: 'LuckiestGuy Regular', cursive;
-                font-size: 13px; color: rgba(255,255,255,0.6); padding: 14px 20px 6px;
-                border-radius: 100px; transition: all 0.25s ease; white-space: nowrap;
-                letter-spacing: 0.3px;
-            }
-            .mobile-switcher-pill a.active {
-                background: rgba(255,255,255,0.92); color: #111;
-                box-shadow: 0 2px 10px rgba(0,0,0,0.18);
-            }
-        }
-
-
         @keyframes spin{to{transform:rotate(360deg)}}
 
         /* ── Pilule switcher mobile (Neo Bulletin) ───────── */
@@ -5604,7 +5576,7 @@
 
         // 4. Vraiment pas connecté
         console.log('Navbar init: no user found, showing login button');
-        loginBtn.style.display = '
+        loginBtn.style.display = '';
     })();
     </script>    <!-- Palette de couleurs surlignage — directement dans body pour éviter tout overflow -->
     <div id="fmtHlPalette">
