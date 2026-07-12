@@ -4277,7 +4277,9 @@
 
     // ─── Compteur effectif = Firebase (si dispo) sinon fallback local ──
     function _plGetCount(id) {
-        if (_plFirebaseReady && _plGlobalCounts[id] !== undefined) return _plGlobalCounts[id];
+        if (_plFirebaseReady) {
+            return _plGlobalCounts[id] !== undefined ? _plGlobalCounts[id] : 0;
+        }
         const local = _plLocalCountsLoad();
         return local[id] || _plGlobalCounts[id] || 0;
     }
@@ -4285,6 +4287,12 @@
     function _plSetLocalCount(id, val) {
         const local = _plLocalCountsLoad();
         local[id] = val;
+        _plLocalCountsSave(local);
+    }
+
+    function _plClearLocalCount(id) {
+        const local = _plLocalCountsLoad();
+        delete local[id];
         _plLocalCountsSave(local);
     }
 
@@ -4350,12 +4358,13 @@
         local[id]   = entry;
         _plSaveLocal(local);
 
-        const delta   = entry.liked ? 1 : -1;
-        const oldVal  = _plGetCount(id);
-        const newVal  = Math.max(0, oldVal + delta);
+        const delta  = entry.liked ? 1 : -1;
+        const newVal = Math.max(0, _plGetCount(id) + delta);
 
-        // ── Update optimiste immédiat du compteur ──
-        _plSetLocalCount(id, newVal);
+        // ── Update optimiste immédiat du compteur + fallback local ──
+        if (!_plFirebaseReady) {
+            _plSetLocalCount(id, newVal);
+        }
         _plUpdateCountDisplay(id);
 
         // ── Firebase : persist du compteur global ──
@@ -4364,20 +4373,21 @@
                 cur => Math.max(0, (cur || 0) + delta),
                 (error, committed) => {
                     if (error) {
-                        console.error('[likes] Firebase refusé pour "' + id + '" :', error);
-                        // Fallback : on garde la valeur locale déjà écrite
+                        console.error('[likes] Échec Firebase pour "' + id + '" :', error);
+                        _plSetLocalCount(id, newVal);
+                        _plUpdateCountDisplay(id);
                     } else if (!committed) {
-                        console.warn('[likes] Transaction non confirmée pour "' + id + '" — utilisation du compteur local');
-                        // La valeur locale reste valable comme fallback
+                        console.warn('[likes] Transaction non confirmée pour "' + id + '" — repli local');
+                        _plSetLocalCount(id, newVal);
+                        _plUpdateCountDisplay(id);
                     } else {
-                        // Transaction réussie → la valeur Firebase est l'autorité
-                        // → supprimer le fallback local pour ce post
-                        const localCounts = _plLocalCountsLoad();
-                        delete localCounts[id];
-                        _plLocalCountsSave(localCounts);
+                        _plClearLocalCount(id);
                     }
-                }
+                },
+                false
             );
+        } else {
+            _plSetLocalCount(id, newVal);
         }
 
         // ── Feedback visuel immédiat (cœur + particules) ──────────
