@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+    <script>
+        (function() {
+            try {
+                var saved = localStorage.getItem('bloxsite_theme');
+                if (saved === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+            } catch (e) {}
+        })();
+    </script>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Leaks – Blox Fruits</title>
@@ -30,6 +38,58 @@
     <style>
         @font-face { font-family: 'LuckiestGuy Regular'; src: url('./fonts/LuckiestGuy-Regular.ttf') format('truetype'); }
         :root { --color-text: #1a1a2e; --color-border: #e8e8f0; --color-primary: #ffda00; --color-accent: #175ec2; }
+
+        /* ── MODE SOMBRE ── */
+        html[data-theme="dark"] { --color-text: #eef0fa; --color-border: #2a2d45; }
+        html[data-theme="dark"] body { background-color: #0e0f1c; }
+        html[data-theme="dark"] .site-background { opacity: 0.35; }
+        html[data-theme="dark"] .site-header { background-color: rgba(20,20,35,0.55); border-bottom-color: rgba(255,255,255,0.1); }
+
+        html[data-theme="dark"] .leaks-tab { background: #171827; color: #dcdff2; border-color: #2a2d45; }
+        html[data-theme="dark"] .secret-bulletin { background: linear-gradient(135deg, #171827 0%, #1c1420 100%); }
+        html[data-theme="dark"] .secret-bulletin::before { color: rgba(255,26,26,0.12); border-color: rgba(255,26,26,0.12); }
+        html[data-theme="dark"] .bulletin-header { border-bottom-color: rgba(255,255,255,0.12); }
+        html[data-theme="dark"] .bulletin-header h2 { color: #f0f2ff; }
+        html[data-theme="dark"] .bulletin-meta { color: #b7bbd8; }
+        html[data-theme="dark"] .bulletin-content p { color: #cdd0ea; }
+        html[data-theme="dark"] .category-title { color: #f0f2ff; }
+
+        html[data-theme="dark"] .news-card { background: #171827; }
+        html[data-theme="dark"] .news-card__content { background: #171827; }
+        html[data-theme="dark"] .news-card__title { color: #f0f2ff; }
+        html[data-theme="dark"] .news-card__image-wrapper { background: #0d0d18; }
+        html[data-theme="dark"] .news-card__button--disabled { background: #1c1e30 !important; color: #dcdff2 !important; border-color: rgba(255,255,255,0.08) !important; }
+
+        html[data-theme="dark"] .comment-toggle-bar { background: #171827; border-color: #2a2d45; }
+        html[data-theme="dark"] .comment-toggle-bar__label { color: #eef0fa; }
+        html[data-theme="dark"] .comment-body { background: #171827; border-color: rgba(255,26,26,0.18); }
+        html[data-theme="dark"] .comment-input { background: #1c1e30; color: #eef0fa; border-color: #2a2d45; }
+        html[data-theme="dark"] .comment-input:focus { background: #20223a; }
+        html[data-theme="dark"] .comment-item__body,
+        html[data-theme="dark"] .comment-reply__body { background: #1c1e30; border-color: #2a2d45; }
+        html[data-theme="dark"] .comment-item__username { color: #f0f2ff; }
+        html[data-theme="dark"] .comment-item__text,
+        html[data-theme="dark"] .comment-reply__text { color: #cdd0ea; }
+        html[data-theme="dark"] .comment-divider { color: #444; }
+        html[data-theme="dark"] .comment-divider::before, html[data-theme="dark"] .comment-divider::after { background: #2a2d45; }
+        html[data-theme="dark"] .comment-sort-btn { border-color: #2a2d45; color: #9ea3c9; }
+        html[data-theme="dark"] .comments-modal { background: #171827; }
+        html[data-theme="dark"] .comments-modal__header { background: linear-gradient(135deg, #1c1420, #171827); border-bottom-color: #2a2d45; }
+        html[data-theme="dark"] .comments-modal__title { color: #f0f2ff; }
+        html[data-theme="dark"] .comments-modal__close { background: #1c1e30; color: #9ea3c9; }
+        html[data-theme="dark"] .comment-see-more-btn { border-color: #2a2d45; color: #6a6f95; }
+        html[data-theme="dark"] .reaction-btn { background: rgba(255,255,255,0.05); border-color: #2a2d45; color: #9ea3c9; }
+        html[data-theme="dark"] .emoji-picker-popup { background: #171827; border-color: #2a2d45; }
+
+        html[data-theme="dark"] .mobile-nav-dropdown { background: rgba(20,20,32,0.96); }
+        html[data-theme="dark"] .mnav-header { border-bottom-color: rgba(255,255,255,0.08); }
+        html[data-theme="dark"] .mnav-header__title { color: #f0f2ff; }
+        html[data-theme="dark"] .mnav-close { background: rgba(255,255,255,0.08); color: #eef0fa; }
+        html[data-theme="dark"] .mnav-close:hover { background: rgba(255,255,255,0.14); }
+        html[data-theme="dark"] .mobile-nav-dropdown a.mnav-link { color: #dcdff2; }
+        html[data-theme="dark"] .mobile-nav-dropdown a.mnav-link:hover { background: rgba(255,255,255,0.06); }
+        html[data-theme="dark"] .mnav-link__icon { color: #8a8fb5; }
+        html[data-theme="dark"] .mobile-nav-label { color: rgba(255,255,255,0.4); }
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
         /* ── ACCESSIBILITÉ : respecter "réduire les animations" du système ── */
@@ -2394,6 +2454,7 @@
         </nav>
         <div class="site-header__icons">
             <span class="material-symbols-outlined" onclick="openSearch()">search</span>
+            <span class="material-symbols-outlined" id="themeToggle" role="button" tabindex="0" aria-label="Changer de thème" title="Changer de thème">dark_mode</span>
 
             <!-- Auth Discord -->
             <div class="discord-skeleton" id="discordSkeleton"></div>
@@ -3227,6 +3288,33 @@
             mobileNavBackdrop?.addEventListener('click', _closeMobileNav);
             mobileNavClose?.addEventListener('click', _closeMobileNav);
             document.addEventListener('keydown', e => { if (e.key === 'Escape') _closeMobileNav(); });
+
+            // ── MODE SOMBRE ──
+            const themeToggle = document.getElementById('themeToggle');
+            function _applyThemeIcon() {
+                const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+                if (themeToggle) {
+                    themeToggle.textContent = isDark ? 'light_mode' : 'dark_mode';
+                    themeToggle.setAttribute('aria-pressed', isDark ? 'true' : 'false');
+                }
+            }
+            _applyThemeIcon();
+            if (themeToggle) {
+                themeToggle.addEventListener('click', () => {
+                    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+                    if (isDark) {
+                        document.documentElement.removeAttribute('data-theme');
+                        try { localStorage.setItem('bloxsite_theme', 'light'); } catch (e) {}
+                    } else {
+                        document.documentElement.setAttribute('data-theme', 'dark');
+                        try { localStorage.setItem('bloxsite_theme', 'dark'); } catch (e) {}
+                    }
+                    _applyThemeIcon();
+                });
+                themeToggle.addEventListener('keydown', e => {
+                    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); themeToggle.click(); }
+                });
+            }
 
             // ── 2. SYSTÈME DE NAV PAR ONGLETS (TABS) ──
             tabs.forEach(tab => {
