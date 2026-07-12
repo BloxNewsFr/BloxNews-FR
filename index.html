@@ -143,6 +143,8 @@
             border-bottom: 1px solid rgba(255, 255, 255, 0.12);
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.2);
             transition: background 0.5s cubic-bezier(0.4, 0, 0.2, 1), backdrop-filter 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateZ(0);
+            will-change: transform;
         }
         .site-header__logo { position: absolute; left: 55px; }
         /* Le logo ne change plus jamais de couleur */
@@ -274,7 +276,10 @@
 
         /* ── RESPONSIVE MOBILE ── */
         @media (max-width: 768px) { 
-            .site-header { padding: 0 20px; height: auto; min-height: 60px; } 
+            .site-header { padding: 0 16px; height: auto; min-height: 60px; } 
+            .site-header__logo { left: 16px; }
+            .site-header__logo img { height: 34px; }
+            .site-header__icons { right: 16px; gap: 8px; }
             .site-nav { display: none; } 
             .mobile-menu-btn { display: block; }
             .news-grid { gap: 20px; padding: 0 12px; } 
@@ -2596,7 +2601,7 @@
         <div class="search-container">
             <div class="search-bar">
                 <span class="material-symbols-outlined search-icon" style="font-size:22px;color:#999;flex-shrink:0">search</span>
-                <input id="searchInput" type="text" placeholder="Rechercher…" autofocus onkeydown="if(event.key==='Escape')closeSearch();if(event.key==='Enter'){event.preventDefault();executeSearch()}">
+                <input id="searchInput" type="text" placeholder="Rechercher…" onkeydown="if(event.key==='Escape')closeSearch();if(event.key==='Enter'){event.preventDefault();executeSearch()}">
                 <button class="search-go-btn" onclick="executeSearch()">Chercher</button>
                 <button class="search-nav-btn" onclick="prevResult()" id="searchPrevBtn">▲</button>
                 <button class="search-nav-btn" onclick="nextResult()" id="searchNextBtn">▼</button>

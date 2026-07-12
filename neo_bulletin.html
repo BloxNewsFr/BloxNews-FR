@@ -158,6 +158,8 @@
     /* Animation douce */
     transition: background 0.5s cubic-bezier(0.4, 0, 0.2, 1), backdrop-filter 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     animation: navbarSheen 6s ease-in-out infinite;
+    transform: translateZ(0);
+    will-change: transform;
 }
         .site-header__logo { position: absolute; left: 55px; }
         .site-header__logo img { height: 42px; width: auto; display: block; }
@@ -2249,6 +2251,9 @@
             /* ── Layout global ── */
             .site-background { display: none; }
             .site-header { padding: 10px 16px; }
+            .site-header__logo { left: 16px; }
+            .site-header__logo img { height: 34px; }
+            .site-header__icons { right: 16px; gap: 8px; }
             .site-nav, .desktop-tabs { display: none; }
             .mobile-menu-btn { display: block; }
             .mobile-nav-dropdown { display: flex; }
@@ -2282,9 +2287,11 @@
                 margin: 0 !important;
                 max-height: 93dvh !important;
                 overflow-y: auto !important;
+                overscroll-behavior: contain !important;
                 transform: translateY(100%) !important;
                 transition: transform 0.38s cubic-bezier(0.32, 0.72, 0, 1) !important;
             }
+            .modal-overlay { overscroll-behavior: contain !important; }
             .modal-overlay.is-active .modal-content {
                 transform: translateY(0) !important;
             }
@@ -2428,7 +2435,7 @@
             }
 
             /* ── Social share ── */
-            .social-share { gap: 7px; flex-wrap: wrap; padding: 0 14px; }
+            .social-share { gap: 7px; flex-wrap: wrap; padding: 0 14px; margin-bottom: 100px !important; position: relative; z-index: 1; }
             .social-share a { font-size: 11px; padding: 7px 12px; }
         }
     </style>
@@ -3240,7 +3247,7 @@
         <div class="search-container">
             <div class="search-bar">
                 <span class="material-symbols-outlined search-icon" style="font-size:22px;color:#999;flex-shrink:0">search</span>
-                <input id="searchInput" type="text" placeholder="Rechercher…" autofocus onkeydown="if(event.key==='Escape')closeSearch();if(event.key==='Enter'){event.preventDefault();executeSearch()}">
+                <input id="searchInput" type="text" placeholder="Rechercher…" onkeydown="if(event.key==='Escape')closeSearch();if(event.key==='Enter'){event.preventDefault();executeSearch()}">
                 <button class="search-go-btn" onclick="executeSearch()">Chercher</button>
                 <button class="search-close-btn" onclick="closeSearch()">✕</button>
             </div>
@@ -3416,11 +3423,13 @@
                         if (edBtn) edBtn.classList.remove('is-active');
                         edBtn.textContent = '✏️ Éditer';
                         modal.classList.add('is-active');
+                        document.body.style.overflow = 'hidden';
                     });
                 });
 
                 const closeModalFn = () => {
                     modal.classList.remove('is-active');
+                    document.body.style.overflow = '';
                     if (video) { video.pause(); video.src = ''; }
                     if (modalImg) modalImg.src = '';
                     // Fermer le panneau d'édition
@@ -5083,7 +5092,7 @@
         if (edPanel) edPanel.classList.remove('is-open');
         const edBtn = document.getElementById('modalEditToggle');
         if (edBtn) { edBtn.classList.remove('is-active'); edBtn.textContent = '✏️ Éditer'; }
-        if (modal) modal.classList.add('is-active');
+        if (modal) { modal.classList.add('is-active'); document.body.style.overflow = 'hidden'; }
     }
 
     // ══════════════════════════════════════════════════════════════

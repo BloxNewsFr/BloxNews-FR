@@ -86,6 +86,8 @@
             -webkit-backdrop-filter: blur(24px) saturate(180%);
             border-bottom: 1px solid rgba(255, 255, 255, 0.12);
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            transform: translateZ(0);
+            will-change: transform;
         }
         .site-header__logo { position: absolute; left: 55px; }
         .site-header__logo img { height: 42px; width: auto; display: block; }
@@ -172,7 +174,10 @@
         .back-button:hover { transform: scale(1.05); }
 
         @media (max-width: 768px) {
-            .site-header { padding: 0 20px; }
+            .site-header { padding: 0 16px; }
+            .site-header__logo { left: 16px; }
+            .site-header__logo img { height: 34px; }
+            .site-header__icons { right: 16px; gap: 8px; }
             .site-nav { display: none; }
             .mobile-menu-btn { display: block; }
             .blue-banner { font-size: 24px; padding: 12px 30px; }
