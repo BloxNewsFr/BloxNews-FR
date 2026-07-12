@@ -4261,23 +4261,42 @@
     // ═══════════════════════════════════════════════════════════════
     //  SYSTÈME DE LIKE — POSTS  (compteur GLOBAL via Firebase)
     // ═══════════════════════════════════════════════════════════════
-    const POST_LIKE_KEY   = 'blox_post_likes_v1';
-    const FB_LIKES_REF    = typeof FB_DB !== 'undefined' ? FB_DB.ref('post_likes') : null;
-    let   _plGlobalCounts = {};
+    const POST_LIKE_KEY       = 'blox_post_likes_v1';
+    const POST_LIKE_COUNT_KEY = 'blox_post_likes_counts_v1';
+    const FB_LIKES_REF        = typeof FB_DB !== 'undefined' ? FB_DB.ref('post_likes') : null;
+    let   _plGlobalCounts     = {};
+    let   _plFirebaseReady    = false;
+
+    function _plLocalCountsLoad() { try { return JSON.parse(localStorage.getItem(POST_LIKE_COUNT_KEY)) || {}; } catch { return {}; } }
+    function _plLocalCountsSave(d) { try { localStorage.setItem(POST_LIKE_COUNT_KEY, JSON.stringify(d)); } catch {} }
 
     // ─── Persistance locale (liked = par device) ───────────────────
     function _plLoadLocal() { try { return JSON.parse(localStorage.getItem(POST_LIKE_KEY)) || {}; } catch { return {}; } }
     function _plSaveLocal(d) { try { localStorage.setItem(POST_LIKE_KEY, JSON.stringify(d)); } catch {} }
     function _plSlug(s) { return (s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,48); }
 
+    // ─── Compteur effectif = Firebase (si dispo) sinon fallback local ──
+    function _plGetCount(id) {
+        if (_plFirebaseReady && _plGlobalCounts[id] !== undefined) return _plGlobalCounts[id];
+        const local = _plLocalCountsLoad();
+        return local[id] || _plGlobalCounts[id] || 0;
+    }
+
+    function _plSetLocalCount(id, val) {
+        const local = _plLocalCountsLoad();
+        local[id] = val;
+        _plLocalCountsSave(local);
+    }
+
     // ─── Écoute Firebase → met à jour UNIQUEMENT les compteurs ─────
     // (jamais le cœur liked — c'est localStorage qui décide ça)
     if (FB_LIKES_REF) {
         FB_LIKES_REF.on('value', snap => {
             _plGlobalCounts = snap.val() || {};
+            _plFirebaseReady = true;
             document.querySelectorAll('.post-like-btn[data-post-id]').forEach(btn => {
                 const countEl = btn.querySelector('.post-like-count');
-                if (countEl) countEl.textContent = _plGlobalCounts[btn.dataset.postId] || 0;
+                if (countEl) countEl.textContent = _plGetCount(btn.dataset.postId);
             });
             _sortAllSections();
         }, err => {
@@ -4315,6 +4334,13 @@
         return btn;
     }
 
+    function _plUpdateCountDisplay(id) {
+        document.querySelectorAll(`.post-like-btn[data-post-id="${id}"] .post-like-count`).forEach(el => {
+            el.textContent = _plGetCount(id);
+        });
+        _sortAllSections();
+    }
+
     function _plToggle(e) {
         const btn   = e.currentTarget;
         const id    = btn.dataset.postId;
@@ -4324,27 +4350,34 @@
         local[id]   = entry;
         _plSaveLocal(local);
 
-        // ── Firebase est le SEUL à mettre à jour le compteur ──────
-        // Pas d'update optimiste du nombre → zéro double-comptage
-        // (sauf si Firebase échoue : on bascule alors en repli local
-        //  pour que le bouton reste fonctionnel plutôt que "mort")
-        const countEl = btn.querySelector('.post-like-count');
+        const delta   = entry.liked ? 1 : -1;
+        const oldVal  = _plGetCount(id);
+        const newVal  = Math.max(0, oldVal + delta);
+
+        // ── Update optimiste immédiat du compteur ──
+        _plSetLocalCount(id, newVal);
+        _plUpdateCountDisplay(id);
+
+        // ── Firebase : persist du compteur global ──
         if (FB_LIKES_REF) {
             FB_LIKES_REF.child(id).transaction(
-                cur => Math.max(0, (cur || 0) + (entry.liked ? 1 : -1)),
-                (error) => {
+                cur => Math.max(0, (cur || 0) + delta),
+                (error, committed) => {
                     if (error) {
-                        console.error('[likes] échec de synchronisation Firebase pour "' + id + '" :', error);
-                        if (countEl) {
-                            const current = parseInt(countEl.textContent, 10) || 0;
-                            countEl.textContent = Math.max(0, current + (entry.liked ? 1 : -1));
-                        }
+                        console.error('[likes] Firebase refusé pour "' + id + '" :', error);
+                        // Fallback : on garde la valeur locale déjà écrite
+                    } else if (!committed) {
+                        console.warn('[likes] Transaction non confirmée pour "' + id + '" — utilisation du compteur local');
+                        // La valeur locale reste valable comme fallback
+                    } else {
+                        // Transaction réussie → la valeur Firebase est l'autorité
+                        // → supprimer le fallback local pour ce post
+                        const localCounts = _plLocalCountsLoad();
+                        delete localCounts[id];
+                        _plLocalCountsSave(localCounts);
                     }
                 }
             );
-        } else if (countEl) {
-            const current = parseInt(countEl.textContent, 10) || 0;
-            countEl.textContent = Math.max(0, current + (entry.liked ? 1 : -1));
         }
 
         // ── Feedback visuel immédiat (cœur + particules) ──────────
@@ -4393,7 +4426,7 @@
             if (!h2) return;
             const id    = 'dossier-' + _plSlug(h2.textContent.trim());
             const liked = (local[id] || {}).liked || false;
-            const btn   = _plMakeBtn(id, liked, _plGlobalCounts[id] || 0);
+            const btn   = _plMakeBtn(id, liked, _plGetCount(id));
             const wrap  = document.createElement('div');
             wrap.className = 'actus-like-wrap';
             wrap.appendChild(btn);
@@ -4409,7 +4442,7 @@
             const src     = imgEl ? (imgEl.getAttribute('src') || '') : '';
             const id      = 'card-' + _plSlug((titleEl ? titleEl.textContent.trim() : '') + '-' + src);
             const liked   = (local[id] || {}).liked || false;
-            const btn     = _plMakeBtn(id, liked, _plGlobalCounts[id] || 0);
+            const btn     = _plMakeBtn(id, liked, _plGetCount(id));
             let footer    = content.querySelector('.post-like-card-footer');
             if (!footer) {
                 footer  = document.createElement('div');
@@ -4428,7 +4461,7 @@
 
     function _cardLikeCount(card) {
         const btn = card.querySelector('.post-like-btn[data-post-id]');
-        return btn ? (_plGlobalCounts[btn.dataset.postId] || 0) : 0;
+        return btn ? _plGetCount(btn.dataset.postId) : 0;
     }
 
     function _flipSort(grid, sortFn) {
