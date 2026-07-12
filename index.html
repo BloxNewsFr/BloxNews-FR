@@ -1559,6 +1559,10 @@
     </main>
 
     <script>
+        // ── 3D DEPTH ENGINE (déclaré tôt : renderPage() appelle assignDepth() dès le premier rendu) ──
+        let _depthEls = [];
+        const _depthFactors = { '3': 0.6, '2': 0.35, '1': 0.18, '0': 0.08, '-1': 0.03, '-2': 0.01 };
+
         const bulletins = [
             { num: "001", img: "./001/img/img_fruit.png",          href: "./001/bulletin-001.html" },
             { num: "002", img: "./002/img/1th_img.png",            href: "./002/bulletin-002.html" },
@@ -2452,9 +2456,6 @@
         }
 
         // ── 3D DEPTH ENGINE ──
-        let _depthEls = [];
-        const _depthFactors = { '3': 0.6, '2': 0.35, '1': 0.18, '0': 0.08, '-1': 0.03, '-2': 0.01 };
-
         function assignDepth() {
             const map = {
                 '-2': '.site-background',
