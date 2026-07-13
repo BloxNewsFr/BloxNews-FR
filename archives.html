@@ -14,7 +14,6 @@
     <title>Archives – Blox Fruits News</title>
     <meta name="description" content="Retrouvez tous les numéros du Blox Bulletin, du #001 à aujourd'hui, classés et faciles à parcourir.">
     <link rel="canonical" href="https://bloxnewsfr.github.io/BloxNews-FR/archives.html">
-    <link rel="alternate" type="application/rss+xml" title="Blox Fruits News — Flux RSS" href="./feed.xml">
 
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Blox Fruits News">
@@ -87,6 +86,8 @@
             -webkit-backdrop-filter: blur(24px) saturate(180%);
             border-bottom: 1px solid rgba(255, 255, 255, 0.12);
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            transform: translateZ(0);
+            will-change: transform;
         }
         .site-header__logo { position: absolute; left: 55px; }
         .site-header__logo img { height: 42px; width: auto; display: block; }
@@ -171,20 +172,12 @@
             transition: transform 0.15s ease;
         }
         .back-button:hover { transform: scale(1.05); }
-        .rss-link-wrap { margin-top: 16px; }
-        .rss-link {
-            display: inline-flex; align-items: center; gap: 6px;
-            color: #888; text-decoration: none; font-size: 13px; font-weight: 700;
-            padding: 8px 16px; border-radius: 100px; border: 1.5px solid var(--color-border);
-            transition: all 0.2s ease;
-        }
-        .rss-link .material-symbols-outlined { font-size: 17px; color: #ff9a00; }
-        .rss-link:hover { background: rgba(255,154,0,0.08); border-color: rgba(255,154,0,0.35); color: #b56b00; }
-        html[data-theme="dark"] .rss-link { color: #9ea3c9; border-color: #2a2d45; }
-        html[data-theme="dark"] .rss-link:hover { background: rgba(255,154,0,0.1); }
 
         @media (max-width: 768px) {
-            .site-header { padding: 0 20px; }
+            .site-header { padding: 0 16px; }
+            .site-header__logo { left: 16px; }
+            .site-header__logo img { height: 34px; }
+            .site-header__icons { right: 16px; gap: 8px; }
             .site-nav { display: none; }
             .mobile-menu-btn { display: block; }
             .blue-banner { font-size: 24px; padding: 12px 30px; }
@@ -312,11 +305,6 @@
 
         <div class="back-button-container">
             <a href="./index.html" class="back-button">← Retour aux Actualités</a>
-            <div class="rss-link-wrap">
-                <a href="./feed.xml" class="rss-link" title="S'abonner au flux RSS">
-                    <span class="material-symbols-outlined">rss_feed</span> Flux RSS
-                </a>
-            </div>
         </div>
     </main>
 
