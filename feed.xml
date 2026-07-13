@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    FLUX RSS — Blox Fruits News
+    ═══════════════════════════════════════════════════════════════
+    Comment ajouter un nouveau bulletin à ce flux :
+
+    1. Copie un bloc <item>...</item> ci-dessous.
+    2. Remplace <title>, <link>, <guid> et <pubDate>.
+    3. Colle-le tout en haut de la liste (juste après <language>...</language>
+       ou après le dernier <item> ajouté — le plus récent doit être en premier).
+    4. Format de <pubDate> obligatoire : "Jour, JJ Mois AAAA HH:MM:SS +0000"
+       (ex : Thu, 09 Jul 2026 00:00:00 +0000)
+    5. <guid> doit être unique et stable (l'URL du bulletin fait très bien l'affaire).
+
+    Seuls les bulletins dont le contenu a été vérifié figurent ici pour le moment.
+    Ajoute les numéros manquants au fil de l'eau, à ton rythme.
+    ═══════════════════════════════════════════════════════════════
+-->
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+    <title>Blox Fruits News — The Blox Bulletin</title>
+    <link>https://bloxnewsfr.github.io/BloxNews-FR/index.html</link>
+    <atom:link href="https://bloxnewsfr.github.io/BloxNews-FR/feed.xml" rel="self" type="application/rss+xml"/>
+    <description>Toute l'actualité Blox Fruits : bulletins hebdomadaires, mises à jour, événements et news officielles du jeu Roblox Blox Fruits.</description>
+    <language>fr-fr</language>
+    <ttl>360</ttl>
+    <image>
+        <url>https://bloxnewsfr.github.io/BloxNews-FR/BF_news.png</url>
+        <title>Blox Fruits News</title>
+        <link>https://bloxnewsfr.github.io/BloxNews-FR/index.html</link>
+    </image>
+
+    <item>
+        <title>The Blox Bulletin #021 — Magnet Mystery Revealed, Summer Approaches, New Discoveries, and More!</title>
+        <link>https://bloxnewsfr.github.io/BloxNews-FR/021/bulletin-021.html</link>
+        <guid isPermaLink="true">https://bloxnewsfr.github.io/BloxNews-FR/021/bulletin-021.html</guid>
+        <pubDate>Thu, 09 Jul 2026 00:00:00 +0000</pubDate>
+        <description><![CDATA[
+            Un utilisateur du fruit Magnet aperçu fusionnant de la ferraille en une machine de guerre colossale ;
+            une nouvelle Summer Expansion en approche avec un événement inédit et un rééquilibrage PvP majeur ;
+            de nouveaux fonds de profil animés ; et un duel légendaire entre un Dark Blade et une épée-ballon indestructible.
+        ]]></description>
+    </item>
+
+    <item>
+        <title>The Blox Bulletin #004 — Les Légendes s'Élèvent, les Pouvoirs Reviennent</title>
+        <link>https://bloxnewsfr.github.io/BloxNews-FR/004/bulletin-004.html</link>
+        <guid isPermaLink="true">https://bloxnewsfr.github.io/BloxNews-FR/004/bulletin-004.html</guid>
+        <pubDate>Thu, 10 Apr 2025 00:00:00 +0000</pubDate>
+        <description><![CDATA[
+            Révélation du trailer de la mise à jour Gravity, un nouveau boss de raid à l'Avant-Poste Tiki,
+            et un aperçu des fruits Création, Eagle et Gravity refondus.
+        ]]></description>
+    </item>
+
+    <item>
+        <title>The Blox Bulletin #002 — Le Chapitre Deux Révélé</title>
+        <link>https://bloxnewsfr.github.io/BloxNews-FR/002/bulletin-002.html</link>
+        <guid isPermaLink="true">https://bloxnewsfr.github.io/BloxNews-FR/002/bulletin-002.html</guid>
+        <pubDate>Thu, 27 Mar 2025 00:00:00 +0000</pubDate>
+        <description><![CDATA[
+            Le duo Gate & Forge frappe encore lors d'une vente aux enchères, une FAQ développeurs complète sur
+            le Divine Art, le trade, les éveils et les équipages, et une percée mystérieuse dans les Awaks de fruits.
+        ]]></description>
+    </item>
+
+    <item>
+        <title>The Blox Bulletin #001 — Un nouveau chapitre s'ouvre</title>
+        <link>https://bloxnewsfr.github.io/BloxNews-FR/001/bulletin-001.html</link>
+        <guid isPermaLink="true">https://bloxnewsfr.github.io/BloxNews-FR/001/bulletin-001.html</guid>
+        <pubDate>Thu, 20 Mar 2025 00:00:00 +0000</pubDate>
+        <description><![CDATA[
+            Première édition du Blox Bulletin : des météores s'écrasent sur l'Île Tortue, une session de questions
+            aux développeurs sur le lag, la Meta PvP et la Dragon, et le duel des braconniers défaits.
+        ]]></description>
+    </item>
+
+</channel>
+</rss>
