@@ -14,7 +14,6 @@
     <title>Leaks – Blox Fruits</title>
     <meta name="description" content="Tous les leaks Blox Fruits en un seul endroit : nouveaux fruits, VFX, reworks de map, GUI et messages exclusifs interceptés par notre équipe.">
     <link rel="canonical" href="https://bloxnewsfr.github.io/BloxNews-FR/neo_bulletin.html">
-    <link rel="alternate" type="application/rss+xml" title="Blox Fruits News — Flux RSS" href="./feed.xml">
 
     <!-- Open Graph / Discord, Facebook, etc. -->
     <meta property="og:type" content="website">
@@ -159,6 +158,8 @@
     /* Animation douce */
     transition: background 0.5s cubic-bezier(0.4, 0, 0.2, 1), backdrop-filter 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     animation: navbarSheen 6s ease-in-out infinite;
+    transform: translateZ(0);
+    will-change: transform;
 }
         .site-header__logo { position: absolute; left: 55px; }
         .site-header__logo img { height: 42px; width: auto; display: block; }
@@ -2250,6 +2251,9 @@
             /* ── Layout global ── */
             .site-background { display: none; }
             .site-header { padding: 10px 16px; }
+            .site-header__logo { left: 16px; }
+            .site-header__logo img { height: 34px; }
+            .site-header__icons { right: 16px; gap: 8px; }
             .site-nav, .desktop-tabs { display: none; }
             .mobile-menu-btn { display: block; }
             .mobile-nav-dropdown { display: flex; }
@@ -2283,9 +2287,11 @@
                 margin: 0 !important;
                 max-height: 93dvh !important;
                 overflow-y: auto !important;
+                overscroll-behavior: contain !important;
                 transform: translateY(100%) !important;
                 transition: transform 0.38s cubic-bezier(0.32, 0.72, 0, 1) !important;
             }
+            .modal-overlay { overscroll-behavior: contain !important; }
             .modal-overlay.is-active .modal-content {
                 transform: translateY(0) !important;
             }
@@ -2429,7 +2435,7 @@
             }
 
             /* ── Social share ── */
-            .social-share { gap: 7px; flex-wrap: wrap; padding: 0 14px; }
+            .social-share { gap: 7px; flex-wrap: wrap; padding: 0 14px; margin-bottom: 100px !important; position: relative; z-index: 1; }
             .social-share a { font-size: 11px; padding: 7px 12px; }
         }
     </style>
@@ -2651,6 +2657,19 @@
                         <div class="news-card__eyebrow">Leak</div>
                         <h2 class="news-card__title">Magnet: Attaque</h2>
                         <button class="news-card__button open-modal-btn" data-type="image" data-src="./shared/blox_leaks/magnet.png">Voir l'image →</button>
+                    </div>
+<div class="news-card__bar"></div>
+                </article>
+
+                                <article class="news-card">
+                    <div class="news-card__image-wrapper">
+                        <video src="./shared/blox_leaks/leak_magnet_video.mp4#t=1" class="news-card__image" preload="metadata" muted playsinline></video>
+                        <div class="news-card__badge">MAGNET</div>
+                    </div>
+                    <div class="news-card__content">
+                        <div class="news-card__eyebrow">Showcase</div>
+                        <h2 class="news-card__title">Magnet: Ability</h2>
+                        <button class="news-card__button open-modal-btn" data-type="video" data-src="./shared/blox_leaks/leak_magnet_video.mp4">Voir la vidéo →</button>
                     </div>
 <div class="news-card__bar"></div>
                 </article>
@@ -3228,7 +3247,7 @@
         <div class="search-container">
             <div class="search-bar">
                 <span class="material-symbols-outlined search-icon" style="font-size:22px;color:#999;flex-shrink:0">search</span>
-                <input id="searchInput" type="text" placeholder="Rechercher…" autofocus onkeydown="if(event.key==='Escape')closeSearch();if(event.key==='Enter'){event.preventDefault();executeSearch()}">
+                <input id="searchInput" type="text" placeholder="Rechercher…" onkeydown="if(event.key==='Escape')closeSearch();if(event.key==='Enter'){event.preventDefault();executeSearch()}">
                 <button class="search-go-btn" onclick="executeSearch()">Chercher</button>
                 <button class="search-close-btn" onclick="closeSearch()">✕</button>
             </div>
@@ -3404,11 +3423,13 @@
                         if (edBtn) edBtn.classList.remove('is-active');
                         edBtn.textContent = '✏️ Éditer';
                         modal.classList.add('is-active');
+                        document.body.style.overflow = 'hidden';
                     });
                 });
 
                 const closeModalFn = () => {
                     modal.classList.remove('is-active');
+                    document.body.style.overflow = '';
                     if (video) { video.pause(); video.src = ''; }
                     if (modalImg) modalImg.src = '';
                     // Fermer le panneau d'édition
@@ -4262,23 +4283,50 @@
     // ═══════════════════════════════════════════════════════════════
     //  SYSTÈME DE LIKE — POSTS  (compteur GLOBAL via Firebase)
     // ═══════════════════════════════════════════════════════════════
-    const POST_LIKE_KEY   = 'blox_post_likes_v1';
-    const FB_LIKES_REF    = typeof FB_DB !== 'undefined' ? FB_DB.ref('post_likes') : null;
-    let   _plGlobalCounts = {};
+    const POST_LIKE_KEY       = 'blox_post_likes_v1';
+    const POST_LIKE_COUNT_KEY = 'blox_post_likes_counts_v1';
+    const FB_LIKES_REF        = typeof FB_DB !== 'undefined' ? FB_DB.ref('post_likes') : null;
+    let   _plGlobalCounts     = {};
+    let   _plFirebaseReady    = false;
+
+    function _plLocalCountsLoad() { try { return JSON.parse(localStorage.getItem(POST_LIKE_COUNT_KEY)) || {}; } catch { return {}; } }
+    function _plLocalCountsSave(d) { try { localStorage.setItem(POST_LIKE_COUNT_KEY, JSON.stringify(d)); } catch {} }
 
     // ─── Persistance locale (liked = par device) ───────────────────
     function _plLoadLocal() { try { return JSON.parse(localStorage.getItem(POST_LIKE_KEY)) || {}; } catch { return {}; } }
     function _plSaveLocal(d) { try { localStorage.setItem(POST_LIKE_KEY, JSON.stringify(d)); } catch {} }
     function _plSlug(s) { return (s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,48); }
 
+    // ─── Compteur effectif = Firebase (si dispo) sinon fallback local ──
+    function _plGetCount(id) {
+        if (_plFirebaseReady) {
+            return _plGlobalCounts[id] !== undefined ? _plGlobalCounts[id] : 0;
+        }
+        const local = _plLocalCountsLoad();
+        return local[id] || _plGlobalCounts[id] || 0;
+    }
+
+    function _plSetLocalCount(id, val) {
+        const local = _plLocalCountsLoad();
+        local[id] = val;
+        _plLocalCountsSave(local);
+    }
+
+    function _plClearLocalCount(id) {
+        const local = _plLocalCountsLoad();
+        delete local[id];
+        _plLocalCountsSave(local);
+    }
+
     // ─── Écoute Firebase → met à jour UNIQUEMENT les compteurs ─────
     // (jamais le cœur liked — c'est localStorage qui décide ça)
     if (FB_LIKES_REF) {
         FB_LIKES_REF.on('value', snap => {
             _plGlobalCounts = snap.val() || {};
+            _plFirebaseReady = true;
             document.querySelectorAll('.post-like-btn[data-post-id]').forEach(btn => {
                 const countEl = btn.querySelector('.post-like-count');
-                if (countEl) countEl.textContent = _plGlobalCounts[btn.dataset.postId] || 0;
+                if (countEl) countEl.textContent = _plGetCount(btn.dataset.postId);
             });
             _sortAllSections();
         }, err => {
@@ -4316,6 +4364,13 @@
         return btn;
     }
 
+    function _plUpdateCountDisplay(id) {
+        document.querySelectorAll(`.post-like-btn[data-post-id="${id}"] .post-like-count`).forEach(el => {
+            el.textContent = _plGetCount(id);
+        });
+        _sortAllSections();
+    }
+
     function _plToggle(e) {
         const btn   = e.currentTarget;
         const id    = btn.dataset.postId;
@@ -4325,27 +4380,36 @@
         local[id]   = entry;
         _plSaveLocal(local);
 
-        // ── Firebase est le SEUL à mettre à jour le compteur ──────
-        // Pas d'update optimiste du nombre → zéro double-comptage
-        // (sauf si Firebase échoue : on bascule alors en repli local
-        //  pour que le bouton reste fonctionnel plutôt que "mort")
-        const countEl = btn.querySelector('.post-like-count');
+        const delta  = entry.liked ? 1 : -1;
+        const newVal = Math.max(0, _plGetCount(id) + delta);
+
+        // ── Update optimiste immédiat du compteur + fallback local ──
+        if (!_plFirebaseReady) {
+            _plSetLocalCount(id, newVal);
+        }
+        _plUpdateCountDisplay(id);
+
+        // ── Firebase : persist du compteur global ──
         if (FB_LIKES_REF) {
             FB_LIKES_REF.child(id).transaction(
-                cur => Math.max(0, (cur || 0) + (entry.liked ? 1 : -1)),
-                (error) => {
+                cur => Math.max(0, (cur || 0) + delta),
+                (error, committed) => {
                     if (error) {
-                        console.error('[likes] échec de synchronisation Firebase pour "' + id + '" :', error);
-                        if (countEl) {
-                            const current = parseInt(countEl.textContent, 10) || 0;
-                            countEl.textContent = Math.max(0, current + (entry.liked ? 1 : -1));
-                        }
+                        console.error('[likes] Échec Firebase pour "' + id + '" :', error);
+                        _plSetLocalCount(id, newVal);
+                        _plUpdateCountDisplay(id);
+                    } else if (!committed) {
+                        console.warn('[likes] Transaction non confirmée pour "' + id + '" — repli local');
+                        _plSetLocalCount(id, newVal);
+                        _plUpdateCountDisplay(id);
+                    } else {
+                        _plClearLocalCount(id);
                     }
-                }
+                },
+                false
             );
-        } else if (countEl) {
-            const current = parseInt(countEl.textContent, 10) || 0;
-            countEl.textContent = Math.max(0, current + (entry.liked ? 1 : -1));
+        } else {
+            _plSetLocalCount(id, newVal);
         }
 
         // ── Feedback visuel immédiat (cœur + particules) ──────────
@@ -4394,7 +4458,7 @@
             if (!h2) return;
             const id    = 'dossier-' + _plSlug(h2.textContent.trim());
             const liked = (local[id] || {}).liked || false;
-            const btn   = _plMakeBtn(id, liked, _plGlobalCounts[id] || 0);
+            const btn   = _plMakeBtn(id, liked, _plGetCount(id));
             const wrap  = document.createElement('div');
             wrap.className = 'actus-like-wrap';
             wrap.appendChild(btn);
@@ -4410,7 +4474,7 @@
             const src     = imgEl ? (imgEl.getAttribute('src') || '') : '';
             const id      = 'card-' + _plSlug((titleEl ? titleEl.textContent.trim() : '') + '-' + src);
             const liked   = (local[id] || {}).liked || false;
-            const btn     = _plMakeBtn(id, liked, _plGlobalCounts[id] || 0);
+            const btn     = _plMakeBtn(id, liked, _plGetCount(id));
             let footer    = content.querySelector('.post-like-card-footer');
             if (!footer) {
                 footer  = document.createElement('div');
@@ -4429,7 +4493,7 @@
 
     function _cardLikeCount(card) {
         const btn = card.querySelector('.post-like-btn[data-post-id]');
-        return btn ? (_plGlobalCounts[btn.dataset.postId] || 0) : 0;
+        return btn ? _plGetCount(btn.dataset.postId) : 0;
     }
 
     function _flipSort(grid, sortFn) {
@@ -5028,7 +5092,7 @@
         if (edPanel) edPanel.classList.remove('is-open');
         const edBtn = document.getElementById('modalEditToggle');
         if (edBtn) { edBtn.classList.remove('is-active'); edBtn.textContent = '✏️ Éditer'; }
-        if (modal) modal.classList.add('is-active');
+        if (modal) { modal.classList.add('is-active'); document.body.style.overflow = 'hidden'; }
     }
 
     // ══════════════════════════════════════════════════════════════
