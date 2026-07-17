@@ -1,425 +1,87 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <script>
-        (function() {
-            try {
-                var saved = localStorage.getItem('bloxsite_theme');
-                if (saved === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
-            } catch (e) {}
-        })();
-    </script>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Archives – Blox Fruits News</title>
-    <meta name="description" content="Retrouvez tous les numéros du Blox Bulletin, du #001 à aujourd'hui, classés et faciles à parcourir.">
-    <link rel="canonical" href="https://bloxnewsfr.github.io/BloxNews-FR/archives.html">
-
-    <meta property="og:type" content="website">
-    <meta property="og:site_name" content="Blox Fruits News">
-    <meta property="og:title" content="Archives – Blox Fruits News">
-    <meta property="og:description" content="Retrouvez tous les numéros du Blox Bulletin, du #001 à aujourd'hui, classés et faciles à parcourir.">
-    <meta property="og:image" content="https://bloxnewsfr.github.io/BloxNews-FR/BF_news.png">
-    <meta property="og:url" content="https://bloxnewsfr.github.io/BloxNews-FR/archives.html">
-    <meta property="og:locale" content="fr_FR">
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Archives – Blox Fruits News">
-    <meta name="twitter:image" content="https://bloxnewsfr.github.io/BloxNews-FR/BF_news.png">
-
+    <title>Page introuvable – Blox Fruits News</title>
+    <meta name="robots" content="noindex">
     <link rel="icon" type="image/png" href="./shared/favicon.png">
-    <link rel="shortcut icon" href="./shared/bf_logo.png" type="image/png">
     <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
 
     <style>
         @font-face { font-family: 'LuckiestGuy Regular'; src: url('./fonts/LuckiestGuy-Regular.ttf') format('truetype'); }
-        :root { --color-text: #1a1a2e; --color-border: #e8e8f0; --color-primary: #ffda00; --color-accent: #175ec2; }
-
-        /* ── MODE SOMBRE ── */
-        html[data-theme="dark"] { --color-text: #eef0fa; --color-border: #2a2d45; }
-        html[data-theme="dark"] body { background-color: #0e0f1c; }
-        html[data-theme="dark"] .site-background { opacity: 0.35; }
-        html[data-theme="dark"] .site-header { background-color: rgba(20,20,35,0.55); border-bottom-color: rgba(255,255,255,0.1); }
-        html[data-theme="dark"] .page-subtitle { color: #b7bbd8; }
-        html[data-theme="dark"] .archive-toolbar { background: #171827; border-color: #2a2d45; }
-        html[data-theme="dark"] #archiveJump { color: #eef0fa; }
-        html[data-theme="dark"] .archive-count { background: #1c1e30; color: #9ea3c9; }
-        html[data-theme="dark"] .archive-card { background: #171827; border-color: #2a2d45; }
-        html[data-theme="dark"] .archive-card__num { color: #eef0fa; }
-        html[data-theme="dark"] .archive-card__img-wrap { background: #0d0d18; }
-        html[data-theme="dark"] .archive-no-results { color: #6a6f95; }
-        html[data-theme="dark"] .mobile-nav-dropdown { background: rgba(20,20,32,0.96); }
-        html[data-theme="dark"] .mnav-header { border-bottom-color: rgba(255,255,255,0.08); }
-        html[data-theme="dark"] .mnav-header__title { color: #f0f2ff; }
-        html[data-theme="dark"] .mnav-close { background: rgba(255,255,255,0.08); color: #eef0fa; }
-        html[data-theme="dark"] .mnav-close:hover { background: rgba(255,255,255,0.14); }
-        html[data-theme="dark"] .mobile-nav-dropdown a.mnav-link { color: #dcdff2; }
-        html[data-theme="dark"] .mobile-nav-dropdown a.mnav-link:hover { background: rgba(255,255,255,0.06); }
-        html[data-theme="dark"] .mnav-link__icon { color: #8a8fb5; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-
         @media (prefers-reduced-motion: reduce) {
-            *, *::before, *::after {
-                animation-duration: 0.001ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.001ms !important;
-                scroll-behavior: auto !important;
-            }
+            *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; }
         }
-
         body {
             font-family: 'Inter', sans-serif;
-            color: var(--color-text);
-            background-color: #f0f2f8;
             min-height: 100vh;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            text-align: center; padding: 24px;
+            background: linear-gradient(160deg, #175ec2 0%, #0f3f8a 55%, #0a2a5e 100%);
+            color: #fff;
         }
-
-        .site-background { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; z-index: -1; pointer-events: none; }
-        .site-background img { width: 100%; height: 100%; object-fit: cover; display: block; }
-        @media (max-width: 768px) { .site-background { display: none; } }
-
-        .site-header {
-            display: flex; align-items: center; justify-content: center;
-            padding: 0 55px; position: sticky; top: 0; z-index: 1000; height: 72px;
-            background-color: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(24px) saturate(180%);
-            -webkit-backdrop-filter: blur(24px) saturate(180%);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.2);
-        }
-        .site-header__logo { position: absolute; left: 55px; }
-        .site-header__logo img { height: 42px; width: auto; display: block; }
-        .site-nav { display: flex; gap: 8px; padding: 0; margin: 0; list-style: none; font-weight: 900; }
-        .site-nav a {
-            color: var(--color-text); text-decoration: none; font-size: 17px; text-transform: uppercase;
-            font-family: 'LuckiestGuy Regular', cursive; padding: 8px 16px; border-radius: 10px;
-        }
-        .site-nav a:hover { background: var(--color-primary); color: #000; }
-        .site-nav a.active { background: var(--color-accent); color: #fff; }
-        .site-header__icons { display: flex; gap: 12px; position: absolute; right: 55px; align-items: center; }
-        .site-header__icons span { padding: 8px; border-radius: 10px; transition: background 0.2s; cursor: pointer; }
-        .site-header__icons span:hover { background: rgba(0,0,0,0.06); }
-        html[data-theme="dark"] .site-header__icons span:hover { background: rgba(255,255,255,0.08); }
-        .mobile-menu-btn { display: none; }
-        .mobile-nav-dropdown { display: none; }
-        .mobile-nav-backdrop {
-            display: none; position: fixed; inset: 0; z-index: 9990;
-            background: rgba(10,10,20,0.45);
-            backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px);
-            opacity: 0; transition: opacity 0.3s ease;
-        }
-        .mobile-nav-backdrop.is-open { display: block; opacity: 1; }
-
-        .main-content { max-width: 1100px; margin: 0 auto; padding: 40px 24px 80px; }
-
-        .page-header { text-align: center; margin-bottom: 36px; }
-        .blue-banner {
-            display: inline-block; background: linear-gradient(135deg, #175ec2, #2980d4, #175ec2);
-            background-size: 200% auto; color: #fff; padding: 16px 60px; font-size: 36px; font-weight: 900;
-            text-transform: uppercase; letter-spacing: 3px; border-radius: 100px;
+        .error-code {
             font-family: 'LuckiestGuy Regular', cursive;
-            box-shadow: 0 8px 32px rgba(23,94,194,0.45), 0 2px 8px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.2);
+            font-size: clamp(70px, 18vw, 150px);
+            line-height: 1;
+            letter-spacing: 2px;
+            text-shadow: 0 10px 40px rgba(0,0,0,0.35);
+            animation: bob 3.4s ease-in-out infinite;
         }
-        .page-subtitle { margin-top: 18px; font-size: 15px; color: #444; }
-
-        .archive-toolbar {
-            display: flex; align-items: center; gap: 12px; max-width: 480px; margin: 28px auto 32px;
-            background: #fff; border: 1.5px solid var(--color-border); border-radius: 100px;
-            padding: 6px 8px 6px 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+        @keyframes bob {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
         }
-        .archive-toolbar span.material-symbols-outlined { color: #999; font-size: 20px; flex-shrink: 0; }
-        #archiveJump {
-            flex: 1; border: none; outline: none; font-size: 15px; font-family: 'Inter', sans-serif;
-            background: transparent; padding: 10px 0;
+        .error-title {
+            font-family: 'LuckiestGuy Regular', cursive;
+            font-size: clamp(20px, 4vw, 30px);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 8px;
         }
-        #archiveJump::placeholder { color: #bbb; }
-        .archive-count {
-            font-size: 12px; font-weight: 700; color: #888; background: #f2f2f6;
-            border-radius: 100px; padding: 6px 14px; white-space: nowrap;
+        .error-text {
+            margin-top: 16px;
+            font-size: 15px;
+            color: rgba(255,255,255,0.8);
+            max-width: 420px;
+            line-height: 1.6;
         }
-
-        .archive-grid {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 18px;
+        .error-actions {
+            margin-top: 32px;
+            display: flex; gap: 14px; flex-wrap: wrap; justify-content: center;
         }
-        .archive-card {
-            display: block; text-decoration: none; color: inherit;
-            background: #fff; border-radius: 18px; overflow: hidden;
-            box-shadow: 0 6px 24px rgba(0,0,0,0.08); transition: transform 0.25s ease, box-shadow 0.25s ease;
-            border: 1px solid rgba(0,0,0,0.04);
+        .error-btn {
+            font-family: 'LuckiestGuy Regular', cursive;
+            text-decoration: none;
+            padding: 12px 28px;
+            border-radius: 100px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
-        .archive-card:hover { transform: translateY(-6px); box-shadow: 0 14px 34px rgba(0,0,0,0.14); }
-        .archive-card__img-wrap { width: 100%; padding-top: 62%; position: relative; background: #1a1a3e; }
-        .archive-card__img-wrap img {
-            position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+        .error-btn--primary {
+            background: linear-gradient(135deg, #ffda00, #ffc200);
+            color: #111;
+            box-shadow: 0 6px 22px rgba(255,218,0,0.35);
         }
-        .archive-card__num {
-            font-family: 'LuckiestGuy Regular', cursive; font-size: 15px; text-align: center;
-            padding: 10px 6px; letter-spacing: 0.5px; color: #111;
+        .error-btn--secondary {
+            background: rgba(255,255,255,0.12);
+            color: #fff;
+            border: 1.5px solid rgba(255,255,255,0.35);
         }
-        .archive-no-results {
-            grid-column: 1/-1; text-align: center; padding: 60px 20px; color: #999; font-size: 15px;
-        }
-
-        .back-button-container { text-align: center; margin: 46px 0 10px; }
-        .back-button {
-            background: linear-gradient(135deg, #ffda00, #ffc200); color: #000; text-decoration: none;
-            font-weight: 900; padding: 11px 24px; border-radius: 100px; font-size: 13px;
-            text-transform: uppercase; letter-spacing: 0.5px; display: inline-block;
-            box-shadow: 0 4px 15px rgba(255,218,0,0.4); border: 2px solid rgba(0,0,0,0.08);
-            transition: transform 0.15s ease;
-        }
-        .back-button:hover { transform: scale(1.05); }
-
-        @media (max-width: 768px) {
-            .site-header { padding: 0 20px; }
-            .site-nav { display: none; }
-            .mobile-menu-btn { display: block; }
-            .blue-banner { font-size: 24px; padding: 12px 30px; }
-            .archive-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 12px; }
-
-            /* ── MENU MOBILE — panneau plein écran, glass, robuste ── */
-            .mobile-nav-dropdown {
-                display: flex; flex-direction: column;
-                position: fixed; top: 0; right: -85vw; bottom: 0;
-                width: min(82vw, 320px);
-                background: rgba(255,255,255,0.94);
-                backdrop-filter: blur(28px) saturate(180%); -webkit-backdrop-filter: blur(28px) saturate(180%);
-                box-shadow: -12px 0 50px rgba(0,0,0,0.28);
-                z-index: 9991;
-                transition: right 0.35s cubic-bezier(0.4,0,0.2,1);
-                overflow-y: auto;
-                padding-bottom: env(safe-area-inset-bottom, 0);
-            }
-            .mobile-nav-dropdown.is-open { right: 0; }
-
-            .mnav-header {
-                display: flex; align-items: center; justify-content: space-between;
-                padding: 20px 18px 16px; flex-shrink: 0;
-                border-bottom: 1px solid rgba(0,0,0,0.07);
-            }
-            .mnav-header__title {
-                font-family: 'LuckiestGuy Regular', cursive; font-size: 20px;
-                color: #111; text-transform: uppercase; letter-spacing: 0.5px;
-            }
-            .mnav-close {
-                width: 36px; height: 36px; border-radius: 50%; border: none;
-                background: rgba(0,0,0,0.06); color: #333; cursor: pointer;
-                display: flex; align-items: center; justify-content: center;
-                transition: background 0.2s; flex-shrink: 0;
-            }
-            .mnav-close:hover { background: rgba(0,0,0,0.12); }
-            .mnav-close .material-symbols-outlined { font-size: 20px; }
-
-            .mnav-links { display: flex; flex-direction: column; gap: 6px; padding: 14px; }
-            .mobile-nav-dropdown a.mnav-link {
-                display: flex; align-items: center; gap: 14px;
-                text-decoration: none; color: #222; font-weight: 800;
-                font-family: 'Inter', sans-serif; font-size: 15px;
-                padding: 13px 16px; border-radius: 14px; border: none;
-                text-transform: none; letter-spacing: normal;
-                transition: background 0.2s, color 0.2s, transform 0.15s;
-            }
-            .mnav-link__icon { font-size: 20px; color: #999; transition: color 0.2s; flex-shrink: 0; }
-            .mobile-nav-dropdown a.mnav-link:active { transform: scale(0.98); }
-            .mobile-nav-dropdown a.mnav-link:hover { background: rgba(0,0,0,0.045); }
-            .mobile-nav-dropdown a.mnav-link.active {
-                background: linear-gradient(135deg, #175ec2, #2980d4); color: #fff;
-                box-shadow: 0 6px 18px rgba(23,94,194,0.35);
-            }
-            .mobile-nav-dropdown a.mnav-link.active .mnav-link__icon { color: #fff; }
-            .mobile-nav-dropdown a.mnav-link.nav-leaks.active {
-                background: linear-gradient(135deg, #d93025, #ff4d3d);
-                box-shadow: 0 6px 18px rgba(217,48,37,0.35);
-            }
-        }
+        .error-btn:hover { transform: translateY(-3px); }
     </style>
 </head>
 <body>
-
-    <div class="site-background">
-        <picture>
-            <source media="(min-width: 769px)" srcset="./shared/fond_bulletinpng.png">
-            <img src="./shared/fond_bulletinpng.png" alt="Background">
-        </picture>
+    <div class="error-code">404</div>
+    <div class="error-title">Cette île n'existe pas (encore)</div>
+    <p class="error-text">La page que tu cherches a peut-être été engloutie par les mers, renommée, ou n'a jamais existé. Retourne vers des eaux plus sûres !</p>
+    <div class="error-actions">
+        <a href="./index.html" class="error-btn error-btn--primary">← Retour aux Actualités</a>
+        <a href="./archives.html" class="error-btn error-btn--secondary">Voir les Archives</a>
     </div>
-
-    <header class="site-header">
-        <div class="site-header__logo"><img src="./BF_news.png" alt="Blox Fruits"></div>
-        <nav>
-            <ul class="site-nav">
-                <li><a href="https://www.roblox.com/fr/games/2753915549/Blox-Fruits">Game</a></li>
-                <li><a href="./index.html">News</a></li>
-                <li><a href="./neo_bulletin.html">Leaks</a></li>
-                <li><a href="./archives.html" class="active">Archives</a></li>
-            </ul>
-        </nav>
-        <div class="site-header__icons">
-            <span class="material-symbols-outlined" id="themeToggle" role="button" tabindex="0" aria-label="Changer de thème" title="Changer de thème">dark_mode</span>
-            <span class="material-symbols-outlined mobile-menu-btn" id="menuToggle" role="button" tabindex="0" aria-label="Ouvrir le menu" aria-haspopup="true" aria-expanded="false" aria-controls="mobileNav">menu</span>
-        </div>
-    </header>
-
-    <div class="mobile-nav-backdrop" id="mobileNavBackdrop"></div>
-    <nav class="mobile-nav-dropdown" id="mobileNav" aria-hidden="true">
-        <div class="mnav-header">
-            <span class="mnav-header__title">Menu</span>
-            <button class="mnav-close" id="mobileNavClose" aria-label="Fermer le menu">
-                <span class="material-symbols-outlined">close</span>
-            </button>
-        </div>
-        <div class="mnav-links">
-            <a href="https://www.roblox.com/fr/games/2753915549/Blox-Fruits" class="mnav-link">
-                <span class="material-symbols-outlined mnav-link__icon">sports_esports</span> Jouer
-            </a>
-            <a href="./index.html" class="mnav-link nav-news">
-                <span class="material-symbols-outlined mnav-link__icon">newspaper</span> News
-            </a>
-            <a href="./neo_bulletin.html" class="mnav-link nav-leaks">
-                <span class="material-symbols-outlined mnav-link__icon">key</span> Leaks
-            </a>
-            <a href="./archives.html" class="mnav-link active">
-                <span class="material-symbols-outlined mnav-link__icon">inventory_2</span> Archives
-            </a>
-        </div>
-    </nav>
-
-    <main class="main-content">
-        <div class="page-header">
-            <div class="blue-banner">Archives</div>
-            <p class="page-subtitle">Tous les numéros du Blox Bulletin, du plus ancien au plus récent.</p>
-        </div>
-
-        <div class="archive-toolbar">
-            <span class="material-symbols-outlined">search</span>
-            <input id="archiveJump" type="text" placeholder="Aller au numéro… (ex : 015)" inputmode="numeric">
-            <span class="archive-count" id="archiveCount"></span>
-        </div>
-
-        <div class="archive-grid" id="archiveGrid"></div>
-
-        <div class="back-button-container">
-            <a href="./index.html" class="back-button">← Retour aux Actualités</a>
-        </div>
-    </main>
-
-    <script>
-        // Même source de données que le tableau `bulletins` de index.html.
-        // Si tu ajoutes un nouveau numéro dans index.html, ajoute-le ici aussi.
-        const bulletins = [
-            { num: "001", img: "./001/img/img_fruit.png",          href: "./001/bulletin-001.html" },
-            { num: "002", img: "./002/img/1th_img.png",            href: "./002/bulletin-002.html" },
-            { num: "003", img: "./003/img/1th_img.png",            href: "./003/bulletin-003.html" },
-            { num: "004", img: "./004/img/1th_img.png",            href: "./004/bulletin-004.html" },
-            { num: "005", img: "./005/img/bloxyNews1.png",         href: "./005/bulletin-005.html" },
-            { num: "006", img: "./006/img/Thumbnail1Woohoo.png",   href: "./006/bulletin-006.html" },
-            { num: "007", img: "./007/img/IndraCover.png",         href: "./007/bulletin-007.html" },
-            { num: "008", img: "./008/img/ZiolesAuraFarm.png",     href: "./008/bulletin-008.html" },
-            { num: "009", img: "./009/img/duel.png",               href: "./009/bulletin-009.html" },
-            { num: "010", img: "./010/img/RipVSRed.png",           href: "./010/bulletin-010.html" },
-            { num: "011", img: "./011/img/bulletin011cover.png",   href: "./011/bulletin-011.html" },
-            { num: "012", img: "./012/img/hack.png",               href: "./012/bulletin-012.html" },
-            { num: "013", img: "./013/img/BrokenShip.png",         href: "./013/bulletin-013.html" },
-            { num: "014", img: "./014/img/rocket.png",             href: "./014/bulletin-014.html" },
-            { num: "015", img: "./015/img/darkblade.png",          href: "./015/bulletin-015.html" },
-            { num: "016", img: "./016/img/kraken.png",             href: "./016/bulletin-016.html" },
-            { num: "017", img: "./017/img/halloween.png",          href: "./017/bulletin-017.html" },
-            { num: "018", img: "./018/img/MysteryMan.png",         href: "./018/bulletin-018.html" },
-            { num: "019", img: "./019/img/Mygame.png",             href: "./019/bulletin-019.html" },
-            { num: "020", img: "./020/img/bulletin_20.png",        href: "./020/bulletin-020.html" },
-            { num: "021", img: "./021/img/SummerVacay.png",        href: "./021/bulletin-021.html" },
-        ];
-
-        const grid  = document.getElementById('archiveGrid');
-        const count = document.getElementById('archiveCount');
-
-        function render(list) {
-            count.textContent = `${list.length} numéro${list.length !== 1 ? 's' : ''}`;
-            if (list.length === 0) {
-                grid.innerHTML = `<div class="archive-no-results">Aucun numéro ne correspond à cette recherche.</div>`;
-                return;
-            }
-            // Plus récent en premier
-            const ordered = [...list].reverse();
-            grid.innerHTML = ordered.map(b => `
-                <a class="archive-card" href="${b.href}">
-                    <div class="archive-card__img-wrap">
-                        <img src="${b.img}" alt="Bulletin #${b.num}" loading="lazy" decoding="async">
-                    </div>
-                    <div class="archive-card__num">#${b.num}</div>
-                </a>
-            `).join('');
-        }
-
-        render(bulletins);
-
-        document.getElementById('archiveJump').addEventListener('input', e => {
-            const q = e.target.value.trim().toLowerCase();
-            if (!q) { render(bulletins); return; }
-            render(bulletins.filter(b => b.num.includes(q)));
-        });
-
-        // Mode sombre
-        const themeToggle = document.getElementById('themeToggle');
-        function _applyThemeIcon() {
-            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-            if (themeToggle) {
-                themeToggle.textContent = isDark ? 'light_mode' : 'dark_mode';
-                themeToggle.setAttribute('aria-pressed', isDark ? 'true' : 'false');
-            }
-        }
-        _applyThemeIcon();
-        if (themeToggle) {
-            themeToggle.addEventListener('click', () => {
-                const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-                if (isDark) {
-                    document.documentElement.removeAttribute('data-theme');
-                    try { localStorage.setItem('bloxsite_theme', 'light'); } catch (e) {}
-                } else {
-                    document.documentElement.setAttribute('data-theme', 'dark');
-                    try { localStorage.setItem('bloxsite_theme', 'dark'); } catch (e) {}
-                }
-                _applyThemeIcon();
-            });
-            themeToggle.addEventListener('keydown', e => {
-                if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); themeToggle.click(); }
-            });
-        }
-
-        // Menu mobile
-        const menuBtn = document.getElementById('menuToggle');
-        const mobileNav = document.getElementById('mobileNav');
-        const mobileNavBackdrop = document.getElementById('mobileNavBackdrop');
-        const mobileNavClose = document.getElementById('mobileNavClose');
-
-        function openMobileNav() {
-            mobileNav.classList.add('is-open');
-            mobileNavBackdrop?.classList.add('is-open');
-            mobileNav.setAttribute('aria-hidden', 'false');
-            menuBtn.textContent = 'close';
-            menuBtn.setAttribute('aria-expanded', 'true');
-            document.body.style.overflow = 'hidden';
-        }
-        function closeMobileNav() {
-            mobileNav.classList.remove('is-open');
-            mobileNavBackdrop?.classList.remove('is-open');
-            mobileNav.setAttribute('aria-hidden', 'true');
-            menuBtn.textContent = 'menu';
-            menuBtn.setAttribute('aria-expanded', 'false');
-            document.body.style.overflow = '';
-        }
-        if (menuBtn && mobileNav) {
-            menuBtn.addEventListener('click', () => {
-                mobileNav.classList.contains('is-open') ? closeMobileNav() : openMobileNav();
-            });
-            menuBtn.addEventListener('keydown', e => {
-                if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); menuBtn.click(); }
-            });
-            mobileNavBackdrop?.addEventListener('click', closeMobileNav);
-            mobileNavClose?.addEventListener('click', closeMobileNav);
-            document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMobileNav(); });
-            mobileNav.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMobileNav));
-        }
-    </script>
 </body>
 </html>
