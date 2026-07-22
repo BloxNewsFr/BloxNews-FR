@@ -3188,7 +3188,12 @@
 
                     <div class="ncm-field" id="ncmVideoField" style="display:none">
                         <label><span class="ncm-lbl-icon">🔗</span> URL de la vidéo</label>
-                        <input id="ncmSrc" type="text" placeholder="https://…">
+                        <input id="ncmSrc" type="text" placeholder="https://exemple.com/fichier.mp4" oninput="_ncmValidateVideoUrl(this.value)">
+                        <div style="font-size:11px;color:rgba(255,255,255,0.35);margin-top:5px;line-height:1.4;">
+                            ⚠️ Doit être un lien <strong>direct</strong> vers un fichier vidéo (se terminant par .mp4, .webm, .mov…).
+                            Un lien de post X/Twitter, YouTube ou TikTok ne fonctionnera pas — la carte restera noire.
+                        </div>
+                        <div id="ncmSrcWarning" style="display:none;font-size:11px;color:#ff8080;margin-top:6px;background:rgba(255,50,50,0.1);border:1px solid rgba(255,50,50,0.25);border-radius:8px;padding:6px 10px;"></div>
                     </div>
 
                     <!-- Champ contenu texte (actus uniquement) -->
@@ -3401,6 +3406,7 @@
                         if (modalSection) modalSection.textContent = sectionName;
                         if (modalTitle)   modalTitle.textContent   = titleText;
 
+                        if (video) { delete video.dataset.errorShown; const err0 = video.closest('.modal-media-zone')?.querySelector('.modal-video-error'); if (err0) err0.style.display = 'none'; }
                         if (video)    video.style.display    = 'none';
                         if (modalImg) modalImg.style.display = 'none';
 
@@ -3408,7 +3414,8 @@
                             video.src = sourceUrl;
                             video.style.display = 'block';
                             video.currentTime   = 0;
-                            video.play().catch(() => {});
+                            video.onerror = () => _modalVideoError(video, sourceUrl);
+                            video.play().catch(() => _modalVideoError(video, sourceUrl));
                         } else if (type === 'image' && modalImg) {
                             modalImg.src = sourceUrl;
                             modalImg.style.display = 'block';
@@ -3430,7 +3437,13 @@
                 const closeModalFn = () => {
                     modal.classList.remove('is-active');
                     document.body.style.overflow = '';
-                    if (video) { video.pause(); video.src = ''; }
+                    if (video) {
+                        video.pause(); video.src = '';
+                        delete video.dataset.errorShown;
+                        video.style.display = 'none';
+                        const err = video.closest('.modal-media-zone')?.querySelector('.modal-video-error');
+                        if (err) err.style.display = 'none';
+                    }
                     if (modalImg) modalImg.src = '';
                     // Fermer le panneau d'édition
                     const edPanel = document.getElementById('modalEditorPanel');
@@ -5001,7 +5014,7 @@
         } else {
             // ── Carte STANDARD (leak / image / vidéo) ─────────────────
             const mediaTag  = card.mediaType === 'video'
-                ? `<video src="${e(card.src)}" class="news-card__image" preload="metadata" muted playsinline></video>`
+                ? `<video src="${e(card.src)}" class="news-card__image" preload="metadata" muted playsinline onerror="_ncmVideoError(this)"></video>`
                 : `<img src="${e(card.src)}" class="news-card__image" alt="${e(card.title)}" loading="lazy" decoding="async">`;
             const btnLabel = e(card.btnLabel || "Voir l'image →");
             const btnHtml  = card.mediaType === 'video'
@@ -5078,11 +5091,14 @@
         if (modalBadge)   modalBadge.textContent   = badgeText;
         if (modalSection) modalSection.textContent = sectionName;
         if (modalTitle)   modalTitle.textContent   = titleText;
+        if (video) { delete video.dataset.errorShown; const err0 = video.closest('.modal-media-zone')?.querySelector('.modal-video-error'); if (err0) err0.style.display = 'none'; }
         if (video)    video.style.display    = 'none';
         if (modalImg) modalImg.style.display = 'none';
         if (type === 'video' && video) {
             video.src = sourceUrl; video.style.display = 'block';
-            video.currentTime = 0; video.play().catch(() => {});
+            video.currentTime = 0;
+            video.onerror = () => _modalVideoError(video, sourceUrl);
+            video.play().catch(() => _modalVideoError(video, sourceUrl));
         } else if (type === 'image' && modalImg) {
             modalImg.src = sourceUrl; modalImg.style.display = 'block';
         }
@@ -5191,6 +5207,80 @@
             reader.readAsDataURL(file);
         });
     }
+    // ── Affiche un message d'erreur visible dans la lightbox quand la vidéo
+    // ne peut pas se charger, au lieu de laisser l'écran noir silencieux ──────
+    function _modalVideoError(videoEl, sourceUrl) {
+        if (!videoEl || videoEl.dataset.errorShown) return;
+        videoEl.dataset.errorShown = '1';
+        const zone = videoEl.closest('.modal-media-zone');
+        if (!zone) return;
+        videoEl.style.display = 'none';
+        let err = zone.querySelector('.modal-video-error');
+        if (!err) {
+            err = document.createElement('div');
+            err.className = 'modal-video-error';
+            err.style.cssText = 'width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:#1a0000;color:#ff8080;text-align:center;padding:20px;';
+            zone.appendChild(err);
+        }
+        err.style.display = 'flex';
+        err.innerHTML = `<span style="font-size:36px">⚠️</span>
+            <span style="font-size:14px;font-weight:700;line-height:1.5;max-width:80%;">
+                Impossible de charger cette vidéo.<br>
+                <span style="opacity:.65;font-weight:500;font-size:12.5px;">Le lien n'est probablement pas un fichier vidéo direct (.mp4, .webm…) — un lien de post X/Twitter, YouTube ou TikTok ne fonctionnera pas ici.</span>
+            </span>`;
+    }
+
+    // ── Affiche un état d'erreur visible sur une vignette vidéo qui n'a pas pu
+    // charger (au lieu de rester silencieusement noire) ────────────────────────
+    function _ncmVideoError(videoEl) {
+        if (!videoEl || videoEl.dataset.errorShown) return;
+        videoEl.dataset.errorShown = '1';
+        const wrap = videoEl.parentElement;
+        if (!wrap) return;
+        videoEl.style.display = 'none';
+        const err = document.createElement('div');
+        err.style.cssText = 'position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:#1a0000;color:#ff8080;text-align:center;padding:12px;';
+        err.innerHTML = '<span style="font-size:26px">⚠️</span><span style="font-size:12px;font-weight:700;line-height:1.4;max-width:80%;">Vidéo introuvable<br><span style="opacity:.6;font-weight:500">Lien non direct ou invalide</span></span>';
+        wrap.appendChild(err);
+    }
+
+    // ── Validation du lien vidéo : détecte les liens de pages (X, YouTube, TikTok…)
+    // qui ne sont PAS des fichiers vidéo directs et ne pourront jamais se charger.
+    const _NCM_BAD_VIDEO_HOSTS = [
+        'twitter.com', 'x.com', 'youtube.com', 'youtu.be', 'tiktok.com',
+        'instagram.com', 'facebook.com', 'reddit.com', 'discord.com', 'discordapp.com'
+    ];
+    function _ncmValidateVideoUrl(value) {
+        const warn = document.getElementById('ncmSrcWarning');
+        if (!warn) return true;
+        const v = (value || '').trim();
+        if (!v) { warn.style.display = 'none'; return true; }
+        let bad = false;
+        let reason = '';
+        try {
+            const url = new URL(v);
+            const host = url.hostname.replace(/^www\./, '');
+            const isDirectFile = /\.(mp4|webm|mov|m4v|ogg)(\?.*)?$/i.test(url.pathname);
+            if (_NCM_BAD_VIDEO_HOSTS.some(h => host === h || host.endsWith('.' + h))) {
+                bad = true;
+                reason = `Ce lien pointe vers une page ${host}, pas vers un fichier vidéo — la carte restera noire. Il faut un lien direct (.mp4, .webm…), par exemple hébergé ailleurs.`;
+            } else if (!isDirectFile) {
+                bad = true;
+                reason = "Ce lien ne se termine pas par une extension vidéo (.mp4, .webm, .mov…). S'il ne s'agit pas d'un fichier vidéo direct, la carte restera noire.";
+            }
+        } catch (e) {
+            bad = true;
+            reason = 'Ce texte ne ressemble pas à une URL valide.';
+        }
+        if (bad) {
+            warn.textContent = '⚠️ ' + reason;
+            warn.style.display = 'block';
+        } else {
+            warn.style.display = 'none';
+        }
+        return !bad;
+    }
+
     function _ncmTypeChange() {
         const isVideo = document.querySelector('#newCardModal input[name="ncmType"]:checked')?.value === 'video';
         const vf = document.getElementById('ncmVideoField');
@@ -5356,6 +5446,10 @@
         if (!title) { editLog('err', 'Le titre est requis.'); return; }
         if (!isActus && !isMessage && mediaType === 'video' && !src) {
             editLog('err', 'Une vidéo nécessite un lien (URL) hébergé — pas de dépôt de fichier.');
+            return;
+        }
+        if (!isActus && !isMessage && mediaType === 'video' && src && !_ncmValidateVideoUrl(src)) {
+            editLog('err', "Lien vidéo refusé : ce n'est pas un fichier vidéo direct (voir l'avertissement sous le champ URL). La carte serait restée noire.");
             return;
         }
         if (!isActus && !isMessage && !src) { editLog('err', 'Image, vidéo ou lien requis.'); return; }
