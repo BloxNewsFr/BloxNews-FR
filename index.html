@@ -548,7 +548,13 @@
         .news-card.glitch-card .news-card__image-wrapper, .news-card.glitch-card .news-card__content, .news-card.glitch-card .news-card__bar, .news-card.halloween-card .news-card__image-wrapper, .news-card.halloween-card .news-card__content, .news-card.halloween-card .news-card__bar, .news-card.valentine-card .news-card__image-wrapper, .news-card.valentine-card .news-card__content, .news-card.valentine-card .news-card__bar { position: relative; z-index: 2; }
         
         /* 012: glitch terminal */
-        .news-card.glitch-card { background: #020402; border: 2px solid #00ff41; box-shadow: 0 0 24px rgba(0,255,65,0.7), 0 0 60px rgba(0,255,65,0.22), 0 18px 46px rgba(0,0,0,0.55); animation: fadeInUp 0.4s ease both, glitch-card-surge 2.8s steps(1) infinite; content-visibility: auto; contain-intrinsic-size: auto 480px; }
+        .news-card.glitch-card {
+    background: #020402; border: 2px solid #00ff41; 
+    box-shadow: 0 0 24px rgba(0,255,65,0.7), 0 0 60px rgba(0,255,65,0.22), 0 18px 46px rgba(0,0,0,0.55); 
+    animation: fadeInUp 0.4s ease both, glitch-card-surge 2.8s steps(1) infinite; 
+    /* content-visibility: auto; ← supprimer */
+    /* contain-intrinsic-size: auto 480px; ← supprimer */
+}
         .news-card.glitch-card::before { content: ""; position: absolute; inset: 0; z-index: 8; pointer-events: none; background: repeating-linear-gradient(0deg, rgba(0,255,65,0.16) 0 1px, transparent 1px 4px), linear-gradient(90deg, transparent 0 42%, rgba(255,0,88,0.16) 43% 45%, transparent 46% 67%, rgba(0,140,255,0.16) 68% 70%, transparent 71%); mix-blend-mode: screen; animation: glitch-scan 4s linear infinite; }
         .news-card.glitch-card::after { content: "SYSTEM BREACH"; position: absolute; left: 0; right: 0; top: 46%; z-index: 9; color: rgba(0,255,65,0.7); font-family: 'Share Tech Mono', monospace; font-size: 12px; font-weight: 900; letter-spacing: 0; text-align: center; text-shadow: 2px 0 #ff0058, -2px 0 #00a2ff, 0 0 14px #00ff41; transform: skewX(-12deg); pointer-events: none; animation: glitch-warning 1.4s steps(2) infinite; }
         .news-card.glitch-card .news-card__image { filter: sepia(1) hue-rotate(82deg) saturate(420%) contrast(150%) brightness(0.86); transform: scale(1.12); animation: glitch-image-break 1.55s steps(1) infinite; }
