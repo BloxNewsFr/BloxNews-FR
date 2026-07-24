@@ -3690,6 +3690,12 @@
             COMMENTS_DB.push(c);
         });
         saveLocal();
+        // Toujours mettre à jour le badge, même si le panneau est fermé
+        const _n = COMMENTS_DB.length;
+        const _badge = document.getElementById("commentCountBadge");
+        if (_badge) _badge.textContent = _n;
+        const _mb = document.getElementById("modalCountBadge");
+        if (_mb) _mb.textContent = _n;
         if (document.getElementById("commentBody")?.classList.contains("is-open")) renderList();
         if (document.getElementById("commentsModal")?.classList.contains("is-active")) renderModal();
     }, err => {
