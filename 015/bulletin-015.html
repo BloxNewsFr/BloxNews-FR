@@ -212,31 +212,33 @@
             font-family: 'Inter', sans-serif; font-weight: 500;
             letter-spacing: 0.3px; text-align: center;
         }
-        #fire-ambient {
+        #green-ambient {
             position: fixed; inset: 0; pointer-events: none; z-index: 1; overflow: hidden;
         }
-        .fire-glow {
-            position: absolute; bottom: 0; left: 0; width: 100%; height: 200px;
-            background: linear-gradient(0deg, rgba(57,255,20,0.08) 0%, rgba(0,200,0,0.03) 40%, transparent 100%);
-            animation: firePulse 3s ease-in-out infinite;
-        }
-        @keyframes firePulse {
-            0%,100% { opacity: 0.6; }
-            50% { opacity: 1; }
-        }
-        .ember {
-            position: absolute; bottom: 0;
-            width: var(--esize); height: var(--esize);
-            left: var(--ex);
+        .green-orb {
+            position: absolute;
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(200,255,100,0.9), rgba(57,255,20,0.2));
-            box-shadow: 0 0 8px rgba(57,255,20,0.5);
-            animation: emberFloat var(--edur) ease-out var(--edelay) infinite;
+            filter: blur(80px);
+            opacity: 0;
+            animation: greenDrift var(--gdur) ease-in-out var(--gdelay) infinite;
         }
-        @keyframes emberFloat {
-            0% { transform: translateY(0) scale(0.5); opacity: 0; }
-            10% { opacity: 1; transform: translateY(-10px) scale(1); }
-            100% { transform: translateY(calc(-50vh - var(--erise))) translateX(var(--edrift)) scale(0.1); opacity: 0; }
+        .green-orb-1 {
+            width: 420px; height: 320px;
+            bottom: -60px; left: 10%;
+            background: radial-gradient(ellipse, rgba(39,174,60,0.18) 0%, rgba(16,185,40,0.06) 60%, transparent 100%);
+            --gdur: 8s; --gdelay: 0s;
+        }
+        .green-orb-2 {
+            width: 320px; height: 260px;
+            bottom: -40px; right: 15%;
+            background: radial-gradient(ellipse, rgba(57,255,20,0.12) 0%, rgba(39,174,60,0.04) 60%, transparent 100%);
+            --gdur: 11s; --gdelay: 2.5s;
+        }
+        @keyframes greenDrift {
+            0%   { opacity: 0;    transform: translateY(20px); }
+            20%  { opacity: 1; }
+            80%  { opacity: 0.7; }
+            100% { opacity: 0;    transform: translateY(-10px); }
         }
 
         mark.search-hl {
@@ -352,7 +354,10 @@
 </head>
 <body>
 
-<div id="fire-ambient"></div>
+<div id="green-ambient">
+    <div class="green-orb green-orb-1"></div>
+    <div class="green-orb green-orb-2"></div>
+</div>
 
 <header class="site-header">
     <div class="site-header__logo"><img src="../BF_news.png" alt="Blox Fruits"></div>
@@ -625,29 +630,7 @@
     </div>
 </div>
 
-<script>
-    (function(){
-        const c = document.getElementById('fire-ambient');
-        if(!c) return;
 
-        const glow = document.createElement('div');
-        glow.className = 'fire-glow';
-        c.appendChild(glow);
-
-        const emberCount = 25;
-        for(let i=0;i<emberCount;i++){
-            const p = document.createElement('div');
-            p.className = 'ember';
-            p.style.setProperty('--esize', (2 + Math.random() * 5) + 'px');
-            p.style.setProperty('--ex', Math.random() * 100 + '%');
-            p.style.setProperty('--edur', (3 + Math.random() * 5) + 's');
-            p.style.setProperty('--edelay', Math.random() * 8 + 's');
-            p.style.setProperty('--erise', (100 + Math.random() * 300) + 'px');
-            p.style.setProperty('--edrift', (-40 + Math.random() * 80) + 'px');
-            c.appendChild(p);
-        }
-    })();
-</script>
 
 
     <script>
