@@ -1655,6 +1655,10 @@
         function _activeList()   { return _filteredList ?? bulletins; }
         function _totalPages()   { return Math.max(1, Math.ceil(_activeList().length / PER_PAGE)); }
         
+        // BADGES DES BULLETINS :
+        // - status: "" enlève le badge rouge "Nouveau" automatique.
+        // - status: "HACK" met un badge personnalisé.
+        // - supprime la ligne du bulletin pour laisser le badge "Nouveau" automatique.
         const specialCards = {
             "012": { className: "glitch-card", badge: "#012", status: "HACK", eyebrow: "Terminal compromis", title: "BULLETIN #012", button: "Accéder au terminal" },
             "015": { className: "fire-card", badge: "#015", status: "", eyebrow: "The Blox Bulletin", title: "BULLETIN #015", button: "Lire maintenant →" },
