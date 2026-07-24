@@ -555,15 +555,18 @@
     /* content-visibility: auto; ← supprimer */
     /* contain-intrinsic-size: auto 480px; ← supprimer */
 }
-        .news-card.glitch-card::before { content: ""; position: absolute; inset: 0; z-index: 8; pointer-events: none; background: repeating-linear-gradient(0deg, rgba(0,255,65,0.16) 0 1px, transparent 1px 4px), linear-gradient(90deg, transparent 0 42%, rgba(255,0,88,0.16) 43% 45%, transparent 46% 67%, rgba(0,140,255,0.16) 68% 70%, transparent 71%); mix-blend-mode: screen; animation: glitch-scan 4s linear infinite; }
-        .news-card.glitch-card::after { content: "SYSTEM BREACH"; position: absolute; left: 0; right: 0; top: 46%; z-index: 9; color: rgba(0,255,65,0.7); font-family: 'Share Tech Mono', monospace; font-size: 12px; font-weight: 900; letter-spacing: 0; text-align: center; text-shadow: 2px 0 #ff0058, -2px 0 #00a2ff, 0 0 14px #00ff41; transform: skewX(-12deg); pointer-events: none; animation: glitch-warning 1.4s steps(2) infinite; }
+        .news-card.glitch-card::before { content: none; }
+        .news-card.glitch-card::after { content: "SYSTEM BREACH"; position: absolute; left: 0; right: 0; top: 38%; z-index: 5; color: rgba(0,255,65,0.55); font-family: 'Share Tech Mono', monospace; font-size: 12px; font-weight: 900; letter-spacing: 0; text-align: center; text-shadow: 2px 0 rgba(255,0,88,0.7), -2px 0 rgba(0,162,255,0.7), 0 0 14px rgba(0,255,65,0.8); transform: skewX(-12deg); pointer-events: none; animation: glitch-warning 1.8s steps(2) infinite; }
         .news-card.glitch-card .news-card__image { filter: sepia(1) hue-rotate(82deg) saturate(420%) contrast(150%) brightness(0.86); transform: scale(1.12); animation: glitch-image-break 1.55s steps(1) infinite; }
         .news-card.glitch-card:hover .news-card__image { transform: scale(1.18); }
-        .news-card.glitch-card .news-card__image-wrapper { background: #001100; }
-        .news-card.glitch-card .news-card__image-wrapper::after { background: radial-gradient(circle at 50% 35%, transparent 0 30%, rgba(0,0,0,0.38) 62%, rgba(0,0,0,0.88) 100%); }
-        .news-card.glitch-card .news-card__badge, .news-card.glitch-card .news-card__new { background: #000; color: #00ff41; border-color: #00ff41; box-shadow: 0 0 18px rgba(0,255,65,0.85); font-family: 'Share Tech Mono', monospace; letter-spacing: 0; }
+        .news-card.glitch-card .news-card__image-wrapper { background: #001100; overflow: hidden; }
+        .news-card.glitch-card .news-card__image-wrapper::before { content: ""; position: absolute; inset: 0; z-index: 3; pointer-events: none; background: repeating-linear-gradient(0deg, rgba(0,255,65,0.13) 0 1px, transparent 1px 5px), linear-gradient(90deg, transparent 0 58%, rgba(255,0,88,0.12) 59% 60%, transparent 61%); mix-blend-mode: screen; animation: glitch-scan 4s linear infinite; }
+        .news-card.glitch-card .news-card__image-wrapper::after { z-index: 4; background: radial-gradient(circle at 50% 35%, transparent 0 34%, rgba(0,0,0,0.26) 66%, rgba(0,0,0,0.66) 100%); }
+        .news-card.glitch-card .news-card__badge, .news-card.glitch-card .news-card__new { background: #000; color: #00ff41; border-color: #00ff41; box-shadow: 0 0 18px rgba(0,255,65,0.85); font-family: 'Share Tech Mono', monospace; letter-spacing: 0; z-index: 6; }
         .news-card.glitch-card .news-card__new { color: #ff355d; border-color: #ff355d; animation: glitch-label-blink 1.2s steps(1) infinite; }
-        .news-card.glitch-card .news-card__content { background: linear-gradient(180deg, #031006, #000); border-top: 1px solid rgba(0,255,65,0.6); }
+        .news-card.glitch-card .news-card__content { background: linear-gradient(180deg, #031006, #000); border-top: 1px solid rgba(0,255,65,0.6); overflow: hidden; }
+        .news-card.glitch-card .news-card__content::before { content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none; background: repeating-linear-gradient(0deg, rgba(0,255,65,0.1) 0 1px, transparent 1px 5px), linear-gradient(90deg, transparent 0 77%, rgba(255,0,88,0.07) 78% 79%, transparent 80%); animation: glitch-scan 5s linear infinite; }
+        .news-card.glitch-card .news-card__content > * { position: relative; z-index: 1; }
         .news-card.glitch-card .news-card__eyebrow, .news-card.glitch-card .news-card__title { color: #00ff41; font-family: 'Share Tech Mono', monospace; letter-spacing: 0; text-shadow: 2px 0 #ff0058, -2px 0 #00a2ff, 0 0 14px #00ff41; animation: glitch-text-break 0.28s steps(2) infinite alternate; }
         .news-card.glitch-card .news-card__button { background: #000; color: #00ff41; border-color: #00ff41; border-radius: 10px; box-shadow: 0 0 18px rgba(0,255,65,0.62); font-family: 'Share Tech Mono', monospace; letter-spacing: 0; }
         .news-card.glitch-card:hover .news-card__button { background: #00ff41; color: #000; box-shadow: 0 0 28px #00ff41; }
