@@ -14,6 +14,7 @@
     <title>Leaks – Blox Fruits</title>
     <meta name="description" content="Tous les leaks Blox Fruits en un seul endroit : nouveaux fruits, VFX, reworks de map, GUI et messages exclusifs interceptés par notre équipe.">
     <link rel="canonical" href="https://bloxnewsfr.github.io/BloxNews-FR/neo_bulletin.html">
+    <link rel="alternate" type="application/rss+xml" title="Blox Fruits News — Flux RSS" href="./feed.xml">
 
     <!-- Open Graph / Discord, Facebook, etc. -->
     <meta property="og:type" content="website">
@@ -158,8 +159,6 @@
     /* Animation douce */
     transition: background 0.5s cubic-bezier(0.4, 0, 0.2, 1), backdrop-filter 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     animation: navbarSheen 6s ease-in-out infinite;
-    transform: translateZ(0);
-    will-change: transform;
 }
         .site-header__logo { position: absolute; left: 55px; }
         .site-header__logo img { height: 42px; width: auto; display: block; }
@@ -769,6 +768,260 @@
             display: flex; align-items: center; gap: 4px;
         }
         .modal-editor-saved-tag.is-visible { opacity: 1; }
+
+        /* ══════════════════════════════════════════════
+           COMMENTAIRES DANS LA LIGHTBOX (par card)
+        ══════════════════════════════════════════════ */
+        .card-comments-section {
+            border-top: 1px solid rgba(255,255,255,0.07);
+            background: rgba(8,8,16,0.98);
+        }
+        .card-comments-toggle {
+            display: flex; align-items: center; gap: 10px;
+            padding: 12px 18px; cursor: pointer; user-select: none;
+            transition: background 0.2s;
+        }
+        .card-comments-toggle:hover { background: rgba(255,255,255,0.04); }
+        .card-comments-toggle__icon { font-size: 16px; }
+        .card-comments-toggle__label { font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.6); flex: 1; }
+        .card-comments-toggle__count {
+            font-size: 11px; font-weight: 800; background: rgba(255,26,26,0.18);
+            color: rgba(255,100,100,0.9); padding: 2px 8px; border-radius: 100px;
+            min-width: 22px; text-align: center;
+        }
+        .card-comments-toggle__arrow { font-size: 11px; color: rgba(255,255,255,0.3); transition: transform 0.25s; }
+        .card-comments-toggle.is-open .card-comments-toggle__arrow { transform: rotate(180deg); }
+
+        .card-comments-body {
+            max-height: 0; overflow: hidden;
+            transition: max-height 0.35s cubic-bezier(0.4,0,0.2,1);
+            padding: 0 18px;
+        }
+        .card-comments-body.is-open { max-height: 420px; overflow-y: auto; padding: 0 18px 14px; }
+
+        .card-comment-login {
+            display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+            padding: 12px 0; font-size: 13px; color: rgba(255,255,255,0.45);
+        }
+        .card-comment-login button {
+            padding: 6px 14px; border-radius: 100px; border: none;
+            background: #5865F2; color: #fff; font-size: 12px; font-weight: 700;
+            cursor: pointer; font-family: 'Inter', sans-serif;
+        }
+        .card-comment-write {
+            display: flex; align-items: flex-start; gap: 10px; padding: 10px 0;
+        }
+        .card-comment-write.is-hidden { display: none; }
+        .card-comment-avatar-wrap img,
+        .card-comment-avatar-wrap .comment-avatar--placeholder {
+            width: 30px !important; height: 30px !important;
+            font-size: 13px !important; border-radius: 50%; flex-shrink: 0;
+        }
+        .card-comment-input {
+            width: 100%; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px; color: #fff; font-size: 13px; font-family: 'Inter', sans-serif;
+            padding: 8px 12px; resize: none; outline: none; line-height: 1.5;
+            transition: border-color 0.2s;
+        }
+        .card-comment-input:focus { border-color: rgba(255,26,26,0.4); }
+        .card-comment-input::placeholder { color: rgba(255,255,255,0.2); }
+        .card-comment-submit {
+            display: block; margin-top: 6px; margin-left: auto;
+            padding: 6px 14px; border-radius: 100px; border: none;
+            background: linear-gradient(135deg, #ff1a1a, #cc0000); color: #fff;
+            font-size: 12px; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif;
+        }
+        .card-comment-item {
+            display: flex; gap: 10px; padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .card-comment-item:last-child { border-bottom: none; }
+        .card-comment-item img, .card-comment-item .comment-avatar--placeholder {
+            width: 28px !important; height: 28px !important; font-size: 12px !important;
+            border-radius: 50%; flex-shrink: 0;
+        }
+        .card-comment-item__body { flex: 1; min-width: 0; }
+        .card-comment-item__header { display: flex; align-items: center; gap: 7px; margin-bottom: 3px; flex-wrap: wrap; }
+        .card-comment-item__username { font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.85); }
+        .card-comment-item__time { font-size: 11px; color: rgba(255,255,255,0.3); }
+        .card-comment-item__text { font-size: 13px; color: rgba(255,255,255,0.65); line-height: 1.5; word-break: break-word; }
+        .card-comment-item__like {
+            display: inline-flex; align-items: center; gap: 4px;
+            padding: 3px 8px; border-radius: 100px; border: none;
+            background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.4);
+            font-size: 11px; cursor: pointer; margin-top: 5px;
+            font-family: 'Inter', sans-serif; transition: all 0.2s;
+        }
+        .card-comment-item__like:hover { background: rgba(255,26,26,0.12); color: #ff6666; }
+        .card-comment-item__like.liked { background: rgba(255,26,26,0.15); color: #ff6666; }
+        .card-comment-item__delete {
+            display: inline-flex; align-items: center;
+            padding: 3px 8px; border-radius: 100px; border: none;
+            background: transparent; color: rgba(255,80,80,0.35);
+            font-size: 11px; cursor: pointer; margin-top: 5px; margin-left: 4px;
+            font-family: 'Inter', sans-serif; transition: all 0.2s;
+        }
+        .card-comment-item__delete:hover { background: rgba(255,26,26,0.1); color: #ff6666; }
+        .card-comment-more {
+            width: 100%; padding: 8px; border: 1px solid rgba(255,255,255,0.08); border-radius: 10px;
+            background: transparent; color: rgba(255,255,255,0.3); font-size: 12px; font-weight: 600;
+            cursor: pointer; font-family: 'Inter', sans-serif; margin-top: 8px; transition: all 0.2s;
+        }
+        .card-comment-more:hover { border-color: rgba(255,26,26,0.3); color: rgba(255,100,100,0.7); }
+
+        /* ══════════════════════════════════════════════
+           GROUP CARDS — Fruit groupé
+        ══════════════════════════════════════════════ */
+        .group-card {
+            border-radius: 22px; overflow: hidden; cursor: pointer;
+            background: #fff;
+            transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s ease;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.07), 0 4px 10px rgba(0,0,0,0.09), 0 14px 38px rgba(0,0,0,0.15);
+            position: relative;
+        }
+        html[data-theme="dark"] .group-card { background: #171827; }
+        .group-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05), 0 10px 28px rgba(var(--cat-rgb),0.22), 0 0 0 2px rgba(var(--cat-rgb),0.3);
+        }
+        .group-card__image-wrapper {
+            position: relative; aspect-ratio: 16/10; overflow: hidden;
+            background: #0d0d18;
+        }
+        html[data-theme="dark"] .group-card__image-wrapper { background: #0d0d18; }
+        .group-card__image {
+            width: 100%; height: 100%; object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+        .group-card:hover .group-card__image { transform: scale(1.06); }
+        .group-card__image-wrapper::after {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(180deg, transparent 30%, rgba(0,0,0,0.5) 100%);
+        }
+        .group-card__badge {
+            position: absolute; top: 12px; left: 12px; z-index: 2;
+            background: var(--cat-hex); color: #fff;
+            font-family: 'LuckiestGuy Regular', cursive; font-size: 13px;
+            padding: 4px 12px; border-radius: 100px; letter-spacing: 1px;
+            border: 2px solid rgba(255,255,255,0.55);
+            box-shadow: 0 3px 12px rgba(var(--cat-rgb),0.5);
+        }
+        .group-card__count-pill {
+            position: absolute; bottom: 12px; right: 12px; z-index: 2;
+            background: rgba(0,0,0,0.72); backdrop-filter: blur(8px);
+            color: #fff; font-size: 11px; font-weight: 700;
+            padding: 4px 10px; border-radius: 100px; letter-spacing: 0.3px;
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+        .group-card__content {
+            padding: 18px 20px 16px; background: inherit;
+            box-shadow: inset 0 5px 16px rgba(0,0,0,0.04);
+        }
+        .group-card__eyebrow {
+            font-size: 11px; font-weight: 700; color: var(--cat-hex);
+            text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 6px;
+        }
+        .group-card__title {
+            font-family: 'LuckiestGuy Regular', cursive; font-size: 20px; font-weight: 900;
+            color: #111; letter-spacing: 0.4px; margin-bottom: 12px;
+        }
+        html[data-theme="dark"] .group-card__title { color: #f0f2ff; }
+        .group-card__open-btn {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: var(--cat-hex); color: #fff; border: none;
+            padding: 10px 20px; border-radius: 100px; font-size: 13px;
+            font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px;
+            cursor: pointer; font-family: 'Inter', sans-serif;
+            box-shadow: 0 4px 16px rgba(var(--cat-rgb),0.45);
+            transition: all 0.25s;
+        }
+        .group-card:hover .group-card__open-btn {
+            filter: brightness(1.15); transform: translateX(3px);
+        }
+        .group-card__bar {
+            height: 5px;
+            background: linear-gradient(90deg, transparent, var(--cat-hex), var(--cat-hex), transparent);
+            background-size: 200% auto; animation: barSlide 3s linear infinite;
+        }
+
+        /* ── DRAWER GROUPE ── */
+        .group-drawer-overlay {
+            position: fixed; inset: 0; z-index: 9997;
+            background: rgba(0,0,0,0.82); backdrop-filter: blur(10px);
+            opacity: 0; pointer-events: none; transition: opacity 0.3s;
+        }
+        .group-drawer-overlay.is-active { opacity: 1; pointer-events: auto; }
+        .group-drawer {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            max-height: 92dvh; z-index: 9998;
+            background: #0e0f1c; border-radius: 24px 24px 0 0;
+            display: flex; flex-direction: column;
+            transform: translateY(100%); transition: transform 0.38s cubic-bezier(0.34,1.26,0.64,1);
+            overflow: hidden;
+        }
+        .group-drawer-overlay.is-active .group-drawer { transform: translateY(0); }
+        .group-drawer__handle {
+            width: 40px; height: 4px; border-radius: 2px;
+            background: rgba(255,255,255,0.2); margin: 14px auto 0;
+            cursor: pointer; flex-shrink: 0;
+        }
+        .group-drawer__header {
+            display: flex; align-items: center; gap: 12px;
+            padding: 14px 20px 12px; flex-shrink: 0;
+            border-bottom: 1px solid rgba(255,255,255,0.07);
+        }
+        .group-drawer__badge {
+            font-family: 'LuckiestGuy Regular', cursive; font-size: 12px;
+            padding: 4px 12px; border-radius: 100px;
+            background: var(--drawer-cat-hex, #cc0000); color: #fff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        .group-drawer__title {
+            font-family: 'LuckiestGuy Regular', cursive; font-size: 18px;
+            color: #f0f2ff; flex: 1; letter-spacing: 0.3px;
+        }
+        .group-drawer__close {
+            width: 32px; height: 32px; border-radius: 50%; border: none;
+            background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.6);
+            font-size: 14px; cursor: pointer; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            transition: background 0.2s;
+        }
+        .group-drawer__close:hover { background: rgba(255,26,26,0.25); color: #fff; }
+
+        .group-drawer__grid {
+            flex: 1; overflow-y: auto; padding: 16px;
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(240px,1fr)); gap: 12px;
+        }
+        @media (max-width: 600px) {
+            .group-drawer__grid { grid-template-columns: 1fr 1fr; gap: 8px; padding: 12px; }
+        }
+        .group-drawer__item {
+            border-radius: 14px; overflow: hidden; cursor: pointer;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.06);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .group-drawer__item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+            border-color: rgba(var(--drawer-cat-rgb, 204,0,0),0.4);
+        }
+        .group-drawer__item-img {
+            width: 100%; aspect-ratio: 16/10; object-fit: cover;
+            display: block; background: #0d0d18;
+        }
+        .group-drawer__item video {
+            width: 100%; aspect-ratio: 16/10; object-fit: cover; display: block; background: #000;
+        }
+        .group-drawer__item-label {
+            padding: 8px 10px; font-size: 12px; font-weight: 700;
+            color: rgba(255,255,255,0.65); line-height: 1.3;
+        }
+        .group-drawer__item-sub {
+            font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px;
+            color: rgba(var(--drawer-cat-rgb,204,0,0),0.8); margin-bottom: 2px;
+        }
 
         /* ── RESPONSIVE RESPONSIVE ── */
         /* mobile: voir bloc @media unique en haut de fichier */
@@ -2251,9 +2504,6 @@
             /* ── Layout global ── */
             .site-background { display: none; }
             .site-header { padding: 10px 16px; }
-            .site-header__logo { left: 16px; }
-            .site-header__logo img { height: 34px; }
-            .site-header__icons { right: 16px; gap: 8px; }
             .site-nav, .desktop-tabs { display: none; }
             .mobile-menu-btn { display: block; }
             .mobile-nav-dropdown { display: flex; }
@@ -2287,11 +2537,9 @@
                 margin: 0 !important;
                 max-height: 93dvh !important;
                 overflow-y: auto !important;
-                overscroll-behavior: contain !important;
                 transform: translateY(100%) !important;
                 transition: transform 0.38s cubic-bezier(0.32, 0.72, 0, 1) !important;
             }
-            .modal-overlay { overscroll-behavior: contain !important; }
             .modal-overlay.is-active .modal-content {
                 transform: translateY(0) !important;
             }
@@ -2435,7 +2683,7 @@
             }
 
             /* ── Social share ── */
-            .social-share { gap: 7px; flex-wrap: wrap; padding: 0 14px; margin-bottom: 100px !important; position: relative; z-index: 1; }
+            .social-share { gap: 7px; flex-wrap: wrap; padding: 0 14px; }
             .social-share a { font-size: 11px; padding: 7px 12px; }
         }
     </style>
@@ -2648,124 +2896,84 @@
         <section id="cat-fruit" class="category-section" style="--cat-hex: #ff0055; --cat-rgb: 255, 0, 85;">
             <div class="category-title">🍎 FRUITS & REWORKS</div>
             <div class="news-grid">
+
+                <!-- ── GROUP CARD : MAGNET ── -->
+                <article class="group-card" style="--cat-hex:#ff0055;--cat-rgb:255,0,85"
+                    onclick="openGroupDrawer('magnet')">
+                    <div class="group-card__image-wrapper">
+                        <img src="./shared/blox_leaks/magnet_ability 2.jpeg" class="group-card__image" alt="Magnet" loading="lazy">
+                        <div class="group-card__badge">MAGNET</div>
+                        <div class="group-card__count-pill">3 leaks</div>
+                    </div>
+                    <div class="group-card__content">
+                        <div class="group-card__eyebrow">Fruit · Leak</div>
+                        <h2 class="group-card__title">Magnet M1 + Z</h2>
+                        <button class="group-card__open-btn">Voir tous les leaks →</button>
+                    </div>
+                    <div class="group-card__bar"></div>
+                </article>
+
+                <!-- ── GROUP CARD : CELESTIAL ── -->
+                <article class="group-card" style="--cat-hex:#ffa500;--cat-rgb:255,165,0"
+                    onclick="openGroupDrawer('celestial')">
+                    <div class="group-card__image-wrapper">
+                        <img src="./shared/blox_leaks/celestial_shop.png" class="group-card__image" alt="Celestial" loading="lazy">
+                        <div class="group-card__badge">CELESTIAL</div>
+                        <div class="group-card__count-pill">2 leaks</div>
+                    </div>
+                    <div class="group-card__content">
+                        <div class="group-card__eyebrow">Fruit · Leak</div>
+                        <h2 class="group-card__title">Celestial Fruit</h2>
+                        <button class="group-card__open-btn">Voir tous les leaks →</button>
+                    </div>
+                    <div class="group-card__bar"></div>
+                </article>
+
+                <!-- ── GROUP CARD : ONI ── -->
+                <article class="group-card" style="--cat-hex:#a200ff;--cat-rgb:162,0,255"
+                    onclick="openGroupDrawer('oni')">
+                    <div class="group-card__image-wrapper">
+                        <img src="./shared/blox_leaks/oni_shop.png" class="group-card__image" alt="Oni" loading="lazy">
+                        <div class="group-card__badge">ONI</div>
+                        <div class="group-card__count-pill">2 leaks</div>
+                    </div>
+                    <div class="group-card__content">
+                        <div class="group-card__eyebrow">Fruit · Leak</div>
+                        <h2 class="group-card__title">Oni Fruit</h2>
+                        <button class="group-card__open-btn">Voir tous les leaks →</button>
+                    </div>
+                    <div class="group-card__bar"></div>
+                </article>
+
+                <!-- ── CARD SOLO : DARK ── -->
                 <article class="news-card">
                     <div class="news-card__image-wrapper">
-                        <img src="./shared/blox_leaks/magnet.png" class="news-card__image" alt="T-Rex" loading="lazy" decoding="async">
-                        <div class="news-card__badge">MAGNET</div>
-                    </div>
-                    <div class="news-card__content">
-                        <div class="news-card__eyebrow">Leak</div>
-                        <h2 class="news-card__title">Magnet: Attaque</h2>
-                        <button class="news-card__button open-modal-btn" data-type="image" data-src="./shared/blox_leaks/magnet.png">Voir l'image →</button>
-                    </div>
-<div class="news-card__bar"></div>
-                </article>
-
-                                <article class="news-card">
-                    <div class="news-card__image-wrapper">
-                        <video src="./shared/blox_leaks/leak_magnet_video.mp4#t=1" class="news-card__image" preload="metadata" muted playsinline></video>
-                        <div class="news-card__badge">MAGNET</div>
-                    </div>
-                    <div class="news-card__content">
-                        <div class="news-card__eyebrow">Showcase</div>
-                        <h2 class="news-card__title">Magnet: Ability</h2>
-                        <button class="news-card__button open-modal-btn" data-type="video" data-src="./shared/blox_leaks/leak_magnet_video.mp4">Voir la vidéo →</button>
-                    </div>
-<div class="news-card__bar"></div>
-                </article>
-
-                <article class="news-card">
-                    <div class="news-card__image-wrapper">
-                        <video src="./shared/blox_leaks/magnet_ability.mov#t=1" class="news-card__image" preload="metadata" muted playsinline></video>
-                        <div class="news-card__badge">MAGNET</div>
-                    </div>
-                    <div class="news-card__content">
-                        <div class="news-card__eyebrow">Showcase</div>
-                        <h2 class="news-card__title">Magnet: Attaque</h2>
-                        <button class="news-card__button open-modal-btn" data-type="video" data-src="./shared/blox_leaks/magnet_ability.mov">Voir la vidéo →</button>
-                    </div>
-<div class="news-card__bar"></div>
-                </article>
-
-                                <article class="news-card">
-                    <div class="news-card__image-wrapper">
-                        <img src="./shared/blox_leaks/magnet_ability 2.jpeg" class="news-card__image" alt="T-Rex" loading="lazy" decoding="async">
-                        <div class="news-card__badge">MAGNET</div>
-                    </div>
-                    <div class="news-card__content">
-                        <div class="news-card__eyebrow">Leak</div>
-                        <h2 class="news-card__title">Magnet: Attaque</h2>
-                        <button class="news-card__button open-modal-btn" data-type="image" data-src="./shared/blox_leaks/magnet_ability 2.jpeg">Voir l'image →</button>
-                    </div>
-<div class="news-card__bar"></div>
-                </article>
-
-                                <article class="news-card">
-                    <div class="news-card__image-wrapper">
-                        <img src="./shared/blox_leaks/celestial_physic.png" class="news-card__image" alt="T-Rex" loading="lazy" decoding="async">
-                        <div class="news-card__badge">CELESTIAL</div>
-                    </div>
-                    <div class="news-card__content">
-                        <div class="news-card__eyebrow">Leak</div>
-                        <h2 class="news-card__title">Celestial Fruit</h2>
-                        <button class="news-card__button open-modal-btn" data-type="image" data-src="./shared/blox_leaks/celestial_physic.png">Voir l'image →</button>
-                    </div>
-<div class="news-card__bar"></div>
-                </article>
-
-                                <article class="news-card">
-                    <div class="news-card__image-wrapper">
-                        <img src="./shared/blox_leaks/celestial_shop.png" class="news-card__image" alt="T-Rex" loading="lazy" decoding="async">
-                        <div class="news-card__badge">CELESTIAL</div>
-                    </div>
-                    <div class="news-card__content">
-                        <div class="news-card__eyebrow">Leak</div>
-                        <h2 class="news-card__title">Celestial Fruit</h2>
-                        <button class="news-card__button open-modal-btn" data-type="image" data-src="./shared/blox_leaks/celestial_shop.png">Voir l'image →</button>
-                    </div>
-<div class="news-card__bar"></div>
-                </article>
-
-                                <article class="news-card">
-                    <div class="news-card__image-wrapper">
-                        <img src="./shared/blox_leaks/oni_physic.png" class="news-card__image" alt="T-Rex" loading="lazy" decoding="async">
-                        <div class="news-card__badge">ONI</div>
-                    </div>
-                    <div class="news-card__content">
-                        <div class="news-card__eyebrow">Leak</div>
-                        <h2 class="news-card__title">Oni Fruit</h2>
-                        <button class="news-card__button open-modal-btn" data-type="image" data-src="./shared/blox_leaks/oni_physic.png">Voir l'image →</button>
-                    </div>
-<div class="news-card__bar"></div>
-                </article>
-
-                                <article class="news-card">
-                    <div class="news-card__image-wrapper">
-                        <img src="./shared/blox_leaks/oni_shop.png" class="news-card__image" alt="T-Rex" loading="lazy" decoding="async">
-                        <div class="news-card__badge">ONI</div>
-                    </div>
-                    <div class="news-card__content">
-                        <div class="news-card__eyebrow">Leak</div>
-                        <h2 class="news-card__title">Oni Fruits</h2>
-                        <button class="news-card__button open-modal-btn" data-type="image" data-src="./shared/blox_leaks/oni_shop.png">Voir l'image →</button>
-                    </div>
-<div class="news-card__bar"></div>
-                </article>
-
-                                                <article class="news-card">
-                    <div class="news-card__image-wrapper">
-                        <img src="./shared/blox_leaks/dark_rework.jpeg" class="news-card__image" alt="T-Rex" loading="lazy" decoding="async">
+                        <img src="./shared/blox_leaks/dark_rework.jpeg" class="news-card__image" alt="Dark Rework" loading="lazy" decoding="async">
                         <div class="news-card__badge">DARK</div>
                     </div>
                     <div class="news-card__content">
                         <div class="news-card__eyebrow">Leak</div>
                         <h2 class="news-card__title">Dark Rework</h2>
-                        <button class="news-card__button open-modal-btn" data-type="image" data-src="./shared/blox_leaks/dark_rework.jpeg">Voir l'image →</button>
+                        <button class="news-card__button open-modal-btn" data-type="image" data-src="./shared/blox_leaks/dark_rework.jpeg" data-card-id="dark-rework">Voir l'image →</button>
                     </div>
-<div class="news-card__bar"></div>
+                    <div class="news-card__bar"></div>
                 </article>
+
             </div>
         </section>
+
+        <!-- ── DRAWER OVERLAY (partagé) ── -->
+        <div class="group-drawer-overlay" id="groupDrawerOverlay" onclick="closeGroupDrawer(event)">
+            <div class="group-drawer" id="groupDrawer">
+                <div class="group-drawer__handle" onclick="closeGroupDrawer()"></div>
+                <div class="group-drawer__header">
+                    <span class="group-drawer__badge" id="drawerBadge">GROUPE</span>
+                    <span class="group-drawer__title" id="drawerTitle">Tous les leaks</span>
+                    <button class="group-drawer__close" onclick="closeGroupDrawer()">✕</button>
+                </div>
+                <div class="group-drawer__grid" id="drawerGrid"></div>
+            </div>
+        </div>
 
 
         <!--✨ VFX (EFFETS VISUELS)-->
@@ -3007,6 +3215,37 @@
                     </div>
                 </div>
                 <div class="modal-close-hint">Touchez en dehors, ou en haut ↑, pour fermer</div>
+
+                <!-- ── COMMENTAIRES PAR CARD ── -->
+                <div class="card-comments-section" id="cardCommentsSection">
+                    <div class="card-comments-toggle" id="cardCommentsToggle" onclick="toggleCardComments()">
+                        <span class="card-comments-toggle__icon">💬</span>
+                        <span class="card-comments-toggle__label">Commentaires</span>
+                        <span class="card-comments-toggle__count" id="cardCommentCountBadge">0</span>
+                        <span class="card-comments-toggle__arrow" id="cardCommentsArrow">▾</span>
+                    </div>
+                    <div class="card-comments-body" id="cardCommentsBody">
+                        <!-- Login banner -->
+                        <div class="card-comment-login" id="cardCommentLoginBanner">
+                            <span>🎮</span>
+                            <span>Connecte-toi via Discord pour commenter</span>
+                            <button onclick="_discordLogin()">Se connecter</button>
+                        </div>
+                        <!-- Write box -->
+                        <div class="card-comment-write is-hidden" id="cardCommentWriteBox">
+                            <div class="card-comment-avatar-wrap" id="cardCommentAvatarWrap"></div>
+                            <div style="flex:1;min-width:0">
+                                <textarea class="card-comment-input" id="cardCommentInput"
+                                    placeholder="Écris un commentaire sur ce leak…" rows="1"
+                                    oninput="autoResize(this)" maxlength="240"></textarea>
+                                <button class="card-comment-submit" onclick="postCardComment()">Poster</button>
+                            </div>
+                        </div>
+                        <!-- List -->
+                        <div class="card-comment-list" id="cardCommentList"></div>
+                        <button class="card-comment-more" id="cardCommentMoreBtn" onclick="loadMoreCardComments()" style="display:none">Voir plus →</button>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -3188,12 +3427,7 @@
 
                     <div class="ncm-field" id="ncmVideoField" style="display:none">
                         <label><span class="ncm-lbl-icon">🔗</span> URL de la vidéo</label>
-                        <input id="ncmSrc" type="text" placeholder="https://exemple.com/fichier.mp4" oninput="_ncmValidateVideoUrl(this.value)">
-                        <div style="font-size:11px;color:rgba(255,255,255,0.35);margin-top:5px;line-height:1.4;">
-                            ⚠️ Doit être un lien <strong>direct</strong> vers un fichier vidéo (se terminant par .mp4, .webm, .mov…).
-                            Un lien de post X/Twitter, YouTube ou TikTok ne fonctionnera pas — la carte restera noire.
-                        </div>
-                        <div id="ncmSrcWarning" style="display:none;font-size:11px;color:#ff8080;margin-top:6px;background:rgba(255,50,50,0.1);border:1px solid rgba(255,50,50,0.25);border-radius:8px;padding:6px 10px;"></div>
+                        <input id="ncmSrc" type="text" placeholder="https://…">
                     </div>
 
                     <!-- Champ contenu texte (actus uniquement) -->
@@ -3252,7 +3486,7 @@
         <div class="search-container">
             <div class="search-bar">
                 <span class="material-symbols-outlined search-icon" style="font-size:22px;color:#999;flex-shrink:0">search</span>
-                <input id="searchInput" type="text" placeholder="Rechercher…" onkeydown="if(event.key==='Escape')closeSearch();if(event.key==='Enter'){event.preventDefault();executeSearch()}">
+                <input id="searchInput" type="text" placeholder="Rechercher…" autofocus onkeydown="if(event.key==='Escape')closeSearch();if(event.key==='Enter'){event.preventDefault();executeSearch()}">
                 <button class="search-go-btn" onclick="executeSearch()">Chercher</button>
                 <button class="search-close-btn" onclick="closeSearch()">✕</button>
             </div>
@@ -3406,7 +3640,6 @@
                         if (modalSection) modalSection.textContent = sectionName;
                         if (modalTitle)   modalTitle.textContent   = titleText;
 
-                        if (video) { delete video.dataset.errorShown; const err0 = video.closest('.modal-media-zone')?.querySelector('.modal-video-error'); if (err0) err0.style.display = 'none'; }
                         if (video)    video.style.display    = 'none';
                         if (modalImg) modalImg.style.display = 'none';
 
@@ -3414,12 +3647,14 @@
                             video.src = sourceUrl;
                             video.style.display = 'block';
                             video.currentTime   = 0;
-                            video.onerror = () => _modalVideoError(video, sourceUrl);
-                            video.play().catch(() => _modalVideoError(video, sourceUrl));
+                            video.play().catch(() => {});
                         } else if (type === 'image' && modalImg) {
                             modalImg.src = sourceUrl;
                             modalImg.style.display = 'block';
                         }
+                        // Commentaires par card
+                        const cardId = btn.getAttribute('data-card-id') || btoa(encodeURIComponent(sourceUrl||titleText)).replace(/[^a-zA-Z0-9]/g,'').slice(0,32);
+                        _cardCommentsOpen(cardId);
                         // Charger les données de l'éditeur pour cette carte
                         _modalEditKey = 'modal_edit__' + btoa(encodeURIComponent(sourceUrl || titleText)).slice(0,48);
                         _modalEditLoad(_modalEditKey);
@@ -3430,21 +3665,14 @@
                         if (edBtn) edBtn.classList.remove('is-active');
                         edBtn.textContent = '✏️ Éditer';
                         modal.classList.add('is-active');
-                        document.body.style.overflow = 'hidden';
                     });
                 });
 
                 const closeModalFn = () => {
                     modal.classList.remove('is-active');
-                    document.body.style.overflow = '';
-                    if (video) {
-                        video.pause(); video.src = '';
-                        delete video.dataset.errorShown;
-                        video.style.display = 'none';
-                        const err = video.closest('.modal-media-zone')?.querySelector('.modal-video-error');
-                        if (err) err.style.display = 'none';
-                    }
+                    if (video) { video.pause(); video.src = ''; }
                     if (modalImg) modalImg.src = '';
+                    _cardCommentsClose();
                     // Fermer le panneau d'édition
                     const edPanel = document.getElementById('modalEditorPanel');
                     if (edPanel) edPanel.classList.remove('is-open');
@@ -3459,6 +3687,112 @@
                 });
             }
         });
+    </script>
+
+    <script>
+    /* ════════════════════════════════════════════════════════════════
+       GROUP DRAWER — données des groupes de fruits
+    ═══════════════════════════════════════════════════════════════ */
+    const GROUP_DATA = {
+        magnet: {
+            badge: 'MAGNET', title: 'Magnet — Tous les leaks',
+            hex: '#ff0055', rgb: '255,0,85',
+            items: [
+                { type:'image', src:'./shared/blox_leaks/magnet_ability 2.jpeg', label:'Magnet M1 + Z', sub:'Leak' },
+                { type:'video', src:'./shared/blox_leaks/magnet_ability.mov',   label:'Magnet: Showcase vidéo',  sub:'Showcase' },
+                { type:'image', src:'./shared/blox_leaks/magnet.png',           label:'Magnet: Attaque',         sub:'Leak' },
+            ]
+        },
+        celestial: {
+            badge: 'CELESTIAL', title: 'Celestial — Tous les leaks',
+            hex: '#ffa500', rgb: '255,165,0',
+            items: [
+                { type:'image', src:'./shared/blox_leaks/celestial_shop.png',   label:'Celestial: Shop',    sub:'Leak' },
+                { type:'image', src:'./shared/blox_leaks/celestial_physic.png', label:'Celestial: Design',  sub:'Leak' },
+            ]
+        },
+        oni: {
+            badge: 'ONI', title: 'Oni — Tous les leaks',
+            hex: '#a200ff', rgb: '162,0,255',
+            items: [
+                { type:'image', src:'./shared/blox_leaks/oni_shop.png',   label:'Oni: Shop',   sub:'Leak' },
+                { type:'image', src:'./shared/blox_leaks/oni_physic.png', label:'Oni: Design', sub:'Leak' },
+            ]
+        }
+    };
+
+    function openGroupDrawer(groupId) {
+        const data = GROUP_DATA[groupId];
+        if (!data) return;
+        const overlay = document.getElementById('groupDrawerOverlay');
+        const grid    = document.getElementById('drawerGrid');
+        document.getElementById('drawerBadge').textContent = data.badge;
+        document.getElementById('drawerTitle').textContent = data.title;
+        overlay.style.setProperty('--drawer-cat-hex', data.hex);
+        overlay.style.setProperty('--drawer-cat-rgb', data.rgb);
+        document.getElementById('groupDrawer').style.setProperty('--drawer-cat-hex', data.hex);
+        document.getElementById('groupDrawer').style.setProperty('--drawer-cat-rgb', data.rgb);
+
+        grid.innerHTML = data.items.map((item, i) => {
+            const thumb = item.type === 'video'
+                ? `<video src="${item.src}#t=0.5" preload="metadata" muted playsinline class="group-drawer__item-img" style="object-fit:cover"></video>`
+                : `<img src="${item.src}" class="group-drawer__item-img" alt="${item.label}" loading="lazy">`;
+            return `<div class="group-drawer__item" onclick="openGroupItem('${groupId}',${i})" style="--drawer-cat-rgb:${data.rgb}">
+                ${thumb}
+                <div class="group-drawer__item-label">
+                    <div class="group-drawer__item-sub">${item.sub}</div>
+                    ${item.label}
+                </div>
+            </div>`;
+        }).join('');
+        overlay.classList.add('is-active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function openGroupItem(groupId, idx) {
+        const data = GROUP_DATA[groupId];
+        if (!data) return;
+        const item = data.items[idx];
+        // Fermer le drawer d'abord
+        const overlay = document.getElementById('groupDrawerOverlay');
+        overlay.classList.remove('is-active');
+        document.body.style.overflow = '';
+        // Ouvrir la lightbox existante
+        const modal  = document.getElementById('videoModal');
+        const video  = document.getElementById('fruitVideo');
+        const img    = document.getElementById('modalImage');
+        document.getElementById('modalBadge').textContent   = data.badge;
+        document.getElementById('modalSection').textContent = '🍎 Fruits & Reworks';
+        document.getElementById('modalMetaTitle').textContent = item.label;
+        video.style.display = 'none'; img.style.display = 'none';
+        if (item.type === 'video') {
+            video.src = item.src; video.style.display = 'block';
+            video.currentTime = 0; video.play().catch(()=>{});
+        } else {
+            img.src = item.src; img.style.display = 'block';
+        }
+        // Card comments
+        const cardId = groupId + '-' + idx;
+        _cardCommentsOpen(cardId);
+        // Edit key
+        _modalEditKey = 'modal_edit__' + btoa(encodeURIComponent(item.src||item.label)).slice(0,48);
+        _modalEditLoad(_modalEditKey);
+        document.getElementById('modalEditorPanel')?.classList.remove('is-open');
+        const edBtn = document.getElementById('modalEditToggle');
+        if (edBtn) { edBtn.classList.remove('is-active'); edBtn.textContent = '✏️ Éditer'; }
+        modal.classList.add('is-active');
+    }
+
+    function closeGroupDrawer(e) {
+        if (e && e.target !== document.getElementById('groupDrawerOverlay')) return;
+        document.getElementById('groupDrawerOverlay')?.classList.remove('is-active');
+        document.body.style.overflow = '';
+    }
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') {
+            document.getElementById('groupDrawerOverlay')?.classList.remove('is-active');
+        }
+    });
     </script>
 
     <script>
@@ -3690,12 +4024,6 @@
             COMMENTS_DB.push(c);
         });
         saveLocal();
-        // Toujours mettre à jour le badge, même si le panneau est fermé
-        const _n = COMMENTS_DB.length;
-        const _badge = document.getElementById("commentCountBadge");
-        if (_badge) _badge.textContent = _n;
-        const _mb = document.getElementById("modalCountBadge");
-        if (_mb) _mb.textContent = _n;
         if (document.getElementById("commentBody")?.classList.contains("is-open")) renderList();
         if (document.getElementById("commentsModal")?.classList.contains("is-active")) renderModal();
     }, err => {
@@ -3709,6 +4037,158 @@
             COMMENTS_DB.push(...legacy);
         }
     })();
+
+    /* ════════════════════════════════════════════════════════════════
+       COMMENTAIRES PAR CARD (lightbox)
+    ═══════════════════════════════════════════════════════════════ */
+    const CARD_COMMENTS_MAX = 5;
+    let _ccCardId     = null;
+    let _ccRef        = null;
+    let _ccListener   = null;
+    let _ccDB         = [];
+    let _ccShown      = CARD_COMMENTS_MAX;
+
+    function _cardCommentsOpen(cardId) {
+        // Détacher l'ancien listener
+        if (_ccRef && _ccListener) { _ccRef.off('value', _ccListener); }
+        _ccCardId = cardId;
+        _ccDB = [];
+        _ccShown = CARD_COMMENTS_MAX;
+        _ccRef = FB_DB.ref('card_comments/' + cardId);
+
+        // Reset UI
+        const body = document.getElementById('cardCommentsBody');
+        const tog  = document.getElementById('cardCommentsToggle');
+        if (body) { body.classList.remove('is-open'); }
+        if (tog)  { tog.classList.remove('is-open'); }
+        document.getElementById('cardCommentCountBadge').textContent = '0';
+        document.getElementById('cardCommentList').innerHTML = '';
+        document.getElementById('cardCommentMoreBtn').style.display = 'none';
+
+        // Login state
+        _ccUpdateLoginState();
+
+        // Firebase listener
+        _ccListener = _ccRef.on('value', snap => {
+            let val = snap.val();
+            if (!val) { _ccDB = []; } else {
+                if (!Array.isArray(val)) val = Object.keys(val).sort((a,b)=>Number(a)-Number(b)).map(k=>val[k]);
+                // Préserver likedByMe
+                const likes = {};
+                _ccDB.forEach(c => { likes[c.id] = c.likedByMe; });
+                _ccDB = val.map(c => ({ ...c, likedByMe: !!likes[c.id] }));
+            }
+            _ccRender();
+        }, err => { console.warn('[card-comments] Firebase error:', err); });
+    }
+
+    function _cardCommentsClose() {
+        if (_ccRef && _ccListener) { _ccRef.off('value', _ccListener); _ccListener = null; }
+        _ccCardId = null; _ccDB = [];
+    }
+
+    function _ccUpdateLoginState() {
+        const banner = document.getElementById('cardCommentLoginBanner');
+        const box    = document.getElementById('cardCommentWriteBox');
+        const wrap   = document.getElementById('cardCommentAvatarWrap');
+        if (!banner || !box) return;
+        if (window.currentUser) {
+            banner.style.display = 'none';
+            box.classList.remove('is-hidden');
+            if (wrap) wrap.innerHTML = avatarHTML(window.currentUser, 28);
+        } else {
+            banner.style.display = 'flex';
+            box.classList.add('is-hidden');
+        }
+    }
+
+    function toggleCardComments() {
+        const body = document.getElementById('cardCommentsBody');
+        const tog  = document.getElementById('cardCommentsToggle');
+        if (!body) return;
+        const open = body.classList.toggle('is-open');
+        tog?.classList.toggle('is-open', open);
+        if (open) { _ccUpdateLoginState(); _ccRender(); }
+    }
+
+    function _ccRender() {
+        const list = document.getElementById('cardCommentList');
+        const more = document.getElementById('cardCommentMoreBtn');
+        const badge= document.getElementById('cardCommentCountBadge');
+        if (!list) return;
+        const sorted = [..._ccDB].sort((a,b) => new Date(b.time) - new Date(a.time));
+        badge.textContent = sorted.length;
+        const shown = sorted.slice(0, _ccShown);
+        if (shown.length === 0) {
+            list.innerHTML = `<div style="text-align:center;padding:20px 0;color:rgba(255,255,255,0.25);font-size:13px">💬 Sois le premier à commenter ce leak !</div>`;
+        } else {
+            list.innerHTML = shown.map(c => _ccRenderItem(c)).join('');
+        }
+        if (more) more.style.display = sorted.length > _ccShown ? 'block' : 'none';
+    }
+
+    function _ccRenderItem(c) {
+        const canDel = window.currentUser && (MODERATORS.includes(window.currentUser.username) || c.username === window.currentUser.username);
+        return `<div class="card-comment-item" id="cc-${c.id}">
+            ${avatarHTML(c, 28)}
+            <div class="card-comment-item__body">
+                <div class="card-comment-item__header">
+                    ${discordTag()}
+                    <span class="card-comment-item__username">${c.username}</span>
+                    <span class="card-comment-item__time">${relativeTime(c.time)}</span>
+                </div>
+                <div class="card-comment-item__text">${c.text}</div>
+                <button class="card-comment-item__like${c.likedByMe?' liked':''}" onclick="_ccLike('${c.id}',this)">
+                    ${c.likedByMe?'❤️':'🤍'} ${c.likes||0}
+                </button>
+                ${canDel?`<button class="card-comment-item__delete" onclick="_ccDelete('${c.id}')">🗑</button>`:''}
+            </div>
+        </div>`;
+    }
+
+    function postCardComment() {
+        if (!window.currentUser || !_ccCardId) return;
+        const inp = document.getElementById('cardCommentInput');
+        const txt = (inp?.value||'').trim(); if (!txt) return;
+        const check = _filterComment(txt);
+        if (check.blocked) { _showCommentWarning('Contenu inapproprié.'); return; }
+        const c = { id: uid(), username: window.currentUser.username, avatar: window.currentUser.avatar||'',
+            text: txt, time: isoNow(), likes: 0, likedByMe: false };
+        _ccDB.unshift(c);
+        _ccRef.set(_ccDB.map(x => { const n={...x}; delete n.likedByMe; return n; }))
+            .catch(e => console.error('[card-comments] write error:', e));
+        inp.value = ''; inp.style.height = '';
+        _ccRender();
+    }
+
+    function _ccLike(cid, btn) {
+        const c = _ccDB.find(x => x.id === cid); if (!c) return;
+        c.likedByMe = !c.likedByMe;
+        c.likes = Math.max(0, (c.likes||0) + (c.likedByMe ? 1 : -1));
+        btn.className = 'card-comment-item__like' + (c.likedByMe?' liked':'');
+        btn.innerHTML = (c.likedByMe?'❤️':'🤍') + ' ' + c.likes;
+        _ccRef.set(_ccDB.map(x => { const n={...x}; delete n.likedByMe; return n; }))
+            .catch(e => console.error('[card-comments] like error:', e));
+    }
+
+    function _ccDelete(cid) {
+        _ccDB = _ccDB.filter(c => c.id !== cid);
+        _ccRef.set(_ccDB.map(x => { const n={...x}; delete n.likedByMe; return n; }))
+            .catch(e => console.error('[card-comments] delete error:', e));
+        _ccRender();
+    }
+
+    function loadMoreCardComments() {
+        _ccShown += CARD_COMMENTS_MAX;
+        _ccRender();
+    }
+
+    // Sync login state into card comments quand discordLogin est appelé
+    const _origDiscordLogin = window.discordLogin;
+    window.discordLogin = function(user) {
+        if (typeof _origDiscordLogin === 'function') _origDiscordLogin(user);
+        _ccUpdateLoginState();
+    };
 
     /* ─── Droits ─── */
     function canDelete(c)      { if (!window.currentUser) return false; return MODERATORS.includes(window.currentUser.username) || c.username === window.currentUser.username; }
@@ -4302,50 +4782,23 @@
     // ═══════════════════════════════════════════════════════════════
     //  SYSTÈME DE LIKE — POSTS  (compteur GLOBAL via Firebase)
     // ═══════════════════════════════════════════════════════════════
-    const POST_LIKE_KEY       = 'blox_post_likes_v1';
-    const POST_LIKE_COUNT_KEY = 'blox_post_likes_counts_v1';
-    const FB_LIKES_REF        = typeof FB_DB !== 'undefined' ? FB_DB.ref('post_likes') : null;
-    let   _plGlobalCounts     = {};
-    let   _plFirebaseReady    = false;
-
-    function _plLocalCountsLoad() { try { return JSON.parse(localStorage.getItem(POST_LIKE_COUNT_KEY)) || {}; } catch { return {}; } }
-    function _plLocalCountsSave(d) { try { localStorage.setItem(POST_LIKE_COUNT_KEY, JSON.stringify(d)); } catch {} }
+    const POST_LIKE_KEY   = 'blox_post_likes_v1';
+    const FB_LIKES_REF    = typeof FB_DB !== 'undefined' ? FB_DB.ref('post_likes') : null;
+    let   _plGlobalCounts = {};
 
     // ─── Persistance locale (liked = par device) ───────────────────
     function _plLoadLocal() { try { return JSON.parse(localStorage.getItem(POST_LIKE_KEY)) || {}; } catch { return {}; } }
     function _plSaveLocal(d) { try { localStorage.setItem(POST_LIKE_KEY, JSON.stringify(d)); } catch {} }
     function _plSlug(s) { return (s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,48); }
 
-    // ─── Compteur effectif = Firebase (si dispo) sinon fallback local ──
-    function _plGetCount(id) {
-        if (_plFirebaseReady) {
-            return _plGlobalCounts[id] !== undefined ? _plGlobalCounts[id] : 0;
-        }
-        const local = _plLocalCountsLoad();
-        return local[id] || _plGlobalCounts[id] || 0;
-    }
-
-    function _plSetLocalCount(id, val) {
-        const local = _plLocalCountsLoad();
-        local[id] = val;
-        _plLocalCountsSave(local);
-    }
-
-    function _plClearLocalCount(id) {
-        const local = _plLocalCountsLoad();
-        delete local[id];
-        _plLocalCountsSave(local);
-    }
-
     // ─── Écoute Firebase → met à jour UNIQUEMENT les compteurs ─────
     // (jamais le cœur liked — c'est localStorage qui décide ça)
     if (FB_LIKES_REF) {
         FB_LIKES_REF.on('value', snap => {
             _plGlobalCounts = snap.val() || {};
-            _plFirebaseReady = true;
             document.querySelectorAll('.post-like-btn[data-post-id]').forEach(btn => {
                 const countEl = btn.querySelector('.post-like-count');
-                if (countEl) countEl.textContent = _plGetCount(btn.dataset.postId);
+                if (countEl) countEl.textContent = _plGlobalCounts[btn.dataset.postId] || 0;
             });
             _sortAllSections();
         }, err => {
@@ -4383,13 +4836,6 @@
         return btn;
     }
 
-    function _plUpdateCountDisplay(id) {
-        document.querySelectorAll(`.post-like-btn[data-post-id="${id}"] .post-like-count`).forEach(el => {
-            el.textContent = _plGetCount(id);
-        });
-        _sortAllSections();
-    }
-
     function _plToggle(e) {
         const btn   = e.currentTarget;
         const id    = btn.dataset.postId;
@@ -4399,36 +4845,27 @@
         local[id]   = entry;
         _plSaveLocal(local);
 
-        const delta  = entry.liked ? 1 : -1;
-        const newVal = Math.max(0, _plGetCount(id) + delta);
-
-        // ── Update optimiste immédiat du compteur + fallback local ──
-        if (!_plFirebaseReady) {
-            _plSetLocalCount(id, newVal);
-        }
-        _plUpdateCountDisplay(id);
-
-        // ── Firebase : persist du compteur global ──
+        // ── Firebase est le SEUL à mettre à jour le compteur ──────
+        // Pas d'update optimiste du nombre → zéro double-comptage
+        // (sauf si Firebase échoue : on bascule alors en repli local
+        //  pour que le bouton reste fonctionnel plutôt que "mort")
+        const countEl = btn.querySelector('.post-like-count');
         if (FB_LIKES_REF) {
             FB_LIKES_REF.child(id).transaction(
-                cur => Math.max(0, (cur || 0) + delta),
-                (error, committed) => {
+                cur => Math.max(0, (cur || 0) + (entry.liked ? 1 : -1)),
+                (error) => {
                     if (error) {
-                        console.error('[likes] Échec Firebase pour "' + id + '" :', error);
-                        _plSetLocalCount(id, newVal);
-                        _plUpdateCountDisplay(id);
-                    } else if (!committed) {
-                        console.warn('[likes] Transaction non confirmée pour "' + id + '" — repli local');
-                        _plSetLocalCount(id, newVal);
-                        _plUpdateCountDisplay(id);
-                    } else {
-                        _plClearLocalCount(id);
+                        console.error('[likes] échec de synchronisation Firebase pour "' + id + '" :', error);
+                        if (countEl) {
+                            const current = parseInt(countEl.textContent, 10) || 0;
+                            countEl.textContent = Math.max(0, current + (entry.liked ? 1 : -1));
+                        }
                     }
-                },
-                false
+                }
             );
-        } else {
-            _plSetLocalCount(id, newVal);
+        } else if (countEl) {
+            const current = parseInt(countEl.textContent, 10) || 0;
+            countEl.textContent = Math.max(0, current + (entry.liked ? 1 : -1));
         }
 
         // ── Feedback visuel immédiat (cœur + particules) ──────────
@@ -4477,7 +4914,7 @@
             if (!h2) return;
             const id    = 'dossier-' + _plSlug(h2.textContent.trim());
             const liked = (local[id] || {}).liked || false;
-            const btn   = _plMakeBtn(id, liked, _plGetCount(id));
+            const btn   = _plMakeBtn(id, liked, _plGlobalCounts[id] || 0);
             const wrap  = document.createElement('div');
             wrap.className = 'actus-like-wrap';
             wrap.appendChild(btn);
@@ -4493,7 +4930,7 @@
             const src     = imgEl ? (imgEl.getAttribute('src') || '') : '';
             const id      = 'card-' + _plSlug((titleEl ? titleEl.textContent.trim() : '') + '-' + src);
             const liked   = (local[id] || {}).liked || false;
-            const btn     = _plMakeBtn(id, liked, _plGetCount(id));
+            const btn     = _plMakeBtn(id, liked, _plGlobalCounts[id] || 0);
             let footer    = content.querySelector('.post-like-card-footer');
             if (!footer) {
                 footer  = document.createElement('div');
@@ -4512,7 +4949,7 @@
 
     function _cardLikeCount(card) {
         const btn = card.querySelector('.post-like-btn[data-post-id]');
-        return btn ? _plGetCount(btn.dataset.postId) : 0;
+        return btn ? (_plGlobalCounts[btn.dataset.postId] || 0) : 0;
     }
 
     function _flipSort(grid, sortFn) {
@@ -4923,11 +5360,10 @@
     // ── IDs statiques ──────────────────────────────────────────────
     // On assigne un data-static-id à chaque card statique au chargement
     function _assignStaticIds() {
-        document.querySelectorAll('.news-card:not([data-cc-id])').forEach((card, i) => {
+        document.querySelectorAll('.news-card:not([data-cc-id]), .group-card:not([data-cc-id])').forEach((card, i) => {
             if (!card.dataset.staticId) {
-                const title = card.querySelector('.news-card__title')?.textContent?.trim() || '';
+                const title = card.querySelector('.news-card__title, .group-card__title')?.textContent?.trim() || '';
                 const section = card.closest('[id^="cat-"]')?.id || 'unknown';
-                // slug stable
                 const slug = (section + '__' + title).toLowerCase()
                     .replace(/[^a-z0-9]+/g, '_').slice(0, 60) + '__' + i;
                 card.dataset.staticId = slug;
@@ -5020,7 +5456,7 @@
         } else {
             // ── Carte STANDARD (leak / image / vidéo) ─────────────────
             const mediaTag  = card.mediaType === 'video'
-                ? `<video src="${e(card.src)}" class="news-card__image" preload="metadata" muted playsinline onerror="_ncmVideoError(this)"></video>`
+                ? `<video src="${e(card.src)}" class="news-card__image" preload="metadata" muted playsinline></video>`
                 : `<img src="${e(card.src)}" class="news-card__image" alt="${e(card.title)}" loading="lazy" decoding="async">`;
             const btnLabel = e(card.btnLabel || "Voir l'image →");
             const btnHtml  = card.mediaType === 'video'
@@ -5097,24 +5533,24 @@
         if (modalBadge)   modalBadge.textContent   = badgeText;
         if (modalSection) modalSection.textContent = sectionName;
         if (modalTitle)   modalTitle.textContent   = titleText;
-        if (video) { delete video.dataset.errorShown; const err0 = video.closest('.modal-media-zone')?.querySelector('.modal-video-error'); if (err0) err0.style.display = 'none'; }
         if (video)    video.style.display    = 'none';
         if (modalImg) modalImg.style.display = 'none';
         if (type === 'video' && video) {
             video.src = sourceUrl; video.style.display = 'block';
-            video.currentTime = 0;
-            video.onerror = () => _modalVideoError(video, sourceUrl);
-            video.play().catch(() => _modalVideoError(video, sourceUrl));
+            video.currentTime = 0; video.play().catch(() => {});
         } else if (type === 'image' && modalImg) {
             modalImg.src = sourceUrl; modalImg.style.display = 'block';
         }
+        // Commentaires par card
+        const cardId = btn.getAttribute('data-card-id') || btoa(encodeURIComponent(sourceUrl||titleText)).replace(/[^a-zA-Z0-9]/g,'').slice(0,32);
+        _cardCommentsOpen(cardId);
         _modalEditKey = 'modal_edit__' + btoa(encodeURIComponent(sourceUrl || titleText)).slice(0,48);
         _modalEditLoad(_modalEditKey);
         const edPanel = document.getElementById('modalEditorPanel');
         if (edPanel) edPanel.classList.remove('is-open');
         const edBtn = document.getElementById('modalEditToggle');
         if (edBtn) { edBtn.classList.remove('is-active'); edBtn.textContent = '✏️ Éditer'; }
-        if (modal) { modal.classList.add('is-active'); document.body.style.overflow = 'hidden'; }
+        if (modal) modal.classList.add('is-active');
     }
 
     // ══════════════════════════════════════════════════════════════
@@ -5213,80 +5649,6 @@
             reader.readAsDataURL(file);
         });
     }
-    // ── Affiche un message d'erreur visible dans la lightbox quand la vidéo
-    // ne peut pas se charger, au lieu de laisser l'écran noir silencieux ──────
-    function _modalVideoError(videoEl, sourceUrl) {
-        if (!videoEl || videoEl.dataset.errorShown) return;
-        videoEl.dataset.errorShown = '1';
-        const zone = videoEl.closest('.modal-media-zone');
-        if (!zone) return;
-        videoEl.style.display = 'none';
-        let err = zone.querySelector('.modal-video-error');
-        if (!err) {
-            err = document.createElement('div');
-            err.className = 'modal-video-error';
-            err.style.cssText = 'width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:#1a0000;color:#ff8080;text-align:center;padding:20px;';
-            zone.appendChild(err);
-        }
-        err.style.display = 'flex';
-        err.innerHTML = `<span style="font-size:36px">⚠️</span>
-            <span style="font-size:14px;font-weight:700;line-height:1.5;max-width:80%;">
-                Impossible de charger cette vidéo.<br>
-                <span style="opacity:.65;font-weight:500;font-size:12.5px;">Le lien n'est probablement pas un fichier vidéo direct (.mp4, .webm…) — un lien de post X/Twitter, YouTube ou TikTok ne fonctionnera pas ici.</span>
-            </span>`;
-    }
-
-    // ── Affiche un état d'erreur visible sur une vignette vidéo qui n'a pas pu
-    // charger (au lieu de rester silencieusement noire) ────────────────────────
-    function _ncmVideoError(videoEl) {
-        if (!videoEl || videoEl.dataset.errorShown) return;
-        videoEl.dataset.errorShown = '1';
-        const wrap = videoEl.parentElement;
-        if (!wrap) return;
-        videoEl.style.display = 'none';
-        const err = document.createElement('div');
-        err.style.cssText = 'position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:#1a0000;color:#ff8080;text-align:center;padding:12px;';
-        err.innerHTML = '<span style="font-size:26px">⚠️</span><span style="font-size:12px;font-weight:700;line-height:1.4;max-width:80%;">Vidéo introuvable<br><span style="opacity:.6;font-weight:500">Lien non direct ou invalide</span></span>';
-        wrap.appendChild(err);
-    }
-
-    // ── Validation du lien vidéo : détecte les liens de pages (X, YouTube, TikTok…)
-    // qui ne sont PAS des fichiers vidéo directs et ne pourront jamais se charger.
-    const _NCM_BAD_VIDEO_HOSTS = [
-        'twitter.com', 'x.com', 'youtube.com', 'youtu.be', 'tiktok.com',
-        'instagram.com', 'facebook.com', 'reddit.com', 'discord.com', 'discordapp.com'
-    ];
-    function _ncmValidateVideoUrl(value) {
-        const warn = document.getElementById('ncmSrcWarning');
-        if (!warn) return true;
-        const v = (value || '').trim();
-        if (!v) { warn.style.display = 'none'; return true; }
-        let bad = false;
-        let reason = '';
-        try {
-            const url = new URL(v);
-            const host = url.hostname.replace(/^www\./, '');
-            const isDirectFile = /\.(mp4|webm|mov|m4v|ogg)(\?.*)?$/i.test(url.pathname);
-            if (_NCM_BAD_VIDEO_HOSTS.some(h => host === h || host.endsWith('.' + h))) {
-                bad = true;
-                reason = `Ce lien pointe vers une page ${host}, pas vers un fichier vidéo — la carte restera noire. Il faut un lien direct (.mp4, .webm…), par exemple hébergé ailleurs.`;
-            } else if (!isDirectFile) {
-                bad = true;
-                reason = "Ce lien ne se termine pas par une extension vidéo (.mp4, .webm, .mov…). S'il ne s'agit pas d'un fichier vidéo direct, la carte restera noire.";
-            }
-        } catch (e) {
-            bad = true;
-            reason = 'Ce texte ne ressemble pas à une URL valide.';
-        }
-        if (bad) {
-            warn.textContent = '⚠️ ' + reason;
-            warn.style.display = 'block';
-        } else {
-            warn.style.display = 'none';
-        }
-        return !bad;
-    }
-
     function _ncmTypeChange() {
         const isVideo = document.querySelector('#newCardModal input[name="ncmType"]:checked')?.value === 'video';
         const vf = document.getElementById('ncmVideoField');
@@ -5454,10 +5816,6 @@
             editLog('err', 'Une vidéo nécessite un lien (URL) hébergé — pas de dépôt de fichier.');
             return;
         }
-        if (!isActus && !isMessage && mediaType === 'video' && src && !_ncmValidateVideoUrl(src)) {
-            editLog('err', "Lien vidéo refusé : ce n'est pas un fichier vidéo direct (voir l'avertissement sous le champ URL). La carte serait restée noire.");
-            return;
-        }
         if (!isActus && !isMessage && !src) { editLog('err', 'Image, vidéo ou lien requis.'); return; }
         if (src && src.startsWith('data:') && src.length > 1300000) {
             editLog('err', 'Le fichier est trop volumineux pour être sauvegardé (Firebase). Utilise un lien direct.');
@@ -5523,31 +5881,32 @@
     function _cmdDelete() {
         const list = document.getElementById('dcmList');
         if (!list) return;
-        const allCards = [...document.querySelectorAll('.news-card')];
+        const allCards = [...document.querySelectorAll('.news-card, .group-card')];
         if (allCards.length === 0) {
             list.innerHTML = '<div class="dcm-empty"><div class="dcm-empty-icon">🗂️</div><div class="dcm-empty-text">Aucune carte dans la page</div></div>';
         } else {
             list.innerHTML = allCards.map((card, i) => {
-                const title    = card.querySelector('.news-card__title')?.textContent?.trim() || 'Sans titre';
-                const badge    = card.querySelector('.news-card__badge')?.textContent?.trim() || '';
+                const isGroup  = card.classList.contains('group-card');
+                const title    = card.querySelector('.news-card__title, .group-card__title')?.textContent?.trim() || 'Sans titre';
+                const badge    = card.querySelector('.news-card__badge, .group-card__badge')?.textContent?.trim() || '';
                 const section  = card.closest('[id^="cat-"]');
                 const sectionName = section?.id?.replace('cat-','') || 'inconnu';
                 const ccId     = card.dataset.ccId || null;
                 const staticId = card.dataset.staticId || ('static_' + i);
                 const uid      = ccId || staticId;
                 const isCustom = !!ccId;
-                const imgEl    = card.querySelector('.news-card__image');
+                const imgEl    = card.querySelector('.news-card__image, .group-card__image');
                 const imgSrc   = imgEl?.tagName === 'IMG' ? imgEl.src : '';
                 const isVideo  = imgEl?.tagName === 'VIDEO';
                 const thumb    = imgSrc
                     ? `<img src="${_ccEsc(imgSrc)}" alt="" style="width:100%;height:100%;object-fit:cover;display:block;">`
-                    : `<span style="font-size:20px">${isVideo ? '🎬' : '🖼️'}</span>`;
+                    : `<span style="font-size:20px">${isGroup ? '📦' : isVideo ? '🎬' : '🖼️'}</span>`;
                 return `<div class="dcm-item" id="dcm-item-${uid}">
                     <div class="dcm-item-thumb">${thumb}</div>
                     <div class="dcm-item-info">
                         <div class="dcm-item-badge">${_ccEsc(badge)}</div>
                         <div class="dcm-item-title">${_ccEsc(title)}</div>
-                        <div class="dcm-item-section">${sectionName}${isCustom ? ' · personnalisée' : ''}</div>
+                        <div class="dcm-item-section">${sectionName}${isCustom ? ' · personnalisée' : ''}${isGroup ? ' · groupe' : ''}</div>
                     </div>
                     <button class="dcm-item-del" onclick="_dcmOpenConfirm('${uid}')">Supprimer</button>
                 </div>
@@ -5601,7 +5960,8 @@
             const el = document.querySelector(`[data-cc-id="${ccId}"]`);
             if (el) el.remove();
         } else {
-            const el = document.querySelector(`[data-static-id="${staticId}"]`);
+            const el = document.querySelector(`[data-static-id="${staticId}"]`)
+                    || document.querySelector(`.group-card[data-static-id="${staticId}"]`);
             if (el) el.remove();
             if (FB_DELETED_REF) {
                 FB_DELETED_REF.transaction(current => {
