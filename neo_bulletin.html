@@ -1229,6 +1229,13 @@
             transition: transform 0.2s, box-shadow 0.2s;
         }
         .card-comment-submit:hover { transform: scale(1.04); box-shadow: 0 4px 14px rgba(204,0,0,0.35); }
+        .card-comments-empty {
+            text-align: center; padding: 20px 0; font-size: 13px;
+            color: rgba(0,0,0,0.25);
+        }
+        html[data-theme="dark"] .card-comments-empty {
+            color: rgba(255,255,255,0.25);
+        }
         .card-comment-item {
             display: flex; gap: 10px; padding: 10px 0;
             border-bottom: 1px solid rgba(0,0,0,0.04);
@@ -4936,7 +4943,7 @@
         badge.textContent = sorted.length;
         const shown = sorted.slice(0, _dcShown);
         if (shown.length === 0) {
-            list.innerHTML = `<div style="text-align:center;padding:20px 0;color:rgba(255,255,255,0.25);font-size:13px">🔓 Sois le premier à commenter ce document déclassifié !</div>`;
+            list.innerHTML = `<div class="card-comments-empty">🔓 Sois le premier à commenter ce document déclassifié !</div>`;
         } else {
             list.innerHTML = shown.map(c => _ccRenderItem(c)).join('');
         }
@@ -5299,7 +5306,7 @@
         badge.textContent = sorted.length;
         const shown = sorted.slice(0, _ccShown);
         if (shown.length === 0) {
-            list.innerHTML = `<div style="text-align:center;padding:20px 0;color:rgba(255,255,255,0.25);font-size:13px">💬 Sois le premier à commenter ce leak !</div>`;
+            list.innerHTML = `<div class="card-comments-empty">💬 Sois le premier à commenter ce leak !</div>`;
         } else {
             list.innerHTML = shown.map(c => _ccRenderItem(c)).join('');
         }
@@ -5435,7 +5442,7 @@
         if (badge) badge.textContent = sorted.length;
         const shown = sorted.slice(0, _actusShown[cardId] || ACTUS_CC_MAX);
         if (shown.length === 0) {
-            list.innerHTML = `<div style="text-align:center;padding:20px 0;color:rgba(255,255,255,0.25);font-size:13px">💬 Sois le premier à commenter ce dossier !</div>`;
+            list.innerHTML = `<div class="card-comments-empty">💬 Sois le premier à commenter ce dossier !</div>`;
         } else {
             list.innerHTML = shown.map(c => _actusRenderItem(c)).join('');
         }
