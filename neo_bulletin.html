@@ -591,6 +591,225 @@
         }
         @keyframes pulseBadge { 0%,100% { transform: scale(1); } 50% { transform: scale(1.08); } }
 
+        /* ══════════════════════════════════════════════
+           CARTE MESSAGE — style enquête / dossier
+        ══════════════════════════════════════════════ */
+        .msg-card {
+            border-radius: 18px; overflow: hidden; cursor: default;
+            background: #0e0f1a;
+            border: 1px solid rgba(255,200,50,0.15);
+            box-shadow: 0 0 0 1px rgba(255,200,50,0.06),
+                        0 4px 24px rgba(0,0,0,0.5),
+                        inset 0 1px 0 rgba(255,255,255,0.04);
+            position: relative;
+            transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s;
+        }
+        .msg-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 0 0 1px rgba(255,200,50,0.18),
+                        0 12px 40px rgba(0,0,0,0.6),
+                        0 0 40px rgba(255,180,0,0.06);
+        }
+        /* Grain de papier */
+        .msg-card::before {
+            content: '';
+            position: absolute; inset: 0; z-index: 0; pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+            opacity: 0.6; border-radius: 18px;
+        }
+        .msg-card__tape {
+            position: absolute; top: -4px; left: 50%; transform: translateX(-50%);
+            width: 70px; height: 18px;
+            background: rgba(255,230,100,0.13);
+            border: 1px solid rgba(255,220,60,0.2);
+            border-radius: 3px; z-index: 3;
+        }
+        .msg-card__header {
+            position: relative; z-index: 1;
+            padding: 24px 20px 0;
+            display: flex; align-items: flex-start; gap: 14px;
+        }
+        .msg-card__stamp {
+            width: 48px; height: 48px; flex-shrink: 0; border-radius: 10px;
+            background: rgba(255,180,0,0.08);
+            border: 2px solid rgba(255,180,0,0.25);
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'LuckiestGuy Regular', cursive; font-size: 16px;
+            color: rgba(255,180,0,0.9); letter-spacing: 1px;
+            box-shadow: 0 0 14px rgba(255,180,0,0.08), inset 0 0 8px rgba(255,180,0,0.04);
+        }
+        .msg-card__meta { flex: 1; min-width: 0; }
+        .msg-card__eyebrow {
+            font-size: 10px; font-weight: 800; letter-spacing: 2px;
+            text-transform: uppercase; color: rgba(255,180,0,0.6); margin-bottom: 4px;
+        }
+        .msg-card__title {
+            font-family: 'LuckiestGuy Regular', cursive; font-size: 17px;
+            color: rgba(255,240,180,0.92); letter-spacing: 0.3px; line-height: 1.2;
+            margin: 0;
+        }
+        .msg-card__classified {
+            display: inline-flex; align-items: center; gap: 5px;
+            font-size: 9px; font-weight: 900; letter-spacing: 2px;
+            color: rgba(255,80,80,0.7); text-transform: uppercase;
+            border: 1px solid rgba(255,80,80,0.25); border-radius: 4px;
+            padding: 2px 7px; margin-top: 6px;
+        }
+        .msg-card__body {
+            position: relative; z-index: 1;
+            padding: 14px 20px;
+        }
+        /* Texte chiffré (msgText affiché comme "code crypté") */
+        .msg-card__cipher {
+            font-family: 'Share Tech Mono', monospace; font-size: 12px;
+            color: rgba(255,220,80,0.35); line-height: 1.7;
+            letter-spacing: 1px; word-break: break-all;
+            background: rgba(255,220,80,0.03);
+            border: 1px solid rgba(255,220,80,0.08);
+            border-radius: 8px; padding: 10px 12px; margin-bottom: 14px;
+            /* Flou partiel style "censuré" */
+            -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.15) 100%);
+            mask-image: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.15) 100%);
+        }
+        .msg-card__footer {
+            position: relative; z-index: 1;
+            padding: 0 20px 20px;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .msg-card__decrypt-btn {
+            flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px;
+            padding: 11px 18px; border-radius: 100px; border: none; cursor: pointer;
+            background: linear-gradient(135deg, rgba(255,180,0,0.15), rgba(255,140,0,0.08));
+            border: 1px solid rgba(255,180,0,0.3);
+            color: rgba(255,210,80,0.9); font-size: 13px; font-weight: 800;
+            font-family: 'LuckiestGuy Regular', cursive; letter-spacing: 1px;
+            text-transform: uppercase;
+            box-shadow: 0 2px 12px rgba(255,160,0,0.1);
+            transition: all 0.25s;
+        }
+        .msg-card__decrypt-btn:hover {
+            background: linear-gradient(135deg, rgba(255,180,0,0.25), rgba(255,140,0,0.15));
+            border-color: rgba(255,180,0,0.55);
+            color: rgba(255,230,100,1);
+            box-shadow: 0 4px 20px rgba(255,160,0,0.2);
+            transform: translateY(-1px);
+        }
+        .msg-card__decrypt-btn__icon { font-size: 16px; }
+        .msg-card__bar {
+            height: 3px;
+            background: linear-gradient(90deg, transparent, rgba(255,180,0,0.5), rgba(255,80,80,0.3), transparent);
+        }
+        /* Scanline overlay */
+        .msg-card__scan {
+            position: absolute; inset: 0; pointer-events: none; z-index: 2;
+            background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.04) 3px, rgba(0,0,0,0.04) 4px);
+            border-radius: 18px;
+        }
+
+        /* ══════════════════════════════════════════════
+           POP-UP DÉCRYPTAGE — modal révélation
+        ══════════════════════════════════════════════ */
+        #decryptModal {
+            position: fixed; inset: 0; z-index: 10000;
+            background: rgba(0,0,0,0); pointer-events: none;
+            display: flex; align-items: flex-end; justify-content: center;
+            transition: background 0.35s;
+        }
+        #decryptModal.is-active {
+            background: rgba(0,0,0,0.88); pointer-events: auto;
+            backdrop-filter: blur(12px);
+        }
+        .decrypt-panel {
+            width: 100%; max-width: 620px; max-height: 92dvh;
+            background: #0c0d18;
+            border-radius: 24px 24px 0 0;
+            border: 1px solid rgba(255,180,0,0.15);
+            border-bottom: none;
+            display: flex; flex-direction: column; overflow: hidden;
+            transform: translateY(100%);
+            transition: transform 0.4s cubic-bezier(0.34,1.26,0.64,1);
+            box-shadow: 0 -8px 60px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,180,0,0.08);
+        }
+        #decryptModal.is-active .decrypt-panel { transform: translateY(0); }
+        .decrypt-panel__handle {
+            width: 40px; height: 4px; background: rgba(255,180,0,0.2);
+            border-radius: 2px; margin: 14px auto 0; cursor: pointer; flex-shrink: 0;
+        }
+        .decrypt-panel__header {
+            padding: 16px 20px 14px; border-bottom: 1px solid rgba(255,180,0,0.08);
+            display: flex; align-items: center; gap: 12px; flex-shrink: 0;
+        }
+        .decrypt-panel__classified-badge {
+            font-size: 9px; font-weight: 900; letter-spacing: 2px;
+            color: rgba(255,80,80,0.8); text-transform: uppercase;
+            border: 1px solid rgba(255,80,80,0.35); border-radius: 4px;
+            padding: 3px 8px;
+        }
+        .decrypt-panel__title {
+            font-family: 'LuckiestGuy Regular', cursive; font-size: 17px;
+            color: rgba(255,230,120,0.95); flex: 1; letter-spacing: 0.3px;
+        }
+        .decrypt-panel__close {
+            width: 32px; height: 32px; border-radius: 50%; border: none;
+            background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.5);
+            font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: background 0.2s;
+        }
+        .decrypt-panel__close:hover { background: rgba(255,80,80,0.2); color: #fff; }
+        .decrypt-panel__body {
+            flex: 1; overflow-y: auto; padding: 0;
+        }
+        .decrypt-panel__img-wrap {
+            position: relative; background: #060710;
+            border-bottom: 1px solid rgba(255,180,0,0.08);
+        }
+        .decrypt-panel__img {
+            width: 100%; max-height: 55dvh; object-fit: contain; display: block;
+        }
+        /* Animation révélation au premier affichage */
+        .decrypt-panel__reveal-overlay {
+            position: absolute; inset: 0;
+            background: #060710;
+            display: flex; align-items: center; justify-content: center;
+            z-index: 2;
+            transition: opacity 0.6s ease 0.2s;
+        }
+        .decrypt-panel__reveal-overlay.done { opacity: 0; pointer-events: none; }
+        .decrypt-panel__reveal-anim {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 13px; color: rgba(255,180,0,0.7);
+            letter-spacing: 2px; animation: revealScan 1.2s steps(8) forwards;
+        }
+        @keyframes revealScan {
+            0%   { content: ''; opacity: 1; }
+            100% { opacity: 0; }
+        }
+        .decrypt-panel__scanline {
+            position: absolute; inset: 0; pointer-events: none;
+            background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.06) 3px, rgba(0,0,0,0.06) 4px);
+        }
+        .decrypt-panel__footer-bar {
+            padding: 10px 20px 6px;
+            display: flex; align-items: center; gap: 8px;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+        .decrypt-panel__footer-label {
+            font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
+            text-transform: uppercase; color: rgba(255,180,0,0.4); flex: 1;
+        }
+
+        /* Champ image dans /new modal (message) */
+        .ncm-msg-img-field {
+            margin-top: 10px; padding: 10px 12px;
+            border: 1px dashed rgba(255,180,0,0.25); border-radius: 10px;
+            background: rgba(255,180,0,0.04); cursor: pointer;
+            display: flex; align-items: center; gap: 8px;
+            font-size: 12px; color: rgba(255,180,0,0.5);
+            transition: border-color 0.2s, background 0.2s;
+        }
+        .ncm-msg-img-field:hover { border-color: rgba(255,180,0,0.5); background: rgba(255,180,0,0.08); }
+        .ncm-msg-img-field.has-img { border-color: rgba(255,180,0,0.45); color: rgba(255,210,80,0.8); }
+
         /* ── LIGHTBOX (MODAL VIDÉO & IMAGE) ── */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -3274,6 +3493,58 @@
 
     </main>
 
+    <!-- ── MODAL DÉCRYPTAGE ── -->
+    <div id="decryptModal" onclick="if(event.target===this)closeDecryptModal()">
+        <div class="decrypt-panel">
+            <div class="decrypt-panel__handle" onclick="closeDecryptModal()"></div>
+            <div class="decrypt-panel__header">
+                <span class="decrypt-panel__classified-badge">🔓 DÉCRYPTÉ</span>
+                <span class="decrypt-panel__title" id="decryptTitle">—</span>
+                <button class="decrypt-panel__close" onclick="closeDecryptModal()">✕</button>
+            </div>
+            <div class="decrypt-panel__body">
+                <!-- Image révélée -->
+                <div class="decrypt-panel__img-wrap" id="decryptImgWrap">
+                    <div class="decrypt-panel__reveal-overlay" id="decryptRevealOverlay">
+                        <span class="decrypt-panel__reveal-anim">DÉCRYPTAGE EN COURS…</span>
+                    </div>
+                    <img class="decrypt-panel__img" id="decryptImg" src="" alt="Décrypté">
+                    <div class="decrypt-panel__scanline"></div>
+                </div>
+                <div class="decrypt-panel__footer-bar">
+                    <span class="decrypt-panel__footer-label">Document déclassifié</span>
+                </div>
+                <!-- Commentaires par card -->
+                <div class="card-comments-section" id="decryptCommentsSection">
+                    <div class="card-comments-toggle" id="decryptCommentsToggle" onclick="toggleDecryptComments()">
+                        <span class="card-comments-toggle__icon">💬</span>
+                        <span class="card-comments-toggle__label">Commentaires</span>
+                        <span class="card-comments-toggle__count" id="decryptCommentCountBadge">0</span>
+                        <span class="card-comments-toggle__arrow" id="decryptCommentsArrow">▾</span>
+                    </div>
+                    <div class="card-comments-body" id="decryptCommentsBody">
+                        <div class="card-comment-login" id="decryptCommentLoginBanner">
+                            <span>🎮</span>
+                            <span>Connecte-toi via Discord pour commenter</span>
+                            <button onclick="_discordLogin()">Se connecter</button>
+                        </div>
+                        <div class="card-comment-write is-hidden" id="decryptCommentWriteBox">
+                            <div class="card-comment-avatar-wrap" id="decryptCommentAvatarWrap"></div>
+                            <div style="flex:1;min-width:0">
+                                <textarea class="card-comment-input" id="decryptCommentInput"
+                                    placeholder="Ton avis sur ce dossier déclassifié…" rows="1"
+                                    oninput="autoResize(this)" maxlength="240"></textarea>
+                                <button class="card-comment-submit" onclick="postDecryptComment()">Poster</button>
+                            </div>
+                        </div>
+                        <div class="card-comment-list" id="decryptCommentList"></div>
+                        <button class="card-comment-more" id="decryptCommentMoreBtn" onclick="loadMoreDecryptComments()" style="display:none">Voir plus →</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- ── COMMAND EDITOR PANEL ── -->
     <div id="editModePanel">
         <div class="edit-panel__header">
@@ -3369,6 +3640,15 @@
                                 <div class="ncm-msg-title" contenteditable="true" id="ncmMsgTitle" spellcheck="false">Message de E. - Quake</div>
                                 <div class="ncm-msg-text" contenteditable="true" id="ncmMsgText" spellcheck="false">Écris le contenu du message ici…</div>
                                 <div class="ncm-msg-btn">Décrypter →</div>
+                                <!-- Champ image décrypté -->
+                                <div class="ncm-msg-img-field" id="ncmMsgImgField" onclick="document.getElementById('ncmMsgFileInput').click()">
+                                    <span>🔓</span>
+                                    <span id="ncmMsgImgLabel">Image révélée au décryptage (cliquer ou URL)</span>
+                                </div>
+                                <input type="file" id="ncmMsgFileInput" accept="image/*" style="display:none" onchange="_ncmMsgFileSelected(this)">
+                                <input type="text" id="ncmMsgSrc" placeholder="ou coller une URL d'image…"
+                                    style="margin-top:6px;width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,180,0,0.15);border-radius:8px;padding:7px 10px;color:rgba(255,220,80,0.7);font-size:11px;font-family:monospace;outline:none;"
+                                    oninput="_ncmMsgSrcChange(this.value)">
                             </div>
                         </div>
                     </div>
@@ -5602,19 +5882,31 @@
         let html = '';
 
         if (card.kind === 'message') {
-            // ── Carte MESSAGE (style existant des cartes message) ──────
+            // ── Carte MESSAGE — style enquête / dossier ────────────────
             const initials = e(card.msgInitials || card.badge || '?');
-            html = `<article class="news-card" data-cc-id="${card.id}">
-                <div class="news-card__image-wrapper" style="padding-top:30%;">
-                    <div style="position:absolute;inset:0;background:#111;display:flex;align-items:center;justify-content:center;color:#ff8800;font-family:'LuckiestGuy Regular',cursive;font-size:40px;">${initials}</div>
+            const cipherText = _msgCipher(card.msgText || card.title || '');
+            const cardId = 'msg-' + card.id;
+            html = `<article class="msg-card" data-cc-id="${card.id}" data-msg-card-id="${e(cardId)}">
+                <div class="msg-card__tape"></div>
+                <div class="msg-card__scan"></div>
+                <div class="msg-card__header">
+                    <div class="msg-card__stamp">${initials}</div>
+                    <div class="msg-card__meta">
+                        <div class="msg-card__eyebrow">📁 Dossier confidentiel</div>
+                        <h2 class="msg-card__title">${e(card.title)}</h2>
+                        <div class="msg-card__classified">⛔ CLASSIFIÉ</div>
+                    </div>
                 </div>
-                <div class="news-card__content">
-                    <div class="news-card__eyebrow">Cryptage</div>
-                    <h2 class="news-card__title">${e(card.title)}</h2>
-                    <p style="color:#555;margin-bottom:15px;font-size:14px;">${e(card.msgText || '')}</p>
-                    <button class="news-card__button news-card__button--disabled">Décrypter →</button>
+                <div class="msg-card__body">
+                    <div class="msg-card__cipher">${e(cipherText)}</div>
                 </div>
-                <div class="news-card__bar"></div>
+                <div class="msg-card__footer">
+                    <button class="msg-card__decrypt-btn" onclick="openDecryptModal('${e(card.id)}', '${e(card.title)}', '${e(card.src || card.msgSrc || '')}')">
+                        <span class="msg-card__decrypt-btn__icon">🔓</span>
+                        Décrypter
+                    </button>
+                </div>
+                <div class="msg-card__bar"></div>
             </article>`;
 
         } else if (card.kind === 'actus') {
