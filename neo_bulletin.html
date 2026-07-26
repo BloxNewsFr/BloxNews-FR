@@ -4885,6 +4885,141 @@
         _ccRender();
     }
 
+    /* ════════════════════════════════════════════════════════════════
+       COMMENTAIRES ACTUS — pour les cartes créées via /new
+    ═══════════════════════════════════════════════════════════════ */
+    const _actusCommentsDB = {};
+    const _actusShown = {};
+    const ACTUS_CC_MAX = 5;
+
+    function _initActusComments(cardId) {
+        _actusCommentsDB[cardId] = [];
+        _actusShown[cardId] = ACTUS_CC_MAX;
+        _actusUpdateLogin(cardId);
+        const ref = FB_DB.ref('card_comments/' + cardId);
+        ref.on('value', snap => {
+            let val = snap.val();
+            if (!val) { _actusCommentsDB[cardId] = []; }
+            else {
+                if (!Array.isArray(val)) val = Object.keys(val).sort((a,b)=>Number(a)-Number(b)).map(k=>val[k]);
+                const likes = {};
+                (_actusCommentsDB[cardId] || []).forEach(c => { likes[c.id] = c.likedByMe; });
+                _actusCommentsDB[cardId] = val.map(c => ({ ...c, likedByMe: !!likes[c.id] }));
+            }
+            _actusRenderComments(cardId);
+        }, err => console.warn('[actus-comments] Firebase error for', cardId, err));
+    }
+
+    function _actusUpdateLogin(cardId) {
+        const banner = document.querySelector(`.actus-cc-login[data-actus-id="${cardId}"]`);
+        const box    = document.querySelector(`.actus-cc-write[data-actus-id="${cardId}"]`);
+        const wrap   = box?.querySelector('.card-comment-avatar-wrap');
+        if (!banner || !box) return;
+        if (window.currentUser) {
+            banner.style.display = 'none';
+            box.classList.remove('is-hidden');
+            if (wrap) wrap.innerHTML = avatarHTML(window.currentUser, 28);
+        } else {
+            banner.style.display = 'flex';
+            box.classList.add('is-hidden');
+        }
+    }
+
+    function _actusRenderComments(cardId) {
+        const list  = document.querySelector(`.actus-cc-list[data-actus-id="${cardId}"]`);
+        const more  = document.querySelector(`.actus-cc-more[data-actus-id="${cardId}"]`);
+        const badge = document.querySelector(`.actus-cc-count[data-actus-id="${cardId}"]`);
+        if (!list) return;
+        const db = _actusCommentsDB[cardId] || [];
+        const sorted = [...db].sort((a,b) => new Date(b.time) - new Date(a.time));
+        if (badge) badge.textContent = sorted.length;
+        const shown = sorted.slice(0, _actusShown[cardId] || ACTUS_CC_MAX);
+        if (shown.length === 0) {
+            list.innerHTML = `<div style="text-align:center;padding:20px 0;color:rgba(0,0,0,0.3);font-size:13px">💬 Sois le premier à commenter ce dossier !</div>`;
+        } else {
+            list.innerHTML = shown.map(c => _actusRenderItem(c)).join('');
+        }
+        if (more) more.style.display = sorted.length > (_actusShown[cardId] || ACTUS_CC_MAX) ? 'block' : 'none';
+    }
+
+    function _actusRenderItem(c) {
+        const canDel = window.currentUser && (MODERATORS.includes(window.currentUser.username) || c.username === window.currentUser.username);
+        return `<div class="card-comment-item">
+            ${avatarHTML(c, 28)}
+            <div class="card-comment-item__body">
+                <div class="card-comment-item__header">
+                    ${discordTag()}
+                    <span class="card-comment-item__username">${c.username}</span>
+                    <span class="card-comment-item__time">${relativeTime(c.time)}</span>
+                </div>
+                <div class="card-comment-item__text">${c.text}</div>
+                <button class="card-comment-item__like${c.likedByMe?' liked':''}" onclick="_actusLikeComment('${c.id}',this)">
+                    ${c.likedByMe?'❤️':'🤍'} ${c.likes||0}
+                </button>
+                ${canDel?`<button class="card-comment-item__delete" onclick="_actusDeleteComment('${c.id}')">🗑</button>`:''}
+            </div>
+        </div>`;
+    }
+
+    window._actusPostComment = function(cardId) {
+        if (!window.currentUser) return;
+        const inp = document.querySelector(`.actus-cc-input[data-actus-id="${cardId}"]`);
+        const txt = (inp?.value||'').trim(); if (!txt) return;
+        const check = _filterComment(txt);
+        if (check.blocked) { _showCommentWarning('Contenu inapproprié.'); return; }
+        const c = { id: uid(), username: window.currentUser.username, avatar: window.currentUser.avatar||'',
+            text: txt, time: isoNow(), likes: 0, likedByMe: false };
+        const db = _actusCommentsDB[cardId] || [];
+        db.unshift(c);
+        _actusCommentsDB[cardId] = db;
+        const ref = FB_DB.ref('card_comments/' + cardId);
+        ref.set(db.map(x => { const n={...x}; delete n.likedByMe; return n; }))
+            .catch(e => console.error('[actus-comments] write error:', e));
+        inp.value = ''; inp.style.height = '';
+        _actusRenderComments(cardId);
+    };
+
+    window._actusMoreComments = function(cardId) {
+        _actusShown[cardId] = (_actusShown[cardId] || ACTUS_CC_MAX) + ACTUS_CC_MAX;
+        _actusRenderComments(cardId);
+    };
+
+    function _actusLikeComment(cid, btn) {
+        let found = null; let cardId = '';
+        Object.keys(_actusCommentsDB).forEach(k => {
+            const c = _actusCommentsDB[k].find(x => x.id === cid);
+            if (c) { found = c; cardId = k; }
+        });
+        if (!found) return;
+        found.likedByMe = !found.likedByMe;
+        found.likes = Math.max(0, (found.likes||0) + (found.likedByMe ? 1 : -1));
+        btn.className = 'card-comment-item__like' + (found.likedByMe?' liked':'');
+        btn.innerHTML = (found.likedByMe?'❤️':'🤍') + ' ' + found.likes;
+        const ref = FB_DB.ref('card_comments/' + cardId);
+        ref.set(_actusCommentsDB[cardId].map(x => { const n={...x}; delete n.likedByMe; return n; }))
+            .catch(e => console.error('[actus-comments] like error:', e));
+    }
+
+    function _actusDeleteComment(cid) {
+        let cardId = ''; let db = [];
+        Object.keys(_actusCommentsDB).forEach(k => {
+            const idx = _actusCommentsDB[k].findIndex(x => x.id === cid);
+            if (idx !== -1) { _actusCommentsDB[k].splice(idx, 1); cardId = k; db = _actusCommentsDB[k]; }
+        });
+        if (!cardId) return;
+        const ref = FB_DB.ref('card_comments/' + cardId);
+        ref.set(db.map(x => { const n={...x}; delete n.likedByMe; return n; }))
+            .catch(e => console.error('[actus-comments] delete error:', e));
+        _actusRenderComments(cardId);
+    }
+
+    // Sync login state into actus comments
+    const _actusLoginSync = window.discordLogin;
+    window.discordLogin = function(user) {
+        if (typeof _actusLoginSync === 'function') _actusLoginSync(user);
+        Object.keys(_actusCommentsDB).forEach(cardId => _actusUpdateLogin(cardId));
+    };
+
     // Sync login state into card comments quand discordLogin est appelé
     const _origDiscordLogin = window.discordLogin;
     window.discordLogin = function(user) {
@@ -5689,8 +5824,39 @@
         }
     }
 
+    function _sortActusSection() {
+        const section = document.getElementById('cat-actus');
+        if (!section) return;
+        const dossiers = [...section.querySelectorAll('.secret-bulletin')];
+        if (dossiers.length < 2) return;
+        const oldPositions = new Map();
+        dossiers.forEach(d => oldPositions.set(d, d.getBoundingClientRect()));
+        dossiers.sort((a, b) => {
+            const tsA = a.dataset.date ? parseInt(a.dataset.date, 10) || 0 : 0;
+            const tsB = b.dataset.date ? parseInt(b.dataset.date, 10) || 0 : 0;
+            return tsB - tsA;
+        });
+        dossiers.forEach(d => section.appendChild(d));
+        requestAnimationFrame(() => {
+            dossiers.forEach(d => {
+                const oldRect = oldPositions.get(d);
+                if (!oldRect) return;
+                const newRect = d.getBoundingClientRect();
+                const dx = oldRect.left - newRect.left;
+                const dy = oldRect.top - newRect.top;
+                if (Math.abs(dx) < 2 && Math.abs(dy) < 2) return;
+                d.animate([
+                    { transform: `translate(${dx}px, ${dy}px)` },
+                    { transform: 'translate(0, 0)' }
+                ], { duration: 350, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' });
+            });
+        });
+    }
+
     function _sortAllSections() {
         document.querySelectorAll('.category-section:not(#cat-actus)').forEach(s => _sortSection(s));
+        _sortActusSection();
+        if (typeof initPostLikes === 'function') initPostLikes();
     }
 
     function _injectSortToggles() {
@@ -6273,7 +6439,8 @@
             const contentRendered = typeof renderMarkdown === 'function'
                 ? renderMarkdown(card.actusText || card.msgText || '')
                 : e(card.actusText || '');
-            html = `<div class="secret-bulletin" data-cc-id="${card.id}" style="margin-bottom:24px;">
+            const likeId = 'dossier-' + _plSlug(card.title);
+            const actHtml = `<div class="secret-bulletin" data-cc-id="${card.id}" data-date="${_cardTs}" style="margin-bottom:24px;">
                 <div class="bulletin-header">
                     <h2>${e(card.title)}</h2>
                     <div class="bulletin-meta">STATUT : ACTIF<br>DATE : ${dateLabel}</div>
@@ -6281,12 +6448,45 @@
                 <div class="bulletin-content">
                     <p>${contentRendered}</p>
                 </div>
+                <div style="display:flex;align-items:center;padding:10px 0 4px;border-top:1px solid rgba(128,128,128,0.12);margin-top:12px;">
+                    <span class="static-actus-like-init" data-like-id="${likeId}"></span>
+                </div>
+                <div class="card-comments-section">
+                    <div class="card-comments-toggle" onclick="this.classList.toggle('is-open');this.nextElementSibling.classList.toggle('is-open')">
+                        <span class="card-comments-toggle__icon">💬</span>
+                        <span class="card-comments-toggle__label">Commentaires</span>
+                        <span class="card-comments-toggle__count actus-cc-count" data-actus-id="${e(card.id)}">0</span>
+                        <span class="card-comments-toggle__arrow">▾</span>
+                    </div>
+                    <div class="card-comments-body">
+                        <div class="card-comment-login actus-cc-login" data-actus-id="${e(card.id)}">
+                            <span>🎮</span><span>Connecte-toi pour commenter</span>
+                            <button onclick="_discordLogin()">Se connecter</button>
+                        </div>
+                        <div class="card-comment-write is-hidden actus-cc-write" data-actus-id="${e(card.id)}">
+                            <div class="card-comment-avatar-wrap"></div>
+                            <div style="flex:1;min-width:0">
+                                <textarea class="card-comment-input actus-cc-input" data-actus-id="${e(card.id)}"
+                                    placeholder="Ton avis sur ce dossier…" rows="1"
+                                    oninput="autoResize(this)" maxlength="240"></textarea>
+                                <button class="card-comment-submit" onclick="_actusPostComment('${e(card.id)}')">Poster</button>
+                            </div>
+                        </div>
+                        <div class="card-comment-list actus-cc-list" data-actus-id="${e(card.id)}"></div>
+                        <button class="card-comment-more actus-cc-more" data-actus-id="${e(card.id)}"
+                            onclick="_actusMoreComments('${e(card.id)}')" style="display:none">Voir plus →</button>
+                    </div>
+                </div>
             </div>`;
             // Pour les actus on insère dans la section (pas dans une grid)
             const tmp2 = document.createElement('div');
-            tmp2.innerHTML = html.trim();
+            tmp2.innerHTML = actHtml.trim();
             const actusEl = tmp2.firstChild;
-            section.appendChild(actusEl);
+            // Insérer en premier (nouveau en haut)
+            const firstActus = section.querySelector('.secret-bulletin');
+            if (firstActus) section.insertBefore(actusEl, firstActus);
+            else section.appendChild(actusEl);
+            _initActusComments(card.id);
             return; // sortie anticipée, pas de like card footer
 
         } else {
