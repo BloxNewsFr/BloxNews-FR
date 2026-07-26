@@ -1621,31 +1621,36 @@
         const _depthFactors = { '3': 0.6, '2': 0.35, '1': 0.18, '0': 0.08, '-1': 0.03, '-2': 0.01 };
 
         const bulletins = [
-            { num: "001", img: "./001/img/img_fruit.png",          href: "./001/bulletin-001.html" },
-            { num: "002", img: "./002/img/1th_img.png",            href: "./002/bulletin-002.html" },
-            { num: "003", img: "./003/img/1th_img.png",            href: "./003/bulletin-003.html" },
-            { num: "004", img: "./004/img/1th_img.png",            href: "./004/bulletin-004.html" },
-            { num: "005", img: "./005/img/bloxyNews1.png",         href: "./005/bulletin-005.html" },
-            { num: "006", img: "./006/img/Thumbnail1Woohoo.png",   href: "./006/bulletin-006.html" },
-            { num: "007", img: "./007/img/IndraCover.png",         href: "./007/bulletin-007.html" },
-            { num: "008", img: "./008/img/ZiolesAuraFarm.png",     href: "./008/bulletin-008.html" },
-            { num: "009", img: "./009/img/duel.png",               href: "./009/bulletin-009.html" },
-            { num: "010", img: "./010/img/RipVSRed.png",           href: "./010/bulletin-010.html" },
-            { num: "011", img: "./011/img/bulletin011cover.png",   href: "./011/bulletin-011.html" },
-            { num: "012", img: "./012/img/hack.png",               href: "./012/bulletin-012.html" },
-            { num: "013", img: "./013/img/BrokenShip.png",         href: "./013/bulletin-013.html" },
-            { num: "014", img: "./014/img/rocket.png",             href: "./014/bulletin-014.html" },
-            { num: "015", img: "./015/img/darkblade.png",          href: "./015/bulletin-015.html" },
-            { num: "016", img: "./016/img/kraken.png",             href: "./016/bulletin-016.html" },
-            { num: "017", img: "./017/img/halloween.png",          href: "./017/bulletin-017.html" },
-            { num: "018", img: "./018/img/MysteryMan.png",         href: "./018/bulletin-018.html" },
-            { num: "019", img: "./019/img/Mygame.png",             href: "./019/bulletin-019.html" },
-            { num: "020", img: "./020/img/bulletin_20.png",        href: "./020/bulletin-020.html" },
-            { num: "021", img: "./021/img/SummerVacay.png",        href: "./021/bulletin-021.html" },
-            { num: "022", img: "./022/img/SummerBanner.png",       href: "./022/bulletin-022.html" },
-            { num: "023", img: "./023/img/INDRAATTACK.png",        href: "./023/bulletin-023.html" },
+            { num: "001", img: "./001/img/img_fruit.png",          href: "./001/bulletin-001.html", date: "2025-03-20" },
+            { num: "002", img: "./002/img/1th_img.png",            href: "./002/bulletin-002.html", date: "2025-03-27" },
+            { num: "003", img: "./003/img/1th_img.png",            href: "./003/bulletin-003.html", date: "2025-04-03" },
+            { num: "004", img: "./004/img/1th_img.png",            href: "./004/bulletin-004.html", date: "2025-04-10" },
+            { num: "005", img: "./005/img/bloxyNews1.png",         href: "./005/bulletin-005.html", date: "2025-05-09" },
+            { num: "006", img: "./006/img/Thumbnail1Woohoo.png",   href: "./006/bulletin-006.html", date: "2025-05-15" },
+            { num: "007", img: "./007/img/IndraCover.png",         href: "./007/bulletin-007.html", date: "2025-05-23" },
+            { num: "008", img: "./008/img/ZiolesAuraFarm.png",     href: "./008/bulletin-008.html", date: "2025-05-30" },
+            { num: "009", img: "./009/img/duel.png",               href: "./009/bulletin-009.html", date: "2025-06-05" },
+            { num: "010", img: "./010/img/RipVSRed.png",           href: "./010/bulletin-010.html", date: "2025-06-13" },
+            { num: "011", img: "./011/img/bulletin011cover.png",   href: "./011/bulletin-011.html", date: "2025-06-20" },
+            { num: "012", img: "./012/img/hack.png",               href: "./012/bulletin-012.html", date: "2025-06-20" },
+            { num: "013", img: "./013/img/BrokenShip.png",         href: "./013/bulletin-013.html", date: "2025-07-04" },
+            { num: "014", img: "./014/img/rocket.png",             href: "./014/bulletin-014.html", date: "2025-07-11" },
+            { num: "015", img: "./015/img/darkblade.png",          href: "./015/bulletin-015.html", date: "2025-07-19" },
+            { num: "016", img: "./016/img/kraken.png",             href: "./016/bulletin-016.html", date: "2025-07-25" },
+            { num: "017", img: "./017/img/halloween.png",          href: "./017/bulletin-017.html", date: "2025-10-01" },
+            { num: "018", img: "./018/img/MysteryMan.png",         href: "./018/bulletin-018.html", date: "2025-08-01" },
+            { num: "019", img: "./019/img/Mygame.png",             href: "./019/bulletin-019.html", date: "2026-02-08" },
+            { num: "020", img: "./020/img/bulletin_20.png",        href: "./020/bulletin-020.html", date: "2026-07-02" },
+            { num: "021", img: "./021/img/SummerVacay.png",        href: "./021/bulletin-021.html", date: "2026-07-09" },
+            { num: "022", img: "./022/img/SummerBanner.png",       href: "./022/bulletin-022.html", date: "2026-07-17" },
+            { num: "023", img: "./023/img/INDRAATTACK.png",        href: "./023/bulletin-023.html", date: "2026-07-23" },
         ];
-        const NEW_THRESHOLD = 4;
+        const NEW_DAYS = 7; // Badge "Nouveau" visible pendant 7 jours après publication
+        function isRecentBulletin(b) {
+            if (!b.date) return false;
+            const diff = Date.now() - new Date(b.date).getTime();
+            return diff >= 0 && diff < NEW_DAYS * 24 * 60 * 60 * 1000;
+        }
         const PER_PAGE = 6;
         let currentPage = 1;
         // ── État recherche filtre ──────────────────────────────────────
@@ -2166,7 +2171,7 @@
                 grid.innerHTML = slice.map((b, i) => {
                     const special = specialCards[b.num] || {};
                     const globalIndex = _searchActive ? i : (start + i);
-                    const isNew = !_searchActive && globalIndex >= bulletins.length - NEW_THRESHOLD;
+                    const isNew = isRecentBulletin(b);
                     const statusLabel = special.status !== undefined ? (special.status || "") : (isNew ? "Nouveau" : "");
                     
                     let deco = "";
