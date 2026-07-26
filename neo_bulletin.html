@@ -3217,68 +3217,53 @@
                 </div>
 --
             <!-- ══════════════════════════════════════════════
-                 SYSTÈME DE COMMENTAIRES
+                 SYSTÈME DE COMMENTAIRES UNIFIÉ
             ══════════════════════════════════════════════ -->
-            <div class="comment-section" id="commentSection">
+            <div class="card-comments-section" id="commentSection" style="border-radius:18px;margin-top:20px;border:1px solid rgba(255,255,255,0.07)">
 
-                <!-- Barre toggle -->
-                <div class="comment-toggle-bar" id="commentToggle" onclick="toggleComments()">
-                    <div class="comment-toggle-bar__icon">
+                <div class="card-comments-toggle" id="commentToggle" onclick="toggleComments()" style="border-radius:18px">
+                    <div class="card-comments-toggle__icon">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block">
                             <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.002.022.015.043.033.055a19.91 19.91 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z" fill="currentColor"/>
                         </svg>
                     </div>
-                    <span class="comment-toggle-bar__label">Commentaires</span>
-                    <span class="comment-toggle-bar__count" id="commentCountBadge">0</span>
-                    <span class="comment-toggle-bar__arrow">▾</span>
+                    <span class="card-comments-toggle__label">Commentaires</span>
+                    <span class="card-comments-toggle__count" id="commentCountBadge">0</span>
+                    <span class="card-comments-toggle__arrow">▾</span>
                 </div>
 
-                <!-- Corps -->
-                <div class="comment-body" id="commentBody">
+                <div class="card-comments-body" id="commentBody">
 
-                    <!-- Bannière Discord login -->
-                    <div class="comment-login-banner" id="discordBanner">
-                        <span class="comment-login-banner__icon">🎮</span>
-                        <div class="comment-login-banner__text">
-                            <div class="comment-login-banner__title">Connecte-toi pour commenter</div>
-                            <div class="comment-login-banner__sub">Ton pseudo et ton avatar Discord seront utilisés</div>
+                    <div class="card-comment-login" id="discordBanner">
+                        <span style="font-size:16px">🎮</span>
+                        <div style="flex:1;min-width:0">
+                            <div style="font-weight:600;font-size:13px;color:rgba(255,255,255,0.7)">Connecte-toi pour commenter</div>
+                            <div class="card-comment-login__sub" style="font-size:12px;color:rgba(255,255,255,0.35)">Ton pseudo et ton avatar Discord seront utilisés</div>
                         </div>
-                        <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-                             🔌 POINT D'INTÉGRATION DISCORD OAUTH
-                             Remplace onclick par ton vrai handler OAuth.
-                             Appelle ensuite : discordLogin({ username, avatar })
-                        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
-                        <button class="comment-discord-btn"
-                            onclick="_discordLogin()">
-                            Se connecter
-                        </button>
+                        <button class="card-comment-login__btn" onclick="_discordLogin()">Se connecter</button>
                     </div>
 
-                    <!-- Zone de saisie (visible si connecté) -->
-                    <div class="comment-write-box is-hidden" id="commentWriteBox">
-                        <div class="comment-avatar--placeholder" id="userAvatarBox">?</div>
-                        <div class="comment-input-wrap">
-                            <textarea class="comment-input" id="commentInput"
+                    <div class="card-comment-write is-hidden" id="commentWriteBox">
+                        <div class="card-comment-avatar-wrap"><div class="comment-avatar--placeholder" id="userAvatarBox">?</div></div>
+                        <div class="card-comment-input-wrap" style="flex:1;min-width:0">
+                            <textarea class="card-comment-input" id="commentInput"
                                 placeholder="Écris un commentaire…" rows="1"
                                 oninput="autoResize(this);updateCharCounter(this)" maxlength="240"></textarea>
-                            <span class="comment-char-counter" id="charCounter">240</span>
-                            <button class="comment-submit" onclick="postComment()">Poster</button>
+                            <span class="card-comment-char-counter" id="charCounter">240</span>
+                            <button class="card-comment-submit" onclick="postComment()">Poster</button>
                         </div>
                     </div>
 
-                    <!-- Séparateur + tri -->
-                    <div class="comment-sort-bar">
-                        <span class="comment-sort-label">Trier :</span>
-                        <button class="comment-sort-btn active" id="sortTop" onclick="setSort('top')">⭐ Top</button>
-                        <button class="comment-sort-btn" id="sortNew" onclick="setSort('new')">🕐 Récents</button>
+                    <div class="card-comment-sort-bar">
+                        <span class="card-comment-sort-label">Trier :</span>
+                        <button class="card-comment-sort-btn active" id="sortTop" onclick="setSort('top')">⭐ Top</button>
+                        <button class="card-comment-sort-btn" id="sortNew" onclick="setSort('new')">🕐 Récents</button>
                     </div>
-                    <div class="comment-divider">Commentaires</div>
+                    <div class="card-comment-divider">Commentaires</div>
 
-                    <!-- Top 4 commentaires -->
-                    <div class="comment-list" id="commentList"></div>
+                    <div class="card-comment-list" id="commentList"></div>
 
-                    <!-- Voir plus -->
-                    <button class="comment-see-more-btn" id="seeMoreBtn" onclick="openAllComments()">
+                    <button class="card-comment-see-all" id="seeMoreBtn" onclick="openAllComments()">
                         Voir tous les commentaires →
                     </button>
 
@@ -4739,6 +4724,17 @@
         </div>
     </div>
 
+    <!-- Actus all-comments modal -->
+    <div id="actusAllCommentsModal" onclick="_actusCloseAllComments(event)">
+        <div class="actus-comments-modal">
+            <div class="actus-comments-modal__header">
+                <div class="actus-comments-modal__title">💬 Tous les commentaires</div>
+                <button class="actus-comments-modal__close" onclick="_actusCloseAllComments()">✕</button>
+            </div>
+            <div class="actus-comments-modal__body"></div>
+        </div>
+    </div>
+
     <!-- LOGIQUE COMMENTAIRES -->
     <script>
     /* ─── Helpers timestamp relatif ────────────────────────────────── */
@@ -5379,9 +5375,9 @@
     function updateCharCounter(el) {
         const counter = document.getElementById('charCounter');
         if (!counter) return;
-        const rem = 240 - el.value.length;
-        counter.textContent = rem;
-        counter.className = 'comment-char-counter' + (rem < 20 ? ' danger' : rem < 50 ? ' warn' : '');
+        const rem = 240 - (el.value||'').length;
+        counter.textContent = Math.max(0, rem);
+        counter.className = 'card-comment-char-counter' + (rem < 20 ? ' danger' : rem < 50 ? ' warn' : '');
     }
 
     /* ─── Login ─── */
