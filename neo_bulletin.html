@@ -47,13 +47,7 @@
         html[data-theme="dark"] .site-header { background-color: rgba(20,20,35,0.55); border-bottom-color: rgba(255,255,255,0.1); }
 
         html[data-theme="dark"] .leaks-tab { background: #171827; color: #dcdff2; border-color: #2a2d45; }
-        html[data-theme="dark"] .secret-bulletin { background: linear-gradient(135deg, #171827 0%, #1c1420 100%); }
-        html[data-theme="dark"] .secret-bulletin::before { color: rgba(255,26,26,0.12); border-color: rgba(255,26,26,0.12); }
-        html[data-theme="dark"] .bulletin-header { border-bottom-color: rgba(255,255,255,0.12); }
-        html[data-theme="dark"] .bulletin-header h2 { color: #f0f2ff; }
-        html[data-theme="dark"] .bulletin-meta { color: #b7bbd8; }
-        html[data-theme="dark"] .bulletin-content p { color: #cdd0ea; }
-        html[data-theme="dark"] .category-title { color: #f0f2ff; }
+        /* secret-bulletin : toujours dark, overrides thème supprimés */
 
         html[data-theme="dark"] .news-card { background: #171827; }
         html[data-theme="dark"] .news-card__content { background: #171827; }
@@ -441,18 +435,10 @@
             background: rgba(255,255,255,0.35); flex-shrink: 0;
         }
         .bulletin-topbar__status {
-            font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 800;
-            text-transform: uppercase; letter-spacing: 1.5px;
-            color: #ffda00; margin-left: auto;
-            display: flex; align-items: center; gap: 5px;
+            font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 1px;
+            color: rgba(255,255,255,0.38); margin-left: auto;
         }
-        .bulletin-topbar__status::before {
-            content: ''; width: 6px; height: 6px; border-radius: 50%;
-            background: #ffda00;
-            box-shadow: 0 0 6px #ffda00;
-            animation: pulseDot 2s ease-in-out infinite;
-        }
-        @keyframes pulseDot { 0%,100% { opacity: 1; } 50% { opacity: 0.35; } }
 
         /* Contenu principal */
         .bulletin-inner { padding: 28px 32px 24px 36px; position: relative; z-index: 1; }
@@ -480,8 +466,8 @@
         .bulletin-content .highlightr { color: #ff4444; background: rgba(255, 26, 26, 0.14); padding: 2px 8px; border-radius: 6px; font-weight: 700; }
         .bulletin-content .highlightv { color: #a67fff; background: rgba(120, 50, 255, 0.14); padding: 2px 8px; border-radius: 6px; font-weight: 700; }
 
-        /* Dark mode du bulletin est le même (déjà sombre) */
-        html[data-theme="dark"] .secret-bulletin { background: #0a0a12; border-color: rgba(255,26,26,0.22); }
+        /* Dark mode du bulletin est le même (toujours sombre, indépendamment du thème) */
+        /* Suppression des overrides thème hérités — la card est dark by design */
 
         .category-title {
             display: flex; align-items: center; gap: 20px; font-size: 32px; font-weight: 900; text-transform: uppercase; margin-bottom: 30px; color: #111; font-family: 'LuckiestGuy Regular', cursive; letter-spacing: 1px;
@@ -2753,53 +2739,69 @@
             font-weight: 700; font-family: 'Inter', sans-serif; cursor: default;
         }
 
-        /* Preview ACTUS — calque le secret-bulletin */
+        /* Preview ACTUS — calque le secret-bulletin redesigné */
         .ncm-actus-preview {
-            border-radius: 16px; overflow: hidden;
-            background: linear-gradient(135deg, #fff 0%, #fff9f9 100%);
-            border-left: 8px solid #ff1a1a;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.12);
-            padding: 20px; position: relative;
+            border-radius: 16px; overflow: hidden; position: relative;
+            background: #0d0d14;
+            border: 1px solid rgba(255,26,26,0.18);
+            box-shadow: 0 4px 24px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,26,26,0.06);
+        }
+        .ncm-actus-preview::after {
+            content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+            width: 3px; background: linear-gradient(180deg, #ff1a1a, #cc0000);
         }
         .ncm-actus-preview::before {
             content: 'TOP SECRET'; position: absolute; bottom: 12px; right: 12px;
-            color: rgba(255,26,26,0.07); font-size: 28px; font-weight: 900;
+            color: rgba(255,26,26,0.06); font-size: 22px; font-weight: 900;
             transform: rotate(12deg); pointer-events: none;
             font-family: 'LuckiestGuy Regular', cursive;
-            border: 3px solid rgba(255,26,26,0.07); padding: 6px 12px; border-radius: 8px;
+            border: 2px solid rgba(255,26,26,0.06); padding: 4px 10px; border-radius: 6px;
         }
+        /* Topbar preview */
+        .ncm-actus-topbar {
+            background: linear-gradient(90deg, #cc0000 0%, #1a0000 100%);
+            padding: 7px 16px;
+            display: flex; align-items: center; gap: 8px;
+            border-bottom: 1px solid rgba(255,26,26,0.2);
+            font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px;
+            color: rgba(255,255,255,0.65); font-family: 'LuckiestGuy Regular', cursive;
+        }
+        .ncm-actus-topbar-dot { width: 5px; height: 5px; border-radius: 50%; background: rgba(255,255,255,0.3); flex-shrink: 0; }
+        /* Inner preview */
+        .ncm-actus-inner { padding: 16px 18px 14px 20px; }
         .ncm-actus-header {
             display: flex; justify-content: space-between; align-items: flex-start;
-            gap: 12px; border-bottom: 2px dashed #e0e0e0; padding-bottom: 12px; margin-bottom: 14px;
+            gap: 12px; border-bottom: 1px solid rgba(255,255,255,0.07); padding-bottom: 12px; margin-bottom: 12px;
         }
         .ncm-actus-h2 {
-            font-family: 'LuckiestGuy Regular', cursive; font-size: 16px; color: #111;
-            line-height: 1.2; flex: 1; min-width: 0; outline: none;
+            font-family: 'LuckiestGuy Regular', cursive; font-size: 15px; color: rgba(255,240,240,0.92);
+            line-height: 1.25; flex: 1; min-width: 0; outline: none;
             border: 1.5px dashed transparent; border-radius: 6px; padding: 2px 4px;
             transition: border-color 0.15s;
+            text-shadow: 0 1px 6px rgba(255,26,26,0.25);
         }
-        .ncm-actus-h2:hover, .ncm-actus-h2:focus { border-color: rgba(124,58,237,0.4); }
+        .ncm-actus-h2:hover, .ncm-actus-h2:focus { border-color: rgba(255,80,80,0.4); background: rgba(255,255,255,0.03); }
         .ncm-actus-meta {
-            font-size: 10px; font-weight: 700; color: #999; text-align: right;
-            text-transform: uppercase; line-height: 1.7; flex-shrink: 0;
-            background: rgba(255,26,26,0.04); border: 1px solid rgba(255,26,26,0.1);
-            border-radius: 8px; padding: 5px 8px;
+            font-size: 9px; font-weight: 700; color: rgba(255,180,180,0.5); text-align: right;
+            text-transform: uppercase; line-height: 1.8; flex-shrink: 0;
+            background: rgba(255,26,26,0.07); border: 1px solid rgba(255,26,26,0.15);
+            border-radius: 8px; padding: 4px 8px;
         }
         .ncm-actus-text {
-            font-size: 12px; color: #333; line-height: 1.6; outline: none;
+            font-size: 12px; color: rgba(200,190,190,0.75); line-height: 1.65; outline: none;
             border: 1.5px dashed transparent; border-radius: 6px; padding: 2px 4px;
-            transition: border-color 0.15s; min-height: 44px;
+            transition: border-color 0.15s; min-height: 40px;
         }
-        .ncm-actus-text:hover, .ncm-actus-text:focus { border-color: rgba(124,58,237,0.4); }
+        .ncm-actus-text:hover, .ncm-actus-text:focus { border-color: rgba(255,80,80,0.35); background: rgba(255,255,255,0.02); }
         .ncm-actus-comments {
-            margin-top: 14px; display: flex; align-items: center; gap: 10px;
-            padding: 10px 14px; background: #f8f8f8; border-radius: 12px;
-            border: 1px solid #eee; font-size: 12px; color: #555;
+            margin-top: 12px; display: flex; align-items: center; gap: 8px;
+            padding: 8px 12px; background: rgba(255,255,255,0.03); border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.06); font-size: 11px; color: rgba(255,255,255,0.3);
         }
         .ncm-actus-comments-icon {
-            width: 28px; height: 28px; border-radius: 8px;
-            background: linear-gradient(135deg, #ff1a1a, #ff5555);
-            display: flex; align-items: center; justify-content: center; color: #fff; font-size: 12px;
+            width: 24px; height: 24px; border-radius: 7px;
+            background: linear-gradient(135deg, rgba(255,26,26,0.25), rgba(255,26,26,0.1));
+            display: flex; align-items: center; justify-content: center; color: rgba(255,100,100,0.7); font-size: 12px;
         }
 
         /* Colonne droite — Formulaire */
@@ -3287,8 +3289,10 @@
             .main-content { padding: 14px 12px 110px !important; overflow: visible !important; }
 
             /* ── Secret bulletin ── */
-            .secret-bulletin { padding: 20px 16px; border-radius: 16px; }
-            .secret-bulletin::before { font-size: 24px; bottom: 8px; right: 8px; }
+            .secret-bulletin { border-radius: 14px; }
+            .secret-bulletin::before { font-size: 18px; bottom: 8px; right: 8px; }
+            .bulletin-topbar { padding: 8px 16px; }
+            .bulletin-inner { padding: 18px 16px 16px 20px; }
             .bulletin-header { flex-direction: column; align-items: flex-start; gap: 8px; }
             .bulletin-header h2 { font-size: 20px; }
             .bulletin-meta { text-align: left; white-space: normal; font-size: 11px; }
@@ -3621,7 +3625,7 @@
                     <span class="bulletin-topbar__label">Blox Leaks Network</span>
                     <span class="bulletin-topbar__dot"></span>
                     <span class="bulletin-topbar__label">Dossier #001</span>
-                    <span class="bulletin-topbar__status">En direct</span>
+                    <span class="bulletin-topbar__status">20 juil. 2026</span>
                 </div>
                 <div class="bulletin-inner">
                 <div class="bulletin-header">
@@ -4270,9 +4274,15 @@
                     <!-- Preview ACTUS -->
                     <div id="ncmPreviewActus">
                         <div class="ncm-actus-preview">
+                            <div class="ncm-actus-topbar">
+                                Blox Leaks Network
+                                <span class="ncm-actus-topbar-dot"></span>
+                                Actus
+                            </div>
+                            <div class="ncm-actus-inner">
                             <div class="ncm-actus-header">
-                                <div class="ncm-actus-h2" contenteditable="true" id="ncmActusTitle" spellcheck="false">DOSSIER #001 : TITRE DU DOSSIER</div>
-                                <div class="ncm-actus-meta">STATUT : ACTIF<br>DATE : MAI 2026</div>
+                                <div class="ncm-actus-h2" contenteditable="true" id="ncmActusTitle" spellcheck="false">TITRE DU DOSSIER</div>
+                                <div class="ncm-actus-meta">STATUT : ACTIF<br>À L'INSTANT</div>
                             </div>
                             <div class="ncm-actus-text" contenteditable="true" id="ncmActusText" spellcheck="false">Écris le contenu du dossier ici. Tu peux utiliser **gras**, ==surligné==, __souligné__…</div>
                             <div class="ncm-actus-comments">
@@ -4281,6 +4291,7 @@
                                 </div>
                                 Commentaires — section incluse automatiquement
                             </div>
+                            </div><!-- /ncm-actus-inner -->
                         </div>
                     </div>
 
@@ -7105,6 +7116,13 @@
                 : e(card.actusText || '');
             const likeId = 'dossier-' + _plSlug(card.title);
             const actHtml = `<div class="secret-bulletin" data-cc-id="${card.id}" data-date="${_cardTs}" style="margin-bottom:24px;">
+                <div class="bulletin-topbar">
+                    <span class="bulletin-topbar__label">Blox Leaks Network</span>
+                    <span class="bulletin-topbar__dot"></span>
+                    <span class="bulletin-topbar__label">Actus</span>
+                    <span class="bulletin-topbar__status" style="animation:none;font-size:10px;color:rgba(255,255,255,0.35);">${dateLabel}</span>
+                </div>
+                <div class="bulletin-inner">
                 <div class="bulletin-header">
                     <h2>${e(card.title)}</h2>
                     <div class="bulletin-meta">STATUT : ACTIF<br>DATE : ${dateLabel}</div>
@@ -7153,6 +7171,7 @@
                             onclick="_actusOpenAllComments('${e(card.id)}')" style="display:none">Voir tous les commentaires →</button>
                     </div>
                 </div>
+                </div><!-- /bulletin-inner -->
             </div>`;
             // Pour les actus on insère dans la section (pas dans une grid)
             const tmp2 = document.createElement('div');
