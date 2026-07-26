@@ -4777,6 +4777,10 @@
     }
 
     function _dcUpdateLogin() {
+        if (!window.currentUser && typeof _getDiscordUser === 'function') {
+            const cached = _getDiscordUser();
+            if (cached) window.currentUser = { username: cached.username, avatar: _discordAvatarUrl(cached) };
+        }
         const banner = document.getElementById('decryptCommentLoginBanner');
         const box    = document.getElementById('decryptCommentWriteBox');
         const wrap   = document.getElementById('decryptCommentAvatarWrap');
@@ -4832,10 +4836,8 @@
 
     function loadMoreDecryptComments() { _dcShown += 5; _dcRender(); }
 
-
-
     /* ════════════════════════════════════════════════════════════════
-       ÉDITEUR DE CONTENU DANS LA LIGHTBOX (/edit modal)
+        ÉDITEUR DE CONTENU DANS LA LIGHTBOX (/edit modal)
     ═══════════════════════════════════════════════════════════════ */
     const MODAL_EDIT_STORE = 'bloxleaks_modal_edits';
     let _modalEditKey = null;
@@ -5137,6 +5139,10 @@
     }
 
     function _ccUpdateLoginState() {
+        if (!window.currentUser && typeof _getDiscordUser === 'function') {
+            const cached = _getDiscordUser();
+            if (cached) window.currentUser = { username: cached.username, avatar: _discordAvatarUrl(cached) };
+        }
         const banner = document.getElementById('cardCommentLoginBanner');
         const box    = document.getElementById('cardCommentWriteBox');
         const wrap   = document.getElementById('cardCommentAvatarWrap');
@@ -5260,6 +5266,10 @@
     }
 
     function _actusUpdateLogin(cardId) {
+        if (!window.currentUser && typeof _getDiscordUser === 'function') {
+            const cached = _getDiscordUser();
+            if (cached) window.currentUser = { username: cached.username, avatar: _discordAvatarUrl(cached) };
+        }
         const banner = document.querySelector(`.actus-cc-login[data-actus-id="${cardId}"]`);
         const box    = document.querySelector(`.actus-cc-write[data-actus-id="${cardId}"]`);
         const wrap   = box?.querySelector('.card-comment-avatar-wrap');
@@ -7713,6 +7723,8 @@
         // Helper: afficher l'utilisateur dans la navbar (sans casser si erreur)
         function showUserInNavbar(user) {
             console.log('showUserInNavbar called with:', user);
+            window.currentUser = { username: user.username, avatar: _discordAvatarUrl(user) };
+            window.discordCurrentUser = window.currentUser;
             try {
                 const avatarUrl = _discordAvatarUrl(user);
                 const displayName = user.global_name || user.username;
