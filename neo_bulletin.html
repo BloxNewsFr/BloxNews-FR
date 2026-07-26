@@ -1031,43 +1031,68 @@
            COMMENTAIRES DANS LA LIGHTBOX (par card)
         ══════════════════════════════════════════════ */
         .card-comments-section {
-            border-top: 1px solid rgba(255,255,255,0.07);
-            background: rgba(8,8,16,0.98);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px;
+            background: linear-gradient(145deg, rgba(12,12,24,0.99), rgba(8,8,20,0.97));
+            box-shadow: 0 4px 24px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.06);
+            overflow: hidden;
         }
         .card-comments-toggle {
             display: flex; align-items: center; gap: 10px;
-            padding: 12px 18px; cursor: pointer; user-select: none;
+            padding: 14px 20px; cursor: pointer; user-select: none;
             transition: background 0.2s;
+            background: rgba(255,255,255,0.02);
+            border-bottom: 1px solid transparent;
         }
-        .card-comments-toggle:hover { background: rgba(255,255,255,0.04); }
-        .card-comments-toggle__icon { font-size: 16px; }
-        .card-comments-toggle__label { font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.6); flex: 1; }
+        .card-comments-toggle:hover { background: rgba(255,255,255,0.05); }
+        .card-comments-toggle.is-open {
+            border-bottom-color: rgba(255,255,255,0.06);
+            background: linear-gradient(180deg, rgba(255,255,255,0.03), transparent);
+        }
+        .card-comments-toggle__icon {
+            font-size: 16px;
+            width: 34px; height: 34px; border-radius: 10px;
+            background: linear-gradient(135deg, rgba(255,26,26,0.15), rgba(255,26,26,0.05));
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+            color: rgba(255,100,100,0.7);
+            box-shadow: 0 2px 8px rgba(255,26,26,0.08);
+        }
+        .card-comments-toggle__label { font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.6); flex: 1; letter-spacing: 0.3px; }
         .card-comments-toggle__count {
             font-size: 11px; font-weight: 800; background: rgba(255,26,26,0.18);
             color: rgba(255,100,100,0.9); padding: 2px 8px; border-radius: 100px;
-            min-width: 22px; text-align: center;
+            min-width: 22px; text-align: center; box-shadow: 0 1px 4px rgba(255,26,26,0.08);
         }
-        .card-comments-toggle__arrow { font-size: 11px; color: rgba(255,255,255,0.3); transition: transform 0.25s; }
+        .card-comments-toggle__arrow { font-size: 11px; color: rgba(255,255,255,0.3); transition: transform 0.25s; font-weight: 900; }
         .card-comments-toggle.is-open .card-comments-toggle__arrow { transform: rotate(180deg); }
 
         .card-comments-body {
             max-height: 0; overflow: hidden;
             transition: max-height 0.35s cubic-bezier(0.4,0,0.2,1);
-            padding: 0 18px;
+            padding: 0 20px;
         }
-        .card-comments-body.is-open { max-height: 420px; overflow-y: auto; padding: 0 18px 14px; }
+        .card-comments-body.is-open { max-height: 420px; overflow-y: auto; padding: 0 20px 14px; }
+        .card-comments-body::-webkit-scrollbar { width: 4px; }
+        .card-comments-body::-webkit-scrollbar-track { background: transparent; }
+        .card-comments-body::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
+        .card-comments-body::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.15); }
 
         .card-comment-login {
             display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
-            padding: 12px 0; font-size: 13px; color: rgba(255,255,255,0.45);
+            padding: 14px 0; font-size: 13px; color: rgba(255,255,255,0.45);
+            border-bottom: 1px solid rgba(255,255,255,0.04);
         }
-        .card-comment-login button {
-            padding: 6px 14px; border-radius: 100px; border: none;
-            background: #5865F2; color: #fff; font-size: 12px; font-weight: 700;
-            cursor: pointer; font-family: 'Inter', sans-serif;
+        .card-comment-login__btn {
+            padding: 7px 16px; border-radius: 100px; border: none;
+            background: linear-gradient(135deg, #5865F2, #4752c4); color: #fff; font-size: 12px; font-weight: 700;
+            cursor: pointer; font-family: 'Inter', sans-serif; flex-shrink: 0;
+            box-shadow: 0 2px 8px rgba(88,101,242,0.25);
+            transition: transform 0.2s, box-shadow 0.2s;
         }
+        .card-comment-login__btn:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(88,101,242,0.35); }
         .card-comment-write {
-            display: flex; align-items: flex-start; gap: 10px; padding: 10px 0;
+            display: flex; align-items: flex-start; gap: 10px; padding: 12px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
         }
         .card-comment-write.is-hidden { display: none; }
         .card-comment-avatar-wrap img,
@@ -1078,17 +1103,20 @@
         .card-comment-input {
             width: 100%; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
             border-radius: 10px; color: #fff; font-size: 13px; font-family: 'Inter', sans-serif;
-            padding: 8px 12px; resize: none; outline: none; line-height: 1.5;
-            transition: border-color 0.2s;
+            padding: 9px 12px; resize: none; outline: none; line-height: 1.5;
+            transition: border-color 0.2s, box-shadow 0.2s;
         }
-        .card-comment-input:focus { border-color: rgba(255,26,26,0.4); }
+        .card-comment-input:focus { border-color: rgba(255,26,26,0.4); box-shadow: 0 0 0 3px rgba(255,26,26,0.06); }
         .card-comment-input::placeholder { color: rgba(255,255,255,0.2); }
         .card-comment-submit {
             display: block; margin-top: 6px; margin-left: auto;
-            padding: 6px 14px; border-radius: 100px; border: none;
+            padding: 7px 16px; border-radius: 100px; border: none;
             background: linear-gradient(135deg, #ff1a1a, #cc0000); color: #fff;
             font-size: 12px; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif;
+            box-shadow: 0 2px 8px rgba(204,0,0,0.2);
+            transition: transform 0.2s, box-shadow 0.2s;
         }
+        .card-comment-submit:hover { transform: scale(1.04); box-shadow: 0 4px 14px rgba(204,0,0,0.35); }
         .card-comment-item {
             display: flex; gap: 10px; padding: 10px 0;
             border-bottom: 1px solid rgba(255,255,255,0.05);
@@ -1105,13 +1133,13 @@
         .card-comment-item__text { font-size: 13px; color: rgba(255,255,255,0.65); line-height: 1.5; word-break: break-word; }
         .card-comment-item__like {
             display: inline-flex; align-items: center; gap: 4px;
-            padding: 3px 8px; border-radius: 100px; border: none;
-            background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.4);
+            padding: 4px 10px; border-radius: 100px; border: 1px solid rgba(255,255,255,0.06);
+            background: rgba(255,255,255,0.04); color: rgba(255,255,255,0.4);
             font-size: 11px; cursor: pointer; margin-top: 5px;
             font-family: 'Inter', sans-serif; transition: all 0.2s;
         }
-        .card-comment-item__like:hover { background: rgba(255,26,26,0.12); color: #ff6666; }
-        .card-comment-item__like.liked { background: rgba(255,26,26,0.15); color: #ff6666; }
+        .card-comment-item__like:hover { background: rgba(255,26,26,0.1); border-color: rgba(255,26,26,0.2); color: #ff6666; }
+        .card-comment-item__like.liked { background: rgba(255,26,26,0.12); border-color: rgba(255,26,26,0.2); color: #ff6666; box-shadow: 0 1px 6px rgba(255,26,26,0.1); }
         .card-comment-item__delete {
             display: inline-flex; align-items: center;
             padding: 3px 8px; border-radius: 100px; border: none;
@@ -1130,31 +1158,32 @@
         /* ── Unified sort bar / divider / char counter / see-all ── */
         .card-comment-sort-bar {
             display: flex; align-items: center; gap: 6px;
-            padding: 8px 0 6px; margin-bottom: 2px;
+            padding: 10px 0 6px; margin-bottom: 2px;
         }
         .card-comment-sort-label {
             font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.35);
             text-transform: uppercase; letter-spacing: 0.8px; flex-shrink: 0;
         }
         .card-comment-sort-btn {
-            padding: 4px 12px; border-radius: 100px; border: 1.5px solid rgba(255,255,255,0.12);
+            padding: 5px 14px; border-radius: 100px; border: 1.5px solid rgba(255,255,255,0.12);
             font-size: 11px; font-weight: 700; cursor: pointer; background: none;
             color: rgba(255,255,255,0.4); font-family: 'Inter', sans-serif; transition: all 0.18s;
         }
         .card-comment-sort-btn.active {
-            background: #ff1a1a; border-color: #ff1a1a; color: #fff;
+            background: linear-gradient(135deg, #ff1a1a, #cc0000); border-color: #ff1a1a; color: #fff;
+            box-shadow: 0 2px 8px rgba(255,26,26,0.25);
         }
         .card-comment-sort-btn:not(.active):hover { border-color: rgba(255,26,26,0.3); color: #ff6666; }
         .card-comment-divider {
             display: flex; align-items: center; gap: 10px;
-            color: rgba(255,255,255,0.2); font-size: 10px; font-weight: 700; letter-spacing: 1.2px;
-            text-transform: uppercase; margin: 4px 0 2px;
+            color: rgba(255,255,255,0.25); font-size: 10px; font-weight: 700; letter-spacing: 1.2px;
+            text-transform: uppercase; margin: 6px 0 4px;
         }
         .card-comment-divider::before, .card-comment-divider::after {
-            content: ""; flex: 1; height: 1px; background: rgba(255,255,255,0.06);
+            content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08) 50%, transparent);
         }
         .card-comment-char-counter {
-            position: absolute; right: 80px; bottom: 12px;
+            position: absolute; right: 80px; bottom: 13px;
             font-size: 11px; color: rgba(255,255,255,0.3); font-weight: 600;
             pointer-events: none; transition: color 0.2s;
         }
@@ -1162,22 +1191,29 @@
         .card-comment-char-counter.danger { color: #ff1a1a; }
         .card-comment-input-wrap { position: relative; }
         .card-comment-see-all {
-            width: 100%; padding: 8px; border: 1px dashed rgba(255,255,255,0.12); border-radius: 10px;
-            background: transparent; color: rgba(255,255,255,0.3); font-size: 12px; font-weight: 600;
-            cursor: pointer; font-family: 'Inter', sans-serif; margin-top: 8px; transition: all 0.2s;
+            width: 100%; padding: 10px; border: 1px dashed rgba(255,255,255,0.12); border-radius: 10px;
+            background: rgba(255,255,255,0.02); color: rgba(255,255,255,0.35); font-size: 12px; font-weight: 600;
+            cursor: pointer; font-family: 'Inter', sans-serif; margin-top: 10px; transition: all 0.2s;
         }
         .card-comment-see-all.is-hidden { display: none; }
-        .card-comment-see-all:hover { border-color: rgba(255,26,26,0.3); color: rgba(255,100,100,0.7); }
+        .card-comment-see-all:hover { border-color: rgba(255,26,26,0.35); color: rgba(255,100,100,0.8); background: rgba(255,26,26,0.04); }
         /* Pin badge for card comments */
         .card-comment-item__pin-badge {
-            font-size: 10px; font-weight: 800; color: #cc8800;
-            background: rgba(255,215,0,0.15); border-radius: 6px;
-            padding: 1px 6px; margin-left: auto; white-space: nowrap;
-            border: 1px solid rgba(255,215,0,0.3);
+            font-size: 10px; font-weight: 800; color: #d4a800;
+            background: linear-gradient(135deg, rgba(255,215,0,0.18), rgba(255,180,0,0.08));
+            border-radius: 6px; padding: 1px 7px; margin-left: auto; white-space: nowrap;
+            border: 1px solid rgba(255,215,0,0.25);
+            box-shadow: 0 1px 4px rgba(255,215,0,0.08);
+        }
+        .card-comment-item--pinned {
+            background: linear-gradient(90deg, rgba(255,215,0,0.04), transparent);
+            border-radius: 8px;
+            margin: 0 -12px;
+            padding: 6px 12px;
         }
         .card-comment-item--pinned .card-comment-item__body {
-            border-left: 2px solid rgba(255,215,0,0.4);
-            padding-left: 8px;
+            border-left: 2px solid rgba(255,215,0,0.3);
+            padding-left: 10px;
         }
         .card-comment-item__pin {
             display: inline-flex; align-items: center;
@@ -1242,19 +1278,24 @@
 
         /* ── Unify .comment-item inside .card-comments-section ── */
         .card-comments-section .comment-item {
-            display: flex; gap: 10px; padding: 10px 0;
+            display: flex; gap: 10px; padding: 12px 0;
             border-bottom: 1px solid rgba(255,255,255,0.05);
             background: transparent; animation: none;
         }
+        .card-comments-section .comment-item:first-of-type { padding-top: 0; }
         .card-comments-section .comment-item:last-child { border-bottom: none; }
         .card-comments-section .comment-item__body {
             background: transparent !important; border: none !important;
             border-radius: 0; padding: 0; flex: 1; min-width: 0;
             box-shadow: none !important;
         }
+        .card-comments-section .comment-item--pinned {
+            background: linear-gradient(90deg, rgba(255,215,0,0.04), transparent);
+            border-radius: 8px; margin: 0 -12px; padding: 8px 12px;
+        }
         .card-comments-section .comment-item--pinned .comment-item__body {
-            border-left: 2px solid rgba(255,215,0,0.4) !important;
-            padding-left: 8px;
+            border-left: 2px solid rgba(255,215,0,0.3) !important;
+            padding-left: 10px;
         }
         .card-comments-section .comment-item__header {
             display: flex; align-items: center; gap: 7px; margin-bottom: 3px; flex-wrap: wrap;
