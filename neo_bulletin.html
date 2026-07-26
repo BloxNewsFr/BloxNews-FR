@@ -5015,6 +5015,11 @@
 
     // Sync login state into card comments + actus comments quand discordLogin est appelé
     const _origDiscordLogin = window.discordLogin;
+    window.discordLogin = function(user) {
+        if (typeof _origDiscordLogin === 'function') _origDiscordLogin(user);
+        _ccUpdateLoginState();
+        Object.keys(_actusCommentsDB).forEach(cardId => _actusUpdateLogin(cardId));
+    };
 
     /* ─── Droits ─── */
     function canDelete(c)      { if (!window.currentUser) return false; return MODERATORS.includes(window.currentUser.username) || c.username === window.currentUser.username; }
