@@ -577,6 +577,20 @@
         }
         .news-card:hover .news-card__button::before { left: 100%; }
 
+        /* ── BADGE « NOUVEAU » ── */
+        .leak-card__new {
+            position: absolute; top: 14px; right: 14px; z-index: 3;
+            background: linear-gradient(135deg, var(--cat-hex, #ff1a1a), color-mix(in srgb, var(--cat-hex, #ff1a1a) 70%, #000));
+            color: #fff; font-weight: 900; font-size: 11px;
+            padding: 4px 10px; border-radius: 100px;
+            font-family: 'Inter', sans-serif; letter-spacing: 1px; text-transform: uppercase;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2), 0 4px 14px rgba(var(--cat-rgb, 255,26,26),0.45);
+            animation: pulseBadge 2s ease-in-out infinite;
+            border: 1.5px solid rgba(255,255,255,0.35);
+            pointer-events: none;
+        }
+        @keyframes pulseBadge { 0%,100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+
         /* ── LIGHTBOX (MODAL VIDÉO & IMAGE) ── */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -1021,6 +1035,15 @@
         .group-drawer__item-sub {
             font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px;
             color: rgba(var(--drawer-cat-rgb,204,0,0),0.8); margin-bottom: 2px;
+        }
+
+        .group-drawer__item-like {
+            padding: 0 10px 8px;
+            display: flex; align-items: center;
+        }
+        .group-drawer__item-like .post-like-btn {
+            transform: scale(0.88);
+            transform-origin: left center;
         }
 
         /* ── RESPONSIVE RESPONSIVE ── */
@@ -3721,6 +3744,58 @@
         }
     };
 
+    /* ════════════════════════════════════════════════════════════════
+       SYNC GROUP CARDS — intègre les cards Firebase dans GROUP_DATA
+    ═══════════════════════════════════════════════════════════════ */
+
+    // Map badge → groupId pour router les cards Firebase vers le bon groupe
+    const GROUP_BADGE_MAP = {
+        'MAGNET': 'magnet', 'Magnet': 'magnet', 'magnet': 'magnet',
+        'CELESTIAL': 'celestial', 'Celestial': 'celestial', 'celestial': 'celestial',
+        'ONI': 'oni', 'Oni': 'oni', 'oni': 'oni',
+    };
+
+    function _syncGroupCards(fbCards) {
+        // Réinitialiser les items Firebase de chaque groupe (garder les statiques)
+        Object.values(GROUP_DATA).forEach(g => {
+            g.items = g.items.filter(it => !it._fromFirebase);
+        });
+        // Injecter chaque card Firebase dans le groupe correspondant
+        fbCards.forEach(card => {
+            const groupId = GROUP_BADGE_MAP[card.badge];
+            if (!groupId || !GROUP_DATA[groupId]) return;
+            const g = GROUP_DATA[groupId];
+            // Éviter les doublons
+            if (g.items.find(it => it._ccId === card.id)) return;
+            g.items.unshift({
+                type: card.mediaType === 'video' ? 'video' : 'image',
+                src: card.src,
+                label: card.title || card.badge,
+                sub: card.eyebrow || 'Leak',
+                _fromFirebase: true,
+                _ccId: card.id,
+            });
+        });
+        // Mettre à jour le compteur sur la group-card dans le DOM
+        Object.entries(GROUP_DATA).forEach(([gid, g]) => {
+            const gcCard = document.querySelector(`.group-card[onclick*="'${gid}'"]`);
+            if (!gcCard) return;
+            const pill = gcCard.querySelector('.group-card__count-pill');
+            if (pill) pill.textContent = g.items.length + ' leak' + (g.items.length > 1 ? 's' : '');
+            // Mettre à jour l'image de preview avec l'item le plus récent
+            const firstImg = g.items[0];
+            if (firstImg && firstImg.type === 'image') {
+                const img = gcCard.querySelector('.group-card__image');
+                if (img && img.src !== firstImg.src) img.src = firstImg.src;
+            }
+        });
+    }
+
+    /* ── Rerender du drawer avec likes ─────────────────────────────── */
+    function _drawerLikeId(groupId, idx) {
+        return 'card-' + _plSlug(groupId + '-' + idx);
+    }
+
     function openGroupDrawer(groupId) {
         const data = GROUP_DATA[groupId];
         if (!data) return;
@@ -3735,16 +3810,46 @@
 
         grid.innerHTML = data.items.map((item, i) => {
             const thumb = item.type === 'video'
-                ? `<video src="${item.src}#t=0.5" preload="metadata" muted playsinline class="group-drawer__item-img" style="object-fit:cover"></video>`
+                ? `<video src="${item.src}#t=0.5" preload="metadata" muted playsinline class="group-drawer__item-img"></video>`
                 : `<img src="${item.src}" class="group-drawer__item-img" alt="${item.label}" loading="lazy">`;
-            return `<div class="group-drawer__item" onclick="openGroupItem('${groupId}',${i})" style="--drawer-cat-rgb:${data.rgb}">
-                ${thumb}
+            const likeId = _drawerLikeId(groupId, i);
+            const local  = _plLoadLocal();
+            const liked  = (local[likeId] || {}).liked || false;
+            const count  = _plGlobalCounts[likeId] || 0;
+            return `<div class="group-drawer__item" style="--drawer-cat-rgb:${data.rgb}">
+                <div onclick="openGroupItem('${groupId}',${i})">${thumb}</div>
                 <div class="group-drawer__item-label">
                     <div class="group-drawer__item-sub">${item.sub}</div>
                     ${item.label}
                 </div>
+                <div class="group-drawer__item-like">
+                    ${_plMakeBtn(likeId, liked, count).outerHTML}
+                </div>
             </div>`;
         }).join('');
+
+        // Rebind les boutons like dans le drawer
+        grid.querySelectorAll('.post-like-btn').forEach(btn => {
+            btn.addEventListener('click', e => {
+                e.stopPropagation();
+                const id = btn.dataset.postId;
+                if (!id) return;
+                const local = _plLoadLocal();
+                const prev  = local[id] || { liked: false, count: 0 };
+                const nowLiked = !prev.liked;
+                local[id] = { liked: nowLiked, count: (prev.count || 0) + (nowLiked ? 1 : -1) };
+                try { localStorage.setItem(POST_LIKE_KEY, JSON.stringify(local)); } catch {}
+                const countEl = btn.querySelector('.post-like-count');
+                const delta = nowLiked ? 1 : -1;
+                _plGlobalCounts[id] = Math.max(0, (_plGlobalCounts[id] || 0) + delta);
+                if (countEl) countEl.textContent = _plGlobalCounts[id];
+                btn.classList.toggle('liked', nowLiked);
+                if (typeof FB_LIKES_REF !== 'undefined' && FB_LIKES_REF) {
+                    FB_LIKES_REF.child(id).transaction(cur => Math.max(0, (cur || 0) + delta));
+                }
+            });
+        });
+
         overlay.classList.add('is-active');
         document.body.style.overflow = 'hidden';
     }
@@ -5360,14 +5465,67 @@
     // ── IDs statiques ──────────────────────────────────────────────
     // On assigne un data-static-id à chaque card statique au chargement
     function _assignStaticIds() {
-        document.querySelectorAll('.news-card:not([data-cc-id]), .group-card:not([data-cc-id])').forEach((card, i) => {
+        document.querySelectorAll('.news-card:not([data-cc-id]), .group-card:not([data-cc-id]), .secret-bulletin:not([data-cc-id])').forEach((card, i) => {
             if (!card.dataset.staticId) {
-                const title = card.querySelector('.news-card__title, .group-card__title')?.textContent?.trim() || '';
+                const title   = card.querySelector('.news-card__title, .group-card__title, h2')?.textContent?.trim() || '';
                 const section = card.closest('[id^="cat-"]')?.id || 'unknown';
-                const slug = (section + '__' + title).toLowerCase()
+                const slug    = (section + '__' + title).toLowerCase()
                     .replace(/[^a-z0-9]+/g, '_').slice(0, 60) + '__' + i;
                 card.dataset.staticId = slug;
             }
+        });
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    //  BADGE « NOUVEAU » — durée 72h depuis la création
+    // ══════════════════════════════════════════════════════════════
+    const NEW_BADGE_KEY = 'blox_leak_new_badges_v1';
+    const NEW_BADGE_TTL = 72 * 60 * 60 * 1000; // 72 heures
+
+    function _nbLoad() { try { return JSON.parse(localStorage.getItem(NEW_BADGE_KEY)) || {}; } catch { return {}; } }
+    function _nbSave(obj) { try { localStorage.setItem(NEW_BADGE_KEY, JSON.stringify(obj)); } catch {} }
+
+    /** Enregistre le timestamp de création d'une card */
+    function _nbRegister(staticId) {
+        if (!staticId) return;
+        const db = _nbLoad();
+        if (!db[staticId]) { db[staticId] = Date.now(); _nbSave(db); }
+    }
+
+    /** Renvoie true si la card est encore "nouvelle" */
+    function _nbIsNew(staticId) {
+        const db = _nbLoad();
+        const ts = db[staticId];
+        if (!ts) return false;
+        const age = Date.now() - ts;
+        if (age > NEW_BADGE_TTL) { delete db[staticId]; _nbSave(db); return false; }
+        return true;
+    }
+
+    /** Injecte le badge dans l'image-wrapper d'une card (news-card ou group-card) */
+    function _nbInject(card) {
+        if (!card || card.querySelector('.leak-card__new')) return;
+        const wrapper = card.querySelector('.news-card__image-wrapper, .group-card__image-wrapper');
+        if (!wrapper) return;
+        const badge = document.createElement('div');
+        badge.className = 'leak-card__new';
+        badge.textContent = 'Nouveau';
+        wrapper.appendChild(badge);
+        // Auto-retrait au bout du TTL restant
+        const staticId = card.dataset.staticId || card.dataset.ccId;
+        const db = _nbLoad();
+        const ts = db[staticId];
+        if (ts) {
+            const remaining = NEW_BADGE_TTL - (Date.now() - ts);
+            if (remaining > 0) setTimeout(() => badge.remove(), remaining);
+        }
+    }
+
+    /** Parcourt toutes les cards au chargement et injecte les badges actifs */
+    function _nbApplyAll() {
+        document.querySelectorAll('.news-card, .group-card').forEach(card => {
+            const sid = card.dataset.staticId || card.dataset.ccId;
+            if (sid && _nbIsNew(sid)) _nbInject(card);
         });
     }
 
@@ -5497,6 +5655,13 @@
                 content.appendChild(footer);
             }
         } catch(e) { console.warn('[_renderOneCard] like button error:', e); }
+
+        // Badge « Nouveau » — injecter si la card est encore récente
+        try {
+            const sid = card.id;
+            if (_nbIsNew(sid)) _nbInject(el);
+        } catch(e) {}
+
         // Rebind modale
         el.querySelectorAll('.open-modal-btn').forEach(btn => {
             btn.addEventListener('click', _modalBtnHandler);
@@ -5835,6 +6000,17 @@
         // Rendu immédiat
         try { _renderOneCard(newCard); } catch(err) { console.error('[render]', err); }
 
+        // Badge « Nouveau » — enregistrer le timestamp et injecter immédiatement
+        try {
+            const createdEl = document.querySelector(`[data-cc-id="${cardId}"]`);
+            if (createdEl) {
+                const sid = cardId;
+                createdEl.dataset.staticId = sid;
+                _nbRegister(sid);
+                _nbInject(createdEl);
+            }
+        } catch(e) { console.warn('[new-badge]', e); }
+
         const escFn = _ccEsc;
         const toast = document.getElementById('newCardToast');
         function _ncmShowToast(label, text) {
@@ -5881,14 +6057,18 @@
     function _cmdDelete() {
         const list = document.getElementById('dcmList');
         if (!list) return;
-        const allCards = [...document.querySelectorAll('.news-card, .group-card')];
+        const allCards = [
+            ...document.querySelectorAll('.news-card, .group-card'),
+            ...document.querySelectorAll('.secret-bulletin[data-cc-id], .secret-bulletin[data-static-id]'),
+        ];
         if (allCards.length === 0) {
             list.innerHTML = '<div class="dcm-empty"><div class="dcm-empty-icon">🗂️</div><div class="dcm-empty-text">Aucune carte dans la page</div></div>';
         } else {
             list.innerHTML = allCards.map((card, i) => {
                 const isGroup  = card.classList.contains('group-card');
-                const title    = card.querySelector('.news-card__title, .group-card__title')?.textContent?.trim() || 'Sans titre';
-                const badge    = card.querySelector('.news-card__badge, .group-card__badge')?.textContent?.trim() || '';
+                const isActus  = card.classList.contains('secret-bulletin');
+                const title    = card.querySelector('.news-card__title, .group-card__title, h2')?.textContent?.trim() || 'Sans titre';
+                const badge    = card.querySelector('.news-card__badge, .group-card__badge')?.textContent?.trim() || (isActus ? 'ACTUS' : '');
                 const section  = card.closest('[id^="cat-"]');
                 const sectionName = section?.id?.replace('cat-','') || 'inconnu';
                 const ccId     = card.dataset.ccId || null;
@@ -5898,15 +6078,18 @@
                 const imgEl    = card.querySelector('.news-card__image, .group-card__image');
                 const imgSrc   = imgEl?.tagName === 'IMG' ? imgEl.src : '';
                 const isVideo  = imgEl?.tagName === 'VIDEO';
-                const thumb    = imgSrc
-                    ? `<img src="${_ccEsc(imgSrc)}" alt="" style="width:100%;height:100%;object-fit:cover;display:block;">`
-                    : `<span style="font-size:20px">${isGroup ? '📦' : isVideo ? '🎬' : '🖼️'}</span>`;
+                const thumb    = isActus
+                    ? `<span style="font-size:22px">📰</span>`
+                    : imgSrc
+                        ? `<img src="${_ccEsc(imgSrc)}" alt="" style="width:100%;height:100%;object-fit:cover;display:block;">`
+                        : `<span style="font-size:20px">${isGroup ? '📦' : isVideo ? '🎬' : '🖼️'}</span>`;
+                const typeLabel = isActus ? ' · actus' : isGroup ? ' · groupe' : isCustom ? ' · personnalisée' : '';
                 return `<div class="dcm-item" id="dcm-item-${uid}">
                     <div class="dcm-item-thumb">${thumb}</div>
                     <div class="dcm-item-info">
                         <div class="dcm-item-badge">${_ccEsc(badge)}</div>
                         <div class="dcm-item-title">${_ccEsc(title)}</div>
-                        <div class="dcm-item-section">${sectionName}${isCustom ? ' · personnalisée' : ''}${isGroup ? ' · groupe' : ''}</div>
+                        <div class="dcm-item-section">${sectionName}${typeLabel}</div>
                     </div>
                     <button class="dcm-item-del" onclick="_dcmOpenConfirm('${uid}')">Supprimer</button>
                 </div>
@@ -5941,15 +6124,12 @@
         }
         if (ccId) {
             if (FB_CC_REF) {
-                // Avec push(), trouver la clé Firebase correspondant à card.id
                 FB_CC_REF.once('value', snap => {
                     const raw = snap.val();
                     if (!raw) return;
                     if (Array.isArray(raw)) {
-                        // Ancienne structure (array) : transaction
                         FB_CC_REF.transaction(c => Array.isArray(c) ? c.filter(x => x.id !== ccId) : []);
                     } else {
-                        // Nouvelle structure (push) : supprimer le nœud enfant
                         Object.entries(raw).forEach(([fbKey, card]) => {
                             if (card.id === ccId) FB_CC_REF.child(fbKey).remove();
                         });
@@ -5960,8 +6140,8 @@
             const el = document.querySelector(`[data-cc-id="${ccId}"]`);
             if (el) el.remove();
         } else {
-            const el = document.querySelector(`[data-static-id="${staticId}"]`)
-                    || document.querySelector(`.group-card[data-static-id="${staticId}"]`);
+            // Chercher dans tous les types : news-card, group-card, secret-bulletin
+            const el = document.querySelector(`[data-static-id="${staticId}"]`);
             if (el) el.remove();
             if (FB_DELETED_REF) {
                 FB_DELETED_REF.transaction(current => {
@@ -5975,7 +6155,7 @@
             _originalOrder.set(s.id, [...s.querySelectorAll('.news-card')]);
         });
         _sortAllSections();
-        editLog('ok', 'Carte supprimée.');
+        editLog('ok', 'Élément supprimé.');
         _cmdDelete();
     }
 
@@ -6022,6 +6202,7 @@
 
         // 1. Assigner des IDs stables aux cards statiques (avant tout)
         _assignStaticIds();
+        _nbApplyAll();   // badges « Nouveau » sur les cards récentes
         _ensureAllVideoThumbnails(document);
 
         // 2. Appliquer les suppressions de cards statiques depuis Firebase
@@ -6040,7 +6221,6 @@
         if (FB_CC_REF) {
             FB_CC_REF.on('value', snap => {
                 const raw = snap.val();
-                // push() stocke un objet {firebaseKey: card}, pas un array
                 const fbCards = raw
                     ? (Array.isArray(raw) ? raw : Object.values(raw))
                     : [];
@@ -6051,6 +6231,13 @@
                 document.querySelectorAll('[data-cc-id]').forEach(el => {
                     if (!fbIds.has(el.dataset.ccId)) el.remove();
                 });
+                // Remettre à jour _originalOrder avec les nouvelles cards, puis trier
+                document.querySelectorAll('.category-section:not(#cat-actus)').forEach(s => {
+                    _originalOrder.set(s.id, [...s.querySelectorAll('.news-card')]);
+                });
+                _sortAllSections();
+                // Synchroniser les group-cards avec les cards Firebase
+                _syncGroupCards(fbCards);
             });
         } else {
             _renderCustomCards();
