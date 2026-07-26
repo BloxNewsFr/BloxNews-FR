@@ -5013,19 +5013,8 @@
         _actusRenderComments(cardId);
     }
 
-    // Sync login state into actus comments
-    const _actusLoginSync = window.discordLogin;
-    window.discordLogin = function(user) {
-        if (typeof _actusLoginSync === 'function') _actusLoginSync(user);
-        Object.keys(_actusCommentsDB).forEach(cardId => _actusUpdateLogin(cardId));
-    };
-
-    // Sync login state into card comments quand discordLogin est appelé
+    // Sync login state into card comments + actus comments quand discordLogin est appelé
     const _origDiscordLogin = window.discordLogin;
-    window.discordLogin = function(user) {
-        if (typeof _origDiscordLogin === 'function') _origDiscordLogin(user);
-        _ccUpdateLoginState();
-    };
 
     /* ─── Droits ─── */
     function canDelete(c)      { if (!window.currentUser) return false; return MODERATORS.includes(window.currentUser.username) || c.username === window.currentUser.username; }
