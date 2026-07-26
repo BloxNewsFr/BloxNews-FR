@@ -877,6 +877,67 @@
             border-top: 1px solid rgba(255,255,255,0.07);
             background: linear-gradient(135deg, rgba(20,10,10,0.98), rgba(14,14,22,0.98));
         }
+        /* ── LIGHT MODE pour la lightbox ── */
+        html:not([data-theme="dark"]) .modal-overlay { background: rgba(0,0,0,0.4); }
+        html:not([data-theme="dark"]) .modal-content {
+            background: #ffffff;
+            border: 1px solid rgba(0,0,0,0.08);
+            box-shadow: 0 40px 120px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.03);
+        }
+        html:not([data-theme="dark"]) .modal-close-float {
+            background: rgba(255,255,255,0.92);
+            border: 1px solid rgba(0,0,0,0.1);
+            color: rgba(0,0,0,0.55);
+        }
+        html:not([data-theme="dark"]) .modal-close-float:hover { background: #cc0000; border-color: #cc0000; color: #fff; }
+        html:not([data-theme="dark"]) .modal-media-zone { background: #e8e8f0; }
+        html:not([data-theme="dark"]) .modal-info-footer {
+            border-top: 1px solid rgba(0,0,0,0.06);
+            background: linear-gradient(135deg, #fafafe, #f2f2f8);
+        }
+        html:not([data-theme="dark"]) .modal-info-title { color: rgba(0,0,0,0.75); }
+        html:not([data-theme="dark"]) .modal-info-section {
+            color: rgba(0,0,0,0.35);
+            background: rgba(0,0,0,0.04);
+            border: 1px solid rgba(0,0,0,0.07);
+        }
+        html:not([data-theme="dark"]) .modal-content-display {
+            background: #fafafe;
+            border-top: 1px solid rgba(0,0,0,0.04);
+        }
+        html:not([data-theme="dark"]) .mcd-tabs {
+            border: 1px solid rgba(0,0,0,0.06);
+            background: rgba(0,0,0,0.02);
+        }
+        html:not([data-theme="dark"]) .mcd-tab { color: rgba(0,0,0,0.3); }
+        html:not([data-theme="dark"]) .mcd-tab.active { background: rgba(255,26,26,0.08); color: rgba(200,0,0,0.85); }
+        html:not([data-theme="dark"]) .mcd-tab:hover:not(.active) { color: rgba(0,0,0,0.5); }
+        html:not([data-theme="dark"]) .mcd-text { color: rgba(0,0,0,0.7); }
+        html:not([data-theme="dark"]) .modal-editor-panel {
+            background: #fafafe;
+            border-top: 1px solid rgba(0,0,0,0.04);
+        }
+        html:not([data-theme="dark"]) .modal-editor-tabs {
+            border: 1px solid rgba(0,0,0,0.07);
+            background: rgba(0,0,0,0.02);
+        }
+        html:not([data-theme="dark"]) .modal-editor-tab { color: rgba(0,0,0,0.35); }
+        html:not([data-theme="dark"]) .modal-editor-tab.active { background: rgba(255,26,26,0.1); color: rgba(200,0,0,0.85); }
+        html:not([data-theme="dark"]) .modal-editor-tab:hover:not(.active) { color: rgba(0,0,0,0.55); }
+        html:not([data-theme="dark"]) .modal-editor-label { color: rgba(0,0,0,0.35); }
+        html:not([data-theme="dark"]) .modal-editor-textarea {
+            border: 1px solid rgba(0,0,0,0.1);
+            background: #ffffff;
+            color: #1a1a2e;
+        }
+        html:not([data-theme="dark"]) .modal-editor-textarea:focus {
+            border-color: rgba(255,26,26,0.3);
+            background: #ffffff;
+        }
+        html:not([data-theme="dark"]) .modal-editor-textarea::placeholder { color: rgba(0,0,0,0.2); }
+        html:not([data-theme="dark"]) .modal-drag-handle { background: rgba(0,0,0,0.15); }
+        html:not([data-theme="dark"]) .modal-close-hint { color: rgba(0,0,0,0.25); }
+
         /* ── Zone d'affichage du contenu éditorial ── */
         .modal-content-display {
             display: none;
