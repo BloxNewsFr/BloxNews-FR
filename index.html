@@ -1652,6 +1652,7 @@
             { num: "022", img: "./022/img/SummerBanner.png",       href: "./022/bulletin-022.html", date: "2026-07-17" },
             { num: "023", img: "./023/img/INDRAATTACK.png",        href: "./023/bulletin-023.html", date: "2026-07-23" },
         ];
+        bulletins.sort((a, b) => new Date(b.date) - new Date(a.date));
         const NEW_DAYS = 7; // Badge "Nouveau" visible pendant 7 jours après publication
         function isRecentBulletin(b) {
             if (!b.date) return false;
