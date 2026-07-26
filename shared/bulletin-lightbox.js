@@ -36,10 +36,33 @@
 
         const modalImg = lightbox.querySelector('.bulletin-image-lightbox__img');
         const closeBtn = lightbox.querySelector('.bulletin-image-lightbox__close');
+        let activeSourceImg = null;
+
+        function fitImageToViewport() {
+            const sourceWidth = modalImg.naturalWidth || activeSourceImg?.naturalWidth || 1;
+            const sourceHeight = modalImg.naturalHeight || activeSourceImg?.naturalHeight || 1;
+            const viewportWidth = window.innerWidth * (window.innerWidth <= 640 ? 0.96 : 0.94);
+            const viewportHeight = window.innerHeight * (window.innerWidth <= 640 ? 0.86 : 0.9);
+            const ratio = sourceWidth / sourceHeight;
+
+            let targetWidth = viewportWidth;
+            let targetHeight = targetWidth / ratio;
+
+            if (targetHeight > viewportHeight) {
+                targetHeight = viewportHeight;
+                targetWidth = targetHeight * ratio;
+            }
+
+            modalImg.style.width = Math.round(targetWidth) + 'px';
+            modalImg.style.height = Math.round(targetHeight) + 'px';
+        }
 
         function openLightbox(img) {
+            activeSourceImg = img;
+            modalImg.onload = fitImageToViewport;
             modalImg.src = img.currentSrc || img.src;
             modalImg.alt = img.alt || 'Image agrandie';
+            if (modalImg.complete) fitImageToViewport();
             lightbox.classList.add('is-active');
             document.body.classList.add('bulletin-lightbox-open');
             closeBtn.focus({ preventScroll: true });
@@ -51,6 +74,9 @@
             window.setTimeout(function () {
                 if (!lightbox.classList.contains('is-active')) {
                     modalImg.removeAttribute('src');
+                    modalImg.removeAttribute('style');
+                    modalImg.onload = null;
+                    activeSourceImg = null;
                 }
             }, 250);
         }
@@ -81,6 +107,9 @@
             if (event.key === 'Escape' && lightbox.classList.contains('is-active')) {
                 closeLightbox();
             }
+        });
+        window.addEventListener('resize', function () {
+            if (lightbox.classList.contains('is-active')) fitImageToViewport();
         });
     });
 })();

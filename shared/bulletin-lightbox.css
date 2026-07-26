@@ -25,7 +25,7 @@
 
 .bulletin-image-lightbox__panel {
     position: relative;
-    max-width: min(1120px, 94vw);
+    max-width: 94vw;
     max-height: 90dvh;
     transform: scale(0.96) translateY(12px);
     transition: transform 0.25s ease;
@@ -37,9 +37,10 @@
 
 .bulletin-image-lightbox__img {
     display: block;
-    max-width: 100%;
+    max-width: 94vw;
     max-height: 90dvh;
     object-fit: contain;
+    background: rgba(0, 0, 0, 0.16);
     border-radius: 14px;
     box-shadow: 0 24px 80px rgba(0, 0, 0, 0.65);
 }
@@ -81,6 +82,7 @@ body.bulletin-lightbox-open {
     }
 
     .bulletin-image-lightbox__img {
+        max-width: 96vw;
         max-height: 86dvh;
         border-radius: 10px;
     }
