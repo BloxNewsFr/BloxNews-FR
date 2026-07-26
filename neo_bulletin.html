@@ -1240,6 +1240,110 @@
         html[data-theme="dark"] .card-comment-char-counter { color: rgba(255,255,255,0.3); }
         html[data-theme="dark"] .card-comment-see-all { border-color: rgba(255,255,255,0.08); color: rgba(255,255,255,0.3); }
 
+        /* ── Unify .comment-item inside .card-comments-section ── */
+        .card-comments-section .comment-item {
+            display: flex; gap: 10px; padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            background: transparent; animation: none;
+        }
+        .card-comments-section .comment-item:last-child { border-bottom: none; }
+        .card-comments-section .comment-item__body {
+            background: transparent !important; border: none !important;
+            border-radius: 0; padding: 0; flex: 1; min-width: 0;
+            box-shadow: none !important;
+        }
+        .card-comments-section .comment-item--pinned .comment-item__body {
+            border-left: 2px solid rgba(255,215,0,0.4) !important;
+            padding-left: 8px;
+        }
+        .card-comments-section .comment-item__header {
+            display: flex; align-items: center; gap: 7px; margin-bottom: 3px; flex-wrap: wrap;
+        }
+        .card-comments-section .comment-item__username {
+            font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.85);
+        }
+        .card-comments-section .comment-item__time {
+            font-size: 11px; color: rgba(255,255,255,0.3);
+        }
+        .card-comments-section .comment-item__text {
+            font-size: 13px; color: rgba(255,255,255,0.65);
+            line-height: 1.5; word-break: break-word;
+        }
+        .card-comments-section .comment-pin-badge {
+            font-size: 10px; font-weight: 800; color: #cc8800;
+            background: rgba(255,215,0,0.15); border-radius: 6px;
+            padding: 1px 6px; margin-left: auto; white-space: nowrap;
+            border: 1px solid rgba(255,215,0,0.3);
+        }
+        .card-comments-section .comment-item__actions {
+            display: flex; align-items: center; flex-wrap: wrap; gap: 2px; margin-top: 5px;
+        }
+        .card-comments-section .comment-btn {
+            display: inline-flex; align-items: center; gap: 4px;
+            padding: 3px 8px; border-radius: 100px; border: none;
+            background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.4);
+            font-size: 11px; cursor: pointer; font-family: 'Inter', sans-serif;
+            transition: all 0.2s;
+        }
+        .card-comments-section .comment-btn:hover { background: rgba(255,26,26,0.12); color: #ff6666; }
+        .card-comments-section .comment-btn--liked { background: rgba(255,26,26,0.15); color: #ff6666; }
+        .card-comments-section .comment-btn--delete,
+        .card-comments-section .comment-btn--pin {
+            display: inline-flex; align-items: center; gap: 4px;
+            padding: 3px 8px; border-radius: 100px; border: none;
+            background: transparent; color: rgba(255,80,80,0.35);
+            font-size: 11px; cursor: pointer; font-family: 'Inter', sans-serif;
+            transition: all 0.2s;
+        }
+        .card-comments-section .comment-btn--delete:hover { background: rgba(255,26,26,0.1); color: #ff6666; }
+        .card-comments-section .comment-btn--pin { color: rgba(255,215,0,0.35); }
+        .card-comments-section .comment-btn--pin:hover { background: rgba(255,215,0,0.1); color: #ffcc00; }
+        .card-comments-section .comment-btn--pin.is-pinned { color: #ffcc00; }
+        .card-comments-section .comment-reactions {
+            display: flex; align-items: center; gap: 4px; flex-wrap: wrap; margin-top: 4px;
+        }
+        .card-comments-section .reaction-btn {
+            display: inline-flex; align-items: center; gap: 3px;
+            padding: 2px 6px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.04); color: rgba(255,255,255,0.5);
+            font-size: 12px; cursor: pointer; font-family: 'Inter', sans-serif;
+            transition: all 0.15s;
+        }
+        .card-comments-section .reaction-btn:hover { background: rgba(255,255,255,0.08); }
+        .card-comments-section .reaction-add-btn {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 22px; height: 22px; border-radius: 6px; border: 1px dashed rgba(255,255,255,0.12);
+            background: transparent; color: rgba(255,255,255,0.25); font-size: 13px; cursor: pointer;
+            font-family: 'Inter', sans-serif; transition: all 0.15s;
+        }
+        .card-comments-section .reaction-add-btn:hover { border-color: rgba(255,255,255,0.3); color: rgba(255,255,255,0.5); }
+        .card-comments-section .comment-item .comment-avatar,
+        .card-comments-section .comment-item .comment-avatar--placeholder {
+            width: 28px !important; height: 28px !important; font-size: 12px !important;
+        }
+        .card-comments-section .comment-reply-write {
+            display: flex; align-items: center; gap: 8px; margin-top: 10px; padding-top: 8px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+        .card-comments-section .comment-reply-write .comment-avatar--placeholder {
+            width: 24px !important; height: 24px !important; font-size: 10px !important;
+        }
+        .card-comments-section .comment-reply-input {
+            flex: 1; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px; color: rgba(255,255,255,0.8); font-size: 12px;
+            font-family: 'Inter', sans-serif; padding: 6px 10px; resize: none; outline: none;
+        }
+        .card-comments-section .comment-reply-input:focus { border-color: rgba(255,26,26,0.3); }
+        .card-comments-section .comment-reply-submit {
+            padding: 5px 12px; border-radius: 100px; border: none; flex-shrink: 0;
+            background: linear-gradient(135deg, #ff1a1a, #cc0000); color: #fff;
+            font-size: 11px; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif;
+        }
+        html[data-theme="dark"] .card-comments-section .comment-item__text { color: #cdd0ea; }
+        html[data-theme="dark"] .card-comments-section .comment-reply-input {
+            background: #1c1e30; color: #eef0fa; border-color: #2a2d45;
+        }
+
         /* ══════════════════════════════════════════════
            GROUP CARDS — Fruit groupé
         ══════════════════════════════════════════════ */
@@ -3220,9 +3324,9 @@
             <!-- ══════════════════════════════════════════════
                  SYSTÈME DE COMMENTAIRES UNIFIÉ
             ══════════════════════════════════════════════ -->
-            <div class="card-comments-section" id="commentSection" style="border-radius:18px;margin-top:20px;border:1px solid rgba(255,255,255,0.07)">
+            <div class="card-comments-section" id="commentSection" style="margin-top:20px">
 
-                <div class="card-comments-toggle" id="commentToggle" onclick="toggleComments()" style="border-radius:18px">
+                <div class="card-comments-toggle" id="commentToggle" onclick="toggleComments()">
                     <div class="card-comments-toggle__icon">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block">
                             <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.002.022.015.043.033.055a19.91 19.91 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z" fill="currentColor"/>
