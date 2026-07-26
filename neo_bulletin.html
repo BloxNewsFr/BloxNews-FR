@@ -3370,6 +3370,13 @@
         <section id="cat-messages" class="category-section" style="--cat-hex: #ff8800; --cat-rgb: 255, 136, 0;">
             <div class="category-title">✉️ MESSAGES & LORE</div>
             <div class="news-grid">
+                <!--
+                    Images des anciennes cards "Messages & Lore" :
+                    ne modifie pas les boutons ci-dessous. Va plutôt dans le JS vers
+                    STATIC_DECRYPT_IMAGES et mets le chemin de l'image décryptée pour
+                    l'id correspondant, par exemple :
+                    'static-shafi-felku-magnet': './shared/blox_leaks/Decrypt/mon-image.png'
+                -->
 
                 <!-- ── Shafi x Felku ── -->
                 <article class="msg-card" data-static-id="cat-messages__shafi-felku-magnet__0">
@@ -4301,6 +4308,26 @@
         }
     }
 
+    /*
+     * Images a afficher quand on clique sur "Decrypter" pour les anciennes cards.
+     *
+     * 1. Mets tes fichiers dans :
+     *    ./shared/blox_leaks/Decrypt/
+     *
+     * 2. Remplis la ligne de la card concernee avec le nom exact du fichier :
+     *    'static-shafi-felku-magnet': './shared/blox_leaks/Decrypt/mon-image.png',
+     *
+     * Les ids disponibles actuellement :
+     * - static-shafi-felku-magnet
+     * - static-shafi-discord-magnet
+     * - static-e-quake
+     */
+    const STATIC_DECRYPT_IMAGES = {
+        'static-shafi-felku-magnet': '',
+        'static-shafi-discord-magnet': '',
+        'static-e-quake': '../shared/blox_leaks/Decrypt/Untitled-1.png'
+    };
+
     // Ouvre le modal décryptage
     function openDecryptModal(cardId, title, imgSrc) {
         const modal = document.getElementById('decryptModal');
@@ -4308,16 +4335,19 @@
         document.getElementById('decryptTitle').textContent = title || '—';
         const img = document.getElementById('decryptImg');
         const overlay = document.getElementById('decryptRevealOverlay');
+        const imgWrap = document.getElementById('decryptImgWrap');
+        const resolvedImgSrc = imgSrc || STATIC_DECRYPT_IMAGES[cardId] || '';
 
-        if (imgSrc) {
-            img.src = imgSrc;
+        if (resolvedImgSrc) {
+            imgWrap.style.display = '';
+            img.src = resolvedImgSrc;
             img.style.display = 'block';
             // Animation de révélation
             overlay.classList.remove('done');
             setTimeout(() => overlay.classList.add('done'), 1400);
         } else {
             // Pas d'image : masquer la zone image
-            document.getElementById('decryptImgWrap').style.display = 'none';
+            imgWrap.style.display = 'none';
             overlay.classList.add('done');
         }
 
