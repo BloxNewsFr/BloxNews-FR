@@ -4832,12 +4832,7 @@
 
     function loadMoreDecryptComments() { _dcShown += 5; _dcRender(); }
 
-    // Sync login → décrypt comments
-    const _origDiscordLogin2 = window.discordLogin;
-    window.discordLogin = function(user) {
-        if (typeof _origDiscordLogin2 === 'function') _origDiscordLogin2(user);
-        _dcUpdateLogin();
-    };
+
 
     /* ════════════════════════════════════════════════════════════════
        ÉDITEUR DE CONTENU DANS LA LIGHTBOX (/edit modal)
@@ -5437,10 +5432,11 @@
         document.body.style.overflow = '';
     };
 
-    // Sync login state into card comments + actus comments quand discordLogin est appelé
+    // Sync login state into card comments + actus comments + decrypt comments
     const _origDiscordLogin = window.discordLogin;
     window.discordLogin = function(user) {
         if (typeof _origDiscordLogin === 'function') _origDiscordLogin(user);
+        _dcUpdateLogin();
         _ccUpdateLoginState();
         Object.keys(_actusCommentsDB).forEach(cardId => _actusUpdateLogin(cardId));
     };
@@ -7688,12 +7684,13 @@
         document.addEventListener('click', () => pill.classList.remove('dropdown-open'), { once: false });
 
         // ── Auto-connecter le système de commentaires ──────────────
+        window.currentUser = { username: user.username, avatar: avatarUrl };
         if (typeof discordLogin === 'function') {
-            discordLogin({ username: user.username, avatar: avatarUrl });
+            discordLogin(window.currentUser);
         } else {
             // discordLogin pas encore disponible (ordre de chargement) → réessayer
             window.addEventListener('load', () => {
-                if (typeof discordLogin === 'function') discordLogin({ username: user.username, avatar: avatarUrl });
+                if (typeof discordLogin === 'function') discordLogin(window.currentUser);
             });
         }
     }
@@ -7762,7 +7759,8 @@
                         localStorage.setItem(DISCORD_TOKEN_KEY, JSON.stringify({ token, expiresAt }));
                         localStorage.setItem(DISCORD_USER_KEY, JSON.stringify(user));
                         showUserInNavbar(user);
-                        if (typeof discordLogin === 'function') discordLogin({ username: user.username, avatar: _discordAvatarUrl(user) });
+                        window.currentUser = { username: user.username, avatar: _discordAvatarUrl(user) };
+                        if (typeof discordLogin === 'function') discordLogin(window.currentUser);
                     } catch(e) {
                         skeleton.classList.remove('is-visible');
                         loginBtn.style.display = '';
@@ -7797,8 +7795,9 @@
                 }
                 // Sync comment system
                 console.log('Navbar sync: calling discordLogin with cached user', cachedUser.username);
-                if (typeof discordLogin === 'function') discordLogin({ username: cachedUser.username, avatar: _discordAvatarUrl(cachedUser) });
-                else window.addEventListener('load', () => { if (typeof discordLogin === 'function') discordLogin({ username: cachedUser.username, avatar: _discordAvatarUrl(cachedUser) }); });
+                window.currentUser = { username: cachedUser.username, avatar: _discordAvatarUrl(cachedUser) };
+                if (typeof discordLogin === 'function') discordLogin(window.currentUser);
+                else window.addEventListener('load', () => { if (typeof discordLogin === 'function') discordLogin(window.currentUser); });
                 return;
             }
         } catch(e) {}
