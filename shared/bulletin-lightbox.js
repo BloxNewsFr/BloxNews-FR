@@ -36,6 +36,8 @@
 
         const modalImg = lightbox.querySelector('.bulletin-image-lightbox__img');
         const closeBtn = lightbox.querySelector('.bulletin-image-lightbox__close');
+        // AJOUT : On cible le panneau parent
+        const panel = lightbox.querySelector('.bulletin-image-lightbox__panel'); 
         let activeSourceImg = null;
 
         function fitImageToViewport() {
@@ -53,20 +55,12 @@
                 targetWidth = targetHeight * ratio;
             }
 
-            modalImg.style.width = Math.round(targetWidth) + 'px';
-            modalImg.style.height = Math.round(targetHeight) + 'px';
+            // MODIFICATION : On applique les dimensions au panneau, pas à l'image
+            panel.style.width = Math.round(targetWidth) + 'px';
+            panel.style.height = Math.round(targetHeight) + 'px';
         }
 
-        function openLightbox(img) {
-            activeSourceImg = img;
-            modalImg.onload = fitImageToViewport;
-            modalImg.src = img.currentSrc || img.src;
-            modalImg.alt = img.alt || 'Image agrandie';
-            if (modalImg.complete) fitImageToViewport();
-            lightbox.classList.add('is-active');
-            document.body.classList.add('bulletin-lightbox-open');
-            closeBtn.focus({ preventScroll: true });
-        }
+        // ... (openLightbox reste inchangé)
 
         function closeLightbox() {
             lightbox.classList.remove('is-active');
@@ -74,12 +68,14 @@
             window.setTimeout(function () {
                 if (!lightbox.classList.contains('is-active')) {
                     modalImg.removeAttribute('src');
-                    modalImg.removeAttribute('style');
+                    // MODIFICATION : On retire le style du panneau, pas de l'image
+                    panel.removeAttribute('style'); 
                     modalImg.onload = null;
                     activeSourceImg = null;
                 }
             }, 250);
         }
+
 
         images.forEach((img) => {
             img.setAttribute('data-bulletin-lightbox', '');

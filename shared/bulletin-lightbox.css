@@ -37,6 +37,8 @@
 
 .bulletin-image-lightbox__img {
     display: block;
+    width: 100%;       /* AJOUT */
+    height: 100%;      /* AJOUT */
     max-width: 94vw;
     max-height: 90dvh;
     object-fit: contain;
@@ -44,6 +46,7 @@
     border-radius: 14px;
     box-shadow: 0 24px 80px rgba(0, 0, 0, 0.65);
 }
+
 
 .bulletin-image-lightbox__close {
     position: absolute;
