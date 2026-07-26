@@ -5872,17 +5872,46 @@
     function loadEdits() {
         try { return JSON.parse(localStorage.getItem(EDIT_KEY)) || {}; } catch { return {}; }
     }
+    function encodeEditPathForFirebase(path) {
+        return encodeURIComponent(path).replace(/\./g, '%2E');
+    }
+    function decodeEditPathFromFirebase(path) {
+        try { return decodeURIComponent(path); } catch { return path; }
+    }
+    function encodeEditsForFirebase(edits) {
+        return Object.fromEntries(Object.entries(edits || {}).map(([path, text]) => [
+            encodeEditPathForFirebase(path),
+            text
+        ]));
+    }
+    function decodeEditsFromFirebase(edits) {
+        return Object.fromEntries(Object.entries(edits || {}).map(([path, text]) => [
+            decodeEditPathFromFirebase(path),
+            text
+        ]));
+    }
     function saveEdits(obj) {
         try { localStorage.setItem(EDIT_KEY, JSON.stringify(obj)); } catch {}
-        if (FB_EDITS_REF) FB_EDITS_REF.set(obj);
+        if (FB_EDITS_REF) {
+            return FB_EDITS_REF.set(encodeEditsForFirebase(obj)).then(() => true).catch(err => {
+                const reason = err?.message || 'erreur inconnue';
+                console.error('[content_edits] échec de sauvegarde Firebase :', err);
+                editLog('err', 'Firebase a refusé la sauvegarde du texte : ' + reason);
+                return false;
+            });
+        }
+        return Promise.resolve(false);
     }
 
     if (FB_EDITS_REF) {
         FB_EDITS_REF.on('value', snap => {
-            const fbEdits = snap.val() || {};
-            const merged = { ...fbEdits, ...loadEdits() };
+            const fbEdits = decodeEditsFromFirebase(snap.val() || {});
+            const merged = { ...loadEdits(), ...fbEdits };
             try { localStorage.setItem(EDIT_KEY, JSON.stringify(merged)); } catch {}
             if (!_editMode) applyStoredEdits();
+        }, err => {
+            console.error('[content_edits] Firebase inaccessible en lecture :', err);
+            editLog('err', 'Firebase inaccessible pour les textes : ' + (err?.message || 'lecture refusée'));
         });
     }
 
@@ -6003,8 +6032,10 @@
         const path  = _editEl.dataset.editPath || getEditPath(_editEl);
         const edits = loadEdits();
         edits[path] = newText; // stocker le texte brut avec marqueurs
-        saveEdits(edits);
-        editLog('ok', `Sauvegardé : "${oldText.slice(0,22)}…"`);
+        saveEdits(edits).then(savedToFirebase => {
+            if (savedToFirebase) editLog('ok', `Sauvegardé Firebase : "${oldText.slice(0,22)}…"`);
+            else if (!FB_EDITS_REF) editLog('info', `Sauvegardé localement : "${oldText.slice(0,22)}…"`);
+        });
         closeEditInline();
     }
 
