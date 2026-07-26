@@ -34,7 +34,7 @@
         ].join('');
         document.body.appendChild(lightbox);
 
-        const modalImg = lightbox.querySelector('.bulletin-image-lightbox__img');
+const modalImg = lightbox.querySelector('.bulletin-image-lightbox__img');
         const closeBtn = lightbox.querySelector('.bulletin-image-lightbox__close');
         // AJOUT : On cible le panneau parent
         const panel = lightbox.querySelector('.bulletin-image-lightbox__panel'); 
@@ -60,6 +60,17 @@
             panel.style.height = Math.round(targetHeight) + 'px';
         }
 
+        function openLightbox(img) {
+            activeSourceImg = img;
+            modalImg.onload = fitImageToViewport;
+            modalImg.src = img.currentSrc || img.src;
+            modalImg.alt = img.alt || 'Image agrandie';
+            if (modalImg.complete) fitImageToViewport();
+            lightbox.classList.add('is-active');
+            document.body.classList.add('bulletin-lightbox-open');
+            closeBtn.focus({ preventScroll: true });
+        }
+
         // ... (openLightbox reste inchangé)
 
         function closeLightbox() {
@@ -75,7 +86,6 @@
                 }
             }, 250);
         }
-
 
         images.forEach((img) => {
             img.setAttribute('data-bulletin-lightbox', '');
