@@ -4208,6 +4208,179 @@
 
     <script>
     /* ════════════════════════════════════════════════════════════════
+       MODAL DÉCRYPTAGE — révélation de l'image + commentaires
+    ═══════════════════════════════════════════════════════════════ */
+    let _ncmMsgImageData = ''; // base64 drag-drop image
+
+    // Génère un texte "chiffré" visuel à partir du vrai texte
+    function _msgCipher(text) {
+        const chars = 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz0123456789!@#$%^&*';
+        return text.split('').map(c => {
+            if (c === ' ') return ' ';
+            if (c === '\n') return '\n';
+            // 1 char sur 3 reste lisible, le reste est chiffré
+            return Math.random() > 0.33 ? chars[Math.floor(Math.random() * chars.length)] : c;
+        }).join('');
+    }
+
+    // Drag-drop image pour la card message dans /new
+    function _ncmMsgFileSelected(input) {
+        const file = input.files?.[0]; if (!file) return;
+        const reader = new FileReader();
+        reader.onload = e => {
+            _ncmMsgImageData = e.target.result;
+            const lbl = document.getElementById('ncmMsgImgLabel');
+            const fld = document.getElementById('ncmMsgImgField');
+            if (lbl) lbl.textContent = '✅ ' + file.name;
+            if (fld) fld.classList.add('has-img');
+        };
+        reader.readAsDataURL(file);
+    }
+    function _ncmMsgSrcChange(val) {
+        const lbl = document.getElementById('ncmMsgImgLabel');
+        const fld = document.getElementById('ncmMsgImgField');
+        if (val.trim()) {
+            if (lbl) lbl.textContent = '🔗 URL définie';
+            if (fld) fld.classList.add('has-img');
+            _ncmMsgImageData = ''; // URL prime sur drag-drop
+        } else {
+            if (lbl) lbl.textContent = 'Image révélée au décryptage (cliquer ou URL)';
+            if (fld) fld.classList.remove('has-img');
+        }
+    }
+
+    // Ouvre le modal décryptage
+    function openDecryptModal(cardId, title, imgSrc) {
+        const modal = document.getElementById('decryptModal');
+        if (!modal) return;
+        document.getElementById('decryptTitle').textContent = title || '—';
+        const img = document.getElementById('decryptImg');
+        const overlay = document.getElementById('decryptRevealOverlay');
+
+        if (imgSrc) {
+            img.src = imgSrc;
+            img.style.display = 'block';
+            // Animation de révélation
+            overlay.classList.remove('done');
+            setTimeout(() => overlay.classList.add('done'), 1400);
+        } else {
+            // Pas d'image : masquer la zone image
+            document.getElementById('decryptImgWrap').style.display = 'none';
+            overlay.classList.add('done');
+        }
+
+        // Commentaires
+        _dcOpen('decrypt-' + cardId);
+
+        modal.classList.add('is-active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeDecryptModal() {
+        const modal = document.getElementById('decryptModal');
+        if (!modal) return;
+        modal.classList.remove('is-active');
+        document.body.style.overflow = '';
+        document.getElementById('decryptImg').src = '';
+        document.getElementById('decryptImgWrap').style.display = '';
+        document.getElementById('decryptRevealOverlay').classList.remove('done');
+        _dcClose();
+    }
+
+    // Alias commentaires pour le modal décryptage (réutilise le système _cc*)
+    let _dcCardId = null, _dcRef = null, _dcListener = null, _dcDB = [], _dcShown = 5;
+
+    function _dcOpen(cardId) {
+        if (_dcRef && _dcListener) { _dcRef.off('value', _dcListener); }
+        _dcCardId = cardId; _dcDB = []; _dcShown = 5;
+        _dcRef = FB_DB.ref('card_comments/' + cardId);
+        _dcUpdateLogin();
+        document.getElementById('decryptCommentCountBadge').textContent = '0';
+        document.getElementById('decryptCommentList').innerHTML = '';
+        document.getElementById('decryptCommentsBody').classList.remove('is-open');
+        document.getElementById('decryptCommentsToggle').classList.remove('is-open');
+        document.getElementById('decryptCommentMoreBtn').style.display = 'none';
+        _dcListener = _dcRef.on('value', snap => {
+            let val = snap.val();
+            if (!val) { _dcDB = []; }
+            else {
+                if (!Array.isArray(val)) val = Object.keys(val).sort((a,b)=>Number(a)-Number(b)).map(k=>val[k]);
+                const likes = {}; _dcDB.forEach(c => { likes[c.id] = c.likedByMe; });
+                _dcDB = val.map(c => ({ ...c, likedByMe: !!likes[c.id] }));
+            }
+            _dcRender();
+        }, err => console.warn('[decrypt-comments]', err));
+    }
+
+    function _dcClose() {
+        if (_dcRef && _dcListener) { _dcRef.off('value', _dcListener); _dcListener = null; }
+        _dcCardId = null; _dcDB = [];
+    }
+
+    function _dcUpdateLogin() {
+        const banner = document.getElementById('decryptCommentLoginBanner');
+        const box    = document.getElementById('decryptCommentWriteBox');
+        const wrap   = document.getElementById('decryptCommentAvatarWrap');
+        if (!banner || !box) return;
+        if (window.currentUser) {
+            banner.style.display = 'none';
+            box.classList.remove('is-hidden');
+            if (wrap) wrap.innerHTML = avatarHTML(window.currentUser, 28);
+        } else {
+            banner.style.display = 'flex';
+            box.classList.add('is-hidden');
+        }
+    }
+
+    function toggleDecryptComments() {
+        const body = document.getElementById('decryptCommentsBody');
+        const tog  = document.getElementById('decryptCommentsToggle');
+        const open = body.classList.toggle('is-open');
+        tog?.classList.toggle('is-open', open);
+        if (open) { _dcUpdateLogin(); _dcRender(); }
+    }
+
+    function _dcRender() {
+        const list  = document.getElementById('decryptCommentList');
+        const more  = document.getElementById('decryptCommentMoreBtn');
+        const badge = document.getElementById('decryptCommentCountBadge');
+        if (!list) return;
+        const sorted = [..._dcDB].sort((a,b) => new Date(b.time) - new Date(a.time));
+        badge.textContent = sorted.length;
+        const shown = sorted.slice(0, _dcShown);
+        if (shown.length === 0) {
+            list.innerHTML = `<div style="text-align:center;padding:20px 0;color:rgba(255,255,255,0.25);font-size:13px">🔓 Sois le premier à commenter ce document déclassifié !</div>`;
+        } else {
+            list.innerHTML = shown.map(c => _ccRenderItem(c)).join('');
+        }
+        if (more) more.style.display = sorted.length > _dcShown ? 'block' : 'none';
+    }
+
+    function postDecryptComment() {
+        if (!window.currentUser || !_dcCardId) return;
+        const inp = document.getElementById('decryptCommentInput');
+        const txt = (inp?.value||'').trim(); if (!txt) return;
+        const check = _filterComment(txt);
+        if (check.blocked) { _showCommentWarning('Contenu inapproprié.'); return; }
+        const c = { id: uid(), username: window.currentUser.username, avatar: window.currentUser.avatar||'',
+            text: txt, time: isoNow(), likes: 0, likedByMe: false };
+        _dcDB.unshift(c);
+        _dcRef.set(_dcDB.map(x => { const n={...x}; delete n.likedByMe; return n; }))
+            .catch(e => console.error('[decrypt-comments] write error:', e));
+        inp.value = ''; inp.style.height = '';
+        _dcRender();
+    }
+
+    function loadMoreDecryptComments() { _dcShown += 5; _dcRender(); }
+
+    // Sync login → décrypt comments
+    const _origDiscordLogin2 = window.discordLogin;
+    window.discordLogin = function(user) {
+        if (typeof _origDiscordLogin2 === 'function') _origDiscordLogin2(user);
+        _dcUpdateLogin();
+    };
+
+    /* ════════════════════════════════════════════════════════════════
        ÉDITEUR DE CONTENU DANS LA LIGHTBOX (/edit modal)
     ═══════════════════════════════════════════════════════════════ */
     const MODAL_EDIT_STORE = 'bloxleaks_modal_edits';
@@ -5811,13 +5984,21 @@
     /** Injecte le badge dans l'image-wrapper d'une card (news-card ou group-card) */
     function _nbInject(card) {
         if (!card || card.querySelector('.leak-card__new')) return;
-        const wrapper = card.querySelector('.news-card__image-wrapper, .group-card__image-wrapper');
+        // msg-card : badge dans le header plutôt que dans un image-wrapper
+        let wrapper = card.querySelector('.news-card__image-wrapper, .group-card__image-wrapper');
+        if (!wrapper && card.classList.contains('msg-card')) {
+            wrapper = card.querySelector('.msg-card__header');
+        }
         if (!wrapper) return;
         const badge = document.createElement('div');
         badge.className = 'leak-card__new';
         badge.textContent = 'Nouveau';
+        // Sur msg-card le header est en position relative — on force absolute
+        if (card.classList.contains('msg-card')) {
+            badge.style.cssText = 'position:absolute;top:10px;right:14px;z-index:4';
+            card.style.position = 'relative';
+        }
         wrapper.appendChild(badge);
-        // Auto-retrait au bout du TTL restant
         const staticId = card.dataset.staticId || card.dataset.ccId;
         const db = _nbLoad();
         const ts = db[staticId];
@@ -5827,9 +6008,8 @@
         }
     }
 
-    /** Parcourt toutes les cards au chargement et injecte les badges actifs */
     function _nbApplyAll() {
-        document.querySelectorAll('.news-card, .group-card').forEach(card => {
+        document.querySelectorAll('.news-card, .group-card, .msg-card').forEach(card => {
             const sid = card.dataset.staticId || card.dataset.ccId;
             if (sid && _nbIsNew(sid)) _nbInject(card);
         });
@@ -6241,6 +6421,10 @@
         const msgInit = document.getElementById('ncmMsgInitials'); if (msgInit) msgInit.textContent = 'E.';
         const msgTit  = document.getElementById('ncmMsgTitle'); if (msgTit) msgTit.textContent = 'Message de E. - Quake';
         const msgTxt  = document.getElementById('ncmMsgText'); if (msgTxt) msgTxt.textContent = 'Écris le contenu du message ici…';
+        const msgSrcInp = document.getElementById('ncmMsgSrc'); if (msgSrcInp) msgSrcInp.value = '';
+        const msgImgLbl = document.getElementById('ncmMsgImgLabel'); if (msgImgLbl) msgImgLbl.textContent = 'Image révélée au décryptage (cliquer ou URL)';
+        const msgImgFld = document.getElementById('ncmMsgImgField'); if (msgImgFld) msgImgFld.classList.remove('has-img');
+        _ncmMsgImageData = '';
 
         // Reset champs actus
         const actTit  = document.getElementById('ncmActusTitle'); if (actTit) actTit.textContent = 'DOSSIER #001 : TITRE DU DOSSIER';
@@ -6272,7 +6456,9 @@
             msgInitials = document.getElementById('ncmMsgInitials')?.textContent?.trim() || 'E.';
             title       = document.getElementById('ncmMsgTitle')?.textContent?.trim() || 'Message';
             msgText     = document.getElementById('ncmMsgText')?.textContent?.trim() || '';
-            badge = 'Cryptage'; eyebrow = 'Cryptage'; btnLabel = 'Décrypter →'; src = '';
+            badge = 'Cryptage'; eyebrow = 'Cryptage'; btnLabel = 'Décrypter →';
+            // Image révélée : URL tapée ou drag-drop
+            src = document.getElementById('ncmMsgSrc')?.value?.trim() || _ncmMsgImageData || '';
         } else if (isActus) {
             title     = document.getElementById('ncmActusTitle')?.textContent?.trim() || 'Dossier';
             actusText = document.getElementById('ncmActusText')?.textContent?.trim()
@@ -6316,7 +6502,8 @@
         const newCard = {
             id: cardId, sectionId, badge, title,
             src: src || '', eyebrow, btnLabel, mediaType, kind,
-            actusText: actusText || '', msgInitials: msgInitials || '', msgText: msgText || ''
+            actusText: actusText || '', msgInitials: msgInitials || '',
+            msgText: msgText || '', msgSrc: (isMessage ? src : '') || ''
         };
 
         // Rendu immédiat
@@ -6380,7 +6567,7 @@
         const list = document.getElementById('dcmList');
         if (!list) return;
         const allCards = [
-            ...document.querySelectorAll('.news-card, .group-card'),
+            ...document.querySelectorAll('.news-card, .group-card, .msg-card'),
             ...document.querySelectorAll('.secret-bulletin[data-cc-id], .secret-bulletin[data-static-id]'),
         ];
         if (allCards.length === 0) {
@@ -6389,8 +6576,9 @@
             list.innerHTML = allCards.map((card, i) => {
                 const isGroup  = card.classList.contains('group-card');
                 const isActus  = card.classList.contains('secret-bulletin');
-                const title    = card.querySelector('.news-card__title, .group-card__title, h2')?.textContent?.trim() || 'Sans titre';
-                const badge    = card.querySelector('.news-card__badge, .group-card__badge')?.textContent?.trim() || (isActus ? 'ACTUS' : '');
+                const isMsg    = card.classList.contains('msg-card');
+                const title    = card.querySelector('.news-card__title, .group-card__title, .msg-card__title, h2')?.textContent?.trim() || 'Sans titre';
+                const badge    = card.querySelector('.news-card__badge, .group-card__badge')?.textContent?.trim() || (isActus ? 'ACTUS' : isMsg ? 'MSG' : '');
                 const section  = card.closest('[id^="cat-"]');
                 const sectionName = section?.id?.replace('cat-','') || 'inconnu';
                 const ccId     = card.dataset.ccId || null;
@@ -6402,10 +6590,12 @@
                 const isVideo  = imgEl?.tagName === 'VIDEO';
                 const thumb    = isActus
                     ? `<span style="font-size:22px">📰</span>`
-                    : imgSrc
-                        ? `<img src="${_ccEsc(imgSrc)}" alt="" style="width:100%;height:100%;object-fit:cover;display:block;">`
-                        : `<span style="font-size:20px">${isGroup ? '📦' : isVideo ? '🎬' : '🖼️'}</span>`;
-                const typeLabel = isActus ? ' · actus' : isGroup ? ' · groupe' : isCustom ? ' · personnalisée' : '';
+                    : isMsg
+                        ? `<span style="font-size:22px">🔐</span>`
+                        : imgSrc
+                            ? `<img src="${_ccEsc(imgSrc)}" alt="" style="width:100%;height:100%;object-fit:cover;display:block;">`
+                            : `<span style="font-size:20px">${isGroup ? '📦' : isVideo ? '🎬' : '🖼️'}</span>`;
+                const typeLabel = isActus ? ' · actus' : isMsg ? ' · message' : isGroup ? ' · groupe' : isCustom ? ' · personnalisée' : '';
                 return `<div class="dcm-item" id="dcm-item-${uid}">
                     <div class="dcm-item-thumb">${thumb}</div>
                     <div class="dcm-item-info">
