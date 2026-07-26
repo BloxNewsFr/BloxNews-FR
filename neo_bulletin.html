@@ -4457,6 +4457,72 @@
 
     function loadMoreDecryptComments() { _dcShown += 5; _dcRender(); }
 
+    /* ── Commentaires inline dans les blocs actus ─────────────────── */
+    const _actusRefs = {}; // cardId → firebase ref
+
+    function _actusBindComments(cardId, actusEl) {
+        if (_actusRefs[cardId]) return; // déjà bindé
+        const ref = FB_DB.ref('card_comments/' + cardId);
+        _actusRefs[cardId] = ref;
+        ref.on('value', snap => {
+            let val = snap.val();
+            let db = [];
+            if (val) {
+                if (!Array.isArray(val)) val = Object.keys(val).sort((a,b)=>Number(a)-Number(b)).map(k=>val[k]);
+                db = val;
+            }
+            const countEl = actusEl.querySelector(`.actus-cc-count[data-cc-id="${cardId}"]`);
+            if (countEl) countEl.textContent = db.length;
+            const listEl = actusEl.querySelector(`[data-actus-list="${cardId}"]`);
+            const moreEl = actusEl.querySelector(`[data-actus-more="${cardId}"]`);
+            if (!listEl) return;
+            const shown = [...db].sort((a,b) => new Date(b.time)-new Date(a.time)).slice(0, listEl.dataset.shown ? parseInt(listEl.dataset.shown) : 5);
+            listEl.dataset.shown = listEl.dataset.shown || 5;
+            if (db.length === 0) {
+                listEl.innerHTML = `<div style="text-align:center;padding:16px 0;color:rgba(255,255,255,0.22);font-size:13px">💬 Aucun commentaire pour l'instant</div>`;
+            } else {
+                listEl.innerHTML = shown.map(c => _ccRenderItem(c)).join('');
+            }
+            if (moreEl) moreEl.style.display = db.length > (parseInt(listEl.dataset.shown)||5) ? 'block' : 'none';
+        }, err => console.warn('[actus-comments]', err));
+    }
+
+    function _actusPostComment(cardId, btn) {
+        if (!window.currentUser) return;
+        const actusEl = btn.closest('.secret-bulletin');
+        const inp = actusEl?.querySelector(`[data-actus-input="${cardId}"]`);
+        const txt = (inp?.value||'').trim(); if (!txt) return;
+        const check = _filterComment(txt);
+        if (check.blocked) { _showCommentWarning('Contenu inapproprié.'); return; }
+        const ref = _actusRefs[cardId] || FB_DB.ref('card_comments/' + cardId);
+        _actusRefs[cardId] = ref;
+        const c = { id: uid(), username: window.currentUser.username, avatar: window.currentUser.avatar||'',
+            text: txt, time: isoNow(), likes: 0 };
+        ref.once('value', snap => {
+            let val = snap.val();
+            let db = val ? (Array.isArray(val) ? val : Object.values(val)) : [];
+            db.unshift(c);
+            ref.set(db).catch(err => console.error('[actus-comments] write error:', err));
+        });
+        inp.value = ''; inp.style.height = '';
+    }
+
+    function _actusLoadMore(cardId, btn) {
+        const actusEl = btn.closest('.secret-bulletin');
+        const listEl = actusEl?.querySelector(`[data-actus-list="${cardId}"]`);
+        if (!listEl) return;
+        listEl.dataset.shown = (parseInt(listEl.dataset.shown)||5) + 5;
+        // Re-déclenche le render en relisant Firebase
+        const ref = _actusRefs[cardId];
+        if (ref) ref.once('value', snap => {
+            let val = snap.val();
+            let db = val ? (Array.isArray(val) ? val : Object.values(val)) : [];
+            const shown = [...db].sort((a,b) => new Date(b.time)-new Date(a.time)).slice(0, parseInt(listEl.dataset.shown));
+            listEl.innerHTML = shown.map(c => _ccRenderItem(c)).join('');
+            btn.style.display = db.length > parseInt(listEl.dataset.shown) ? 'block' : 'none';
+        });
+    }
+
     // Sync login → décrypt comments
     const _origDiscordLogin2 = window.discordLogin;
     window.discordLogin = function(user) {
@@ -6099,17 +6165,18 @@
     /** Injecte le badge dans l'image-wrapper d'une card (news-card ou group-card) */
     function _nbInject(card) {
         if (!card || card.querySelector('.leak-card__new')) return;
-        // msg-card : badge dans le header plutôt que dans un image-wrapper
         let wrapper = card.querySelector('.news-card__image-wrapper, .group-card__image-wrapper');
         if (!wrapper && card.classList.contains('msg-card')) {
             wrapper = card.querySelector('.msg-card__header');
+        }
+        if (!wrapper && card.classList.contains('secret-bulletin')) {
+            wrapper = card.querySelector('.bulletin-header');
         }
         if (!wrapper) return;
         const badge = document.createElement('div');
         badge.className = 'leak-card__new';
         badge.textContent = 'Nouveau';
-        // Sur msg-card le header est en position relative — on force absolute
-        if (card.classList.contains('msg-card')) {
+        if (card.classList.contains('msg-card') || card.classList.contains('secret-bulletin')) {
             badge.style.cssText = 'position:absolute;top:10px;right:14px;z-index:4';
             card.style.position = 'relative';
         }
@@ -6124,7 +6191,7 @@
     }
 
     function _nbApplyAll() {
-        document.querySelectorAll('.news-card, .group-card, .msg-card').forEach(card => {
+        document.querySelectorAll('.news-card, .group-card, .msg-card, .secret-bulletin').forEach(card => {
             const sid = card.dataset.staticId || card.dataset.ccId;
             if (sid && _nbIsNew(sid)) _nbInject(card);
         });
@@ -6212,6 +6279,10 @@
             const contentRendered = typeof renderMarkdown === 'function'
                 ? renderMarkdown(card.actusText || card.msgText || '')
                 : e(card.actusText || '');
+            const likeId = 'card-' + _plSlug(card.title + '-' + card.id);
+            const localLikes = _plLoadLocal();
+            const liked = (localLikes[likeId] || {}).liked || false;
+            const likeCount = _plGlobalCounts[likeId] || 0;
             html = `<div class="secret-bulletin" data-cc-id="${card.id}" style="margin-bottom:24px;">
                 <div class="bulletin-header">
                     <h2>${e(card.title)}</h2>
@@ -6220,13 +6291,55 @@
                 <div class="bulletin-content">
                     <p>${contentRendered}</p>
                 </div>
+                <div class="bulletin-footer-row" style="display:flex;align-items:center;gap:10px;padding:10px 0 4px;border-top:1px solid rgba(255,255,255,0.06);margin-top:12px;">
+                    <span data-like-id="${likeId}" class="actus-like-placeholder" style="flex-shrink:0"></span>
+                </div>
+                <!-- Commentaires card actus -->
+                <div class="card-comments-section" style="margin:0 -4px -4px;border-radius:0 0 16px 16px;overflow:hidden;">
+                    <div class="card-comments-toggle" onclick="this.nextElementSibling.classList.toggle('is-open');this.classList.toggle('is-open')">
+                        <span class="card-comments-toggle__icon">💬</span>
+                        <span class="card-comments-toggle__label">Commentaires</span>
+                        <span class="card-comments-toggle__count actus-cc-count" data-cc-id="${card.id}">0</span>
+                        <span class="card-comments-toggle__arrow">▾</span>
+                    </div>
+                    <div class="card-comments-body" data-actus-cc-id="${card.id}">
+                        <div class="card-comment-login actus-cc-login" data-cc-id="${card.id}" style="display:${window.currentUser?'none':'flex'}">
+                            <span>🎮</span><span>Connecte-toi pour commenter</span>
+                            <button onclick="_discordLogin()">Se connecter</button>
+                        </div>
+                        <div class="card-comment-write${window.currentUser?'':' is-hidden'}" data-cc-id="${card.id}">
+                            <div class="card-comment-avatar-wrap">${window.currentUser ? avatarHTML(window.currentUser, 28) : ''}</div>
+                            <div style="flex:1;min-width:0">
+                                <textarea class="card-comment-input" placeholder="Ton avis sur ce dossier…" rows="1"
+                                    oninput="autoResize(this)" maxlength="240"
+                                    data-actus-input="${card.id}"></textarea>
+                                <button class="card-comment-submit" onclick="_actusPostComment('${card.id}',this)">Poster</button>
+                            </div>
+                        </div>
+                        <div class="card-comment-list" data-actus-list="${card.id}"></div>
+                        <button class="card-comment-more" data-actus-more="${card.id}" style="display:none" onclick="_actusLoadMore('${card.id}',this)">Voir plus →</button>
+                    </div>
+                </div>
             </div>`;
-            // Pour les actus on insère dans la section (pas dans une grid)
+
             const tmp2 = document.createElement('div');
             tmp2.innerHTML = html.trim();
             const actusEl = tmp2.firstChild;
             section.appendChild(actusEl);
-            return; // sortie anticipée, pas de like card footer
+
+            // Like button
+            try {
+                const likeBtn = _plMakeBtn(likeId, liked, likeCount);
+                const placeholder = actusEl.querySelector('.actus-like-placeholder');
+                if (placeholder && likeBtn) placeholder.replaceWith(likeBtn);
+            } catch(e) { console.warn('[actus like]', e); }
+
+            // Badge Nouveau
+            try { if (_nbIsNew(card.id)) _nbInject(actusEl); } catch(e) {}
+
+            // Firebase commentaires
+            _actusBindComments(card.id, actusEl);
+            return;
 
         } else {
             // ── Carte STANDARD (leak / image / vidéo) ─────────────────
