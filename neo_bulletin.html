@@ -629,8 +629,8 @@
         }
         .msg-card__header {
             position: relative; z-index: 1;
-            padding: 24px 20px 0;
-            display: flex; align-items: flex-start; gap: 14px;
+            padding: 28px 24px 0;
+            display: flex; align-items: flex-start; gap: 18px;
         }
         .msg-card__stamp {
             width: 48px; height: 48px; flex-shrink: 0; border-radius: 10px;
@@ -644,12 +644,12 @@
         .msg-card__meta { flex: 1; min-width: 0; }
         .msg-card__eyebrow {
             font-size: 10px; font-weight: 800; letter-spacing: 2px;
-            text-transform: uppercase; color: rgba(255,180,0,0.6); margin-bottom: 4px;
+            text-transform: uppercase; color: rgba(255,180,0,0.6); margin-bottom: 6px;
         }
-        .msg-card__date { font-size: 10px; font-weight: 500; color: rgba(255,180,0,0.35); margin-bottom: 4px; }
+        .msg-card__date { font-size: 10px; font-weight: 500; color: rgba(255,180,0,0.35); margin-bottom: 6px; }
         .msg-card__title {
-            font-family: 'LuckiestGuy Regular', cursive; font-size: 17px;
-            color: rgba(255,240,180,0.92); letter-spacing: 0.3px; line-height: 1.2;
+            font-family: 'LuckiestGuy Regular', cursive; font-size: 19px;
+            color: rgba(255,240,180,0.92); letter-spacing: 0.3px; line-height: 1.3;
             margin: 0;
         }
         .msg-card__classified {
@@ -657,32 +657,32 @@
             font-size: 9px; font-weight: 900; letter-spacing: 2px;
             color: rgba(255,80,80,0.7); text-transform: uppercase;
             border: 1px solid rgba(255,80,80,0.25); border-radius: 4px;
-            padding: 2px 7px; margin-top: 6px;
+            padding: 3px 8px; margin-top: 10px;
         }
         .msg-card__body {
             position: relative; z-index: 1;
-            padding: 14px 20px;
+            padding: 18px 24px;
         }
         /* Texte chiffré (msgText affiché comme "code crypté") */
         .msg-card__cipher {
             font-family: 'Share Tech Mono', monospace; font-size: 12px;
-            color: rgba(255,220,80,0.35); line-height: 1.7;
+            color: rgba(255,220,80,0.35); line-height: 1.8;
             letter-spacing: 1px; word-break: break-all;
             background: rgba(255,220,80,0.03);
             border: 1px solid rgba(255,220,80,0.08);
-            border-radius: 8px; padding: 10px 12px; margin-bottom: 14px;
+            border-radius: 8px; padding: 14px 16px; margin-bottom: 18px;
             /* Flou partiel style "censuré" */
             -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.15) 100%);
             mask-image: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.15) 100%);
         }
         .msg-card__footer {
             position: relative; z-index: 1;
-            padding: 0 20px 20px;
-            display: flex; align-items: center; gap: 10px;
+            padding: 0 24px 24px;
+            display: flex; align-items: center; gap: 12px;
         }
         .msg-card__decrypt-btn {
             flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px;
-            padding: 11px 18px; border-radius: 100px; border: none; cursor: pointer;
+            padding: 13px 22px; border-radius: 100px; border: none; cursor: pointer;
             background: linear-gradient(135deg, rgba(255,180,0,0.15), rgba(255,140,0,0.08));
             border: 1px solid rgba(255,180,0,0.3);
             color: rgba(255,210,80,0.9); font-size: 13px; font-weight: 800;
@@ -698,7 +698,7 @@
             box-shadow: 0 4px 20px rgba(255,160,0,0.2);
             transform: translateY(-1px);
         }
-        .msg-card__decrypt-btn__icon { font-size: 16px; }
+        .msg-card__decrypt-btn__icon { font-size: 18px; }
         .msg-card__bar {
             height: 3px;
             background: linear-gradient(90deg, transparent, rgba(255,180,0,0.5), rgba(255,80,80,0.3), transparent);
@@ -3377,6 +3377,13 @@
             .card-comment-item__like { padding: 3px 8px; font-size: 10px; }
             .card-comment-see-all { padding: 8px; font-size: 11px; margin-top: 8px; }
             .card-comment-char-counter { right: 72px; bottom: 11px; font-size: 10px; }
+
+            /* ── msg-card mobile ── */
+            .msg-card__header { padding: 22px 18px 0; gap: 14px; }
+            .msg-card__body { padding: 14px 18px; }
+            .msg-card__footer { padding: 0 18px 18px; }
+            .msg-card__title { font-size: 17px; }
+            .msg-card__cipher { padding: 12px 14px; }
         }
     </style>
 </head>
