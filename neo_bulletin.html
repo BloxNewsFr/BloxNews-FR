@@ -398,40 +398,90 @@
         /* No animation on section switch — prevents child animation restart */
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* ── BLOC DOSSIER TOP SECRET ── */
+        /* ── BLOC DOSSIER TOP SECRET — REFONTE ── */
         .secret-bulletin {
-            background: #fff; border-radius: 24px; padding: 40px; position: relative; margin-bottom: 40px;
-            box-shadow: 0 16px 50px rgba(0,0,0,0.14), 0 2px 8px rgba(0,0,0,0.08); overflow: hidden; border-left: 10px solid #ff1a1a;
-            background: linear-gradient(135deg, #fff 0%, #fff9f9 100%);
+            position: relative; margin-bottom: 40px; border-radius: 20px; overflow: hidden;
+            background: #0d0d14;
+            border: 1px solid rgba(255, 26, 26, 0.18);
+            box-shadow:
+                0 0 0 1px rgba(255,26,26,0.06),
+                0 4px 16px rgba(0,0,0,0.4),
+                0 24px 64px rgba(0,0,0,0.45),
+                inset 0 1px 0 rgba(255,255,255,0.04);
         }
+        /* Bande rouge à gauche */
+        .secret-bulletin::after {
+            content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+            width: 4px; background: linear-gradient(180deg, #ff1a1a, #cc0000);
+            border-radius: 4px 0 0 4px;
+        }
+        /* Watermark TOP SECRET */
         .secret-bulletin::before {
-            content: "TOP SECRET"; position: absolute; bottom: 28px; right: 28px;
-            color: rgba(255, 26, 26, 0.07);
-            font-size: 60px; font-weight: 900; transform: rotate(12deg); pointer-events: none;
+            content: "TOP SECRET"; position: absolute; bottom: 20px; right: 20px;
+            color: rgba(255, 26, 26, 0.06);
+            font-size: 52px; font-weight: 900; transform: rotate(12deg); pointer-events: none;
             font-family: 'LuckiestGuy Regular', cursive;
-            border: 5px solid rgba(255, 26, 26, 0.07); padding: 10px 20px; border-radius: 12px;
-            z-index: 0;
+            border: 4px solid rgba(255, 26, 26, 0.06); padding: 8px 18px; border-radius: 10px;
+            z-index: 0; letter-spacing: 2px;
         }
+        /* Bande header colorée */
+        .bulletin-topbar {
+            background: linear-gradient(90deg, #cc0000 0%, #1a0000 100%);
+            padding: 10px 28px 10px 28px;
+            display: flex; align-items: center; gap: 10px;
+            border-bottom: 1px solid rgba(255,26,26,0.2);
+        }
+        .bulletin-topbar__label {
+            font-family: 'LuckiestGuy Regular', cursive;
+            font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+            color: rgba(255,255,255,0.7); line-height: 1;
+        }
+        .bulletin-topbar__dot {
+            width: 6px; height: 6px; border-radius: 50%;
+            background: rgba(255,255,255,0.35); flex-shrink: 0;
+        }
+        .bulletin-topbar__status {
+            font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 800;
+            text-transform: uppercase; letter-spacing: 1.5px;
+            color: #ffda00; margin-left: auto;
+            display: flex; align-items: center; gap: 5px;
+        }
+        .bulletin-topbar__status::before {
+            content: ''; width: 6px; height: 6px; border-radius: 50%;
+            background: #ffda00;
+            box-shadow: 0 0 6px #ffda00;
+            animation: pulseDot 2s ease-in-out infinite;
+        }
+        @keyframes pulseDot { 0%,100% { opacity: 1; } 50% { opacity: 0.35; } }
+
+        /* Contenu principal */
+        .bulletin-inner { padding: 28px 32px 24px 36px; position: relative; z-index: 1; }
+
         .bulletin-header {
             display: flex; justify-content: space-between; align-items: flex-start; gap: 20px;
-            border-bottom: 2px dashed #e0e0e0; padding-bottom: 18px; margin-bottom: 25px;
+            border-bottom: 1px solid rgba(255,255,255,0.07); padding-bottom: 18px; margin-bottom: 22px;
             position: relative; z-index: 1;
         }
         .bulletin-header h2 {
-            flex: 1; min-width: 0; margin: 0; color: #111;
-            font-family: 'LuckiestGuy Regular', cursive; font-size: 28px; letter-spacing: 0.5px;
-            line-height: 1.2; word-break: break-word;
+            flex: 1; min-width: 0; margin: 0;
+            color: rgba(255,240,240,0.95);
+            font-family: 'LuckiestGuy Regular', cursive; font-size: 26px; letter-spacing: 0.5px;
+            line-height: 1.25; word-break: break-word;
+            text-shadow: 0 2px 12px rgba(255,26,26,0.3);
         }
         .bulletin-meta {
-            flex-shrink: 0; font-size: 12px; color: #888; text-align: right;
+            flex-shrink: 0; font-size: 11px; color: rgba(255,180,180,0.55); text-align: right;
             font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
-            background: rgba(255,26,26,0.04); border: 1px solid rgba(255,26,26,0.1);
-            border-radius: 10px; padding: 8px 12px; white-space: nowrap; line-height: 1.7;
+            background: rgba(255,26,26,0.07); border: 1px solid rgba(255,26,26,0.15);
+            border-radius: 10px; padding: 8px 12px; white-space: nowrap; line-height: 1.8;
         }
         .bulletin-content { position: relative; z-index: 1; }
-        .bulletin-content p { font-size: 15px; margin-bottom: 15px; color: #333; line-height: 1.7; }
-        .bulletin-content .highlightr { color: #cc0000; background: rgba(255, 26, 26, 0.1); padding: 2px 8px; border-radius: 6px; font-weight: bold; }
-        .bulletin-content .highlightv { color: #4e00cc; background: rgba(83, 26, 255, 0.1); padding: 2px 8px; border-radius: 6px; font-weight: bold; }
+        .bulletin-content p { font-size: 14.5px; margin-bottom: 14px; color: rgba(220,210,210,0.82); line-height: 1.75; }
+        .bulletin-content .highlightr { color: #ff4444; background: rgba(255, 26, 26, 0.14); padding: 2px 8px; border-radius: 6px; font-weight: 700; }
+        .bulletin-content .highlightv { color: #a67fff; background: rgba(120, 50, 255, 0.14); padding: 2px 8px; border-radius: 6px; font-weight: 700; }
+
+        /* Dark mode du bulletin est le même (déjà sombre) */
+        html[data-theme="dark"] .secret-bulletin { background: #0a0a12; border-color: rgba(255,26,26,0.22); }
 
         .category-title {
             display: flex; align-items: center; gap: 20px; font-size: 32px; font-weight: 900; text-transform: uppercase; margin-bottom: 30px; color: #111; font-family: 'LuckiestGuy Regular', cursive; letter-spacing: 1px;
@@ -1733,6 +1783,10 @@
         .group-drawer__item-sub {
             font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px;
             color: rgba(var(--drawer-cat-rgb,204,0,0),0.8); margin-bottom: 2px;
+        }
+        .group-drawer__item-date {
+            font-size: 10px; font-weight: 500; color: rgba(255,255,255,0.28);
+            margin-top: 4px; letter-spacing: 0.2px;
         }
 
         .group-drawer__item-like {
@@ -3563,8 +3617,15 @@
 
                 <section id="cat-actus" class="category-section active-section">
             <div class="secret-bulletin">
+                <div class="bulletin-topbar">
+                    <span class="bulletin-topbar__label">Blox Leaks Network</span>
+                    <span class="bulletin-topbar__dot"></span>
+                    <span class="bulletin-topbar__label">Dossier #001</span>
+                    <span class="bulletin-topbar__status">En direct</span>
+                </div>
+                <div class="bulletin-inner">
                 <div class="bulletin-header">
-                    <h2>DOSSIER #001 : BLOX FRUITS 2</h2>
+                    <h2>BLOX FRUITS 2</h2>
                     <div class="bulletin-meta">
                         STATUT : NON CONFIRMÉ<br>
                         INTERCEPTION : JUIL 2026
@@ -3575,22 +3636,8 @@
                     <p>Deux nouveau fruits ont leak ! Un portant le nom de <span class="highlightv">Magnet Fruit</span>, et l'autre avec un nom inconnu. Nous sommes pratiquemment sûr que les seas actuelles vont être réimaginé, le grinding repenssé, et d'autres nouveautés incroyable</p>
                     <p>Des seas rework, des accesoires rework ect... Passez à la prochaine section pour savoir ce qu'il y aura dans la prochaine update</p>
                 </div>
+                </div><!-- /bulletin-inner -->
 
-<!--       <section id="cat-actus" class="category-section active-section">
-            <div class="secret-bulletin">
-                <div class="bulletin-header">
-                    <h2>DOSSIER #001 : QUELQUES BOULONS AU SOL</h2>
-                    <div class="bulletin-meta">
-                        STATUT : NON CONFIRMÉ<br>
-                        INTERCEPTION : MAI 2026
-                    </div>
-                </div>
-                <div class="bulletin-content">
-                    <p>Bienvenue sur le réseau Blox Leaks. Les développeurs essaient de brouiller les pistes, mais nous avons intercepté de nouveaux fragments de la prochaine mise à jour.</p>
-                    <p>Le <span class="highlight">nouveau fruit</span> commence à prendre forme. Les mers s'agitent, et de nouvelles structures massives ont été aperçues au loin. Préparez vos fruits, car le marché noir risque de s'enflammer.</p>
-                    <p>Passez à la prochaine section pour décrypter les données récupérées par nos espions. Restez sur vos gardes.</p>
-                </div>
---
             <!-- ══════════════════════════════════════════════
                  SYSTÈME DE COMMENTAIRES UNIFIÉ
             ══════════════════════════════════════════════ -->
@@ -3663,7 +3710,7 @@
                     </div>
                     <div class="group-card__content">
                         <div class="group-card__eyebrow">Fruit · Leak</div>
-                        <div class="group-card__date"></div>
+                        <div class="group-card__date">20 juil. 2026</div>
                         <h2 class="group-card__title">Magnet M1 + Z</h2>
                         <button class="group-card__open-btn">Voir tous les leaks →</button>
                     </div>
@@ -3680,7 +3727,7 @@
                     </div>
                     <div class="group-card__content">
                         <div class="group-card__eyebrow">Fruit · Leak</div>
-                        <div class="group-card__date"></div>
+                        <div class="group-card__date">21 juil. 2026</div>
                         <h2 class="group-card__title">Celestial Fruit</h2>
                         <button class="group-card__open-btn">Voir tous les leaks →</button>
                     </div>
@@ -3697,7 +3744,7 @@
                     </div>
                     <div class="group-card__content">
                         <div class="group-card__eyebrow">Fruit · Leak</div>
-                        <div class="group-card__date"></div>
+                        <div class="group-card__date">18 juil. 2026</div>
                         <h2 class="group-card__title">Oni Fruit</h2>
                         <button class="group-card__open-btn">Voir tous les leaks →</button>
                     </div>
@@ -4514,10 +4561,22 @@
                         if (modalImg) modalImg.style.display = 'none';
 
                         if (type === 'video' && video) {
+                            const existing = document.getElementById('_modalExtVideoBtn');
+                            if (existing) existing.remove();
                             video.src = sourceUrl;
                             video.style.display = 'block';
                             video.currentTime   = 0;
-                            video.play().catch(() => {});
+                            video.onerror = () => {
+                                video.style.display = 'none';
+                                video.onerror = null;
+                                _showExtVideoBtn(sourceUrl, video);
+                            };
+                            video.play().catch(() => {
+                                if (video.readyState === 0 || video.error) {
+                                    video.style.display = 'none';
+                                    _showExtVideoBtn(sourceUrl, video);
+                                }
+                            });
                         } else if (type === 'image' && modalImg) {
                             modalImg.src = sourceUrl;
                             modalImg.style.display = 'block';
@@ -4540,8 +4599,9 @@
 
                 const closeModalFn = () => {
                     modal.classList.remove('is-active');
-                    if (video) { video.pause(); video.src = ''; }
+                    if (video) { video.pause(); video.src = ''; video.onerror = null; }
                     if (modalImg) modalImg.src = '';
+                    document.getElementById('_modalExtVideoBtn')?.remove();
                     _cardCommentsClose();
                     // Fermer le panneau d'édition
                     const edPanel = document.getElementById('modalEditorPanel');
@@ -4568,25 +4628,25 @@
             badge: 'MAGNET', title: 'Magnet — Tous les leaks',
             hex: '#ff0055', rgb: '255,0,85',
             items: [
-                { type:'image', src:'./shared/blox_leaks/magnet_ability 2.jpeg', label:'Magnet M1 + Z', sub:'Leak' },
-                { type:'video', src:'./shared/blox_leaks/magnet_ability.mov',   label:'Magnet: Showcase vidéo',  sub:'Showcase' },
-                { type:'image', src:'./shared/blox_leaks/magnet.png',           label:'Magnet: Attaque',         sub:'Leak' },
+                { type:'image', src:'./shared/blox_leaks/magnet_ability 2.jpeg', label:'MAGNET M1 + Z',        sub:'Leak',     date:'20 juil. 2026' },
+                { type:'video', src:'./shared/blox_leaks/magnet_ability.mov',    label:'Magnet: Showcase vidéo', sub:'Showcase', date:'20 juil. 2026' },
+                { type:'image', src:'./shared/blox_leaks/magnet.png',            label:'Magnet: Attaque',        sub:'Leak',     date:'20 juil. 2026' },
             ]
         },
         celestial: {
             badge: 'CELESTIAL', title: 'Celestial — Tous les leaks',
             hex: '#ffa500', rgb: '255,165,0',
             items: [
-                { type:'image', src:'./shared/blox_leaks/celestial_shop.png',   label:'Celestial: Shop',    sub:'Leak' },
-                { type:'image', src:'./shared/blox_leaks/celestial_physic.png', label:'Celestial: Design',  sub:'Leak' },
+                { type:'image', src:'./shared/blox_leaks/celestial_shop.png',   label:'Celestial: Shop',   sub:'Leak', date:'21 juil. 2026' },
+                { type:'image', src:'./shared/blox_leaks/celestial_physic.png', label:'Celestial: Design', sub:'Leak', date:'21 juil. 2026' },
             ]
         },
         oni: {
             badge: 'ONI', title: 'Oni — Tous les leaks',
             hex: '#a200ff', rgb: '162,0,255',
             items: [
-                { type:'image', src:'./shared/blox_leaks/oni_shop.png',   label:'Oni: Shop',   sub:'Leak' },
-                { type:'image', src:'./shared/blox_leaks/oni_physic.png', label:'Oni: Design', sub:'Leak' },
+                { type:'image', src:'./shared/blox_leaks/oni_shop.png',   label:'Oni: Shop',   sub:'Leak', date:'18 juil. 2026' },
+                { type:'image', src:'./shared/blox_leaks/oni_physic.png', label:'Oni: Design', sub:'Leak', date:'18 juil. 2026' },
             ]
         }
     };
@@ -4667,11 +4727,13 @@
             const local  = _plLoadLocal();
             const liked  = (local[likeId] || {}).liked || false;
             const count  = _plGlobalCounts[likeId] || 0;
+            const dateHtml = item.date ? `<div class="group-drawer__item-date">${item.date}</div>` : '';
             return `<div class="group-drawer__item" style="--drawer-cat-rgb:${data.rgb}">
                 <div onclick="openGroupItem('${groupId}',${i})">${thumb}</div>
                 <div class="group-drawer__item-label">
                     <div class="group-drawer__item-sub">${item.sub}</div>
                     ${item.label}
+                    ${dateHtml}
                 </div>
                 <div class="group-drawer__item-like">
                     ${_plMakeBtn(likeId, liked, count).outerHTML}
@@ -4705,6 +4767,30 @@
         document.body.style.overflow = 'hidden';
     }
 
+    // Helper : afficher un bouton "Ouvrir la vidéo" quand le format n'est pas lisible inline
+    function _showExtVideoBtn(src, videoEl) {
+        const existing = document.getElementById('_modalExtVideoBtn');
+        if (existing) existing.remove();
+        const extBtn = document.createElement('a');
+        extBtn.id = '_modalExtVideoBtn';
+        extBtn.href = src;
+        extBtn.target = '_blank';
+        extBtn.rel = 'noopener noreferrer';
+        extBtn.style.cssText = [
+            'display:flex','flex-direction:column','align-items:center','justify-content:center',
+            'gap:12px','padding:36px 24px','text-decoration:none','color:#fff',
+            'background:rgba(255,255,255,0.03)','border:1px solid rgba(255,255,255,0.09)',
+            'border-radius:12px','transition:background 0.2s','width:100%','box-sizing:border-box'
+        ].join(';');
+        extBtn.innerHTML = `
+            <span style="font-size:40px;line-height:1">▶</span>
+            <span style="font-size:14px;font-weight:700;opacity:0.75;letter-spacing:0.3px">Ouvrir la vidéo</span>
+            <span style="font-size:10px;opacity:0.3;word-break:break-all;max-width:300px;text-align:center;font-family:monospace">${src.split('/').pop()}</span>`;
+        extBtn.onmouseover = () => extBtn.style.background = 'rgba(255,255,255,0.06)';
+        extBtn.onmouseout  = () => extBtn.style.background = 'rgba(255,255,255,0.03)';
+        videoEl.parentNode.insertBefore(extBtn, videoEl);
+    }
+
     function openGroupItem(groupId, idx) {
         const data = GROUP_DATA[groupId];
         if (!data) return;
@@ -4723,25 +4809,43 @@
         video.style.display = 'none'; img.style.display = 'none';
         if (item.type === 'video') {
             const isExternal = item.src && (item.src.startsWith('http://') || item.src.startsWith('https://'));
+            // Nettoyage du bouton externe précédent
+            const existingExtBtn = document.getElementById('_modalExtVideoBtn');
+            if (existingExtBtn) existingExtBtn.remove();
+
             if (isExternal) {
-                // Vidéo externe : afficher un bouton lien plutôt que d'intégrer dans <video>
-                img.style.display = 'block';
-                img.src = '';
-                img.style.cssText += ';display:none';
-                // Réutiliser la zone image pour afficher un placeholder cliquable
-                const existingExtBtn = document.getElementById('_modalExtVideoBtn');
-                if (existingExtBtn) existingExtBtn.remove();
-                const extBtn = document.createElement('a');
-                extBtn.id = '_modalExtVideoBtn';
-                extBtn.href = item.src;
-                extBtn.target = '_blank';
-                extBtn.rel = 'noopener noreferrer';
-                extBtn.style.cssText = 'display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:40px 20px;background:rgba(255,255,255,0.04);border-radius:16px;text-decoration:none;color:#fff;margin:16px 0;border:1px solid rgba(255,255,255,0.1);transition:background 0.2s';
-                extBtn.innerHTML = `<span style="font-size:48px">▶️</span><span style="font-size:15px;font-weight:700;opacity:0.8">Voir la vidéo →</span><span style="font-size:11px;opacity:0.4;word-break:break-all;max-width:260px;text-align:center">${item.src}</span>`;
-                video.parentNode.insertBefore(extBtn, video);
+                // URL externe : tenter un embed direct dans <video> avec fallback lien
+                video.src = item.src;
+                video.style.display = 'block';
+                video.currentTime = 0;
+                video.play().catch(() => {
+                    // Échec : afficher le lien externe proprement
+                    video.style.display = 'none';
+                    _showExtVideoBtn(item.src, video);
+                });
+                // Double sécurité : si aucun format supporté, déclenché par onerror
+                video.onerror = () => {
+                    video.style.display = 'none';
+                    video.onerror = null;
+                    _showExtVideoBtn(item.src, video);
+                };
             } else {
-                video.src = item.src; video.style.display = 'block';
-                video.currentTime = 0; video.play().catch(()=>{});
+                // Fichier local : tenter la lecture, fallback si format non supporté (ex: .mov sur Chrome)
+                video.src = item.src;
+                video.style.display = 'block';
+                video.currentTime = 0;
+                video.onerror = () => {
+                    video.style.display = 'none';
+                    video.onerror = null;
+                    _showExtVideoBtn(item.src, video);
+                };
+                video.play().catch(() => {
+                    // play() peut rejeter si le codec n'est pas supporté
+                    if (video.readyState === 0 || video.error) {
+                        video.style.display = 'none';
+                        _showExtVideoBtn(item.src, video);
+                    }
+                });
             }
         } else {
             img.src = item.src; img.style.display = 'block';
