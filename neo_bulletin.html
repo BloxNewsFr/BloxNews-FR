@@ -2247,7 +2247,7 @@
         /* ══ LIKE ACTUS — bouton ancré top-right du secret-bulletin ══ */
         .actus-like-wrap {
             position: absolute;
-            top: 18px; right: 18px;
+            bottom: 18px; right: 18px;
             z-index: 20;
         }
         .actus-like-wrap .post-like-btn {
@@ -5317,7 +5317,7 @@
         const isMod = window.currentUser && MODERATORS.includes(window.currentUser.username);
         const canDel = window.currentUser && (isMod || c.username === window.currentUser.username);
         const pinBadge = c.pinned ? '<span class="card-comment-item__pin-badge">📌 Épinglé</span>' : '';
-        const pinBtn = isMod ? `<button class="card-comment-item__pin${c.pinned?' is-pinned':''}" onclick="_actusPinComment('${c.id}')">${c.pinned?'📌':'📍'}</button>` : '';
+        const pinBtn = isMod ? `<button class="card-comment-item__pin${c.pinned?' is-pinned':''}" onclick="_actusPinComment('${c.id}')">📌</button>` : '';
         return `<div class="card-comment-item${c.pinned?' card-comment-item--pinned':''}">
             ${avatarHTML(c, 28)}
             <div class="card-comment-item__body">
@@ -5384,6 +5384,7 @@
     }
 
     function _actusDeleteComment(cid) {
+        if (!confirm('Supprimer ce commentaire ?')) return;
         let cardId = ''; let db = [];
         Object.keys(_actusCommentsDB).forEach(k => {
             const idx = _actusCommentsDB[k].findIndex(x => x.id === cid);
@@ -6399,16 +6400,21 @@
     let _editTarget = null;
 
     // ── Rendu Markdown léger ─────────────────────────────────────────
+    function _hexToRgba(hex, alpha) {
+        const c = parseInt(hex.replace('#',''), 16);
+        const r = (c >> 16) & 255, g = (c >> 8) & 255, b = c & 255;
+        return `rgba(${r},${g},${b},${alpha})`;
+    }
     function renderMarkdown(text) {
         if (!text) return '';
         let h = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
         h = h.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
         // Surlignage coloré : ==[#xxxxxx]texte==
         h = h.replace(/==\[#([0-9a-fA-F]{3,6})\](.+?)==/g,
-            '<mark style="background:#$1;color:inherit;padding:0 2px;border-radius:3px">$2</mark>');
-        // Surlignage jaune par défaut : ==texte==
+            (m, color, txt) => `<mark style="color:#${color};background:${_hexToRgba('#'+color,0.1)};padding:2px 8px;border-radius:6px;font-weight:bold">${txt}</mark>`);
+        // Surlignage rouge par défaut : ==texte==
         h = h.replace(/==(.+?)==/g,
-            '<mark style="background:rgba(255,218,0,0.38);color:inherit;padding:0 2px;border-radius:3px">$1</mark>');
+            '<mark style="color:#cc0000;background:rgba(255,26,26,0.1);padding:2px 8px;border-radius:6px;font-weight:bold">$1</mark>');
         h = h.replace(/__(.+?)__/g, '<u>$1</u>');
         h = h.replace(/~~(.+?)~~/g, '<s>$1</s>');
         h = h.replace(/\*(.+?)\*/g, '<em>$1</em>');
@@ -6916,7 +6922,20 @@
             if (firstActus) section.insertBefore(actusEl, firstActus);
             else section.appendChild(actusEl);
             _initActusComments(card.id);
-            return; // sortie anticipée, pas de like card footer
+            // Like button en bas à droite
+            try {
+                const likeId = 'dossier-' + _plSlug(card.title);
+                const local  = _plLoadLocal();
+                const liked  = (local[likeId] || {}).liked || false;
+                const btnLike = _plMakeBtn(likeId, liked, _plGlobalCounts[likeId] || 0);
+                if (btnLike) {
+                    const wrap = document.createElement('div');
+                    wrap.className = 'actus-like-wrap';
+                    wrap.appendChild(btnLike);
+                    actusEl.appendChild(wrap);
+                }
+            } catch(e) { console.warn('[actus] like button error:', e); }
+            return;
 
         } else {
             // ── Carte STANDARD (leak / image / vidéo) ─────────────────
