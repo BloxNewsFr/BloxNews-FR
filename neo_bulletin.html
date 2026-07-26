@@ -3070,7 +3070,7 @@
         </div>
 
                 <section id="cat-actus" class="category-section active-section">
-                    <div class="secret-bulletin">
+                    <div class="secret-bulletin" data-static-id="cat-actus__blox-fruits-2__0">
                         <div class="bulletin-header">
                             <h2>DOSSIER #001 : BLOX FRUITS 2</h2>
                             <div class="bulletin-meta">
@@ -3083,10 +3083,42 @@
                             <p>Deux nouveau fruits ont leak ! Un portant le nom de <span class="highlightv">Magnet Fruit</span>, et l'autre avec un nom inconnu. Nous sommes pratiquemment sûr que les seas actuelles vont être réimaginé, le grinding repenssé, et d'autres nouveautés incroyable</p>
                             <p>Des seas rework, des accesoires rework ect... Passez à la prochaine section pour savoir ce qu'il y aura dans la prochaine update</p>
                         </div>
+
+                        <!-- Like inline -->
+                        <div class="bulletin-footer-row" style="display:flex;align-items:center;gap:10px;padding:10px 0 4px;border-top:1px solid rgba(255,255,255,0.06);margin-top:12px;">
+                            <span class="actus-like-placeholder" data-like-id="card-dossier-001-blox-fruits-2"></span>
+                        </div>
+
+                        <!-- Commentaires inline -->
+                        <div class="card-comments-section" style="margin:0 -4px -4px;border-radius:0 0 16px 16px;overflow:hidden;">
+                            <div class="card-comments-toggle" onclick="this.nextElementSibling.classList.toggle('is-open');this.classList.toggle('is-open')">
+                                <span class="card-comments-toggle__icon">💬</span>
+                                <span class="card-comments-toggle__label">Commentaires</span>
+                                <span class="card-comments-toggle__count actus-cc-count" data-cc-id="static-dossier-001">0</span>
+                                <span class="card-comments-toggle__arrow">▾</span>
+                            </div>
+                            <div class="card-comments-body" data-actus-cc-id="static-dossier-001">
+                                <div class="card-comment-login" id="staticActus001LoginBanner">
+                                    <span>🎮</span><span>Connecte-toi pour commenter</span>
+                                    <button onclick="_discordLogin()">Se connecter</button>
+                                </div>
+                                <div class="card-comment-write is-hidden" id="staticActus001WriteBox">
+                                    <div class="card-comment-avatar-wrap" id="staticActus001AvatarWrap"></div>
+                                    <div style="flex:1;min-width:0">
+                                        <textarea class="card-comment-input" placeholder="Ton avis sur ce dossier…" rows="1"
+                                            oninput="autoResize(this)" maxlength="240"
+                                            data-actus-input="static-dossier-001"></textarea>
+                                        <button class="card-comment-submit" onclick="_actusPostComment('static-dossier-001',this)">Poster</button>
+                                    </div>
+                                </div>
+                                <div class="card-comment-list" data-actus-list="static-dossier-001"></div>
+                                <button class="card-comment-more" data-actus-more="static-dossier-001" style="display:none" onclick="_actusLoadMore('static-dossier-001',this)">Voir plus →</button>
+                            </div>
+                        </div>
                     </div>
 
             <!-- ══════════════════════════════════════════════
-                 SYSTÈME DE COMMENTAIRES
+                 SYSTÈME DE COMMENTAIRES (section globale)
             ══════════════════════════════════════════════ -->
             <div class="comment-section" id="commentSection">
 
@@ -3152,9 +3184,7 @@
                     </button>
 
                 </div>
-            </div>
-
-            </div><!-- /secret-bulletin -->
+            </div><!-- /comment-section -->
         </section>
 
         <!--🍎 FRUITS & REWORKS-->
@@ -5640,10 +5670,20 @@
     function initPostLikes() {
         const local = _plLoadLocal();
 
-        // ── Dossier Actus (top-right du secret-bulletin) ──
+        // ── Dossier Actus — remplace les .actus-like-placeholder ──
+        document.querySelectorAll('.actus-like-placeholder').forEach(placeholder => {
+            const likeId = placeholder.dataset.likeId;
+            if (!likeId || placeholder.dataset.initialized) return;
+            placeholder.dataset.initialized = '1';
+            const liked = (local[likeId] || {}).liked || false;
+            const btn   = _plMakeBtn(likeId, liked, _plGlobalCounts[likeId] || 0);
+            if (btn) placeholder.replaceWith(btn);
+        });
+
+        // ── Fallback : ancien système (bulletins sans placeholder) ──
         document.querySelectorAll('.bulletin-header').forEach(header => {
             const bulletin = header.closest('.secret-bulletin');
-            if (!bulletin || bulletin.querySelector('.actus-like-wrap')) return;
+            if (!bulletin || bulletin.querySelector('.actus-like-wrap') || bulletin.querySelector('.post-like-btn')) return;
             const h2 = header.querySelector('h2');
             if (!h2) return;
             const id    = 'dossier-' + _plSlug(h2.textContent.trim());
@@ -5653,6 +5693,26 @@
             wrap.className = 'actus-like-wrap';
             wrap.appendChild(btn);
             bulletin.appendChild(wrap);
+        });
+
+        // ── Commentaires des bulletins statiques ──
+        document.querySelectorAll('[data-actus-cc-id]').forEach(body => {
+            const cardId = body.dataset.actusccId || body.getAttribute('data-actus-cc-id');
+            if (!cardId || body.dataset.ccBound) return;
+            body.dataset.ccBound = '1';
+            const bulletin = body.closest('.secret-bulletin');
+            if (bulletin) _actusBindComments(cardId, bulletin);
+        });
+
+        // ── Login state pour les bulletins statiques ──
+        document.querySelectorAll('[id$="LoginBanner"]').forEach(banner => {
+            const writeBox = document.getElementById(banner.id.replace('LoginBanner','WriteBox'));
+            const avatarWrap = document.getElementById(banner.id.replace('LoginBanner','AvatarWrap'));
+            if (window.currentUser) {
+                banner.style.display = 'none';
+                writeBox?.classList.remove('is-hidden');
+                if (avatarWrap) avatarWrap.innerHTML = avatarHTML(window.currentUser, 28);
+            }
         });
 
         // ── Toutes les news-cards ──
