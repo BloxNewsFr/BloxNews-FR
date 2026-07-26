@@ -712,25 +712,46 @@
         #decryptModal {
             position: fixed; inset: 0; z-index: 10000;
             background: rgba(0,0,0,0); pointer-events: none;
-            display: flex; align-items: flex-end; justify-content: center;
+            display: flex; align-items: center; justify-content: center;
+            padding: 20px;
             transition: background 0.35s;
         }
         #decryptModal.is-active {
             background: rgba(0,0,0,0.88); pointer-events: auto;
-            backdrop-filter: blur(12px);
+            backdrop-filter: blur(14px);
         }
         .decrypt-panel {
-            width: 100%; max-width: 620px; max-height: 92dvh;
+            width: 100%; max-width: 640px; max-height: 90dvh;
             background: #0c0d18;
-            border-radius: 24px 24px 0 0;
-            border: 1px solid rgba(255,180,0,0.15);
-            border-bottom: none;
+            border-radius: 24px;
+            border: 1px solid rgba(255,180,0,0.18);
             display: flex; flex-direction: column; overflow: hidden;
-            transform: translateY(100%);
-            transition: transform 0.4s cubic-bezier(0.34,1.26,0.64,1);
-            box-shadow: 0 -8px 60px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,180,0,0.08);
+            transform: translateY(30px) scale(0.97);
+            opacity: 0;
+            transition: transform 0.38s cubic-bezier(0.34,1.26,0.64,1), opacity 0.28s ease;
+            box-shadow: 0 0 0 1px rgba(255,180,0,0.07), 0 24px 80px rgba(0,0,0,0.8), 0 0 60px rgba(255,140,0,0.05);
         }
-        #decryptModal.is-active .decrypt-panel { transform: translateY(0); }
+        #decryptModal.is-active .decrypt-panel {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+        }
+        /* Mobile : bottom sheet */
+        @media (max-width: 600px) {
+            #decryptModal {
+                align-items: flex-end;
+                padding: 0;
+            }
+            .decrypt-panel {
+                border-radius: 24px 24px 0 0;
+                border-bottom: none;
+                max-height: 92dvh;
+                transform: translateY(100%);
+                opacity: 1;
+            }
+            #decryptModal.is-active .decrypt-panel {
+                transform: translateY(0);
+            }
+        }
         .decrypt-panel__handle {
             width: 40px; height: 4px; background: rgba(255,180,0,0.2);
             border-radius: 2px; margin: 14px auto 0; cursor: pointer; flex-shrink: 0;
@@ -3349,48 +3370,79 @@
         <section id="cat-messages" class="category-section" style="--cat-hex: #ff8800; --cat-rgb: 255, 136, 0;">
             <div class="category-title">✉️ MESSAGES & LORE</div>
             <div class="news-grid">
-                <article class="news-card">
-                    <div class="news-card__image-wrapper" style="padding-top: 30%;">
-                         <div style="position: absolute; inset: 0; background: #111; display:flex; align-items:center; justify-content:center; color:#ff8800; font-family:'LuckiestGuy Regular', cursive; font-size:40px;">Shafi x Felku</div>
+
+                <!-- ── Shafi x Felku ── -->
+                <article class="msg-card" data-static-id="cat-messages__shafi-felku-magnet__0">
+                    <div class="msg-card__tape"></div>
+                    <div class="msg-card__scan"></div>
+                    <div class="msg-card__header">
+                        <div class="msg-card__stamp">SF</div>
+                        <div class="msg-card__meta">
+                            <div class="msg-card__eyebrow">📁 Dossier confidentiel</div>
+                            <h2 class="msg-card__title">Message de Shafi - Magnet</h2>
+                            <div class="msg-card__classified">⛔ CLASSIFIÉ</div>
+                        </div>
                     </div>
-                    <div class="news-card__content">
-                        <div class="news-card__eyebrow">Cryptage</div>
-                        <h2 class="news-card__title">Message de Shafi - Magnet</h2>
-                        <p style="color: #555; margin-bottom: 15px; font-size: 14px;">Mdr, merci à Felku. Il est peut-être un peu perché, haha. En tout cas, ça fait plaisir. Le prochain fruit que je vais cuisiner va atomiser tout ce qu'il a pu préparer jusque-là, mdr.</p>
-                        <button class="news-card__button news-card__button--disabled">Décrypter →</button>
+                    <div class="msg-card__body">
+                        <div class="msg-card__cipher">Mdr$ m3rci à F3lku. Il e$t p3ut-êtr3 un p3u p3rché, haha. 3n tOut cas, ça fa!t plaisir. L3 procha!n fru!t que j3 vais cuis!n3r va atom!ser</div>
                     </div>
-<div class="news-card__bar"></div>
+                    <div class="msg-card__footer">
+                        <button class="msg-card__decrypt-btn" onclick="openDecryptModal('static-shafi-felku-magnet','Message de Shafi - Magnet','')">
+                            <span class="msg-card__decrypt-btn__icon">🔓</span>
+                            Décrypter
+                        </button>
+                    </div>
+                    <div class="msg-card__bar"></div>
                 </article>
 
-                                <article class="news-card">
-                    <div class="news-card__image-wrapper" style="padding-top: 30%;">
-                         <div style="position: absolute; inset: 0; background: #111; display:flex; align-items:center; justify-content:center; color:#ff8800; font-family:'LuckiestGuy Regular', cursive; font-size:40px;">Shafi</div>
+                <!-- ── Shafi Discord ── -->
+                <article class="msg-card" data-static-id="cat-messages__shafi-discord-magnet__1">
+                    <div class="msg-card__tape"></div>
+                    <div class="msg-card__scan"></div>
+                    <div class="msg-card__header">
+                        <div class="msg-card__stamp">SH</div>
+                        <div class="msg-card__meta">
+                            <div class="msg-card__eyebrow">📁 Dossier confidentiel</div>
+                            <h2 class="msg-card__title">Message Shafi Discord - Magnet</h2>
+                            <div class="msg-card__classified">⛔ CLASSIFIÉ</div>
+                        </div>
                     </div>
-                    <div class="news-card__content">
-                        <div class="news-card__eyebrow">Cryptage</div>
-                        <h2 class="news-card__title">Message Shafi Discord - Magnet</h2>
-                        <p style="color: #555; margin-bottom: 15px; font-size: 14px;">
-                            Yo, sérieux Shafi, tu peux nous lâcher un indice sur le prochain fruit sur lequel tu bosses ?
-                            <br>
-                            <span class="highlight">ShafiDev</span> : Laisse-moi voir... peut-être des engrenages en métal (metal gears) 
-                        </p>
-                        <button class="news-card__button news-card__button--disabled">Décrypter →</button>
+                    <div class="msg-card__body">
+                        <div class="msg-card__cipher">Y0, s3r!3ux Sha$i, tu p3ux nous lâch3r un !nd!c3 sur l3 proch@!n fru!t ? Sha$!D3v : La!ss3-mo! vo!r... p3ut-être des 3ngr3nag3s en mét@l</div>
                     </div>
-<div class="news-card__bar"></div>
+                    <div class="msg-card__footer">
+                        <button class="msg-card__decrypt-btn" onclick="openDecryptModal('static-shafi-discord-magnet','Message Shafi Discord - Magnet','')">
+                            <span class="msg-card__decrypt-btn__icon">🔓</span>
+                            Décrypter
+                        </button>
+                    </div>
+                    <div class="msg-card__bar"></div>
                 </article>
 
-                                <article class="news-card">
-                    <div class="news-card__image-wrapper" style="padding-top: 30%;">
-                         <div style="position: absolute; inset: 0; background: #111; display:flex; align-items:center; justify-content:center; color:#ff8800; font-family:'LuckiestGuy Regular', cursive; font-size:40px;">E.</div>
+                <!-- ── E. Quake ── -->
+                <article class="msg-card" data-static-id="cat-messages__e-quake__2">
+                    <div class="msg-card__tape"></div>
+                    <div class="msg-card__scan"></div>
+                    <div class="msg-card__header">
+                        <div class="msg-card__stamp">E.</div>
+                        <div class="msg-card__meta">
+                            <div class="msg-card__eyebrow">📁 Dossier confidentiel</div>
+                            <h2 class="msg-card__title">Message de E. - Quake</h2>
+                            <div class="msg-card__classified">⛔ CLASSIFIÉ</div>
+                        </div>
                     </div>
-                    <div class="news-card__content">
-                        <div class="news-card__eyebrow">Cryptage</div>
-                        <h2 class="news-card__title">Message de E. - Quake</h2>
-                        <p style="color: #555; margin-bottom: 15px; font-size: 14px;">Je vais rework le Quake (la refonte arrive). Les gens vont rager quand ça sortira et que le fruit sera devenu trop fort, juste parce qu'ils diront que ça n'a "aucun skill".</p>
-                        <button class="news-card__button news-card__button--disabled">Décrypter →</button>
+                    <div class="msg-card__body">
+                        <div class="msg-card__cipher">J3 va!s r3work l3 Qu@k3 (la r3font3 arriv3). L3s g3ns vont r@g3r quand ça sort!ra 3t qu3 l3 fru!t s3ra d3v3nu tr0p f0rt, just3 parc3 qu'!ls d!ront qu3 ça n'@ "aucun sk!ll".</div>
                     </div>
-<div class="news-card__bar"></div>
+                    <div class="msg-card__footer">
+                        <button class="msg-card__decrypt-btn" onclick="openDecryptModal('static-e-quake','Message de E. - Quake','')">
+                            <span class="msg-card__decrypt-btn__icon">🔓</span>
+                            Décrypter
+                        </button>
+                    </div>
+                    <div class="msg-card__bar"></div>
                 </article>
+
             </div>
         </section>
 
