@@ -1028,48 +1028,23 @@
            COMMENTAIRES DANS LA LIGHTBOX (par card)
         ══════════════════════════════════════════════ */
         .card-comments-section {
-            border-top: 1px solid rgba(128,128,128,0.12);
-            background: rgba(0,0,0,0.06);
-            border-radius: 8px 8px 16px 16px;
-        }
-        html[data-theme="dark"] .card-comments-section {
-            background: rgba(0,0,0,0.25);
-            border-top-color: rgba(255,255,255,0.07);
-        }
-        /* Dans un secret-bulletin : fond adapté */
-        .secret-bulletin .card-comments-section {
-            background: rgba(0,0,0,0.08);
-            border-top: 1px solid rgba(128,128,128,0.15);
-            border-radius: 8px 8px 14px 14px;
-        }
-        html[data-theme="dark"] .secret-bulletin .card-comments-section {
-            background: rgba(0,0,0,0.3);
-            border-top-color: rgba(255,255,255,0.08);
+            border-top: 1px solid rgba(255,255,255,0.07);
+            background: rgba(8,8,16,0.98);
         }
         .card-comments-toggle {
             display: flex; align-items: center; gap: 10px;
             padding: 12px 18px; cursor: pointer; user-select: none;
             transition: background 0.2s;
-            border-radius: 8px 8px 0 0;
         }
-        .card-comments-toggle:hover { background: rgba(128,128,128,0.08); }
+        .card-comments-toggle:hover { background: rgba(255,255,255,0.04); }
         .card-comments-toggle__icon { font-size: 16px; }
-        .card-comments-toggle__label {
-            font-size: 13px; font-weight: 700;
-            color: rgba(0,0,0,0.45); flex: 1;
-        }
-        html[data-theme="dark"] .card-comments-toggle__label { color: rgba(255,255,255,0.6); }
+        .card-comments-toggle__label { font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.6); flex: 1; }
         .card-comments-toggle__count {
-            font-size: 11px; font-weight: 800;
-            background: rgba(255,26,26,0.14); color: rgba(200,50,50,0.9);
-            padding: 2px 8px; border-radius: 100px;
+            font-size: 11px; font-weight: 800; background: rgba(255,26,26,0.18);
+            color: rgba(255,100,100,0.9); padding: 2px 8px; border-radius: 100px;
             min-width: 22px; text-align: center;
         }
-        html[data-theme="dark"] .card-comments-toggle__count {
-            background: rgba(255,26,26,0.18); color: rgba(255,100,100,0.9);
-        }
-        .card-comments-toggle__arrow { font-size: 11px; color: rgba(0,0,0,0.25); transition: transform 0.25s; }
-        html[data-theme="dark"] .card-comments-toggle__arrow { color: rgba(255,255,255,0.3); }
+        .card-comments-toggle__arrow { font-size: 11px; color: rgba(255,255,255,0.3); transition: transform 0.25s; }
         .card-comments-toggle.is-open .card-comments-toggle__arrow { transform: rotate(180deg); }
 
         .card-comments-body {
@@ -1081,9 +1056,8 @@
 
         .card-comment-login {
             display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
-            padding: 12px 0; font-size: 13px; color: rgba(0,0,0,0.4);
+            padding: 12px 0; font-size: 13px; color: rgba(255,255,255,0.45);
         }
-        html[data-theme="dark"] .card-comment-login { color: rgba(255,255,255,0.45); }
         .card-comment-login button {
             padding: 6px 14px; border-radius: 100px; border: none;
             background: #5865F2; color: #fff; font-size: 12px; font-weight: 700;
@@ -1114,9 +1088,8 @@
         }
         .card-comment-item {
             display: flex; gap: 10px; padding: 10px 0;
-            border-bottom: 1px solid rgba(0,0,0,0.07);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
         }
-        html[data-theme="dark"] .card-comment-item { border-bottom-color: rgba(255,255,255,0.05); }
         .card-comment-item:last-child { border-bottom: none; }
         .card-comment-item img, .card-comment-item .comment-avatar--placeholder {
             width: 28px !important; height: 28px !important; font-size: 12px !important;
@@ -1124,12 +1097,9 @@
         }
         .card-comment-item__body { flex: 1; min-width: 0; }
         .card-comment-item__header { display: flex; align-items: center; gap: 7px; margin-bottom: 3px; flex-wrap: wrap; }
-        .card-comment-item__username { font-size: 12px; font-weight: 700; color: rgba(0,0,0,0.8); }
-        html[data-theme="dark"] .card-comment-item__username { color: rgba(255,255,255,0.85); }
-        .card-comment-item__time { font-size: 11px; color: rgba(0,0,0,0.3); }
-        html[data-theme="dark"] .card-comment-item__time { color: rgba(255,255,255,0.3); }
-        .card-comment-item__text { font-size: 13px; color: rgba(0,0,0,0.55); line-height: 1.5; word-break: break-word; }
-        html[data-theme="dark"] .card-comment-item__text { color: rgba(255,255,255,0.65); }
+        .card-comment-item__username { font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.85); }
+        .card-comment-item__time { font-size: 11px; color: rgba(255,255,255,0.3); }
+        .card-comment-item__text { font-size: 13px; color: rgba(255,255,255,0.65); line-height: 1.5; word-break: break-word; }
         .card-comment-item__like {
             display: inline-flex; align-items: center; gap: 4px;
             padding: 3px 8px; border-radius: 100px; border: none;
@@ -1153,6 +1123,33 @@
             cursor: pointer; font-family: 'Inter', sans-serif; margin-top: 8px; transition: all 0.2s;
         }
         .card-comment-more:hover { border-color: rgba(255,26,26,0.3); color: rgba(255,100,100,0.7); }
+
+        /* ── Overrides thème LIGHT pour les commentaires inline actus ── */
+        html:not([data-theme="dark"]) .secret-bulletin .card-comments-section {
+            border-top-color: rgba(0,0,0,0.08);
+            background: rgba(0,0,0,0.04);
+            border-radius: 8px 8px 14px 14px;
+        }
+        html:not([data-theme="dark"]) .secret-bulletin .card-comments-toggle:hover { background: rgba(0,0,0,0.04); }
+        html:not([data-theme="dark"]) .secret-bulletin .card-comments-toggle__label { color: rgba(0,0,0,0.5); }
+        html:not([data-theme="dark"]) .secret-bulletin .card-comments-toggle__arrow { color: rgba(0,0,0,0.25); }
+        html:not([data-theme="dark"]) .secret-bulletin .card-comment-login { color: rgba(0,0,0,0.45); }
+        html:not([data-theme="dark"]) .secret-bulletin .card-comment-input {
+            background: rgba(0,0,0,0.05); border-color: rgba(0,0,0,0.12); color: #111;
+        }
+        html:not([data-theme="dark"]) .secret-bulletin .card-comment-input::placeholder { color: rgba(0,0,0,0.3); }
+        html:not([data-theme="dark"]) .secret-bulletin .card-comment-item { border-bottom-color: rgba(0,0,0,0.07); }
+        html:not([data-theme="dark"]) .secret-bulletin .card-comment-item__username { color: rgba(0,0,0,0.8); }
+        html:not([data-theme="dark"]) .secret-bulletin .card-comment-item__time { color: rgba(0,0,0,0.3); }
+        html:not([data-theme="dark"]) .secret-bulletin .card-comment-item__text { color: rgba(0,0,0,0.6); }
+        html:not([data-theme="dark"]) .secret-bulletin .card-comment-item__like {
+            background: rgba(0,0,0,0.06); color: rgba(0,0,0,0.4);
+        }
+        html:not([data-theme="dark"]) .secret-bulletin .card-comment-more {
+            border-color: rgba(0,0,0,0.1); color: rgba(0,0,0,0.35);
+        }
+        /* Bords arrondis haut légèrement, bas plus prononcés */
+        .secret-bulletin .card-comments-section { border-radius: 8px 8px 14px 14px; }
 
         /* ══════════════════════════════════════════════
            GROUP CARDS — Fruit groupé
@@ -3100,52 +3097,53 @@
         </div>
 
                 <section id="cat-actus" class="category-section active-section">
-                    <div class="secret-bulletin" data-static-id="cat-actus__blox-fruits-2__0">
-                        <div class="bulletin-header">
-                            <h2>DOSSIER #001 : BLOX FRUITS 2</h2>
-                            <div class="bulletin-meta">
-                                STATUT : NON CONFIRMÉ<br>
-                                INTERCEPTION : JUIL 2026
-                            </div>
-                        </div>
-                        <div class="bulletin-content">
-                            <p>Bienvenue sur le réseau Blox Leaks ! 4 nouveaux bulletins sont sortis actuellement et nous savons maintenant que la prochaine update sera <span class="highlightr">énorme.</span></p>
-                            <p>Deux nouveau fruits ont leak ! Un portant le nom de <span class="highlightv">Magnet Fruit</span>, et l'autre avec un nom inconnu. Nous sommes pratiquemment sûr que les seas actuelles vont être réimaginé, le grinding repenssé, et d'autres nouveautés incroyable</p>
-                            <p>Des seas rework, des accesoires rework ect... Passez à la prochaine section pour savoir ce qu'il y aura dans la prochaine update</p>
-                        </div>
-
-                        <!-- Like inline -->
-                        <div class="bulletin-footer-row" style="display:flex;align-items:center;gap:10px;padding:10px 0 4px;border-top:1px solid rgba(255,255,255,0.06);margin-top:12px;">
-                            <span class="actus-like-placeholder" data-like-id="card-dossier-001-blox-fruits-2"></span>
-                        </div>
-
-                        <!-- Commentaires inline -->
-                        <div class="card-comments-section" style="margin:0 -4px -4px;border-radius:0 0 16px 16px;overflow:hidden;">
-                            <div class="card-comments-toggle" onclick="this.nextElementSibling.classList.toggle('is-open');this.classList.toggle('is-open')">
-                                <span class="card-comments-toggle__icon">💬</span>
-                                <span class="card-comments-toggle__label">Commentaires</span>
-                                <span class="card-comments-toggle__count actus-cc-count" data-cc-id="static-dossier-001">0</span>
-                                <span class="card-comments-toggle__arrow">▾</span>
-                            </div>
-                            <div class="card-comments-body" data-actus-cc-id="static-dossier-001">
-                                <div class="card-comment-login" id="staticActus001LoginBanner">
-                                    <span>🎮</span><span>Connecte-toi pour commenter</span>
-                                    <button onclick="_discordLogin()">Se connecter</button>
-                                </div>
-                                <div class="card-comment-write is-hidden" id="staticActus001WriteBox">
-                                    <div class="card-comment-avatar-wrap" id="staticActus001AvatarWrap"></div>
-                                    <div style="flex:1;min-width:0">
-                                        <textarea class="card-comment-input" placeholder="Ton avis sur ce dossier…" rows="1"
-                                            oninput="autoResize(this)" maxlength="240"
-                                            data-actus-input="static-dossier-001"></textarea>
-                                        <button class="card-comment-submit" onclick="_actusPostComment('static-dossier-001',this)">Poster</button>
-                                    </div>
-                                </div>
-                                <div class="card-comment-list" data-actus-list="static-dossier-001"></div>
-                                <button class="card-comment-more" data-actus-more="static-dossier-001" style="display:none" onclick="_actusLoadMore('static-dossier-001',this)">Voir plus →</button>
-                            </div>
-                        </div>
+            <div class="secret-bulletin" data-static-id="static-dossier-001-blox-fruits-2">
+                <div class="bulletin-header">
+                    <h2>DOSSIER #001 : BLOX FRUITS 2</h2>
+                    <div class="bulletin-meta">
+                        STATUT : NON CONFIRMÉ<br>
+                        INTERCEPTION : JUIL 2026
                     </div>
+                </div>
+                <div class="bulletin-content">
+                    <p>Bienvenue sur le réseau Blox Leaks ! 4 nouveaux bulletins sont sortis actuellement et nous savons maintenant que la prochaine update sera <span class="highlightr">énorme.</span></p>
+                    <p>Deux nouveau fruits ont leak ! Un portant le nom de <span class="highlightv">Magnet Fruit</span>, et l'autre avec un nom inconnu. Nous sommes pratiquemment sûr que les seas actuelles vont être réimaginé, le grinding repenssé, et d'autres nouveautés incroyable</p>
+                    <p>Des seas rework, des accesoires rework ect... Passez à la prochaine section pour savoir ce qu'il y aura dans la prochaine update</p>
+                </div>
+
+                <!-- Like inline -->
+                <div style="display:flex;align-items:center;padding:10px 0 4px;border-top:1px solid rgba(128,128,128,0.12);margin-top:12px;">
+                    <span class="static-actus-like-init" data-like-id="dossier-dossier-001-blox-fruits-2"></span>
+                </div>
+
+                <!-- Commentaires inline -->
+                <div class="card-comments-section">
+                    <div class="card-comments-toggle" onclick="this.classList.toggle('is-open');this.nextElementSibling.classList.toggle('is-open')">
+                        <span class="card-comments-toggle__icon">💬</span>
+                        <span class="card-comments-toggle__label">Commentaires</span>
+                        <span class="card-comments-toggle__count" id="staticActus001Count">0</span>
+                        <span class="card-comments-toggle__arrow">▾</span>
+                    </div>
+                    <div class="card-comments-body" id="staticActus001Body">
+                        <div class="card-comment-login" id="staticActus001Login">
+                            <span>🎮</span><span>Connecte-toi pour commenter</span>
+                            <button onclick="_discordLogin()">Se connecter</button>
+                        </div>
+                        <div class="card-comment-write is-hidden" id="staticActus001Write">
+                            <div class="card-comment-avatar-wrap" id="staticActus001Avatar"></div>
+                            <div style="flex:1;min-width:0">
+                                <textarea class="card-comment-input" id="staticActus001Input"
+                                    placeholder="Ton avis sur ce dossier…" rows="1"
+                                    oninput="autoResize(this)" maxlength="240"></textarea>
+                                <button class="card-comment-submit" onclick="_staticActusPost('static-dossier-001',this)">Poster</button>
+                            </div>
+                        </div>
+                        <div class="card-comment-list" id="staticActus001List"></div>
+                        <button class="card-comment-more" id="staticActus001More" style="display:none"
+                            onclick="_staticActusMore('static-dossier-001',document.getElementById('staticActus001List'),this)">Voir plus →</button>
+                    </div>
+                </div>
+            </div>
 
         </section>
 
@@ -4449,77 +4447,6 @@
 
     function loadMoreDecryptComments() { _dcShown += 5; _dcRender(); }
 
-    /* ── Commentaires inline dans les blocs actus ─────────────────── */
-    const _actusRefs = {}; // cardId → firebase ref
-
-    function _actusBindComments(cardId, actusEl) {
-        if (_actusRefs[cardId]) return;
-        if (typeof FB_DB === 'undefined') {
-            // Firebase pas encore prêt, réessayer après init
-            setTimeout(() => _actusBindComments(cardId, actusEl), 500);
-            return;
-        }
-        const ref = FB_DB.ref('card_comments/' + cardId);
-        _actusRefs[cardId] = ref;
-        ref.on('value', snap => {
-            let val = snap.val();
-            let db = [];
-            if (val) {
-                if (!Array.isArray(val)) val = Object.keys(val).sort((a,b)=>Number(a)-Number(b)).map(k=>val[k]);
-                db = val;
-            }
-            const countEl = actusEl.querySelector(`.actus-cc-count[data-cc-id="${cardId}"]`);
-            if (countEl) countEl.textContent = db.length;
-            const listEl = actusEl.querySelector(`[data-actus-list="${cardId}"]`);
-            const moreEl = actusEl.querySelector(`[data-actus-more="${cardId}"]`);
-            if (!listEl) return;
-            const shown = [...db].sort((a,b) => new Date(b.time)-new Date(a.time)).slice(0, listEl.dataset.shown ? parseInt(listEl.dataset.shown) : 5);
-            listEl.dataset.shown = listEl.dataset.shown || 5;
-            if (db.length === 0) {
-                listEl.innerHTML = `<div style="text-align:center;padding:16px 0;color:rgba(255,255,255,0.22);font-size:13px">💬 Aucun commentaire pour l'instant</div>`;
-            } else {
-                listEl.innerHTML = shown.map(c => _ccRenderItem(c)).join('');
-            }
-            if (moreEl) moreEl.style.display = db.length > (parseInt(listEl.dataset.shown)||5) ? 'block' : 'none';
-        }, err => console.warn('[actus-comments]', err));
-    }
-
-    function _actusPostComment(cardId, btn) {
-        if (!window.currentUser) return;
-        const actusEl = btn.closest('.secret-bulletin');
-        const inp = actusEl?.querySelector(`[data-actus-input="${cardId}"]`);
-        const txt = (inp?.value||'').trim(); if (!txt) return;
-        const check = _filterComment(txt);
-        if (check.blocked) { _showCommentWarning('Contenu inapproprié.'); return; }
-        const ref = _actusRefs[cardId] || FB_DB.ref('card_comments/' + cardId);
-        _actusRefs[cardId] = ref;
-        const c = { id: uid(), username: window.currentUser.username, avatar: window.currentUser.avatar||'',
-            text: txt, time: isoNow(), likes: 0 };
-        ref.once('value', snap => {
-            let val = snap.val();
-            let db = val ? (Array.isArray(val) ? val : Object.values(val)) : [];
-            db.unshift(c);
-            ref.set(db).catch(err => console.error('[actus-comments] write error:', err));
-        });
-        inp.value = ''; inp.style.height = '';
-    }
-
-    function _actusLoadMore(cardId, btn) {
-        const actusEl = btn.closest('.secret-bulletin');
-        const listEl = actusEl?.querySelector(`[data-actus-list="${cardId}"]`);
-        if (!listEl) return;
-        listEl.dataset.shown = (parseInt(listEl.dataset.shown)||5) + 5;
-        // Re-déclenche le render en relisant Firebase
-        const ref = _actusRefs[cardId];
-        if (ref) ref.once('value', snap => {
-            let val = snap.val();
-            let db = val ? (Array.isArray(val) ? val : Object.values(val)) : [];
-            const shown = [...db].sort((a,b) => new Date(b.time)-new Date(a.time)).slice(0, parseInt(listEl.dataset.shown));
-            listEl.innerHTML = shown.map(c => _ccRenderItem(c)).join('');
-            btn.style.display = db.length > parseInt(listEl.dataset.shown) ? 'block' : 'none';
-        });
-    }
-
     // Sync login → décrypt comments
     const _origDiscordLogin2 = window.discordLogin;
     window.discordLogin = function(user) {
@@ -5637,20 +5564,10 @@
     function initPostLikes() {
         const local = _plLoadLocal();
 
-        // ── Dossier Actus — remplace les .actus-like-placeholder ──
-        document.querySelectorAll('.actus-like-placeholder').forEach(placeholder => {
-            const likeId = placeholder.dataset.likeId;
-            if (!likeId || placeholder.dataset.initialized) return;
-            placeholder.dataset.initialized = '1';
-            const liked = (local[likeId] || {}).liked || false;
-            const btn   = _plMakeBtn(likeId, liked, _plGlobalCounts[likeId] || 0);
-            if (btn) placeholder.replaceWith(btn);
-        });
-
-        // ── Fallback : ancien système (bulletins sans placeholder) ──
+        // ── Dossier Actus (top-right du secret-bulletin) ──
         document.querySelectorAll('.bulletin-header').forEach(header => {
             const bulletin = header.closest('.secret-bulletin');
-            if (!bulletin || bulletin.querySelector('.actus-like-wrap') || bulletin.querySelector('.post-like-btn')) return;
+            if (!bulletin || bulletin.querySelector('.actus-like-wrap')) return;
             const h2 = header.querySelector('h2');
             if (!h2) return;
             const id    = 'dossier-' + _plSlug(h2.textContent.trim());
@@ -5660,26 +5577,6 @@
             wrap.className = 'actus-like-wrap';
             wrap.appendChild(btn);
             bulletin.appendChild(wrap);
-        });
-
-        // ── Commentaires des bulletins statiques ──
-        document.querySelectorAll('[data-actus-cc-id]').forEach(body => {
-            const cardId = body.getAttribute('data-actus-cc-id');
-            if (!cardId || body.dataset.ccBound) return;
-            body.dataset.ccBound = '1';
-            const bulletin = body.closest('.secret-bulletin');
-            if (bulletin) _actusBindComments(cardId, bulletin);
-        });
-
-        // ── Login state pour les bulletins statiques ──
-        document.querySelectorAll('[id$="LoginBanner"]').forEach(banner => {
-            const writeBox = document.getElementById(banner.id.replace('LoginBanner','WriteBox'));
-            const avatarWrap = document.getElementById(banner.id.replace('LoginBanner','AvatarWrap'));
-            if (window.currentUser) {
-                banner.style.display = 'none';
-                writeBox?.classList.remove('is-hidden');
-                if (avatarWrap) avatarWrap.innerHTML = avatarHTML(window.currentUser, 28);
-            }
         });
 
         // ── Toutes les news-cards ──
@@ -6192,18 +6089,17 @@
     /** Injecte le badge dans l'image-wrapper d'une card (news-card ou group-card) */
     function _nbInject(card) {
         if (!card || card.querySelector('.leak-card__new')) return;
+        // msg-card : badge dans le header plutôt que dans un image-wrapper
         let wrapper = card.querySelector('.news-card__image-wrapper, .group-card__image-wrapper');
         if (!wrapper && card.classList.contains('msg-card')) {
             wrapper = card.querySelector('.msg-card__header');
-        }
-        if (!wrapper && card.classList.contains('secret-bulletin')) {
-            wrapper = card.querySelector('.bulletin-header');
         }
         if (!wrapper) return;
         const badge = document.createElement('div');
         badge.className = 'leak-card__new';
         badge.textContent = 'Nouveau';
-        if (card.classList.contains('msg-card') || card.classList.contains('secret-bulletin')) {
+        // Sur msg-card le header est en position relative — on force absolute
+        if (card.classList.contains('msg-card')) {
             badge.style.cssText = 'position:absolute;top:10px;right:14px;z-index:4';
             card.style.position = 'relative';
         }
@@ -6218,7 +6114,7 @@
     }
 
     function _nbApplyAll() {
-        document.querySelectorAll('.news-card, .group-card, .msg-card, .secret-bulletin').forEach(card => {
+        document.querySelectorAll('.news-card, .group-card, .msg-card').forEach(card => {
             const sid = card.dataset.staticId || card.dataset.ccId;
             if (sid && _nbIsNew(sid)) _nbInject(card);
         });
@@ -6306,10 +6202,7 @@
             const contentRendered = typeof renderMarkdown === 'function'
                 ? renderMarkdown(card.actusText || card.msgText || '')
                 : e(card.actusText || '');
-            const likeId = 'card-' + _plSlug(card.title + '-' + card.id);
-            const localLikes = _plLoadLocal();
-            const liked = (localLikes[likeId] || {}).liked || false;
-            const likeCount = _plGlobalCounts[likeId] || 0;
+            const likeId = 'dossier-' + _plSlug(card.title);
             html = `<div class="secret-bulletin" data-cc-id="${card.id}" style="margin-bottom:24px;">
                 <div class="bulletin-header">
                     <h2>${e(card.title)}</h2>
@@ -6318,54 +6211,50 @@
                 <div class="bulletin-content">
                     <p>${contentRendered}</p>
                 </div>
-                <div class="bulletin-footer-row" style="display:flex;align-items:center;gap:10px;padding:10px 0 4px;border-top:1px solid rgba(255,255,255,0.06);margin-top:12px;">
-                    <span data-like-id="${likeId}" class="actus-like-placeholder" style="flex-shrink:0"></span>
+                <div style="display:flex;align-items:center;padding:10px 0 4px;border-top:1px solid rgba(128,128,128,0.12);margin-top:12px;">
+                    <span class="static-actus-like-init" data-like-id="${likeId}"></span>
                 </div>
-                <!-- Commentaires card actus -->
-                <div class="card-comments-section" style="margin:0 -4px -4px;border-radius:0 0 16px 16px;overflow:hidden;">
-                    <div class="card-comments-toggle" onclick="this.nextElementSibling.classList.toggle('is-open');this.classList.toggle('is-open')">
+                <div class="card-comments-section">
+                    <div class="card-comments-toggle" onclick="this.classList.toggle('is-open');this.nextElementSibling.classList.toggle('is-open')">
                         <span class="card-comments-toggle__icon">💬</span>
                         <span class="card-comments-toggle__label">Commentaires</span>
-                        <span class="card-comments-toggle__count actus-cc-count" data-cc-id="${card.id}">0</span>
+                        <span class="card-comments-toggle__count">0</span>
                         <span class="card-comments-toggle__arrow">▾</span>
                     </div>
-                    <div class="card-comments-body" data-actus-cc-id="${card.id}">
-                        <div class="card-comment-login actus-cc-login" data-cc-id="${card.id}" style="display:${window.currentUser?'none':'flex'}">
+                    <div class="card-comments-body">
+                        <div class="card-comment-login">
                             <span>🎮</span><span>Connecte-toi pour commenter</span>
                             <button onclick="_discordLogin()">Se connecter</button>
                         </div>
-                        <div class="card-comment-write${window.currentUser?'':' is-hidden'}" data-cc-id="${card.id}">
-                            <div class="card-comment-avatar-wrap">${window.currentUser ? avatarHTML(window.currentUser, 28) : ''}</div>
+                        <div class="card-comment-write is-hidden">
+                            <div class="card-comment-avatar-wrap"></div>
                             <div style="flex:1;min-width:0">
                                 <textarea class="card-comment-input" placeholder="Ton avis sur ce dossier…" rows="1"
-                                    oninput="autoResize(this)" maxlength="240"
-                                    data-actus-input="${card.id}"></textarea>
-                                <button class="card-comment-submit" onclick="_actusPostComment('${card.id}',this)">Poster</button>
+                                    oninput="autoResize(this)" maxlength="240"></textarea>
+                                <button class="card-comment-submit">Poster</button>
                             </div>
                         </div>
-                        <div class="card-comment-list" data-actus-list="${card.id}"></div>
-                        <button class="card-comment-more" data-actus-more="${card.id}" style="display:none" onclick="_actusLoadMore('${card.id}',this)">Voir plus →</button>
+                        <div class="card-comment-list"></div>
+                        <button class="card-comment-more" style="display:none">Voir plus →</button>
                     </div>
                 </div>
             </div>`;
-
             const tmp2 = document.createElement('div');
             tmp2.innerHTML = html.trim();
             const actusEl = tmp2.firstChild;
             section.appendChild(actusEl);
-
-            // Like button
+            // Like
             try {
-                const likeBtn = _plMakeBtn(likeId, liked, likeCount);
-                const placeholder = actusEl.querySelector('.actus-like-placeholder');
-                if (placeholder && likeBtn) placeholder.replaceWith(likeBtn);
-            } catch(e) { console.warn('[actus like]', e); }
-
+                const localLikes = _plLoadLocal();
+                const liked = (localLikes[likeId] || {}).liked || false;
+                const btn = _plMakeBtn(likeId, liked, _plGlobalCounts[likeId] || 0);
+                const ph = actusEl.querySelector('.static-actus-like-init');
+                if (ph && btn) ph.replaceWith(btn);
+            } catch(ex) {}
             // Badge Nouveau
-            try { if (_nbIsNew(card.id)) _nbInject(actusEl); } catch(e) {}
-
-            // Firebase commentaires
-            _actusBindComments(card.id, actusEl);
+            try { if (_nbIsNew(card.id)) _nbInject(actusEl); } catch(ex) {}
+            // Commentaires Firebase
+            _initActusComments(card.id, actusEl);
             return;
 
         } else {
