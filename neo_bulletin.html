@@ -502,6 +502,8 @@
         }
         .news-card__content { padding: 22px 22px 20px; display: flex; flex-direction: column; flex-grow: 1; background: #fff; }
         .news-card__eyebrow { font-size: 11px; font-weight: 700; color: var(--cat-hex); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px; }
+        .news-card__date { font-size: 11px; font-weight: 500; color: #999; margin-bottom: 6px; }
+        html[data-theme="dark"] .news-card__date { color: #7a7a8a; }
         .news-card__title { font-size: 20px; font-weight: 900; color: #111; line-height: 1.25; margin-bottom: 16px; font-family: 'LuckiestGuy Regular', cursive; letter-spacing: 0.5px; }
         
         .news-card__button { 
@@ -644,6 +646,7 @@
             font-size: 10px; font-weight: 800; letter-spacing: 2px;
             text-transform: uppercase; color: rgba(255,180,0,0.6); margin-bottom: 4px;
         }
+        .msg-card__date { font-size: 10px; font-weight: 500; color: rgba(255,180,0,0.35); margin-bottom: 4px; }
         .msg-card__title {
             font-family: 'LuckiestGuy Regular', cursive; font-size: 17px;
             color: rgba(255,240,180,0.92); letter-spacing: 0.3px; line-height: 1.2;
@@ -1176,6 +1179,8 @@
             font-size: 11px; font-weight: 700; color: var(--cat-hex);
             text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 6px;
         }
+        .group-card__date { font-size: 11px; font-weight: 500; color: #999; margin-bottom: 6px; }
+        html[data-theme="dark"] .group-card__date { color: #7a7a8a; }
         .group-card__title {
             font-family: 'LuckiestGuy Regular', cursive; font-size: 20px; font-weight: 900;
             color: #111; letter-spacing: 0.4px; margin-bottom: 12px;
@@ -3178,7 +3183,7 @@
 
                 <!-- ── GROUP CARD : MAGNET ── -->
                 <article class="group-card" style="--cat-hex:#ff0055;--cat-rgb:255,0,85"
-                    onclick="openGroupDrawer('magnet')">
+                    onclick="openGroupDrawer('magnet')" data-date="2026-07-20">
                     <div class="group-card__image-wrapper">
                         <img src="./shared/blox_leaks/magnet_ability 2.jpeg" class="group-card__image" alt="Magnet" loading="lazy">
                         <div class="group-card__badge">MAGNET</div>
@@ -3186,6 +3191,7 @@
                     </div>
                     <div class="group-card__content">
                         <div class="group-card__eyebrow">Fruit · Leak</div>
+                        <div class="group-card__date"></div>
                         <h2 class="group-card__title">Magnet M1 + Z</h2>
                         <button class="group-card__open-btn">Voir tous les leaks →</button>
                     </div>
@@ -3194,7 +3200,7 @@
 
                 <!-- ── GROUP CARD : CELESTIAL ── -->
                 <article class="group-card" style="--cat-hex:#ffa500;--cat-rgb:255,165,0"
-                    onclick="openGroupDrawer('celestial')">
+                    onclick="openGroupDrawer('celestial')" data-date="2026-07-21">
                     <div class="group-card__image-wrapper">
                         <img src="./shared/blox_leaks/celestial_shop.png" class="group-card__image" alt="Celestial" loading="lazy">
                         <div class="group-card__badge">CELESTIAL</div>
@@ -3202,6 +3208,7 @@
                     </div>
                     <div class="group-card__content">
                         <div class="group-card__eyebrow">Fruit · Leak</div>
+                        <div class="group-card__date"></div>
                         <h2 class="group-card__title">Celestial Fruit</h2>
                         <button class="group-card__open-btn">Voir tous les leaks →</button>
                     </div>
@@ -3210,7 +3217,7 @@
 
                 <!-- ── GROUP CARD : ONI ── -->
                 <article class="group-card" style="--cat-hex:#a200ff;--cat-rgb:162,0,255"
-                    onclick="openGroupDrawer('oni')">
+                    onclick="openGroupDrawer('oni')" data-date="2026-07-18">
                     <div class="group-card__image-wrapper">
                         <img src="./shared/blox_leaks/oni_shop.png" class="group-card__image" alt="Oni" loading="lazy">
                         <div class="group-card__badge">ONI</div>
@@ -3218,6 +3225,7 @@
                     </div>
                     <div class="group-card__content">
                         <div class="group-card__eyebrow">Fruit · Leak</div>
+                        <div class="group-card__date"></div>
                         <h2 class="group-card__title">Oni Fruit</h2>
                         <button class="group-card__open-btn">Voir tous les leaks →</button>
                     </div>
@@ -3225,13 +3233,14 @@
                 </article>
 
                 <!-- ── CARD SOLO : DARK ── -->
-                <article class="news-card">
+                <article class="news-card" data-date="2026-07-22">
                     <div class="news-card__image-wrapper">
                         <img src="./shared/blox_leaks/dark_rework.jpeg" class="news-card__image" alt="Dark Rework" loading="lazy" decoding="async">
                         <div class="news-card__badge">DARK</div>
                     </div>
                     <div class="news-card__content">
                         <div class="news-card__eyebrow">Leak</div>
+                        <div class="news-card__date"></div>
                         <h2 class="news-card__title">Dark Rework</h2>
                         <button class="news-card__button open-modal-btn" data-type="image" data-src="./shared/blox_leaks/dark_rework.jpeg" data-card-id="dark-rework">Voir l'image →</button>
                     </div>
@@ -3259,17 +3268,18 @@
         <section id="cat-vfx" class="category-section" style="--cat-hex: #a200ff; --cat-rgb: 162, 0, 255;">
             <div class="category-title">✨ VFX (EFFETS VISUELS)</div>
             <div class="news-grid">
-                <article class="news-card">
+                <article class="news-card" data-date="2026-07-19">
                     <div class="news-card__image-wrapper">
                         <img src="./shared/blox_leaks/skull_guitar.jpeg" class="news-card__image" alt="VFX" loading="lazy" decoding="async">
                         <div class="news-card__badge">GUN</div>
                     </div>
                     <div class="news-card__content">
                         <div class="news-card__eyebrow">Crâne</div>
+                        <div class="news-card__date"></div>
                         <h2 class="news-card__title">Attaque Skull Guitar</h2>
                         <button class="news-card__button open-modal-btn" data-type="image" data-src="./shared/blox_leaks/skull_guitar.jpeg">Voir l'image  →</button>
                     </div>
-<div class="news-card__bar"></div>
+                <div class="news-card__bar"></div>
                 </article>
             </div>
         </section>
@@ -3281,82 +3291,88 @@
             <div class="news-grid">
 
 
-                <article class="news-card">
+                <article class="news-card" data-date="2026-07-23">
                     <div class="news-card__image-wrapper">
                         <img src="./shared/blox_leaks/island_reworks1.png" class="news-card__image" alt="Map" loading="lazy" decoding="async">
                         <div class="news-card__badge">Island</div>
                     </div>
                     <div class="news-card__content">
                         <div class="news-card__eyebrow">Middle Town</div>
+                        <div class="news-card__date"></div>
                         <h2 class="news-card__title">Middle Town rework ?</h2>
                         <button class="news-card__button open-modal-btn" data-type="image" data-src="./shared/blox_leaks/island_reworks1.png">Inspecter →</button>
                     </div>
-<div class="news-card__bar"></div>
+                <div class="news-card__bar"></div>
                 </article>
 
-                                <article class="news-card">
+                                <article class="news-card" data-date="2026-07-23">
                     <div class="news-card__image-wrapper">
                         <img src="./shared/blox_leaks/island_reworks2.png" class="news-card__image" alt="Map" loading="lazy" decoding="async">
                         <div class="news-card__badge">Island</div>
                     </div>
                     <div class="news-card__content">
                         <div class="news-card__eyebrow">Café</div>
+                        <div class="news-card__date"></div>
                         <h2 class="news-card__title">Café rework ?</h2>
                         <button class="news-card__button open-modal-btn" data-type="image" data-src="./shared/blox_leaks/island_reworks2.png">Inspecter →</button>
                     </div>
-<div class="news-card__bar"></div>
+                <div class="news-card__bar"></div>
                 </article>
 
-                                <article class="news-card">
+                                <article class="news-card" data-date="2026-07-22">
                     <div class="news-card__image-wrapper">
                         <img src="./shared/blox_leaks/islandreworks3.png" class="news-card__image" alt="Map" loading="lazy" decoding="async">
                         <div class="news-card__badge">Island</div>
                     </div>
                     <div class="news-card__content">
                         <div class="news-card__eyebrow">Pirate Island</div>
+                        <div class="news-card__date"></div>
                         <h2 class="news-card__title">L'île des Pirates rework ?</h2>
                         <button class="news-card__button open-modal-btn" data-type="image" data-src="./shared/blox_leaks/islandreworks3.png">Inspecter →</button>
                     </div>
-<div class="news-card__bar"></div>
+                <div class="news-card__bar"></div>
                 </article>
 
-                                <article class="news-card">
+                                <article class="news-card" data-date="2026-07-21">
                     <div class="news-card__image-wrapper">
                         <img src="./shared/blox_leaks/island_reworks4.png" class="news-card__image" alt="Map" loading="lazy" decoding="async">
                         <div class="news-card__badge">Island</div>
                     </div>
                     <div class="news-card__content">
                         <div class="news-card__eyebrow">Crused Ship</div>
+                        <div class="news-card__date"></div>
                         <h2 class="news-card__title">Cursed Ship rework ?</h2>
                         <button class="news-card__button open-modal-btn" data-type="image" data-src="./shared/blox_leaks/island_reworks4.png">Inspecter →</button>
                     </div>
-<div class="news-card__bar"></div>
+                <div class="news-card__bar"></div>
                 </article>
 
-                                <article class="news-card">
+                                <article class="news-card" data-date="2026-07-21">
                     <div class="news-card__image-wrapper">
                         <img src="./shared/blox_leaks/island_reworks5.png" class="news-card__image" alt="Map" loading="lazy" decoding="async">
                         <div class="news-card__badge">Island</div>
                     </div>
                     <div class="news-card__content">
                         <div class="news-card__eyebrow">Factory</div>
+                        <div class="news-card__date"></div>
                         <h2 class="news-card__title">Factory rework ?</h2>
                         <button class="news-card__button open-modal-btn" data-type="image" data-src="./shared/blox_leaks/island_reworks5.png">Inspecter →</button>
                     </div>
-<div class="news-card__bar"></div>
+                <div class="news-card__bar"></div>
                 </article>
 
-                                <article class="news-card">
+                                <article class="news-card" data-date="2026-07-20">
                     <div class="news-card__image-wrapper">
                         <img src="./shared/blox_leaks/island_reworks6.png" class="news-card__image" alt="Map" loading="lazy" decoding="async">
                         <div class="news-card__badge">Island</div>
                     </div>
                     <div class="news-card__content">
                         <div class="news-card__eyebrow">Ice Castle</div>
+                        <div class="news-card__date"></div>
                         <h2 class="news-card__title">Ice Castle rework ?</h2>
                         <button class="news-card__button open-modal-btn" data-type="image" data-src="./shared/blox_leaks/island_reworks6.png">Inspecter →</button>
                     </div>
-<div class="news-card__bar"></div>
+                <div class="news-card__bar"></div>
                 </article>
             </div>
         </section>
@@ -3366,17 +3382,18 @@
         <section id="cat-gui" class="category-section" style="--cat-hex: #0088ff; --cat-rgb: 0, 136, 255;">
             <div class="category-title">💻 GUI & SYSTÈMES</div>
             <div class="news-grid">
-                <article class="news-card">
+                <article class="news-card" data-date="2026-07-17">
                     <div class="news-card__image-wrapper">
                         <img src="./shared/blox_leaks/enchantements_design.jpeg" class="news-card__image" alt="GUI" loading="lazy" decoding="async">
                         <div class="news-card__badge">INTERFACE</div>
                     </div>
                     <div class="news-card__content">
                         <div class="news-card__eyebrow">Enchantements/Étoiles</div>
+                        <div class="news-card__date"></div>
                         <h2 class="news-card__title">Nouveau design</h2>
                         <button class="news-card__button open-modal-btn" data-type="image" data-src="./shared/blox_leaks/enchantements_design.jpeg">Aperçu →</button>
                     </div>
-<div class="news-card__bar"></div>
+                <div class="news-card__bar"></div>
                 </article>
             </div>
         </section>
@@ -3395,13 +3412,14 @@
                 -->
 
                 <!-- ── Shafi x Felku ── -->
-                <article class="msg-card" data-static-id="cat-messages__shafi-felku-magnet__0">
+                <article class="msg-card" data-static-id="cat-messages__shafi-felku-magnet__0" data-date="2026-07-15">
                     <div class="msg-card__tape"></div>
                     <div class="msg-card__scan"></div>
                     <div class="msg-card__header">
                         <div class="msg-card__stamp">SF</div>
                         <div class="msg-card__meta">
                             <div class="msg-card__eyebrow">📁 Dossier confidentiel</div>
+                            <div class="msg-card__date"></div>
                             <h2 class="msg-card__title">Message de Shafi - Magnet</h2>
                             <div class="msg-card__classified">⛔ CLASSIFIÉ</div>
                         </div>
@@ -3419,13 +3437,14 @@
                 </article>
 
                 <!-- ── Shafi Discord ── -->
-                <article class="msg-card" data-static-id="cat-messages__shafi-discord-magnet__1">
+                <article class="msg-card" data-static-id="cat-messages__shafi-discord-magnet__1" data-date="2026-07-16">
                     <div class="msg-card__tape"></div>
                     <div class="msg-card__scan"></div>
                     <div class="msg-card__header">
                         <div class="msg-card__stamp">SH</div>
                         <div class="msg-card__meta">
                             <div class="msg-card__eyebrow">📁 Dossier confidentiel</div>
+                            <div class="msg-card__date"></div>
                             <h2 class="msg-card__title">Message Shafi Discord - Magnet</h2>
                             <div class="msg-card__classified">⛔ CLASSIFIÉ</div>
                         </div>
@@ -3443,13 +3462,14 @@
                 </article>
 
                 <!-- ── E. Quake ── -->
-                <article class="msg-card" data-static-id="cat-messages__e-quake__2">
+                <article class="msg-card" data-static-id="cat-messages__e-quake__2" data-date="2026-07-17">
                     <div class="msg-card__tape"></div>
                     <div class="msg-card__scan"></div>
                     <div class="msg-card__header">
                         <div class="msg-card__stamp">E.</div>
                         <div class="msg-card__meta">
                             <div class="msg-card__eyebrow">📁 Dossier confidentiel</div>
+                            <div class="msg-card__date"></div>
                             <h2 class="msg-card__title">Message de E. - Quake</h2>
                             <div class="msg-card__classified">⛔ CLASSIFIÉ</div>
                         </div>
@@ -4622,7 +4642,7 @@
         const h = Math.floor(m / 60);
         if (h < 24)  return `il y a ${h}h`;
         const j = Math.floor(h / 24);
-        if (j < 7)   return `il y a ${j}j`;
+        if (j < 30)  return `il y a ${j}j`;
         return d.toLocaleDateString('fr-FR', { day:'numeric', month:'short' });
     }
     function isoNow() { return new Date().toISOString(); }
@@ -6144,6 +6164,30 @@
         });
     }
 
+    // ── Injection des dates relatives ──────────────────────────
+    function _injectDateLabels() {
+        document.querySelectorAll('[data-date]').forEach(card => {
+            const raw = card.dataset.date;
+            if (!raw) return;
+            const ts = /^\d+$/.test(raw) ? parseInt(raw, 10) : raw;
+            const d = new Date(ts);
+            if (isNaN(d.getTime())) return;
+            const label = relativeTime(d.toISOString());
+            let target = card.querySelector('.news-card__date, .group-card__date, .msg-card__date');
+            if (target) {
+                target.textContent = label;
+            } else {
+                target = document.createElement('div');
+                target.className = 'news-card__date';
+                target.textContent = label;
+                const eyebrow = card.querySelector('.news-card__eyebrow, .group-card__eyebrow, .msg-card__eyebrow');
+                if (eyebrow && eyebrow.parentNode) {
+                    eyebrow.parentNode.insertBefore(target, eyebrow.nextSibling);
+                }
+            }
+        });
+    }
+
     // ── Persistence localStorage (cache local uniquement) ───────────
     function _ccLoad() { try { return JSON.parse(localStorage.getItem(CC_KEY)) || []; } catch { return []; } }
     function _ccSave(cards) { try { localStorage.setItem(CC_KEY, JSON.stringify(cards)); } catch {} }
@@ -6190,18 +6234,23 @@
         const e = _ccEsc;
         let html = '';
 
+        const _cardTs = card.createdAt
+            ? card.createdAt
+            : (card.id && card.id.startsWith('cc_') ? parseInt(card.id.slice(3), 10) || Date.now() : Date.now());
+
         if (card.kind === 'message') {
             // ── Carte MESSAGE — style enquête / dossier ────────────────
             const initials = e(card.msgInitials || card.badge || '?');
             const cipherText = _msgCipher(card.msgText || card.title || '');
             const cardId = 'msg-' + card.id;
-            html = `<article class="msg-card" data-cc-id="${card.id}" data-msg-card-id="${e(cardId)}">
+            html = `<article class="msg-card" data-cc-id="${card.id}" data-msg-card-id="${e(cardId)}" data-date="${_cardTs}">
                 <div class="msg-card__tape"></div>
                 <div class="msg-card__scan"></div>
                 <div class="msg-card__header">
                     <div class="msg-card__stamp">${initials}</div>
                     <div class="msg-card__meta">
                         <div class="msg-card__eyebrow">📁 Dossier confidentiel</div>
+                        <div class="msg-card__date">${relativeTime(new Date(_cardTs).toISOString())}</div>
                         <h2 class="msg-card__title">${e(card.title)}</h2>
                         <div class="msg-card__classified">⛔ CLASSIFIÉ</div>
                     </div>
@@ -6220,16 +6269,14 @@
 
         } else if (card.kind === 'actus') {
             // ── Carte ACTUS (style secret-bulletin) ───────────────────
-            const now = new Date();
-            const mois = ['JAN','FÉV','MAR','AVR','MAI','JUN','JUL','AOÛ','SEP','OCT','NOV','DÉC'][now.getMonth()];
-            const date = `${mois} ${now.getFullYear()}`;
+            const dateLabel = relativeTime(new Date(_cardTs).toISOString());
             const contentRendered = typeof renderMarkdown === 'function'
                 ? renderMarkdown(card.actusText || card.msgText || '')
                 : e(card.actusText || '');
             html = `<div class="secret-bulletin" data-cc-id="${card.id}" style="margin-bottom:24px;">
                 <div class="bulletin-header">
                     <h2>${e(card.title)}</h2>
-                    <div class="bulletin-meta">STATUT : ACTIF<br>DATE : ${date}</div>
+                    <div class="bulletin-meta">STATUT : ACTIF<br>DATE : ${dateLabel}</div>
                 </div>
                 <div class="bulletin-content">
                     <p>${contentRendered}</p>
@@ -6251,13 +6298,15 @@
             const btnHtml  = card.mediaType === 'video'
                 ? `<button class="news-card__button open-modal-btn" data-type="video" data-src="${e(card.src)}">${btnLabel}</button>`
                 : `<button class="news-card__button open-modal-btn" data-type="image" data-src="${e(card.src)}">${btnLabel}</button>`;
-            html = `<article class="news-card" data-cc-id="${card.id}">
+            const dateLabel = relativeTime(new Date(_cardTs).toISOString());
+            html = `<article class="news-card" data-cc-id="${card.id}" data-date="${_cardTs}">
                 <div class="news-card__image-wrapper">
                     ${mediaTag}
                     <div class="news-card__badge">${e(card.badge)}</div>
                 </div>
                 <div class="news-card__content">
                     <div class="news-card__eyebrow">${e(card.eyebrow)}</div>
+                    <div class="news-card__date">${dateLabel}</div>
                     <h2 class="news-card__title">${e(card.title)}</h2>
                     ${btnHtml}
                 </div>
@@ -6632,7 +6681,8 @@
             id: cardId, sectionId, badge, title,
             src: src || '', eyebrow, btnLabel, mediaType, kind,
             actusText: actusText || '', msgInitials: msgInitials || '',
-            msgText: msgText || '', msgSrc: (isMessage ? src : '') || ''
+            msgText: msgText || '', msgSrc: (isMessage ? src : '') || '',
+            createdAt: Date.now()
         };
 
         // Rendu immédiat
@@ -6844,6 +6894,7 @@
         // 1. Assigner des IDs stables aux cards statiques (avant tout)
         _assignStaticIds();
         _nbApplyAll();   // badges « Nouveau » sur les cards récentes
+        _injectDateLabels();   // dates relatives sur les cards
         _ensureAllVideoThumbnails(document);
 
         // 2. Appliquer les suppressions de cards statiques depuis Firebase
@@ -6879,9 +6930,11 @@
                 _sortAllSections();
                 // Synchroniser les group-cards avec les cards Firebase
                 _syncGroupCards(fbCards);
+                _injectDateLabels();
             });
         } else {
             _renderCustomCards();
+            _injectDateLabels();
         }
 
         const toast = document.getElementById('editModeToast');
