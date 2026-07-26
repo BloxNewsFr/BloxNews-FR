@@ -34,10 +34,8 @@
         ].join('');
         document.body.appendChild(lightbox);
 
-const modalImg = lightbox.querySelector('.bulletin-image-lightbox__img');
+        const modalImg = lightbox.querySelector('.bulletin-image-lightbox__img');
         const closeBtn = lightbox.querySelector('.bulletin-image-lightbox__close');
-        // AJOUT : On cible le panneau parent
-        const panel = lightbox.querySelector('.bulletin-image-lightbox__panel'); 
         let activeSourceImg = null;
 
         function fitImageToViewport() {
@@ -55,9 +53,8 @@ const modalImg = lightbox.querySelector('.bulletin-image-lightbox__img');
                 targetWidth = targetHeight * ratio;
             }
 
-            // MODIFICATION : On applique les dimensions au panneau, pas à l'image
-            panel.style.width = Math.round(targetWidth) + 'px';
-            panel.style.height = Math.round(targetHeight) + 'px';
+            modalImg.style.width = Math.round(targetWidth) + 'px';
+            modalImg.style.height = Math.round(targetHeight) + 'px';
         }
 
         function openLightbox(img) {
@@ -71,16 +68,13 @@ const modalImg = lightbox.querySelector('.bulletin-image-lightbox__img');
             closeBtn.focus({ preventScroll: true });
         }
 
-        // ... (openLightbox reste inchangé)
-
         function closeLightbox() {
             lightbox.classList.remove('is-active');
             document.body.classList.remove('bulletin-lightbox-open');
             window.setTimeout(function () {
                 if (!lightbox.classList.contains('is-active')) {
                     modalImg.removeAttribute('src');
-                    // MODIFICATION : On retire le style du panneau, pas de l'image
-                    panel.removeAttribute('style'); 
+                    modalImg.removeAttribute('style');
                     modalImg.onload = null;
                     activeSourceImg = null;
                 }
