@@ -3809,8 +3809,12 @@
         document.getElementById('groupDrawer').style.setProperty('--drawer-cat-rgb', data.rgb);
 
         grid.innerHTML = data.items.map((item, i) => {
+            const isExternal = item.src && (item.src.startsWith('http://') || item.src.startsWith('https://'));
+            const videoSrc   = isExternal ? item.src : (item.src + '#t=0.5');
             const thumb = item.type === 'video'
-                ? `<video src="${item.src}#t=0.5" preload="metadata" muted playsinline class="group-drawer__item-img"></video>`
+                ? (isExternal
+                    ? `<div class="group-drawer__item-img group-drawer__item-vid-ext" style="display:flex;align-items:center;justify-content:center;background:#0d0d18;aspect-ratio:16/10"><span style="font-size:32px">▶️</span></div>`
+                    : `<video src="${videoSrc}" preload="metadata" muted playsinline class="group-drawer__item-img"></video>`)
                 : `<img src="${item.src}" class="group-drawer__item-img" alt="${item.label}" loading="lazy">`;
             const likeId = _drawerLikeId(groupId, i);
             const local  = _plLoadLocal();
@@ -3871,8 +3875,27 @@
         document.getElementById('modalMetaTitle').textContent = item.label;
         video.style.display = 'none'; img.style.display = 'none';
         if (item.type === 'video') {
-            video.src = item.src; video.style.display = 'block';
-            video.currentTime = 0; video.play().catch(()=>{});
+            const isExternal = item.src && (item.src.startsWith('http://') || item.src.startsWith('https://'));
+            if (isExternal) {
+                // Vidéo externe : afficher un bouton lien plutôt que d'intégrer dans <video>
+                img.style.display = 'block';
+                img.src = '';
+                img.style.cssText += ';display:none';
+                // Réutiliser la zone image pour afficher un placeholder cliquable
+                const existingExtBtn = document.getElementById('_modalExtVideoBtn');
+                if (existingExtBtn) existingExtBtn.remove();
+                const extBtn = document.createElement('a');
+                extBtn.id = '_modalExtVideoBtn';
+                extBtn.href = item.src;
+                extBtn.target = '_blank';
+                extBtn.rel = 'noopener noreferrer';
+                extBtn.style.cssText = 'display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:40px 20px;background:rgba(255,255,255,0.04);border-radius:16px;text-decoration:none;color:#fff;margin:16px 0;border:1px solid rgba(255,255,255,0.1);transition:background 0.2s';
+                extBtn.innerHTML = `<span style="font-size:48px">▶️</span><span style="font-size:15px;font-weight:700;opacity:0.8">Voir la vidéo →</span><span style="font-size:11px;opacity:0.4;word-break:break-all;max-width:260px;text-align:center">${item.src}</span>`;
+                video.parentNode.insertBefore(extBtn, video);
+            } else {
+                video.src = item.src; video.style.display = 'block';
+                video.currentTime = 0; video.play().catch(()=>{});
+            }
         } else {
             img.src = item.src; img.style.display = 'block';
         }
@@ -3886,6 +3909,9 @@
         const edBtn = document.getElementById('modalEditToggle');
         if (edBtn) { edBtn.classList.remove('is-active'); edBtn.textContent = '✏️ Éditer'; }
         modal.classList.add('is-active');
+        // Nettoyer le bouton vidéo externe à la fermeture
+        const _cleanExt = () => { document.getElementById('_modalExtVideoBtn')?.remove(); };
+        modal.addEventListener('click', e => { if (e.target === modal) _cleanExt(); }, { once: true });
     }
 
     function closeGroupDrawer(e) {
@@ -5561,6 +5587,10 @@
         const section = document.getElementById(card.sectionId);
         if (!section) return;
         if (document.querySelector(`[data-cc-id="${card.id}"]`)) return;
+
+        // Si la card appartient à un groupe, ne pas la rendre individuellement —
+        // elle sera intégrée dans GROUP_DATA par _syncGroupCards
+        if (GROUP_BADGE_MAP && GROUP_BADGE_MAP[card.badge]) return;
         let grid = section.querySelector('.news-grid');
         if (!grid) {
             grid = document.createElement('div');
