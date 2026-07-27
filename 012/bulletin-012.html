@@ -424,81 +424,81 @@
     
         .search-overlay {
             position: fixed; inset: 0;
-            background: linear-gradient(135deg, rgba(5,5,15,0.88), rgba(15,10,25,0.82));
-            backdrop-filter: blur(18px);
-            -webkit-backdrop-filter: blur(18px);
+            background: linear-gradient(135deg, rgba(0,5,0,0.95), rgba(0,10,5,0.92));
+            backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
             z-index: 99999; display: flex; flex-direction: column;
             align-items: center; padding-top: 120px;
             opacity: 0; pointer-events: none;
-            transition: opacity 0.3s ease;
+            transition: opacity 0.35s ease;
         }
         .search-overlay.is-active { opacity: 1; pointer-events: auto; }
         .search-container {
-            width: 92%; max-width: 560px;
+            width: 92%; max-width: 640px;
             transform: translateY(-24px) scale(0.94);
             transition: transform 0.45s cubic-bezier(0.34,1.56,0.64,1);
         }
         .search-overlay.is-active .search-container { transform: translateY(0) scale(1); }
         .search-bar {
             display: flex; align-items: center; gap: 8px;
-            background: rgba(255,255,255,0.97);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 16px;
-            padding: 4px 4px 4px 20px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.06);
-            transition: box-shadow 0.25s;
+            background: rgba(0,255,65,0.04);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(0,255,65,0.15);
+            border-radius: 16px; padding: 4px 4px 4px 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5), inset 0 1px 0 rgba(0,255,65,0.06);
+            transition: box-shadow 0.25s, border-color 0.25s;
         }
         .search-bar:focus-within {
-            box-shadow: 0 8px 48px rgba(0,0,0,0.4), 0 0 0 2px rgba(255,255,255,0.1);
+            box-shadow: 0 8px 48px rgba(0,255,65,0.06), 0 0 0 1px rgba(0,255,65,0.2);
+            border-color: rgba(0,255,65,0.25);
         }
         .search-bar input {
             flex: 1; border: none; outline: none; font-size: 17px;
-            font-family: 'Inter', sans-serif; color: #111;
-            background: transparent; padding: 14px 0;
-            letter-spacing: 0.1px;
+            font-family: 'Share Tech Mono', monospace; color: #00ff41;
+            background: transparent; padding: 14px 0; letter-spacing: 0.1px;
         }
-        .search-bar input::placeholder { color: #aaa; }
+        .search-bar input::placeholder { color: rgba(0,255,65,0.3); }
         .search-go-btn {
             padding: 10px 22px; border-radius: 12px; border: none;
-            background: linear-gradient(135deg, #111, #333);
+            background: linear-gradient(135deg, #007a1f, #00cc35);
             color: #fff; font-weight: 800; font-size: 13px;
-            cursor: pointer; font-family: 'Inter', sans-serif;
+            cursor: pointer; font-family: 'Share Tech Mono', monospace;
             transition: all 0.25s ease; letter-spacing: 0.3px;
             text-transform: uppercase; flex-shrink: 0;
+            box-shadow: 0 4px 16px rgba(0,255,65,0.2);
         }
-        .search-go-btn:hover { transform: scale(1.04); background: linear-gradient(135deg, #222, #444); box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+        .search-go-btn:hover { transform: scale(1.04); background: linear-gradient(135deg, #009e28, #00ff41); box-shadow: 0 6px 24px rgba(0,255,65,0.35); }
         .search-nav-btn {
             width: 36px; height: 36px; border-radius: 10px; border: none;
-            background: #f2f2f6; color: #555; cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 16px; transition: all 0.2s; flex-shrink: 0;
-            font-family: 'Inter', sans-serif; font-weight: 700;
+            background: rgba(0,255,65,0.06); color: rgba(0,255,65,0.5); cursor: pointer;
+            font-size: 16px; display: flex; align-items: center;
+            justify-content: center; transition: all 0.2s;
+            flex-shrink: 0;
         }
-        .search-nav-btn:hover { background: #e5e5ea; color: #000; }
+        .search-nav-btn:hover { background: rgba(0,255,65,0.12); color: #00ff41; }
         .search-nav-btn:disabled { opacity: 0.2; cursor: default; }
         .search-close-btn {
-            width: 38px; height: 38px; border-radius: 10px; border: none;
-            background: #f2f2f6; color: #888; cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 18px; transition: all 0.2s; flex-shrink: 0;
+            width: 36px; height: 36px; border-radius: 10px; border: none;
+            background: rgba(0,255,65,0.06); color: rgba(0,255,65,0.5); cursor: pointer;
+            font-size: 20px; display: flex; align-items: center;
+            justify-content: center; transition: all 0.2s;
+            flex-shrink: 0;
         }
-        .search-close-btn:hover { background: var(--green); color: #000; }
+        .search-close-btn:hover { background: rgba(0,255,65,0.15); color: #00ff41; }
         .search-stats {
-            color: rgba(255,255,255,0.45); font-size: 14px; margin-top: 18px;
-            font-family: 'Inter', sans-serif; font-weight: 500;
+            color: rgba(0,255,65,0.4); font-size: 14px; margin-top: 12px;
+            font-family: 'Share Tech Mono', monospace; font-weight: 500;
             letter-spacing: 0.3px; text-align: center;
         }
         mark.search-hl {
-            background: linear-gradient(135deg, #fce83a, #ffd700);
+            background: linear-gradient(135deg, #00ff41, #00cc35);
             color: #000; border-radius: 3px; padding: 1px 4px;
-            box-shadow: 0 1px 6px rgba(252,232,58,0.4);
+            box-shadow: 0 1px 6px rgba(0,255,65,0.4);
             transition: all 0.2s;
         }
         mark.search-hl.active {
-            background: linear-gradient(135deg, #ff6b35, #ff4500);
+            background: linear-gradient(135deg, #ffcc00, #ff8800);
             color: #fff; border-radius: 3px; padding: 1px 4px;
-            box-shadow: 0 1px 10px rgba(255,107,53,0.5);
+            box-shadow: 0 1px 10px rgba(255,136,0,0.5);
         }
         @media (max-width: 768px) {
             .search-overlay { padding-top: 60px; }
