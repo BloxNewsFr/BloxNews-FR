@@ -8893,7 +8893,7 @@
             title     = document.getElementById('ncmActusTitle')?.textContent?.trim() || 'Dossier';
             actusText = document.getElementById('ncmActusText')?.textContent?.trim()
                      || document.getElementById('ncmActusContent')?.value?.trim() || '';
-            badge = document.getElementById('ncmEditBadge')?.textContent?.trim() || 'ACTUS';
+            badge = '';
             eyebrow = 'Actus'; btnLabel = 'Lire →'; src = '';
         } else {
             badge    = document.getElementById('ncmEditBadge')?.textContent?.trim() || 'EXCLU';
@@ -9122,6 +9122,7 @@
     }
 
     let _ncmHlColor = '#ffc832';
+    let _ncmHlPending = false;
 
     function _ncmFormatText(type) {
         const ta = document.getElementById('ncmActusContent');
@@ -9154,6 +9155,10 @@
             _ncmHlColor = e.target.value;
             const swatch = document.getElementById('ncmHlSwatch');
             if (swatch) swatch.style.background = _ncmHlColor;
+            if (_ncmHlPending) {
+                _ncmHlPending = false;
+                _ncmFormatText('highlight');
+            }
         }
     });
 
@@ -9162,7 +9167,8 @@
             const ta = document.getElementById('ncmActusContent');
             if (ta && document.activeElement === ta) {
                 e.preventDefault();
-                _ncmFormatText('highlight');
+                _ncmHlPending = true;
+                document.getElementById('ncmHlColorInput')?.click();
             }
         }
     });
