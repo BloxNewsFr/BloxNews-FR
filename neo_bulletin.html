@@ -3318,18 +3318,65 @@
 
 
         /* ═══════════════════════════════════════════════════════════════
+           TABLET (iPad paysage) — réduction progressive
+        ═══════════════════════════════════════════════════════════════ */
+        @media (max-width: 1024px) {
+            .site-header { padding: 0 28px; }
+            .site-header__logo { left: 28px; }
+            .site-header__logo img { height: 36px; }
+            .site-header__icons { right: 28px; gap: 10px; }
+            .site-nav a { font-size: 15px; padding: 6px 14px; }
+            .header-section { margin-bottom: 24px; }
+            .leaks-banner { font-size: 28px; padding: 12px 36px; }
+            .desktop-tabs { gap: 10px; margin-bottom: 32px; }
+            .leaks-tab { padding: 10px 18px; font-size: 14px; }
+            .category-title { font-size: 26px; margin-bottom: 24px; }
+            .sort-toggle button { padding: 5px 12px; }
+            .main-content { padding: 28px 20px 100px; }
+            .news-grid { gap: 18px; }
+            .news-card__content { padding: 18px 18px 16px; }
+            .news-card__title { font-size: 17px; margin-bottom: 12px; }
+            .news-card__eyebrow { font-size: 10px; }
+            .news-card__button { padding: 10px 20px; font-size: 12px; }
+            .group-card__content { padding: 14px 16px 14px; }
+            .group-card__title { font-size: 17px; }
+            .group-card__open-btn { padding: 8px 16px; font-size: 12px; }
+            .group-drawer__grid { gap: 10px; padding: 12px; }
+            .secret-bulletin { margin-bottom: 18px; border-radius: 18px; }
+            .bulletin-topbar { padding: 8px 24px; }
+            .bulletin-inner { padding: 22px 24px 20px 28px; }
+            .bulletin-header h2 { font-size: 22px; }
+            .bulletin-header { gap: 16px; }
+            .bulletin-content p { font-size: 13.5px; }
+            .social-share { margin: 28px auto; }
+            .social-share a { padding: 8px 16px; font-size: 12px; }
+            .msg-card__header { padding: 24px 22px 0; gap: 14px; }
+            .msg-card__body { padding: 16px 22px; }
+            .msg-card__footer { padding: 0 22px 20px; }
+        }
+
+        /* ═══════════════════════════════════════════════════════════════
            MOBILE — bloc unique en FIN DE STYLESHEET pour override correct
         ═══════════════════════════════════════════════════════════════ */
         @media (max-width: 768px) {
             /* ── Layout global ── */
             .site-background { display: none; }
-            .site-header { padding: 10px 16px; }
+            .site-header { padding: 10px 16px; height: 60px; }
+            .site-header__logo { left: 16px; }
+            .site-header__logo img { height: 32px; }
+            .site-header__icons { right: 16px; gap: 8px; }
+            .discord-login-btn { padding: 5px 10px; font-size: 11px; gap: 5px; }
+            .discord-login-btn svg { width: 16px; height: 16px; }
+            .discord-avatar { width: 26px; height: 26px; }
+            .discord-username { max-width: 70px; font-size: 11px; }
+            .discord-user-pill { padding: 3px 8px 3px 3px; gap: 5px; }
             .site-nav, .desktop-tabs { display: none; }
             .mobile-menu-btn { display: block; }
             .mobile-nav-dropdown { display: flex; }
             .mobile-nav-dropdown a.nav-news { color: #1a73e8; }
             .mobile-nav-dropdown a.nav-leaks { color: #d93025; }
             .main-content { padding: 14px 12px 110px !important; overflow: visible !important; }
+            .header-section { margin-bottom: 16px; }
 
             /* ── Secret bulletin ── */
             .secret-bulletin { border-radius: 14px; }
@@ -3345,6 +3392,15 @@
             .news-grid { grid-template-columns: 1fr !important; gap: 14px !important; padding: 0 !important; }
             .news-card { border-radius: 16px; }
             .news-card__title { font-size: 16px; }
+            .news-card__content { padding: 16px 16px 14px; }
+            .news-card__eyebrow { font-size: 10px; }
+            .news-card__button { padding: 9px 18px; font-size: 12px; }
+            .news-card__badge { font-size: 11px; padding: 4px 10px; top: 10px; left: 10px; }
+            .group-card { border-radius: 14px; }
+            .group-card__content { padding: 12px 14px 12px; }
+            .group-card__title { font-size: 16px; }
+            .group-card__open-btn { padding: 8px 16px; font-size: 11px; }
+            .group-card__badge { font-size: 11px; padding: 3px 10px; top: 10px; left: 10px; }
 
             /* ── MODAL LIGHTBOX — bottom sheet corrigé ── */
             .modal-overlay {
@@ -3511,7 +3567,7 @@
             }
 
             /* ── Social share ── */
-            .social-share { gap: 7px; flex-wrap: wrap; padding: 0 14px; }
+            .social-share { gap: 7px; flex-wrap: wrap; padding: 0 14px; margin: 24px auto; }
             .social-share a { font-size: 11px; padding: 7px 12px; }
 
             /* ── Card-comments mobile ── */
@@ -3542,6 +3598,53 @@
             .msg-card__footer { padding: 0 18px 18px; }
             .msg-card__title { font-size: 17px; }
             .msg-card__cipher { padding: 12px 14px; }
+        }
+
+        /* ── Petits mobiles (<480px) ── */
+        @media (max-width: 480px) {
+            .site-header { padding: 8px 12px; height: 52px; }
+            .site-header__logo img { height: 28px; }
+            .site-header__icons { right: 12px; gap: 6px; }
+            .discord-login-btn { padding: 4px 8px; font-size: 10px; }
+            .discord-login-btn svg { width: 14px; height: 14px; }
+            .discord-avatar { width: 22px; height: 22px; }
+            .discord-username { max-width: 50px; font-size: 10px; }
+            .discord-user-pill { padding: 2px 6px 2px 2px; gap: 4px; }
+            .main-content { padding: 10px 8px 100px !important; }
+            .leaks-banner { font-size: 16px; padding: 8px 14px; }
+            .header-section { margin-bottom: 12px; }
+            .news-grid { gap: 10px !important; }
+            .news-card { border-radius: 12px; }
+            .news-card__content { padding: 12px 12px 12px; }
+            .news-card__title { font-size: 15px; margin-bottom: 8px; }
+            .news-card__badge { font-size: 10px; padding: 3px 8px; top: 8px; left: 8px; }
+            .news-card__button { padding: 8px 14px; font-size: 11px; }
+            .news-card__image-wrapper { padding-top: 52%; }
+            .group-card { border-radius: 12px; }
+            .group-card__content { padding: 10px 12px 10px; }
+            .group-card__title { font-size: 14px; }
+            .group-card__open-btn { padding: 6px 14px; font-size: 10px; }
+            .group-card__image-wrapper { aspect-ratio: 16/9; }
+            .group-drawer__grid { grid-template-columns: 1fr 1fr; gap: 6px; padding: 8px; }
+            .category-title { font-size: 16px !important; gap: 6px !important; margin-bottom: 12px !important; }
+            .secret-bulletin { border-radius: 10px; margin-bottom: 14px; }
+            .bulletin-topbar { padding: 6px 14px; gap: 6px; }
+            .bulletin-topbar__label { font-size: 9px; letter-spacing: 1px; }
+            .bulletin-inner { padding: 14px 12px 12px 16px; }
+            .bulletin-header { padding-bottom: 12px; margin-bottom: 14px; gap: 10px; }
+            .bulletin-header h2 { font-size: 17px; }
+            .bulletin-meta { font-size: 10px; padding: 5px 10px; }
+            .bulletin-content p { font-size: 12.5px; line-height: 1.65; }
+            .sort-toggle button { padding: 4px 8px; font-size: 9px; }
+            .msg-card__header { padding: 18px 14px 0; gap: 10px; }
+            .msg-card__body { padding: 12px 14px; }
+            .msg-card__footer { padding: 0 14px 14px; }
+            .msg-card__title { font-size: 15px; }
+            .msg-card__cipher { padding: 10px 12px; }
+            .social-share { margin: 18px auto; gap: 6px; }
+            .social-share a { font-size: 10px; padding: 6px 10px; gap: 4px; }
+            .mobile-switcher-pill { bottom: 18px; padding: 3px; }
+            .mobile-switcher-pill a { font-size: 11px; padding: 12px 14px 5px; }
         }
     </style>
 </head>
