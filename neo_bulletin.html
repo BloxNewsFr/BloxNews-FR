@@ -5046,11 +5046,18 @@
             const g = GROUP_DATA[groupId];
             // Éviter les doublons
             if (g.items.find(it => it._ccId === card.id)) return;
+            const _cardTs = card.createdAt
+                ? new Date(card.createdAt)
+                : (card.id && card.id.startsWith('cc_') ? new Date(parseInt(card.id.slice(3), 10)) : new Date());
+            const _dateStr = isNaN(_cardTs.getTime())
+                ? ''
+                : _cardTs.toLocaleDateString('fr-FR', { day:'numeric', month:'short', year:'numeric' });
             g.items.unshift({
                 type: card.mediaType === 'video' ? 'video' : 'image',
                 src: card.src,
                 label: card.title || card.badge,
                 sub: card.eyebrow || 'Leak',
+                date: _dateStr,
                 _fromFirebase: true,
                 _ccId: card.id,
             });
