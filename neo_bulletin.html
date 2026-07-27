@@ -8496,7 +8496,7 @@
         Object.entries(GROUP_DATA).forEach(([gid, g]) => {
             (g.items || []).forEach((item, idx) => {
                 if (!item._ccId) return;
-                groupItems.push({ gid, idx, item });
+                groupItems.push({ gid, idx, item, groupBadge: g.badge });
             });
         });
         if (allCards.length === 0 && groupItems.length === 0) {
@@ -8545,7 +8545,7 @@
                     </div>
                 </div>`;
             });
-            groupItems.forEach(({ gid, idx: gi, item }) => {
+            groupItems.forEach(({ gid, idx: gi, item, groupBadge }) => {
                 const uid = 'grp_' + gid + '_' + gi;
                 const thumb = item.type === 'video'
                     ? `<span style="font-size:22px">🎬</span>`
@@ -8553,7 +8553,7 @@
                 html += `<div class="dcm-item" id="dcm-item-${uid}">
                     <div class="dcm-item-thumb">${thumb}</div>
                     <div class="dcm-item-info">
-                        <div class="dcm-item-badge">${_ccEsc(item.badge || g.badge)}</div>
+                        <div class="dcm-item-badge">${_ccEsc(item.badge || groupBadge || gid)}</div>
                         <div class="dcm-item-title">${_ccEsc(item.label)}</div>
                         <div class="dcm-item-section">${gid} · dans le groupe</div>
                     </div>
@@ -8569,6 +8569,7 @@
                 </div>`;
             });
             list.innerHTML = html;
+        }
         document.getElementById('deleteCardModal')?.classList.add('is-open');
     }
     function _dcmOpenConfirm(uid) {
