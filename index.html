@@ -734,6 +734,105 @@
         .val-rose::before { content:"🌹"; }
         @keyframes val-rose-float { 0%,100%{transform:translateY(0) rotate(-5deg);opacity:0.6} 50%{transform:translateY(-10px) rotate(5deg);opacity:1} }
 
+        /* 024 ── BIENTÔT (Compte à rebours) */
+        .news-card.soon-card {
+            isolation: isolate; border-radius: 24px; overflow: hidden;
+            background: linear-gradient(155deg, #0a0a14 0%, #12121e 40%, #080810 100%);
+            border: 2px solid rgba(255,218,0,0.4);
+            box-shadow:
+                0 0 0 1px rgba(255,218,0,0.06) inset,
+                0 0 30px rgba(255,218,0,0.15),
+                0 0 60px rgba(255,218,0,0.06),
+                0 30px 80px rgba(0,0,0,0.6);
+            animation: fadeInUp 0.4s ease both, soonBorderPulse 3s ease-in-out infinite;
+        }
+        @keyframes soonBorderPulse {
+            0%, 100% { border-color: rgba(255,218,0,0.4); box-shadow: 0 0 30px rgba(255,218,0,0.15), 0 0 60px rgba(255,218,0,0.06), 0 30px 80px rgba(0,0,0,0.6); }
+            50% { border-color: rgba(255,218,0,0.7); box-shadow: 0 0 40px rgba(255,218,0,0.3), 0 0 80px rgba(255,218,0,0.12), 0 30px 80px rgba(0,0,0,0.6); }
+        }
+        .news-card.soon-card .news-card__image-wrapper {
+            background: linear-gradient(180deg, #0a0a14, #05050a);
+            border-radius: 22px 22px 0 0;
+            box-shadow: inset 0 -3px 0 rgba(255,218,0,0.3);
+            overflow: hidden;
+        }
+        .news-card.soon-card .news-card__image-wrapper::after {
+            z-index: 4; border-radius: 22px 22px 0 0;
+            background:
+                radial-gradient(circle at 50% 50%, transparent 0 20%, rgba(0,0,0,0.3) 60%, rgba(0,0,0,0.7) 100%),
+                radial-gradient(circle at 50% 0%, rgba(255,218,0,0.08) 0 30%, transparent 60%);
+        }
+        .news-card.soon-card .news-card__image { filter: brightness(0.7) saturate(0.5); }
+        .news-card.soon-card:hover .news-card__image { filter: brightness(0.9) saturate(0.7); }
+        .news-card.soon-card:hover {
+            border-color: rgba(255,218,0,0.6);
+            box-shadow: 0 0 50px rgba(255,218,0,0.25), 0 0 100px rgba(255,218,0,0.1), 0 30px 80px rgba(0,0,0,0.7);
+        }
+        .news-card.soon-card .news-card__badge,
+        .news-card.soon-card .news-card__new {
+            background: rgba(10,10,20,0.92); color: #ffda00;
+            border: 1px solid rgba(255,218,0,0.5);
+            box-shadow: 0 0 18px rgba(255,218,0,0.4), inset 0 0 8px rgba(255,218,0,0.05);
+            backdrop-filter: blur(8px); z-index: 6;
+        }
+        .news-card.soon-card .news-card__new {
+            background: linear-gradient(135deg, #b8860b, #ffda00, #b8860b);
+            background-size: 200% auto;
+            color: #000; font-weight: 900; border: none;
+            animation: badgeGoldShimmer 2s ease-in-out infinite;
+        }
+        @keyframes badgeGoldShimmer {
+            0%, 100% { background-position: 0% center; }
+            50% { background-position: 100% center; }
+        }
+        .news-card.soon-card .news-card__content {
+            background:
+                radial-gradient(ellipse at 50% 0%, rgba(255,218,0,0.06) 0%, transparent 50%),
+                linear-gradient(180deg, #0d0d18 0%, #080810 100%);
+            border-top: 1px solid rgba(255,218,0,0.25);
+            position: relative; z-index: 1; border-radius: 0 0 22px 22px;
+        }
+        .news-card.soon-card .news-card__content::before {
+            content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+            background: repeating-linear-gradient(90deg,
+                transparent 0 20px, rgba(255,218,0,0.015) 20px 21px, transparent 21px 40px
+            );
+        }
+        .news-card.soon-card .news-card__content > * { position: relative; z-index: 1; }
+        .news-card.soon-card .news-card__eyebrow {
+            color: #ffda00; letter-spacing: 3px;
+            text-shadow: 0 0 10px rgba(255,218,0,0.5);
+        }
+        .news-card.soon-card .news-card__date { color: rgba(255,218,0,0.4); }
+        .news-card.soon-card .news-card__title {
+            color: #fff;
+            text-shadow: 0 0 20px rgba(255,218,0,0.2);
+        }
+        .news-card.soon-card .news-card__button {
+            background: linear-gradient(135deg, rgba(255,218,0,0.15), rgba(255,218,0,0.08));
+            color: #ffda00; border: 1px solid rgba(255,218,0,0.3);
+            border-radius: 100px; backdrop-filter: blur(4px);
+            box-shadow: 0 0 15px rgba(255,218,0,0.1), inset 0 1px 0 rgba(255,218,0,0.1);
+            overflow: hidden;
+        }
+        .news-card.soon-card .news-card__button::before {
+            background: linear-gradient(90deg, transparent, rgba(255,218,0,0.2), transparent);
+        }
+        .news-card.soon-card:hover .news-card__button {
+            background: linear-gradient(135deg, #ffda00, #ffc200);
+            color: #000;
+            box-shadow: 0 0 30px rgba(255,218,0,0.4);
+        }
+        .news-card.soon-card .news-card__bar {
+            background: linear-gradient(90deg, transparent, #ffda00, transparent);
+            background-size: 200% auto; height: 3px;
+            animation: barShimmer 2s ease-in-out infinite;
+        }
+        @keyframes barShimmer {
+            0%, 100% { background-position: -100% center; }
+            50% { background-position: 100% center; }
+        }
+
         /* 015 ── FEU VERT "HELLFIRE EMERALD" — redesign complet */
         .news-card.fire-card {
             isolation: isolate;
@@ -1767,7 +1866,7 @@
             "020": { status: "" },
             "021": { status: "" },
             "023": { className: "glitch-card", badge: "#023", status: "HACK", eyebrow: "Terminal compromis", title: "BULLETIN #023", button: "Accéder au terminal" },
-            "024": { status: "BIENTÔT", badge: "#024", eyebrow: "Bientôt", title: "Bulletin #024", button: "Voir le compte à rebours" },
+            "024": { className: "soon-card", badge: "#024", status: "BIENTÔT", eyebrow: "À venir", title: "Bulletin #024", button: "Voir le compte à rebours" },
         };
 
         // ════════════════════════════════════════════════════════
