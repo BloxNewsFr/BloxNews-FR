@@ -2990,21 +2990,29 @@
             font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px;
             color: rgba(255,255,255,0.25); font-weight: 700; align-self: stretch; text-align: center;
         }
+        /* ── PREVIEW CARTE STANDARD (calque la vraie news-card) ── */
         #newCardModal .ncm-card {
-            border-radius: 18px; overflow: hidden;
-            background: #fff; box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+            border-radius: 24px; overflow: hidden; position: relative;
+            background: #fff; width: 100%;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.2);
             font-family: 'Inter', sans-serif;
         }
-        #newCardModal .ncm-card-img {
-            width: 100%; height: 180px; background: #1a1a2e;
-            position: relative; overflow: hidden; cursor: pointer;
+        #newCardModal .ncm-card .news-card__image-wrapper {
+            width: 100%; padding-top: 56%; position: relative;
+            overflow: hidden; background: #1a1a2e; cursor: pointer;
+        }
+        #newCardModal .ncm-card .news-card__image-wrapper::after {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(180deg, transparent 30%, rgba(0,0,0,0.18) 65%, rgba(0,0,0,0.5) 100%);
+            pointer-events: none; z-index: 1;
         }
         #newCardModal .ncm-card-img-loaded {
-            width: 100%; height: 100%; object-fit: cover;
-            position: absolute; top: 0; left: 0;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: cover; z-index: 0;
         }
         #newCardModal .ncm-card-empty {
-            width: 100%; height: 100%; display: flex; flex-direction: column;
+            position: absolute; inset: 0; z-index: 0;
+            display: flex; flex-direction: column;
             align-items: center; justify-content: center;
             gap: 6px; color: rgba(255,255,255,0.15);
         }
@@ -3013,40 +3021,52 @@
             font-size: 10px; text-transform: uppercase; letter-spacing: 1px;
             text-align: center; line-height: 1.4;
         }
-        #newCardModal .ncm-card-img.drag-over {
+        #newCardModal .ncm-card .news-card__image-wrapper.drag-over {
             outline: 2px dashed rgba(255,26,26,0.6) !important;
             outline-offset: -4px;
-            background: rgba(255,26,26,0.08) !important;
         }
-        #newCardModal .ncm-card-badge {
-            position: absolute; top: 10px; left: 10px;
-            background: linear-gradient(135deg,#ff1a1a,#cc0000);
-            padding: 3px 10px; border-radius: 20px;
-            font-size: 10px; font-weight: 700; color: #fff;
-            text-transform: uppercase; min-width: 30px; cursor: text;
+        #newCardModal .ncm-card .news-card__badge {
+            position: absolute; top: 14px; left: 14px; z-index: 2;
+            background: #cc0000; color: #fff; font-weight: 900;
+            font-size: 11px; padding: 4px 12px; border-radius: 100px;
+            font-family: 'LuckiestGuy Regular', cursive; letter-spacing: 1px;
+            box-shadow: 0 3px 12px rgba(204,0,0,0.5);
+            border: 2px solid rgba(255,255,255,0.5);
+            cursor: text; min-width: 30px;
         }
-        #newCardModal .ncm-card-body { padding: 12px 14px 14px; }
-        #newCardModal .ncm-card-eyebrow {
-            font-size: 10px; font-weight: 700; text-transform: uppercase;
-            color: #7c3aed; margin-bottom: 4px; letter-spacing: 0.5px; cursor: text;
+        #newCardModal .ncm-card .ncm-card-body {
+            padding: 18px 20px 16px; background: #fff;
         }
-        #newCardModal .ncm-card-title {
-            font-size: 14px; font-weight: 700; color: #111;
-            margin: 0 0 10px; line-height: 1.3; cursor: text;
+        #newCardModal .ncm-card .news-card__eyebrow {
+            font-size: 11px; font-weight: 700; color: #cc0000;
+            text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 6px; cursor: text;
         }
-        #newCardModal .ncm-card-btn {
-            display: block; width: 100%; padding: 9px 16px;
-            background: linear-gradient(135deg,#7c3aed,#6d28d9);
-            color: #fff; border: none; border-radius: 10px;
-            font-size: 11px; font-weight: 700; text-transform: uppercase;
-            letter-spacing: 0.5px; text-align: center; cursor: text;
+        #newCardModal .ncm-card .news-card__date {
+            font-size: 11px; font-weight: 500; color: #999; margin-bottom: 6px;
+        }
+        #newCardModal .ncm-card .news-card__title {
+            font-family: 'LuckiestGuy Regular', cursive;
+            font-size: 18px; font-weight: 900; color: #111;
+            line-height: 1.25; margin-bottom: 14px; cursor: text;
+        }
+        #newCardModal .ncm-card .news-card__button {
+            display: inline-block; background: #cc0000; color: #fff;
+            font-weight: 900; padding: 10px 22px; border-radius: 100px;
+            font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;
+            border: 2px solid rgba(255,255,255,0.2); cursor: text;
+            box-shadow: 0 4px 16px rgba(204,0,0,0.4);
+            font-family: 'Inter', sans-serif;
+        }
+        #newCardModal .ncm-card .news-card__bar {
+            height: 4px;
+            background: linear-gradient(90deg, transparent, #cc0000, #ff1a1a, transparent);
         }
         #newCardModal .ncm-card [contenteditable] {
             outline: none; border-radius: 4px;
             transition: box-shadow 0.15s, background 0.15s;
         }
-        #newCardModal .ncm-card [contenteditable]:hover { box-shadow: 0 0 0 2px rgba(124,58,237,0.35); }
-        #newCardModal .ncm-card [contenteditable]:focus { box-shadow: 0 0 0 2px rgba(124,58,237,0.65); background: rgba(124,58,237,0.05); }
+        #newCardModal .ncm-card [contenteditable]:hover { box-shadow: 0 0 0 2px rgba(204,0,0,0.3); }
+        #newCardModal .ncm-card [contenteditable]:focus { box-shadow: 0 0 0 2px rgba(204,0,0,0.5); background: rgba(204,0,0,0.04); }
 
         #newCardModal .ncm-preview-hint {
             font-size: 11px; color: rgba(255,255,255,0.22); text-align: center;
@@ -3058,54 +3078,103 @@
         #ncmPreviewMessage  { display: none; width: 100%; }
         #ncmPreviewActus    { display: none; width: 100%; }
 
+        /* ── PREVIEW MESSAGE (calque la vraie msg-card) ── */
         .ncm-msg-preview {
-            border-radius: 16px; overflow: hidden;
-            background: #111; border: 1px solid rgba(255,255,255,0.07);
-            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-            width: 100%;
+            border-radius: 18px; overflow: hidden; cursor: default;
+            background: #0e0f1a; width: 100%;
+            border: 1px solid rgba(255,200,50,0.15);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.04);
+            position: relative;
         }
-        .ncm-msg-header {
-            height: 80px; display: flex; align-items: center; justify-content: center;
-            background: #111;
-            color: #ff8800; font-family: 'LuckiestGuy Regular', cursive;
-            font-size: 34px; letter-spacing: 1px;
-            border-bottom: 1px solid rgba(255,255,255,0.06);
-            position: relative; overflow: hidden;
+        .ncm-msg-preview::before {
+            content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+            opacity: 0.5; border-radius: 18px;
+        }
+        .ncm-msg-preview .msg-card__tape {
+            position: absolute; top: -4px; left: 50%; transform: translateX(-50%);
+            width: 60px; height: 16px; z-index: 3;
+            background: rgba(255,230,100,0.13);
+            border: 1px solid rgba(255,220,60,0.2); border-radius: 3px;
+        }
+        .ncm-msg-preview .msg-card__scan {
+            position: absolute; inset: 0; pointer-events: none; z-index: 2;
+            background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.04) 3px, rgba(0,0,0,0.04) 4px);
+            border-radius: 18px;
+        }
+        .ncm-msg-preview .msg-card__header {
+            position: relative; z-index: 1;
+            padding: 24px 20px 0; display: flex; align-items: flex-start; gap: 16px;
+        }
+        .ncm-msg-preview .msg-card__stamp {
+            width: 44px; height: 44px; flex-shrink: 0; border-radius: 10px;
+            background: rgba(255,180,0,0.08);
+            border: 2px solid rgba(255,180,0,0.25);
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'LuckiestGuy Regular', cursive; font-size: 15px;
+            color: rgba(255,180,0,0.9); letter-spacing: 1px;
+            box-shadow: 0 0 14px rgba(255,180,0,0.08), inset 0 0 8px rgba(255,180,0,0.04);
             cursor: text;
         }
-        .ncm-msg-header::before {
-            content: ''; position: absolute; inset: 0;
-            background: radial-gradient(ellipse at center, rgba(255,136,0,0.08) 0%, transparent 70%);
+        .ncm-msg-preview .msg-card__meta { flex: 1; min-width: 0; }
+        .ncm-msg-preview .msg-card__eyebrow {
+            font-size: 10px; font-weight: 800; letter-spacing: 2px;
+            text-transform: uppercase; color: rgba(255,180,0,0.6); margin-bottom: 5px;
         }
-        .ncm-msg-body { padding: 12px 14px; background: #fff; }
-        .ncm-msg-eyebrow {
-            font-size: 10px; font-weight: 800; text-transform: uppercase;
-            letter-spacing: 0.8px; color: #999; margin-bottom: 4px;
+        .ncm-msg-preview .msg-card__title {
+            font-family: 'LuckiestGuy Regular', cursive; font-size: 18px;
+            color: rgba(255,240,180,0.92); letter-spacing: 0.3px; line-height: 1.3;
+            margin: 0; cursor: text;
         }
-        .ncm-msg-title {
-            font-family: 'LuckiestGuy Regular', cursive; font-size: 15px;
-            color: #111; margin-bottom: 6px; line-height: 1.2;
+        .ncm-msg-preview .msg-card__classified {
+            display: inline-flex; align-items: center; gap: 5px;
+            font-size: 9px; font-weight: 900; letter-spacing: 2px;
+            color: rgba(255,80,80,0.7); text-transform: uppercase;
+            border: 1px solid rgba(255,80,80,0.25); border-radius: 4px;
+            padding: 3px 8px; margin-top: 8px;
         }
-        .ncm-msg-text {
-            font-size: 12px; color: #555; line-height: 1.55; margin-bottom: 10px;
-            min-height: 32px; outline: none;
-            border: 1.5px dashed transparent; border-radius: 6px; padding: 2px 4px;
-            transition: border-color 0.15s;
+        .ncm-msg-preview .msg-card__body {
+            position: relative; z-index: 1;
+            padding: 16px 20px;
         }
-        .ncm-msg-text:hover, .ncm-msg-text:focus { border-color: rgba(124,58,237,0.4); }
-        .ncm-msg-btn {
-            display: inline-block; background: #111; color: #fff;
-            padding: 6px 14px; border-radius: 100px; font-size: 11px;
-            font-weight: 700; font-family: 'Inter', sans-serif; cursor: default;
+        .ncm-msg-preview .msg-card__cipher {
+            font-family: 'Share Tech Mono', monospace; font-size: 12px;
+            color: rgba(255,220,80,0.35); line-height: 1.8;
+            letter-spacing: 1px; word-break: break-all;
+            background: rgba(255,220,80,0.03);
+            border: 1px solid rgba(255,220,80,0.08);
+            border-radius: 8px; padding: 12px 14px; margin-bottom: 16px;
+            -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.15) 100%);
+            mask-image: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.15) 100%);
+            cursor: text; min-height: 30px; outline: none;
         }
-        .ncm-msg-img-field {
+        .ncm-msg-preview .msg-card__footer {
+            position: relative; z-index: 1;
+            padding: 0 20px 20px; display: flex; align-items: center; gap: 12px;
+        }
+        .ncm-msg-preview .msg-card__decrypt-btn {
+            flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px;
+            padding: 11px 20px; border-radius: 100px; border: none;
+            background: linear-gradient(135deg, rgba(255,180,0,0.15), rgba(255,140,0,0.08));
+            border: 1px solid rgba(255,180,0,0.3);
+            color: rgba(255,210,80,0.9); font-size: 12px; font-weight: 800;
+            font-family: 'LuckiestGuy Regular', cursive; letter-spacing: 1px;
+            text-transform: uppercase; cursor: default;
+            box-shadow: 0 2px 12px rgba(255,160,0,0.1);
+        }
+        .ncm-msg-preview .msg-card__bar {
+            height: 3px; position: relative; z-index: 1;
+            background: linear-gradient(90deg, transparent, rgba(255,180,0,0.5), rgba(255,80,80,0.3), transparent);
+        }
+        .ncm-msg-preview .ncm-msg-img-field {
             margin-top: 8px; padding: 8px 10px;
             background: rgba(255,180,0,0.04); border: 1px dashed rgba(255,180,0,0.15);
-            border-radius: 8px; cursor: pointer;
+            border-radius: 8px; cursor: pointer; position: relative; z-index: 1;
             display: flex; align-items: center; gap: 8px;
             font-size: 11px; color: rgba(255,220,80,0.5); transition: all 0.2s;
         }
-        .ncm-msg-img-field.has-img { border-color: rgba(255,180,0,0.4); background: rgba(255,180,0,0.08); }
+        .ncm-msg-preview .ncm-msg-img-field.has-img { border-color: rgba(255,180,0,0.4); background: rgba(255,180,0,0.08); }
+        .ncm-msg-preview .msg-card__cipher:focus { background: rgba(255,255,255,0.03); }
 
         .ncm-actus-preview {
             border-radius: 16px; overflow: hidden; position: relative;
@@ -3287,6 +3356,9 @@
         }
         #newCardModal .ncm-recap-card-wrap .ncm-card {
             border-radius: 0; box-shadow: none;
+        }
+        #newCardModal .ncm-recap-card-wrap .ncm-card .news-card__image-wrapper {
+            cursor: default;
         }
         #newCardModal .ncm-recap .ncm-msg-preview,
         #newCardModal .ncm-recap .ncm-actus-preview {
@@ -4889,31 +4961,39 @@
 
                         <div id="ncmPreviewStandard">
                             <div class="ncm-card">
-                                <div class="ncm-card-img" id="ncmDropZone" onclick="document.getElementById('ncmFileInput').click()">
+                                <div class="news-card__image-wrapper" id="ncmDropZone" onclick="document.getElementById('ncmFileInput').click()">
                                     <div class="ncm-card-empty" id="ncmDropHint">
                                         <div class="ncm-card-empty-icon">🖼️</div>
                                         <div class="ncm-card-empty-text">Glisse une image<br>ou clique ici</div>
                                     </div>
-                                    <div class="ncm-card-badge" contenteditable="true" id="ncmEditBadge" spellcheck="false">EXCLU</div>
+                                    <div class="news-card__badge" contenteditable="true" id="ncmEditBadge" spellcheck="false">EXCLU</div>
                                 </div>
                                 <input type="file" id="ncmFileInput" accept="image/*" style="display:none" onchange="_ncmFileSelected(this)">
                                 <div class="ncm-card-body">
-                                    <div class="ncm-card-eyebrow" contenteditable="true" id="ncmEditEyebrow" spellcheck="false">Leak</div>
-                                    <h2 class="ncm-card-title" contenteditable="true" id="ncmEditTitle" spellcheck="false">Titre de la carte</h2>
-                                    <div class="ncm-card-btn" contenteditable="true" id="ncmEditBtn" spellcheck="false">Voir l'image →</div>
+                                    <div class="news-card__eyebrow" contenteditable="true" id="ncmEditEyebrow" spellcheck="false">Leak</div>
+                                    <div class="news-card__date">À L'INSTANT</div>
+                                    <h2 class="news-card__title" contenteditable="true" id="ncmEditTitle" spellcheck="false">Titre de la carte</h2>
+                                    <div class="news-card__button" contenteditable="true" id="ncmEditBtn" spellcheck="false">Voir l'image →</div>
                                 </div>
+                                <div class="news-card__bar"></div>
                             </div>
                             <div class="ncm-preview-hint">Clique sur le <strong>badge</strong>, le <strong>titre</strong> ou le <strong>bouton</strong> pour modifier directement.</div>
                         </div>
 
                         <div id="ncmPreviewMessage">
                             <div class="ncm-msg-preview">
-                                <div class="ncm-msg-header" contenteditable="true" id="ncmMsgInitials" spellcheck="false">E.</div>
-                                <div class="ncm-msg-body">
-                                    <div class="ncm-msg-eyebrow">Cryptage</div>
-                                    <div class="ncm-msg-title" contenteditable="true" id="ncmMsgTitle" spellcheck="false">Message de E. - Quake</div>
-                                    <div class="ncm-msg-text" contenteditable="true" id="ncmMsgText" spellcheck="false">Écris le contenu du message ici…</div>
-                                    <div class="ncm-msg-btn">Décrypter →</div>
+                                <div class="msg-card__tape"></div>
+                                <div class="msg-card__scan"></div>
+                                <div class="msg-card__header">
+                                    <div class="msg-card__stamp" contenteditable="true" id="ncmMsgInitials" spellcheck="false">E.</div>
+                                    <div class="msg-card__meta">
+                                        <div class="msg-card__eyebrow">📁 Dossier confidentiel</div>
+                                        <div class="msg-card__title" contenteditable="true" id="ncmMsgTitle" spellcheck="false">Message de E. - Quake</div>
+                                        <div class="msg-card__classified">⛔ CLASSIFIÉ</div>
+                                    </div>
+                                </div>
+                                <div class="msg-card__body">
+                                    <div class="msg-card__cipher" contenteditable="true" id="ncmMsgText" spellcheck="false">Écris le contenu du message ici…</div>
                                     <div class="ncm-msg-img-field" id="ncmMsgImgField" onclick="document.getElementById('ncmMsgFileInput').click()">
                                         <span>🔓</span>
                                         <span id="ncmMsgImgLabel">Image révélée au décryptage (cliquer ou URL)</span>
@@ -4923,6 +5003,13 @@
                                         style="margin-top:6px;width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,180,0,0.15);border-radius:8px;padding:7px 10px;color:rgba(255,220,80,0.7);font-size:11px;font-family:monospace;outline:none;"
                                         oninput="_ncmMsgSrcChange(this.value)">
                                 </div>
+                                <div class="msg-card__footer">
+                                    <button class="msg-card__decrypt-btn">
+                                        <span class="msg-card__decrypt-btn__icon">🔓</span>
+                                        Décrypter
+                                    </button>
+                                </div>
+                                <div class="msg-card__bar"></div>
                             </div>
                         </div>
 
