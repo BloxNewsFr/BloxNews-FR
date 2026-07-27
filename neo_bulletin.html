@@ -3933,7 +3933,6 @@
             <button class="leaks-tab" data-target="cat-map" style="--cat-hex: #00d238; --cat-rgb: 0, 210, 56;">Map</button>
             <button class="leaks-tab" data-target="cat-gui" style="--cat-hex: #0088ff; --cat-rgb: 0, 136, 255;">GUI</button>
             <button class="leaks-tab" data-target="cat-messages" style="--cat-hex: #ff8800; --cat-rgb: 255, 136, 0;">Messages</button>
-            <button class="leaks-tab" data-target="cat-gameplay" style="--cat-hex: #ff6600; --cat-rgb: 255, 102, 0;">Gameplay</button>
         </div>
     </nav>
 
@@ -3961,7 +3960,6 @@
             <button class="leaks-tab" data-target="cat-map" style="--cat-hex: #00d238; --cat-rgb: 0, 210, 56;">MAP</button>
             <button class="leaks-tab" data-target="cat-gui" style="--cat-hex: #0088ff; --cat-rgb: 0, 136, 255;">GUI</button>
             <button class="leaks-tab" data-target="cat-messages" style="--cat-hex: #ff8800; --cat-rgb: 255, 136, 0;">MESSAGES</button>
-            <button class="leaks-tab" data-target="cat-gameplay" style="--cat-hex: #ff6600; --cat-rgb: 255, 102, 0;">GAMEPLAY</button>
         </div>
 
                 <section id="cat-actus" class="category-section active-section">
@@ -4145,6 +4143,22 @@
                     </div>
                 <div class="news-card__bar"></div>
                 </article>
+
+                <article class="group-card" style="--cat-hex:#ff6600;--cat-rgb:255,102,0"
+                    onclick="openGroupDrawer('gameplay')" data-date="2026-07-27">
+                    <div class="group-card__image-wrapper">
+                        <img src="./shared/blox_leaks/magnet_ability 2.jpeg" class="group-card__image" alt="Gameplay" loading="lazy">
+                        <div class="group-card__badge">GAMEPLAY</div>
+                        <div class="group-card__count-pill">0 leak</div>
+                    </div>
+                    <div class="group-card__content">
+                        <div class="group-card__eyebrow">Gameplay & Mécaniques</div>
+                        <div class="group-card__date">Derniers leaks</div>
+                        <h2 class="group-card__title">Gameplay — Tous les leaks</h2>
+                        <button class="group-card__open-btn">Voir tous les leaks →</button>
+                    </div>
+                    <div class="group-card__bar"></div>
+                </article>
             </div>
         </section>
 
@@ -4259,13 +4273,6 @@
                     </div>
                 <div class="news-card__bar"></div>
                 </article>
-            </div>
-        </section>
-
-        <!--🎮 GAMEPLAY-->
-        <section id="cat-gameplay" class="category-section" style="--cat-hex: #ff6600; --cat-rgb: 255, 102, 0;">
-            <div class="category-title">🎮 GAMEPLAY & MÉCANIQUES</div>
-            <div class="news-grid">
             </div>
         </section>
 
@@ -4887,8 +4894,7 @@
                 'cat-map':      '🗺️ Map & Build',
                 'cat-gui':      '💻 GUI & Systèmes',
                 'cat-messages': '✉️ Messages & Lore',
-                'cat-actus':    '📰 Actus',
-                'cat-gameplay': '🎮 Gameplay & Mécaniques',
+                'cat-actus':    '📰 Actus'
             };
             const modal    = document.getElementById('videoModal');
             const openBtns = document.querySelectorAll('.open-modal-btn');
@@ -5007,6 +5013,12 @@
                 { type:'image', src:'./shared/blox_leaks/oni_shop.png',   label:'Oni: Shop',   sub:'Leak', date:'18 juil. 2026' },
                 { type:'image', src:'./shared/blox_leaks/oni_physic.png', label:'Oni: Design', sub:'Leak', date:'18 juil. 2026' },
             ]
+        },
+        gameplay: {
+            badge: 'GAMEPLAY', title: 'Gameplay — Tous les leaks',
+            hex: '#ff6600', rgb: '255,102,0',
+            items: [
+            ]
         }
     };
 
@@ -5019,6 +5031,7 @@
         'MAGNET': 'magnet', 'Magnet': 'magnet', 'magnet': 'magnet',
         'CELESTIAL': 'celestial', 'Celestial': 'celestial', 'celestial': 'celestial',
         'ONI': 'oni', 'Oni': 'oni', 'oni': 'oni',
+        'GAMEPLAY': 'gameplay', 'Gameplay': 'gameplay', 'gameplay': 'gameplay',
     };
 
     function _syncGroupCards(fbCards) {
@@ -7995,8 +8008,7 @@
         const SECTION_LABELS = {
             'cat-fruit':'🍎 Fruits & Reworks','cat-vfx':'✨ VFX',
             'cat-map':'🗺️ Map & Build','cat-gui':'💻 GUI & Systèmes',
-            'cat-messages':'✉️ Messages & Lore','cat-actus':'📰 Actus',
-            'cat-gameplay':'🎮 Gameplay & Mécaniques'
+            'cat-messages':'✉️ Messages & Lore','cat-actus':'📰 Actus'
         };
         const modal = document.getElementById('videoModal');
         const video = document.getElementById('fruitVideo');
