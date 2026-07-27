@@ -623,11 +623,74 @@
         .discord-dropdown-tag { color: rgba(0,255,65,0.8) !important; }
         .discord-dropdown-item:hover { background: rgba(0,255,65,0.1) !important; color: #00ff41 !important; }
         @keyframes neonPulse { from { box-shadow: 0 0 15px rgba(0,255,65,0.4), inset 0 0 15px rgba(0,255,65,0.1); } to { box-shadow: 0 0 20px rgba(0,255,65,0.5), inset 0 0 20px rgba(0,255,65,0.12); } }
+        /* ══════════════════════════════════
+           EXTREME HACKED EFFECTS
+           ══════════════════════════════════ */
+        .scanline-overlay {
+            position: fixed; inset: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 3px,
+                rgba(0,255,65,0.015) 3px,
+                rgba(0,255,65,0.015) 4px
+            );
+            pointer-events: none; z-index: 99998;
+        }
+        .hacked-watermark {
+            position: fixed; bottom: 20px; right: 20px; z-index: 99997;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 12px; color: rgba(0,255,65,0.12);
+            text-transform: uppercase; letter-spacing: 4px;
+            transform: rotate(-4deg); user-select: none;
+            text-shadow: 0 0 20px rgba(0,255,65,0.05);
+            animation: watermarkPulse 3s ease-in-out infinite;
+        }
+        @keyframes watermarkPulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+        .glitch-img {
+            position: relative; overflow: hidden;
+            animation: imgGlitch 6s infinite;
+        }
+        @keyframes imgGlitch {
+            0%, 90%, 100% { filter: none; }
+            92% { filter: hue-rotate(90deg) saturate(3) brightness(1.4); transform: translateX(3px); }
+            94% { filter: hue-rotate(-90deg) saturate(3) brightness(0.6); transform: translateX(-3px); }
+            96% { filter: none; transform: none; }
+        }
+        body::after {
+            content: '';
+            position: fixed; inset: 0;
+            pointer-events: none; z-index: 99999;
+            background: transparent;
+            animation: crtFlicker 0.15s infinite;
+            opacity: 0;
+        }
+        @keyframes crtFlicker {
+            0% { opacity: 0; }
+            80% { opacity: 0; }
+            81% { opacity: 0.03; }
+            82% { opacity: 0; }
+            99% { opacity: 0; }
+            100% { opacity: 0.015; }
+        }
+        .hacked-box, .glitch-section, .inventory-section, .journal-header {
+            animation: sectionGlitch 8s infinite;
+        }
+        @keyframes sectionGlitch {
+            0%, 99%, 100% { clip-path: none; }
+            99.3% { clip-path: inset(10% 0 60% 0); }
+            99.6% { clip-path: inset(40% 0 20% 0); }
+        }
     </style>
     <link rel="stylesheet" href="../shared/bulletin-lightbox.css">
 </head>
 <body>
 
+<div class="scanline-overlay"></div>
+<div class="hacked-watermark">⚠ SYSTEM HACKED — QUEENA CONTROL ⚠</div>
 <canvas id="matrixCanvas"></canvas>
 
 <header class="site-header">

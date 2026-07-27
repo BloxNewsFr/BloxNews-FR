@@ -732,11 +732,82 @@
         .discord-skeleton.is-visible { display: block; }
         @keyframes skeletonShimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
         @keyframes neonPulse { from { box-shadow: 0 0 15px rgba(0,255,65,0.4), inset 0 0 15px rgba(0,255,65,0.1); } to { box-shadow: 0 0 20px rgba(0,255,65,0.5), inset 0 0 20px rgba(0,255,65,0.12); } }
+
+        /* ══════════════════════════════════
+           EXTREME HACKED EFFECTS — INDRA
+           ══════════════════════════════════ */
+        .indra-watermark {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%) rotate(-12deg);
+            z-index: 99995; pointer-events: none; user-select: none;
+            font-family: 'Times New Roman', Georgia, serif;
+            font-size: clamp(60px, 12vw, 140px);
+            font-weight: 900; font-style: italic;
+            color: rgba(139,0,0,0.07);
+            text-transform: uppercase; letter-spacing: 12px;
+            text-shadow: 0 0 60px rgba(139,0,0,0.05);
+            animation: indraStamp 4s ease-in-out infinite;
+            white-space: nowrap;
+        }
+        @keyframes indraStamp {
+            0%, 100% { opacity: 0.5; transform: translate(-50%,-50%) rotate(-12deg) scale(1); }
+            50% { opacity: 1; transform: translate(-50%,-50%) rotate(-10deg) scale(1.04); }
+        }
+        .corrupted-overlay {
+            position: fixed; inset: 0; z-index: 99994;
+            pointer-events: none; user-select: none;
+            background:
+                repeating-linear-gradient(
+                    90deg,
+                    transparent,
+                    transparent 4px,
+                    rgba(255,0,0,0.008) 4px,
+                    rgba(255,0,0,0.008) 5px
+                ),
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 20px,
+                    rgba(0,255,65,0.005) 20px,
+                    rgba(0,255,65,0.005) 21px
+                );
+            animation: corruptShift 8s linear infinite;
+        }
+        @keyframes corruptShift {
+            0% { background-position: 0 0, 0 0; }
+            100% { background-position: 100px 0, 0 100px; }
+        }
+        body::after {
+            content: '';
+            position: fixed; inset: 0;
+            pointer-events: none; z-index: 99999;
+            background: transparent;
+            animation: crtFlicker 0.12s infinite;
+            opacity: 0;
+        }
+        @keyframes crtFlicker {
+            0% { opacity: 0; }
+            75% { opacity: 0; }
+            76% { opacity: 0.025; }
+            77% { opacity: 0; }
+            98% { opacity: 0; }
+            99% { opacity: 0.01; }
+            100% { opacity: 0; }
+        }
+        .article-main, .dm-section, .hack-col, .hack-col-narrow, .journal-header {
+            animation: contentGlitch 10s infinite;
+        }
+        @keyframes contentGlitch {
+            0%, 99.5%, 100% { clip-path: none; }
+            99.55% { clip-path: inset(5% 0 70% 0); }
+            99.7% { clip-path: inset(50% 0 15% 0); }
+        }
     </style>
     <link rel="stylesheet" href="../shared/bulletin-lightbox.css">
 </head>
 <body>
 
+<div class="indra-watermark">PIRATÉ PAR INDRA</div>
+<div class="corrupted-overlay"></div>
 <canvas id="matrixCanvas"></canvas>
 
 <header class="site-header">

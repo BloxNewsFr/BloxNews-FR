@@ -185,7 +185,8 @@
         }
 
         .section-card {
-            background: linear-gradient(135deg, rgba(255,245,247,0.95), rgba(255,255,255,0.92));
+            background: rgba(255,245,247,0.45);
+            backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
             border-radius: 20px;
             padding: 28px;
             margin-bottom: 28px;
@@ -193,6 +194,11 @@
             border-left: 4px solid #d4a017;
             position: relative;
             overflow: hidden;
+            transition: background 0.3s;
+        }
+        .section-card:hover {
+            background: rgba(255,235,240,0.55);
+            box-shadow: 0 12px 48px rgba(194,24,91,0.12), 0 0 0 1px rgba(212,160,23,0.25);
         }
 
         .section-card::before {
@@ -204,6 +210,12 @@
             color: rgba(194,24,91,0.06);
             font-family: serif;
             line-height: 1;
+            pointer-events: none;
+        }
+        .glass-rose-overlay {
+            position: absolute; inset: 0;
+            background: linear-gradient(135deg, rgba(255,105,180,0.08), rgba(255,20,147,0.04));
+            border-radius: 20px;
             pointer-events: none;
         }
 
@@ -269,12 +281,17 @@
 
         .side-article {
             flex: 1;
-            background: linear-gradient(135deg, rgba(255,245,247,0.95), rgba(255,255,255,0.92));
+            background: rgba(255,245,247,0.45);
+            backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
             border-radius: 20px;
             padding: 24px;
             box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 0 0 1px rgba(212,160,23,0.15);
             position: relative;
             overflow: hidden;
+            transition: background 0.3s;
+        }
+        .side-article:hover {
+            background: rgba(255,235,240,0.55);
         }
 
         .side-article:nth-child(2) {
@@ -676,6 +693,7 @@
 
         <div class="hero-image-wrapper">
             <img src="./img/Mygame.png" class="hero-image" alt="The Blox Bulletin 019">
+            <div class="glass-rose-overlay" style="border-radius:24px;background:linear-gradient(135deg,rgba(255,105,180,0.12),rgba(255,20,147,0.06))"></div>
         </div>
 
         <div class="journal-header">
@@ -687,6 +705,7 @@
         <div class="dashed-line"></div>
 
         <div class="section-card">
+            <div class="glass-rose-overlay"></div>
             <h2>Roses, Chocolats et l'Amour Partout !</h2>
             <span class="author">Par Riley O'Valentine</span>
             <img src="./img/Hearty.png" alt="Valentine's Event">
@@ -703,6 +722,7 @@
         <div class="side-by-side-wrapper">
 
             <div class="side-article">
+                <div class="glass-rose-overlay"></div>
                 <h2>Une Saison d'Amour Encore Plus Grande</h2>
                 <span class="author">Par Rosie Matchmaker</span>
                 <img src="./img/Rosie.png" alt="Rosie Matchmaker">
@@ -717,6 +737,7 @@
             </div>
 
             <div class="side-article">
+                <div class="glass-rose-overlay"></div>
                 <h2>Anomalie Corrompue Rep&eacute;r&eacute;e dans la Nature</h2>
                 <span class="author">Par l'&Eacute;quipe du Bulletin</span>
                 <p>
@@ -732,6 +753,7 @@
         </div>
 
         <div class="section-card">
+            <div class="glass-rose-overlay"></div>
             <h2>Concours de Fruit Art 2026</h2>
             <span class="author">Par l'&Eacute;quipe d'Administration</span>
             <div class="article-noflex">
