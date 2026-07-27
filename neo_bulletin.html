@@ -5667,6 +5667,42 @@
         </div>`;
     }
 
+    // Couleurs par emoji pour les particules
+    const EMOJI_COLORS = {
+        '❤️': ['#ff1a1a','#ff6060','#ffaaaa','#ff3366'],
+        '😂': ['#ffd700','#ffec6e','#fff176','#ffc107'],
+        '😮': ['#00bcd4','#80deea','#4dd0e1','#00acc1'],
+        '🔥': ['#ff6600','#ff9800','#ffcc02','#ff3300'],
+        '👍': ['#4caf50','#81c784','#a5d6a7','#388e3c'],
+        '💀': ['#9e9e9e','#bdbdbd','#eeeeee','#757575'],
+    };
+    function spawnEmojiParticles(btn, em) {
+        const colors = EMOJI_COLORS[em] || EMOJI_COLORS['❤️'];
+        const rect = btn.getBoundingClientRect();
+        const cx = rect.left + rect.width/2, cy = rect.top + rect.height/2;
+        const container = document.createElement('div');
+        container.style.cssText = `position:fixed;left:${cx}px;top:${cy}px;width:0;height:0;pointer-events:none;z-index:99999;overflow:visible;`;
+        document.body.appendChild(container);
+        // Ripple coloré
+        const ripple = document.createElement('div');
+        ripple.className = 'like-ripple';
+        ripple.style.borderColor = colors[0] + '88';
+        container.appendChild(ripple);
+        // Mini emojis qui s'envolent
+        for (let i = 0; i < 6; i++) {
+            const p = document.createElement('div');
+            p.style.cssText = `position:absolute;font-size:${10+Math.random()*6}px;pointer-events:none;left:-4px;top:-4px;`;
+            p.textContent = em;
+            const angle = (i/6)*Math.PI*2 - Math.PI/2 + (Math.random()-0.5)*0.8;
+            const dist  = 20 + Math.random()*18;
+            p.style.setProperty('--px', Math.cos(angle)*dist+'px');
+            p.style.setProperty('--py', Math.sin(angle)*dist+'px');
+            p.style.animation = `likeParticle 0.6s ease-out ${i*.04}s both`;
+            container.appendChild(p);
+        }
+        setTimeout(() => container.remove(), 800);
+    }
+
     // ── Helpers réactions actus ──
     const _actusReactLock = new Set();
     window._actusToggleReaction = function(cardId, cid, em) {
@@ -5683,6 +5719,13 @@
         c.myReactions[em] = !had;
         c.reactions[em]   = Math.max(0, (c.reactions[em]||0) + (had?-1:1));
         if (c.reactions[em] === 0) delete c.reactions[em];
+        // Animation si on ajoute (pas si on retire)
+        if (!had) {
+            const lockKey2 = cardId + '|' + cid + '|' + em;
+            // Trouver le bouton correspondant pour l'animer
+            const reactionEls = document.querySelectorAll(`[onclick*="_actusToggleReaction('${cardId}','${cid}','${em}')"]`);
+            reactionEls.forEach(el => { spawnEmojiParticles(el, em); animateLikeBtn(el); });
+        }
         _actusRenderComments(cardId);
         _actusFirebaseSave(cardId);
     };
@@ -5704,6 +5747,8 @@
     const _origPickEmoji = window.pickEmoji;
     window.pickEmoji = function(em) {
         if (_emojiPickerTarget?.isActus) {
+            // Animer le bouton "+" qui a déclenché le picker
+            const pickerBtn = document.activeElement;
             _actusToggleReaction(_emojiPickerTarget.cardId, _emojiPickerTarget.cid, em);
             closeEmojiPickerOutside(); return;
         }
@@ -5735,6 +5780,7 @@
         const r = (c.replies||[]).find(x => x.id === rid); if (!r) return;
         r.likedByMe = !r.likedByMe;
         r.likes = Math.max(0, (r.likes||0) + (r.likedByMe?1:-1));
+        if (r.likedByMe && btn) { spawnLikeParticles(btn); animateLikeBtn(btn); }
         if (btn) { btn.className = 'comment-btn'+(r.likedByMe?' comment-btn--liked':'');
             btn.innerHTML = `${r.likedByMe?'❤️':'🤍'} <span class="comment-btn__like-count">${r.likes}</span>`; }
         _actusFirebaseSave(cardId);
@@ -5798,6 +5844,7 @@
         if (!found) return;
         found.likedByMe = !found.likedByMe;
         found.likes = Math.max(0, (found.likes||0) + (found.likedByMe ? 1 : -1));
+        if (found.likedByMe) { spawnLikeParticles(btn); animateLikeBtn(btn); }
         btn.className = 'comment-btn' + (found.likedByMe?' comment-btn--liked':'');
         btn.innerHTML = `${found.likedByMe?'❤️':'🤍'} <span class="comment-btn__like-count">${found.likes}</span>`;
         _actusFirebaseSave(cardId);
