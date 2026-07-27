@@ -2795,7 +2795,7 @@
         }
 
         /* ════════════════════════════════════════════════════
-           ── BULLE /NEW — CARD FORGE REDESIGN ──
+           ── BULLE /NEW — CARD FORGE V2 ──
         ════════════════════════════════════════════════════ */
         #newCardModal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -2806,19 +2806,17 @@
         }
         #newCardModal.is-open { display: flex; }
 
-        /* Panel principal */
         #newCardModal .ncm-panel {
             background: #0e0e18;
             border: 1px solid rgba(255,255,255,0.08);
             border-radius: 28px;
-            width: 860px; max-width: 96vw; max-height: 94vh; overflow: hidden;
+            width: 880px; max-width: 96vw; max-height: 94vh; overflow: hidden;
             display: flex; flex-direction: column;
             box-shadow: 0 40px 120px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,26,26,0.12), inset 0 1px 0 rgba(255,255,255,0.05);
             animation: ncmPop 0.32s cubic-bezier(0.34,1.56,0.64,1) both;
         }
         @keyframes ncmPop { from { opacity:0; transform: scale(0.93) translateY(12px); } to { opacity:1; transform: scale(1) translateY(0); } }
 
-        /* Header barre rouge */
         #newCardModal .ncm-header {
             display: flex; align-items: center; gap: 10px;
             padding: 14px 22px;
@@ -2848,18 +2846,149 @@
         }
         #newCardModal .ncm-header-close:hover { background: #cc0000; color: #fff; }
 
-        /* Body layout */
-        #newCardModal .ncm-body {
-            display: flex; flex: 1; overflow: hidden; min-height: 0;
+        /* ── STEP INDICATOR ── */
+        #newCardModal .ncm-steps {
+            display: flex; align-items: center; justify-content: center;
+            gap: 0; padding: 16px 22px 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            flex-shrink: 0;
+        }
+        #newCardModal .ncm-step {
+            display: flex; align-items: center; gap: 7px;
+            opacity: 0.3; transition: all 0.35s; position: relative;
+        }
+        #newCardModal .ncm-step.active { opacity: 1; }
+        #newCardModal .ncm-step.done { opacity: 0.6; }
+        #newCardModal .ncm-step.done .ncm-step-circle {
+            background: #cc0000; border-color: #cc0000; color: #fff;
+        }
+        #newCardModal .ncm-step.done .ncm-step-circle span { display: none; }
+        #newCardModal .ncm-step.done .ncm-step-circle::after {
+            content: '✓'; font-size: 11px; font-weight: 700;
+        }
+        #newCardModal .ncm-step.active .ncm-step-circle {
+            border-color: #ff1a1a; background: rgba(255,26,26,0.15);
+            box-shadow: 0 0 0 4px rgba(255,26,26,0.08);
+        }
+        #newCardModal .ncm-step.active .ncm-step-circle span { color: #ff1a1a; }
+        #newCardModal .ncm-step.active .ncm-step-label { color: #fff; }
+        #newCardModal .ncm-step-circle {
+            width: 28px; height: 28px; border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.12);
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.35s; flex-shrink: 0;
+        }
+        #newCardModal .ncm-step-circle span {
+            font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.4);
+        }
+        #newCardModal .ncm-step-label {
+            font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.3);
+            letter-spacing: 0.3px; transition: color 0.3s;
+        }
+        #newCardModal .ncm-step-line {
+            width: 36px; height: 1.5px;
+            background: rgba(255,255,255,0.06); margin: 0 8px;
+            position: relative;
+        }
+        #newCardModal .ncm-step-line.active {
+            background: rgba(204,0,0,0.5);
         }
 
-        /* Colonne gauche — Prévisualisation */
+        /* ── BODY ── */
+        #newCardModal .ncm-body {
+            flex: 1; overflow: hidden; min-height: 0; position: relative;
+        }
+
+        /* ── STEP PAGES ── */
+        #newCardModal .ncm-page {
+            position: absolute; inset: 0;
+            display: flex; flex-direction: column;
+            opacity: 0; visibility: hidden;
+            transform: translateX(24px) scale(0.98);
+            transition: opacity 0.35s, transform 0.35s, visibility 0s 0.35s;
+            overflow-y: auto;
+        }
+        #newCardModal .ncm-page.active {
+            opacity: 1; visibility: visible;
+            transform: translateX(0) scale(1);
+            transition: opacity 0.35s, transform 0.35s, visibility 0s 0s;
+        }
+        #newCardModal .ncm-page.active.slide-from-right {
+            transform: translateX(0) scale(1);
+        }
+        #newCardModal .ncm-page.exit-left {
+            opacity: 0; transform: translateX(-30px) scale(0.97);
+        }
+
+        /* ══ STEP 1 : TYPE SELECTION ══ */
+        .ncm-page--type {
+            padding: 24px 28px; gap: 16px;
+            align-items: stretch;
+        }
+        .ncm-page--type .ncm-page-title {
+            font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 4px;
+        }
+        .ncm-page--type .ncm-page-desc {
+            font-size: 12px; color: rgba(255,255,255,0.35); margin-bottom: 8px;
+        }
+        .ncm-type-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+            flex: 1; align-content: start;
+        }
+        .ncm-type-card {
+            cursor: pointer; position: relative;
+        }
+        .ncm-type-card input { display: none; }
+        .ncm-type-card-inner {
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 16px; padding: 18px 16px;
+            background: rgba(255,255,255,0.02);
+            transition: all 0.25s; height: 100%;
+            display: flex; flex-direction: column; gap: 10px;
+            position: relative;
+        }
+        .ncm-type-card-inner:hover {
+            border-color: rgba(255,255,255,0.12);
+            background: rgba(255,255,255,0.04);
+            transform: translateY(-2px);
+        }
+        .ncm-type-card.active .ncm-type-card-inner {
+            border-color: rgba(255,26,26,0.45);
+            background: rgba(255,26,26,0.06);
+            box-shadow: 0 0 0 1px rgba(255,26,26,0.2), 0 8px 24px rgba(204,0,0,0.12);
+        }
+        .ncm-type-card-icon {
+            font-size: 26px; line-height: 1;
+        }
+        .ncm-type-card-name {
+            font-weight: 700; font-size: 14px; color: #fff;
+        }
+        .ncm-type-card-desc {
+            font-size: 11px; color: rgba(255,255,255,0.35);
+            line-height: 1.5; flex: 1;
+        }
+        .ncm-type-card-check {
+            position: absolute; top: 10px; right: 10px;
+            width: 22px; height: 22px; border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.08);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 11px; font-weight: 700; color: transparent;
+            transition: all 0.25s;
+        }
+        .ncm-type-card.active .ncm-type-card-check {
+            border-color: #ff1a1a; background: #ff1a1a; color: #fff;
+        }
+
+        /* ══ STEP 2 : EDITOR ══ */
+        .ncm-page--editor {
+            flex-direction: row; gap: 0;
+        }
         #newCardModal .ncm-preview-col {
-            width: 320px; flex-shrink: 0;
-            padding: 24px 20px;
-            background: rgba(255,255,255,0.018);
+            width: 310px; flex-shrink: 0;
+            padding: 20px 18px;
+            background: rgba(255,255,255,0.015);
             border-right: 1px solid rgba(255,255,255,0.05);
-            display: flex; flex-direction: column; gap: 16px;
+            display: flex; flex-direction: column; gap: 14px;
             overflow-y: auto;
         }
         #newCardModal .ncm-preview-label {
@@ -2872,7 +3001,7 @@
             font-family: 'Inter', sans-serif;
         }
         #newCardModal .ncm-card-img {
-            width: 100%; height: 200px; background: #1a1a2e;
+            width: 100%; height: 180px; background: #1a1a2e;
             position: relative; overflow: hidden; cursor: pointer;
         }
         #newCardModal .ncm-card-img-loaded {
@@ -2884,7 +3013,7 @@
             align-items: center; justify-content: center;
             gap: 6px; color: rgba(255,255,255,0.15);
         }
-        #newCardModal .ncm-card-empty-icon { font-size: 28px; opacity: 0.4; }
+        #newCardModal .ncm-card-empty-icon { font-size: 26px; opacity: 0.4; }
         #newCardModal .ncm-card-empty-text {
             font-size: 10px; text-transform: uppercase; letter-spacing: 1px;
             text-align: center; line-height: 1.4;
@@ -2901,14 +3030,14 @@
             font-size: 10px; font-weight: 700; color: #fff;
             text-transform: uppercase; min-width: 30px; cursor: text;
         }
-        #newCardModal .ncm-card-body { padding: 14px 14px 16px; }
+        #newCardModal .ncm-card-body { padding: 12px 14px 14px; }
         #newCardModal .ncm-card-eyebrow {
             font-size: 10px; font-weight: 700; text-transform: uppercase;
-            color: #7c3aed; margin-bottom: 5px; letter-spacing: 0.5px; cursor: text;
+            color: #7c3aed; margin-bottom: 4px; letter-spacing: 0.5px; cursor: text;
         }
         #newCardModal .ncm-card-title {
             font-size: 14px; font-weight: 700; color: #111;
-            margin: 0 0 12px; line-height: 1.3; cursor: text;
+            margin: 0 0 10px; line-height: 1.3; cursor: text;
         }
         #newCardModal .ncm-card-btn {
             display: block; width: 100%; padding: 9px 16px;
@@ -2917,7 +3046,6 @@
             font-size: 11px; font-weight: 700; text-transform: uppercase;
             letter-spacing: 0.5px; text-align: center; cursor: text;
         }
-        /* Editables dans la preview */
         #newCardModal .ncm-card [contenteditable] {
             outline: none; border-radius: 4px;
             transition: box-shadow 0.15s, background 0.15s;
@@ -2925,30 +3053,26 @@
         #newCardModal .ncm-card [contenteditable]:hover { box-shadow: 0 0 0 2px rgba(124,58,237,0.35); }
         #newCardModal .ncm-card [contenteditable]:focus { box-shadow: 0 0 0 2px rgba(124,58,237,0.65); background: rgba(124,58,237,0.05); }
 
-        /* Hint clique pour éditer */
         #newCardModal .ncm-preview-hint {
             font-size: 11px; color: rgba(255,255,255,0.22); text-align: center;
             line-height: 1.5;
         }
         #newCardModal .ncm-preview-hint strong { color: rgba(255,255,255,0.45); }
 
-        /* ── Previews spécifiques par type ── */
-        /* Standard : card normale (déjà stylée par .ncm-card) */
         #ncmPreviewStandard { display: block; }
         #ncmPreviewMessage  { display: none; }
         #ncmPreviewActus    { display: none; }
 
-        /* Preview MESSAGE — calque la vraie carte message */
         .ncm-msg-preview {
             border-radius: 16px; overflow: hidden;
             background: #111; border: 1px solid rgba(255,255,255,0.07);
             box-shadow: 0 8px 32px rgba(0,0,0,0.3);
         }
         .ncm-msg-header {
-            height: 90px; display: flex; align-items: center; justify-content: center;
+            height: 80px; display: flex; align-items: center; justify-content: center;
             background: #111;
             color: #ff8800; font-family: 'LuckiestGuy Regular', cursive;
-            font-size: 38px; letter-spacing: 1px;
+            font-size: 34px; letter-spacing: 1px;
             border-bottom: 1px solid rgba(255,255,255,0.06);
             position: relative; overflow: hidden;
             cursor: text;
@@ -2957,29 +3081,36 @@
             content: ''; position: absolute; inset: 0;
             background: radial-gradient(ellipse at center, rgba(255,136,0,0.08) 0%, transparent 70%);
         }
-        .ncm-msg-body { padding: 14px; background: #fff; }
+        .ncm-msg-body { padding: 12px 14px; background: #fff; }
         .ncm-msg-eyebrow {
             font-size: 10px; font-weight: 800; text-transform: uppercase;
-            letter-spacing: 0.8px; color: #999; margin-bottom: 5px;
+            letter-spacing: 0.8px; color: #999; margin-bottom: 4px;
         }
         .ncm-msg-title {
-            font-family: 'LuckiestGuy Regular', cursive; font-size: 16px;
-            color: #111; margin-bottom: 8px; line-height: 1.2;
+            font-family: 'LuckiestGuy Regular', cursive; font-size: 15px;
+            color: #111; margin-bottom: 6px; line-height: 1.2;
         }
         .ncm-msg-text {
-            font-size: 12px; color: #555; line-height: 1.55; margin-bottom: 12px;
-            min-height: 36px; outline: none;
+            font-size: 12px; color: #555; line-height: 1.55; margin-bottom: 10px;
+            min-height: 32px; outline: none;
             border: 1.5px dashed transparent; border-radius: 6px; padding: 2px 4px;
             transition: border-color 0.15s;
         }
         .ncm-msg-text:hover, .ncm-msg-text:focus { border-color: rgba(124,58,237,0.4); }
         .ncm-msg-btn {
             display: inline-block; background: #111; color: #fff;
-            padding: 7px 16px; border-radius: 100px; font-size: 12px;
+            padding: 6px 14px; border-radius: 100px; font-size: 11px;
             font-weight: 700; font-family: 'Inter', sans-serif; cursor: default;
         }
+        .ncm-msg-img-field {
+            margin-top: 8px; padding: 8px 10px;
+            background: rgba(255,180,0,0.04); border: 1px dashed rgba(255,180,0,0.15);
+            border-radius: 8px; cursor: pointer;
+            display: flex; align-items: center; gap: 8px;
+            font-size: 11px; color: rgba(255,220,80,0.5); transition: all 0.2s;
+        }
+        .ncm-msg-img-field.has-img { border-color: rgba(255,180,0,0.4); background: rgba(255,180,0,0.08); }
 
-        /* Preview ACTUS — calque le secret-bulletin redesigné */
         .ncm-actus-preview {
             border-radius: 16px; overflow: hidden; position: relative;
             background: #0d0d14;
@@ -2991,30 +3122,28 @@
             width: 3px; background: linear-gradient(180deg, #ff1a1a, #cc0000);
         }
         .ncm-actus-preview::before {
-            content: 'TOP SECRET'; position: absolute; bottom: 12px; right: 12px;
-            color: rgba(255,26,26,0.06); font-size: 22px; font-weight: 900;
+            content: 'TOP SECRET'; position: absolute; bottom: 10px; right: 10px;
+            color: rgba(255,26,26,0.06); font-size: 20px; font-weight: 900;
             transform: rotate(12deg); pointer-events: none;
             font-family: 'LuckiestGuy Regular', cursive;
-            border: 2px solid rgba(255,26,26,0.06); padding: 4px 10px; border-radius: 6px;
+            border: 2px solid rgba(255,26,26,0.06); padding: 3px 8px; border-radius: 6px;
         }
-        /* Topbar preview */
         .ncm-actus-topbar {
             background: linear-gradient(90deg, #cc0000 0%, #1a0000 100%);
-            padding: 7px 16px;
+            padding: 6px 14px;
             display: flex; align-items: center; gap: 8px;
             border-bottom: 1px solid rgba(255,26,26,0.2);
             font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px;
             color: rgba(255,255,255,0.65); font-family: 'LuckiestGuy Regular', cursive;
         }
         .ncm-actus-topbar-dot { width: 5px; height: 5px; border-radius: 50%; background: rgba(255,255,255,0.3); flex-shrink: 0; }
-        /* Inner preview */
-        .ncm-actus-inner { padding: 16px 18px 14px 20px; }
+        .ncm-actus-inner { padding: 14px 16px 12px 18px; }
         .ncm-actus-header {
             display: flex; justify-content: space-between; align-items: flex-start;
-            gap: 12px; border-bottom: 1px solid rgba(255,255,255,0.07); padding-bottom: 12px; margin-bottom: 12px;
+            gap: 10px; border-bottom: 1px solid rgba(255,255,255,0.07); padding-bottom: 10px; margin-bottom: 10px;
         }
         .ncm-actus-h2 {
-            font-family: 'LuckiestGuy Regular', cursive; font-size: 15px; color: rgba(255,240,240,0.92);
+            font-family: 'LuckiestGuy Regular', cursive; font-size: 14px; color: rgba(255,240,240,0.92);
             line-height: 1.25; flex: 1; min-width: 0; outline: none;
             border: 1.5px dashed transparent; border-radius: 6px; padding: 2px 4px;
             transition: border-color 0.15s;
@@ -3025,29 +3154,29 @@
             font-size: 9px; font-weight: 700; color: rgba(255,180,180,0.5); text-align: right;
             text-transform: uppercase; line-height: 1.8; flex-shrink: 0;
             background: rgba(255,26,26,0.07); border: 1px solid rgba(255,26,26,0.15);
-            border-radius: 8px; padding: 4px 8px;
+            border-radius: 8px; padding: 3px 7px;
         }
         .ncm-actus-text {
             font-size: 12px; color: rgba(200,190,190,0.75); line-height: 1.65; outline: none;
             border: 1.5px dashed transparent; border-radius: 6px; padding: 2px 4px;
-            transition: border-color 0.15s; min-height: 40px;
+            transition: border-color 0.15s; min-height: 36px;
         }
         .ncm-actus-text:hover, .ncm-actus-text:focus { border-color: rgba(255,80,80,0.35); background: rgba(255,255,255,0.02); }
         .ncm-actus-comments {
-            margin-top: 12px; display: flex; align-items: center; gap: 8px;
-            padding: 8px 12px; background: rgba(255,255,255,0.03); border-radius: 10px;
+            margin-top: 10px; display: flex; align-items: center; gap: 8px;
+            padding: 7px 10px; background: rgba(255,255,255,0.03); border-radius: 10px;
             border: 1px solid rgba(255,255,255,0.06); font-size: 11px; color: rgba(255,255,255,0.3);
         }
         .ncm-actus-comments-icon {
-            width: 24px; height: 24px; border-radius: 7px;
+            width: 22px; height: 22px; border-radius: 7px;
             background: linear-gradient(135deg, rgba(255,26,26,0.25), rgba(255,26,26,0.1));
-            display: flex; align-items: center; justify-content: center; color: rgba(255,100,100,0.7); font-size: 12px;
+            display: flex; align-items: center; justify-content: center; color: rgba(255,100,100,0.7); font-size: 11px;
         }
 
-        /* Colonne droite — Formulaire */
+        /* Formulaire colonne */
         #newCardModal .ncm-form-col {
-            flex: 1; padding: 24px 26px;
-            overflow-y: auto; display: flex; flex-direction: column; gap: 6px;
+            flex: 1; padding: 20px 24px;
+            overflow-y: auto; display: flex; flex-direction: column; gap: 4px;
         }
         #newCardModal .ncm-form-col::-webkit-scrollbar { width: 4px; }
         #newCardModal .ncm-form-col::-webkit-scrollbar-track { background: transparent; }
@@ -3060,17 +3189,17 @@
         }
         #newCardModal .ncm-section-title:first-child { margin-top: 0; }
 
-        #newCardModal .ncm-field { margin-bottom: 14px; }
+        #newCardModal .ncm-field { margin-bottom: 12px; }
         #newCardModal .ncm-field label {
             display: flex; align-items: center; gap: 6px;
             font-size: 11px; text-transform: uppercase;
             letter-spacing: 1px; color: rgba(255,255,255,0.4);
-            font-weight: 700; margin-bottom: 6px;
+            font-weight: 700; margin-bottom: 5px;
         }
         #newCardModal .ncm-field label .ncm-lbl-icon { font-size: 13px; opacity: 0.7; }
         #newCardModal .ncm-field input,
         #newCardModal .ncm-field select {
-            width: 100%; padding: 10px 14px; border-radius: 12px;
+            width: 100%; padding: 9px 14px; border-radius: 12px;
             border: 1px solid rgba(255,255,255,0.08);
             background: rgba(255,255,255,0.05);
             color: #fff; font-size: 13px; font-family: inherit;
@@ -3084,8 +3213,20 @@
         }
         #newCardModal .ncm-field select option { background: #0e0e18; color: #fff; }
         #newCardModal .ncm-field input::placeholder { color: rgba(255,255,255,0.2); }
+        #newCardModal .ncm-field-hint {
+            font-size: 10px; color: rgba(255,255,255,0.2);
+            margin-top: 4px; line-height: 1.4;
+        }
+        #newCardModal .ncm-field-info {
+            font-size: 11px; color: rgba(255,255,255,0.25);
+        }
+        .ncm-field-group-title {
+            font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.5);
+            text-transform: uppercase; letter-spacing: 1px;
+            margin-bottom: 10px; margin-top: 14px;
+            padding-bottom: 6px; border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
 
-        /* Type radios redesignés */
         #newCardModal .ncm-type-group { display: flex; gap: 8px; }
         #newCardModal .ncm-type-pill {
             flex: 1; padding: 9px 14px; border-radius: 10px;
@@ -3115,17 +3256,70 @@
         }
         #newCardModal .ncm-type-pill.active .ncm-type-name { color: #fff; }
         #newCardModal .ncm-type-emoji { font-size: 15px; }
-
-        /* Séparateur */
         #newCardModal .ncm-divider {
             height: 1px; background: rgba(255,255,255,0.05);
-            margin: 10px 0;
+            margin: 8px 0;
         }
 
-        /* Footer avec actions */
+        /* ══ STEP 3 : RECAP ══ */
+        .ncm-page--recap {
+            padding: 28px; align-items: center; gap: 16px;
+            overflow-y: auto;
+        }
+        .ncm-recap {
+            width: 100%; max-width: 440px;
+            display: flex; flex-direction: column; align-items: center; gap: 12px;
+            text-align: center;
+        }
+        .ncm-recap-icon {
+            width: 56px; height: 56px; border-radius: 18px;
+            background: linear-gradient(135deg, #ff1a1a, #cc0000);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 26px; box-shadow: 0 8px 32px rgba(204,0,0,0.35);
+        }
+        .ncm-recap-title {
+            font-size: 18px; font-weight: 700; color: #fff; margin-top: 4px;
+        }
+        .ncm-recap-sub {
+            font-size: 13px; color: rgba(255,255,255,0.35); margin-bottom: 4px;
+        }
+        .ncm-recap-card-wrap {
+            width: 100%; border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.06);
+            background: rgba(255,255,255,0.02);
+            overflow: hidden;
+        }
+        #newCardModal .ncm-recap-card-wrap .ncm-card {
+            border-radius: 0; box-shadow: none;
+        }
+        #newCardModal .ncm-recap .ncm-msg-preview,
+        #newCardModal .ncm-recap .ncm-actus-preview {
+            border-radius: 0; box-shadow: none;
+        }
+        .ncm-recap-details {
+            width: 100%; display: flex; flex-direction: column; gap: 6px;
+            padding: 14px 16px; background: rgba(255,255,255,0.02);
+            border-radius: 12px; border: 1px solid rgba(255,255,255,0.04);
+        }
+        .ncm-recap-row {
+            display: flex; justify-content: space-between; align-items: center;
+            font-size: 12px; color: rgba(255,255,255,0.45);
+        }
+        .ncm-recap-row strong {
+            color: rgba(255,255,255,0.75); font-weight: 600;
+        }
+        .ncm-recap-warning {
+            font-size: 11px; color: rgba(255,180,50,0.5);
+            display: flex; align-items: center; gap: 6px;
+            background: rgba(255,180,50,0.06);
+            border: 1px solid rgba(255,180,50,0.1);
+            padding: 8px 14px; border-radius: 10px;
+        }
+
+        /* ── FOOTER ── */
         #newCardModal .ncm-footer {
             display: flex; align-items: center; gap: 10px;
-            padding: 14px 26px;
+            padding: 12px 24px;
             border-top: 1px solid rgba(255,255,255,0.05);
             background: rgba(255,255,255,0.018);
             flex-shrink: 0;
@@ -3133,13 +3327,33 @@
         #newCardModal .ncm-footer-info {
             flex: 1; font-size: 11px; color: rgba(255,255,255,0.2);
         }
+        #newCardModal .ncm-btn-back {
+            padding: 9px 16px; border-radius: 10px; border: none;
+            font-size: 12px; font-weight: 600; cursor: pointer;
+            font-family: inherit; transition: all 0.2s;
+            background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.5);
+        }
+        #newCardModal .ncm-btn-back:hover { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.8); }
         #newCardModal .ncm-btn-cancel {
             padding: 9px 20px; border-radius: 10px; border: none;
-            font-size: 13px; font-weight: 600; cursor: pointer;
+            font-size: 12px; font-weight: 600; cursor: pointer;
             font-family: inherit; transition: all 0.2s;
             background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.5);
         }
         #newCardModal .ncm-btn-cancel:hover { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.8); }
+        #newCardModal .ncm-btn-next {
+            padding: 9px 22px; border-radius: 10px; border: none;
+            font-size: 12px; font-weight: 700; cursor: pointer;
+            font-family: inherit; transition: all 0.22s;
+            background: linear-gradient(135deg,#ff1a1a,#cc0000);
+            color: #fff; box-shadow: 0 4px 20px rgba(204,0,0,0.3);
+            display: flex; align-items: center; gap: 6px;
+        }
+        #newCardModal .ncm-btn-next:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 28px rgba(204,0,0,0.45);
+        }
+        #newCardModal .ncm-btn-next:active { transform: translateY(0); }
         #newCardModal .ncm-btn-create {
             padding: 9px 24px; border-radius: 10px; border: none;
             font-size: 13px; font-weight: 700; cursor: pointer;
@@ -3778,8 +3992,15 @@
                 height: 100dvh !important; border-radius: 0 !important;
                 flex-direction: column !important; max-height: 100dvh !important;
             }
-            #newCardModal .ncm-body { flex-direction: column !important; overflow-y: auto !important; }
-            #newCardModal .ncm-form-col { border-left: none !important; border-top: 1px solid rgba(255,255,255,0.08) !important; max-height: none !important; }
+            #newCardModal .ncm-page--editor { flex-direction: column !important; }
+            #newCardModal .ncm-preview-col { width: 100% !important; border-right: none !important; border-bottom: 1px solid rgba(255,255,255,0.05) !important; max-height: 260px !important; }
+            #newCardModal .ncm-form-col { border-left: none !important; max-height: none !important; }
+            #newCardModal .ncm-card-img { height: 140px !important; }
+            .ncm-type-grid { grid-template-columns: 1fr !important; }
+            .ncm-page--type { padding: 18px !important; }
+            #newCardModal .ncm-steps { padding: 12px 16px 10px !important; gap: 0 !important; }
+            .ncm-step-line { width: 20px !important; margin: 0 4px !important; }
+            .ncm-page--recap { padding: 18px !important; }
             #deleteCardModal .dcm-panel {
                 width: 100% !important; max-width: 100% !important;
                 height: 100dvh !important; border-radius: 0 !important;
@@ -4599,42 +4820,40 @@
     <div id="newCardModal">
         <div class="ncm-panel">
 
-            <!-- ── HEADER ── -->
             <div class="ncm-header">
                 <div class="ncm-header-icon">✦</div>
                 <div class="ncm-header-text">
                     <div class="ncm-header-title">Nouvelle carte</div>
-                    <div class="ncm-header-sub" id="ncmHeaderSub">Choisis un type pour commencer</div>
+                    <div class="ncm-header-sub" id="ncmHeaderSub">Choisis un type de carte</div>
                 </div>
                 <button class="ncm-header-close" onclick="document.getElementById('newCardModal').classList.remove('is-open')">✕</button>
             </div>
 
-            <!-- ── STEPS INDICATOR ── -->
             <div class="ncm-steps">
-                <div class="ncm-step is-active" id="ncmStep1">
-                    <div class="ncm-step-num">1</div>
+                <div class="ncm-step active" id="ncmStep1" data-step="1">
+                    <div class="ncm-step-circle"><span>1</span></div>
                     <div class="ncm-step-label">Type</div>
                 </div>
-                <div class="ncm-step-line"></div>
-                <div class="ncm-step" id="ncmStep2">
-                    <div class="ncm-step-num">2</div>
+                <div class="ncm-step-line" id="ncmStepLine1"></div>
+                <div class="ncm-step" id="ncmStep2" data-step="2">
+                    <div class="ncm-step-circle"><span>2</span></div>
                     <div class="ncm-step-label">Contenu</div>
                 </div>
-                <div class="ncm-step-line"></div>
-                <div class="ncm-step" id="ncmStep3">
-                    <div class="ncm-step-num">3</div>
+                <div class="ncm-step-line" id="ncmStepLine2"></div>
+                <div class="ncm-step" id="ncmStep3" data-step="3">
+                    <div class="ncm-step-circle"><span>3</span></div>
                     <div class="ncm-step-label">Publier</div>
                 </div>
             </div>
 
-            <!-- ── BODY ── -->
             <div class="ncm-body">
 
-                <!-- ══ STEP 1 : CHOIX DU TYPE ══ -->
-                <div class="ncm-step-page is-active" id="ncmPage1">
+                <div class="ncm-page ncm-page--type active" id="ncmPage1">
+                    <div class="ncm-page-title">Quel type de carte veux-tu créer ?</div>
+                    <div class="ncm-page-desc">Chaque type a un rendu et des champs spécifiques.</div>
                     <div class="ncm-type-grid">
 
-                        <label class="ncm-type-card" id="ncmKindStandard">
+                        <label class="ncm-type-card active" id="ncmKindStandard">
                             <input type="radio" name="ncmKind" value="standard" checked onchange="_ncmKindChange()">
                             <div class="ncm-type-card-inner">
                                 <div class="ncm-type-card-icon">📌</div>
@@ -4667,180 +4886,174 @@
                     </div>
                 </div>
 
-                <!-- ══ STEP 2 : CONTENU (preview + champs) ══ -->
-                <div class="ncm-step-page" id="ncmPage2">
-                    <div class="ncm-editor">
+                <div class="ncm-page ncm-page--editor" id="ncmPage2">
 
-                        <!-- Colonne preview -->
-                        <div class="ncm-preview-col">
-                            <div class="ncm-preview-label">Aperçu en direct</div>
+                    <div class="ncm-preview-col">
+                        <div class="ncm-preview-label">Aperçu en direct</div>
 
-                            <div id="ncmPreviewStandard">
-                                <div class="ncm-card">
-                                    <div class="ncm-card-img" id="ncmDropZone" onclick="document.getElementById('ncmFileInput').click()">
-                                        <div class="ncm-card-empty" id="ncmDropHint">
-                                            <div class="ncm-card-empty-icon">🖼️</div>
-                                            <div class="ncm-card-empty-text">Glisse une image<br>ou clique ici</div>
-                                        </div>
-                                        <div class="ncm-card-badge" contenteditable="true" id="ncmEditBadge" spellcheck="false">EXCLU</div>
+                        <div id="ncmPreviewStandard">
+                            <div class="ncm-card">
+                                <div class="ncm-card-img" id="ncmDropZone" onclick="document.getElementById('ncmFileInput').click()">
+                                    <div class="ncm-card-empty" id="ncmDropHint">
+                                        <div class="ncm-card-empty-icon">🖼️</div>
+                                        <div class="ncm-card-empty-text">Glisse une image<br>ou clique ici</div>
                                     </div>
-                                    <input type="file" id="ncmFileInput" accept="image/*" style="display:none" onchange="_ncmFileSelected(this)">
-                                    <div class="ncm-card-body">
-                                        <div class="ncm-card-eyebrow" contenteditable="true" id="ncmEditEyebrow" spellcheck="false">Leak</div>
-                                        <h2 class="ncm-card-title" contenteditable="true" id="ncmEditTitle" spellcheck="false">Titre de la carte</h2>
-                                        <div class="ncm-card-btn" contenteditable="true" id="ncmEditBtn" spellcheck="false">Voir l'image →</div>
-                                    </div>
+                                    <div class="ncm-card-badge" contenteditable="true" id="ncmEditBadge" spellcheck="false">EXCLU</div>
                                 </div>
-                                <div class="ncm-preview-hint">Clique sur le <strong>badge</strong>, le <strong>titre</strong> ou le <strong>bouton</strong> pour modifier directement.</div>
-                            </div>
-
-                            <div id="ncmPreviewMessage">
-                                <div class="ncm-msg-preview">
-                                    <div class="ncm-msg-header" contenteditable="true" id="ncmMsgInitials" spellcheck="false">E.</div>
-                                    <div class="ncm-msg-body">
-                                        <div class="ncm-msg-eyebrow">Cryptage</div>
-                                        <div class="ncm-msg-title" contenteditable="true" id="ncmMsgTitle" spellcheck="false">Message de E. - Quake</div>
-                                        <div class="ncm-msg-text" contenteditable="true" id="ncmMsgText" spellcheck="false">Écris le contenu du message ici…</div>
-                                        <div class="ncm-msg-btn">Décrypter →</div>
-                                        <div class="ncm-msg-img-field" id="ncmMsgImgField" onclick="document.getElementById('ncmMsgFileInput').click()">
-                                            <span>🔓</span>
-                                            <span id="ncmMsgImgLabel">Image révélée au décryptage (cliquer ou URL)</span>
-                                        </div>
-                                        <input type="file" id="ncmMsgFileInput" accept="image/*" style="display:none" onchange="_ncmMsgFileSelected(this)">
-                                        <input type="text" id="ncmMsgSrc" placeholder="ou coller une URL d'image…"
-                                            style="margin-top:6px;width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,180,0,0.15);border-radius:8px;padding:7px 10px;color:rgba(255,220,80,0.7);font-size:11px;font-family:monospace;outline:none;"
-                                            oninput="_ncmMsgSrcChange(this.value)">
-                                    </div>
+                                <input type="file" id="ncmFileInput" accept="image/*" style="display:none" onchange="_ncmFileSelected(this)">
+                                <div class="ncm-card-body">
+                                    <div class="ncm-card-eyebrow" contenteditable="true" id="ncmEditEyebrow" spellcheck="false">Leak</div>
+                                    <h2 class="ncm-card-title" contenteditable="true" id="ncmEditTitle" spellcheck="false">Titre de la carte</h2>
+                                    <div class="ncm-card-btn" contenteditable="true" id="ncmEditBtn" spellcheck="false">Voir l'image →</div>
                                 </div>
                             </div>
+                            <div class="ncm-preview-hint">Clique sur le <strong>badge</strong>, le <strong>titre</strong> ou le <strong>bouton</strong> pour modifier directement.</div>
+                        </div>
 
-                            <div id="ncmPreviewActus">
-                                <div class="ncm-actus-preview">
-                                    <div class="ncm-actus-topbar">
-                                        Blox Leaks Network
-                                        <span class="ncm-actus-topbar-dot"></span>
-                                        Actus
+                        <div id="ncmPreviewMessage">
+                            <div class="ncm-msg-preview">
+                                <div class="ncm-msg-header" contenteditable="true" id="ncmMsgInitials" spellcheck="false">E.</div>
+                                <div class="ncm-msg-body">
+                                    <div class="ncm-msg-eyebrow">Cryptage</div>
+                                    <div class="ncm-msg-title" contenteditable="true" id="ncmMsgTitle" spellcheck="false">Message de E. - Quake</div>
+                                    <div class="ncm-msg-text" contenteditable="true" id="ncmMsgText" spellcheck="false">Écris le contenu du message ici…</div>
+                                    <div class="ncm-msg-btn">Décrypter →</div>
+                                    <div class="ncm-msg-img-field" id="ncmMsgImgField" onclick="document.getElementById('ncmMsgFileInput').click()">
+                                        <span>🔓</span>
+                                        <span id="ncmMsgImgLabel">Image révélée au décryptage (cliquer ou URL)</span>
                                     </div>
-                                    <div class="ncm-actus-inner">
-                                        <div class="ncm-actus-header">
-                                            <div class="ncm-actus-h2" contenteditable="true" id="ncmActusTitle" spellcheck="false">TITRE DU DOSSIER</div>
-                                            <div class="ncm-actus-meta">STATUT : ACTIF<br>À L'INSTANT</div>
-                                        </div>
-                                        <div class="ncm-actus-text" contenteditable="true" id="ncmActusText" spellcheck="false">Écris le contenu du dossier ici…</div>
-                                        <div class="ncm-actus-comments">
-                                            <div class="ncm-actus-comments-icon">
-                                                <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.002.022.015.043.033.055a19.91 19.91 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
-                                            </div>
-                                            Commentaires inclus automatiquement
-                                        </div>
-                                    </div>
+                                    <input type="file" id="ncmMsgFileInput" accept="image/*" style="display:none" onchange="_ncmMsgFileSelected(this)">
+                                    <input type="text" id="ncmMsgSrc" placeholder="ou coller une URL d'image…"
+                                        style="margin-top:6px;width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,180,0,0.15);border-radius:8px;padding:7px 10px;color:rgba(255,220,80,0.7);font-size:11px;font-family:monospace;outline:none;"
+                                        oninput="_ncmMsgSrcChange(this.value)">
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Colonne formulaire contextuel -->
-                        <div class="ncm-form-col" id="ncmFormCol">
-
-                            <!-- CHAMPS STANDARD -->
-                            <div id="ncmFieldsStandard">
-                                <div class="ncm-field-group-title">Média</div>
-                                <div class="ncm-field">
-                                    <label><span class="ncm-lbl-icon">🎞️</span> Type de média</label>
-                                    <div class="ncm-type-group">
-                                        <label class="ncm-type-pill active" id="ncmPillImage">
-                                            <input type="radio" name="ncmType" value="image" checked onchange="_ncmTypeChange()">
-                                            <span class="ncm-type-dot"></span>
-                                            <span class="ncm-type-emoji">🖼️</span>
-                                            <span class="ncm-type-name">Image</span>
-                                        </label>
-                                        <label class="ncm-type-pill" id="ncmPillVideo">
-                                            <input type="radio" name="ncmType" value="video" onchange="_ncmTypeChange()">
-                                            <span class="ncm-type-dot"></span>
-                                            <span class="ncm-type-emoji">🎬</span>
-                                            <span class="ncm-type-name">Vidéo</span>
-                                        </label>
+                        <div id="ncmPreviewActus">
+                            <div class="ncm-actus-preview">
+                                <div class="ncm-actus-topbar">
+                                    Blox Leaks Network
+                                    <span class="ncm-actus-topbar-dot"></span>
+                                    Actus
+                                </div>
+                                <div class="ncm-actus-inner">
+                                    <div class="ncm-actus-header">
+                                        <div class="ncm-actus-h2" contenteditable="true" id="ncmActusTitle" spellcheck="false">TITRE DU DOSSIER</div>
+                                        <div class="ncm-actus-meta">STATUT : ACTIF<br>À L'INSTANT</div>
+                                    </div>
+                                    <div class="ncm-actus-text" contenteditable="true" id="ncmActusText" spellcheck="false">Écris le contenu du dossier ici…</div>
+                                    <div class="ncm-actus-comments">
+                                        <div class="ncm-actus-comments-icon">
+                                            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.002.022.015.043.033.055a19.91 19.91 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
+                                        </div>
+                                        Commentaires inclus automatiquement
                                     </div>
                                 </div>
-                                <div class="ncm-field" id="ncmVideoField" style="display:none">
-                                    <label><span class="ncm-lbl-icon">🔗</span> URL de la vidéo</label>
-                                    <input id="ncmSrc" type="text" placeholder="https://cdn.example.com/video.mp4">
-                                    <div class="ncm-field-hint">Lien direct vers un fichier .mp4 ou .mov hébergé</div>
-                                </div>
-                                <div class="ncm-field-group-title" style="margin-top:18px">Texte de la carte</div>
-                                <div class="ncm-field">
-                                    <label><span class="ncm-lbl-icon">🏷️</span> Badge</label>
-                                    <input type="text" id="ncmBadgeInput" placeholder="EXCLU, LEAK, NOUVEAU…" oninput="document.getElementById('ncmEditBadge').textContent=this.value||'EXCLU'">
-                                </div>
-                                <div class="ncm-field">
-                                    <label><span class="ncm-lbl-icon">✏️</span> Titre</label>
-                                    <input type="text" id="ncmTitleInput" placeholder="Titre visible sur la carte" oninput="document.getElementById('ncmEditTitle').textContent=this.value||'Titre de la carte'">
-                                </div>
-                                <div class="ncm-field">
-                                    <label><span class="ncm-lbl-icon">📂</span> Section</label>
-                                    <select id="ncmSection"></select>
-                                </div>
                             </div>
-
-                            <!-- CHAMPS ACTUS -->
-                            <div id="ncmFieldsActus" style="display:none">
-                                <div class="ncm-field-group-title">Dossier</div>
-                                <div class="ncm-field">
-                                    <label><span class="ncm-lbl-icon">📝</span> Titre du dossier</label>
-                                    <input type="text" id="ncmActusTitleInput" placeholder="NOM DU DOSSIER"
-                                        oninput="document.getElementById('ncmActusTitle').textContent=this.value||'TITRE DU DOSSIER'">
-                                </div>
-                                <div class="ncm-field">
-                                    <label><span class="ncm-lbl-icon">📄</span> Contenu</label>
-                                    <textarea id="ncmActusContent" rows="6"
-                                        placeholder="Texte du dossier…"
-                                        oninput="_ncmActusSyncPreview()"
-                                        style="width:100%;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);border-radius:10px;padding:10px 14px;color:#fff;font-size:13px;font-family:monospace;outline:none;resize:vertical;box-sizing:border-box;line-height:1.6;"></textarea>
-                                    <div class="ncm-field-hint">**gras** &nbsp;==surligné== &nbsp;__souligné__ &nbsp;~~barré~~</div>
-                                </div>
-                                <div class="ncm-field ncm-field--inline">
-                                    <span class="ncm-field-info">💬 Section commentaires ajoutée automatiquement</span>
-                                </div>
-                            </div>
-
-                            <!-- CHAMPS MESSAGE -->
-                            <div id="ncmFieldsMessage" style="display:none">
-                                <div class="ncm-field-group-title">Message crypté</div>
-                                <div class="ncm-field">
-                                    <label><span class="ncm-lbl-icon">🔤</span> Initiales</label>
-                                    <input type="text" id="ncmMsgInitialsInput" placeholder="E." maxlength="4"
-                                        oninput="document.getElementById('ncmMsgInitials').textContent=this.value||'E.'">
-                                </div>
-                                <div class="ncm-field">
-                                    <label><span class="ncm-lbl-icon">✏️</span> Titre</label>
-                                    <input type="text" id="ncmMsgTitleInput" placeholder="Message de E. - Quake"
-                                        oninput="document.getElementById('ncmMsgTitle').textContent=this.value||'Message de E.'">
-                                </div>
-                                <div class="ncm-field">
-                                    <label><span class="ncm-lbl-icon">📝</span> Contenu crypté</label>
-                                    <textarea id="ncmMsgTextInput" rows="4" placeholder="Contenu visible après décryptage…"
-                                        oninput="document.getElementById('ncmMsgText').textContent=this.value||''"
-                                        style="width:100%;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);border-radius:10px;padding:10px 14px;color:#fff;font-size:13px;font-family:inherit;outline:none;resize:vertical;box-sizing:border-box;"></textarea>
-                                </div>
-                            </div>
-
                         </div>
+                    </div>
+
+                    <div class="ncm-form-col" id="ncmFormCol">
+
+                        <div id="ncmFieldsStandard">
+                            <div class="ncm-field-group-title">Média</div>
+                            <div class="ncm-field">
+                                <label><span class="ncm-lbl-icon">🎞️</span> Type de média</label>
+                                <div class="ncm-type-group">
+                                    <label class="ncm-type-pill active" id="ncmPillImage">
+                                        <input type="radio" name="ncmType" value="image" checked onchange="_ncmTypeChange()">
+                                        <span class="ncm-type-dot"></span>
+                                        <span class="ncm-type-emoji">🖼️</span>
+                                        <span class="ncm-type-name">Image</span>
+                                    </label>
+                                    <label class="ncm-type-pill" id="ncmPillVideo">
+                                        <input type="radio" name="ncmType" value="video" onchange="_ncmTypeChange()">
+                                        <span class="ncm-type-dot"></span>
+                                        <span class="ncm-type-emoji">🎬</span>
+                                        <span class="ncm-type-name">Vidéo</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="ncm-field" id="ncmVideoField" style="display:none">
+                                <label><span class="ncm-lbl-icon">🔗</span> URL de la vidéo</label>
+                                <input id="ncmSrc" type="text" placeholder="https://cdn.example.com/video.mp4">
+                                <div class="ncm-field-hint">Lien direct vers un fichier .mp4 ou .mov hébergé</div>
+                            </div>
+                            <div class="ncm-field-group-title" style="margin-top:18px">Texte de la carte</div>
+                            <div class="ncm-field">
+                                <label><span class="ncm-lbl-icon">🏷️</span> Badge</label>
+                                <input type="text" id="ncmBadgeInput" placeholder="EXCLU, LEAK, NOUVEAU…" oninput="document.getElementById('ncmEditBadge').textContent=this.value||'EXCLU'">
+                            </div>
+                            <div class="ncm-field">
+                                <label><span class="ncm-lbl-icon">✏️</span> Titre</label>
+                                <input type="text" id="ncmTitleInput" placeholder="Titre visible sur la carte" oninput="document.getElementById('ncmEditTitle').textContent=this.value||'Titre de la carte'">
+                            </div>
+                            <div class="ncm-field">
+                                <label><span class="ncm-lbl-icon">📂</span> Section</label>
+                                <select id="ncmSection"></select>
+                            </div>
+                        </div>
+
+                        <div id="ncmFieldsActus" style="display:none">
+                            <div class="ncm-field-group-title">Dossier</div>
+                            <div class="ncm-field">
+                                <label><span class="ncm-lbl-icon">📝</span> Titre du dossier</label>
+                                <input type="text" id="ncmActusTitleInput" placeholder="NOM DU DOSSIER"
+                                    oninput="document.getElementById('ncmActusTitle').textContent=this.value||'TITRE DU DOSSIER'">
+                            </div>
+                            <div class="ncm-field">
+                                <label><span class="ncm-lbl-icon">📄</span> Contenu</label>
+                                <textarea id="ncmActusContent" rows="6"
+                                    placeholder="Texte du dossier…"
+                                    oninput="_ncmActusSyncPreview()"
+                                    style="width:100%;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);border-radius:10px;padding:10px 14px;color:#fff;font-size:13px;font-family:monospace;outline:none;resize:vertical;box-sizing:border-box;line-height:1.6;"></textarea>
+                                <div class="ncm-field-hint">**gras** &nbsp;==surligné== &nbsp;__souligné__ &nbsp;~~barré~~</div>
+                            </div>
+                            <div class="ncm-field">
+                                <span class="ncm-field-info">💬 Section commentaires ajoutée automatiquement</span>
+                            </div>
+                        </div>
+
+                        <div id="ncmFieldsMessage" style="display:none">
+                            <div class="ncm-field-group-title">Message crypté</div>
+                            <div class="ncm-field">
+                                <label><span class="ncm-lbl-icon">🔤</span> Initiales</label>
+                                <input type="text" id="ncmMsgInitialsInput" placeholder="E." maxlength="4"
+                                    oninput="document.getElementById('ncmMsgInitials').textContent=this.value||'E.'">
+                            </div>
+                            <div class="ncm-field">
+                                <label><span class="ncm-lbl-icon">✏️</span> Titre</label>
+                                <input type="text" id="ncmMsgTitleInput" placeholder="Message de E. - Quake"
+                                    oninput="document.getElementById('ncmMsgTitle').textContent=this.value||'Message de E.'">
+                            </div>
+                            <div class="ncm-field">
+                                <label><span class="ncm-lbl-icon">📝</span> Contenu crypté</label>
+                                <textarea id="ncmMsgTextInput" rows="4" placeholder="Contenu visible après décryptage…"
+                                    oninput="document.getElementById('ncmMsgText').textContent=this.value||''"
+                                    style="width:100%;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);border-radius:10px;padding:10px 14px;color:#fff;font-size:13px;font-family:inherit;outline:none;resize:vertical;box-sizing:border-box;"></textarea>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
 
-                <!-- ══ STEP 3 : RÉCAP + PUBLIER ══ -->
-                <div class="ncm-step-page" id="ncmPage3">
+                <div class="ncm-page ncm-page--recap" id="ncmPage3">
                     <div class="ncm-recap">
                         <div class="ncm-recap-icon">🚀</div>
                         <div class="ncm-recap-title">Prêt à publier ?</div>
-                        <div class="ncm-recap-sub">Vérifie le récap avant de créer la carte.</div>
-                        <div class="ncm-recap-card" id="ncmRecapCard"></div>
-                        <div class="ncm-recap-warning">⚠️ La carte sera visible immédiatement pour tous les visiteurs.</div>
+                        <div class="ncm-recap-sub">Vérifie le récapitulatif avant de créer la carte.</div>
+                        <div class="ncm-recap-card-wrap" id="ncmRecapCard"></div>
+                        <div class="ncm-recap-details" id="ncmRecapDetails"></div>
+                        <div class="ncm-recap-warning">
+                            <span>⚠️</span>
+                            <span>La carte sera visible immédiatement pour tous les visiteurs.</span>
+                        </div>
                     </div>
                 </div>
 
             </div>
 
-            <!-- ── FOOTER ── -->
             <div class="ncm-footer">
                 <button class="ncm-btn-back" id="ncmBtnBack" onclick="_ncmPrevStep()" style="display:none">← Retour</button>
                 <div class="ncm-footer-info" id="ncmFooterInfo">Étape 1 sur 3</div>
@@ -8400,26 +8613,13 @@
         const isActus   = kind === 'actus';
         const isMessage = kind === 'message';
 
-        // Afficher le bon preview — IMPORTANT : 'block' et pas '' car le CSS par défaut peut être 'none'
         document.getElementById('ncmPreviewStandard').style.display = (!isActus && !isMessage) ? 'block' : 'none';
         document.getElementById('ncmPreviewMessage').style.display  = isMessage ? 'block' : 'none';
         document.getElementById('ncmPreviewActus').style.display    = isActus   ? 'block' : 'none';
 
-        // Champ section : masqué si actus/message (section fixe)
-        const secField = document.getElementById('ncmSectionField');
-        if (secField) secField.style.display = (isActus || isMessage) ? 'none' : '';
-
-        // Champ contenu texte : visible si actus
-        const actusField = document.getElementById('ncmActusField');
-        if (actusField) actusField.style.display = isActus ? '' : 'none';
-
-        // Hint différent selon le type
-        const hint = document.getElementById('ncmPreviewHint');
-        if (hint) {
-            if (isMessage) hint.innerHTML = 'Clique sur les <strong>initiales</strong>, le <strong>titre</strong> ou le <strong>texte</strong> pour les modifier.';
-            else if (isActus) hint.innerHTML = 'Clique sur le <strong>titre</strong> ou le <strong>texte</strong> pour les modifier. Les commentaires sont ajoutés automatiquement.';
-            else hint.innerHTML = 'Clique sur le <strong>badge</strong>, le <strong>titre</strong> ou le <strong>bouton</strong> pour les modifier directement.';
-        }
+        document.getElementById('ncmFieldsStandard').style.display = (!isActus && !isMessage) ? '' : 'none';
+        document.getElementById('ncmFieldsActus').style.display     = isActus   ? '' : 'none';
+        document.getElementById('ncmFieldsMessage').style.display   = isMessage ? '' : 'none';
 
         // Adapter les pills Kind
         document.querySelectorAll('#newCardModal label[id^="ncmKind"]').forEach(l => l.classList.remove('active'));
@@ -8435,6 +8635,22 @@
             const inp = document.getElementById('ncmTitleInput');
             if (inp) inp.value = document.getElementById('ncmActusTitle')?.textContent || '';
         }
+        // Reset à l'étape 1 quand on change de type
+        const pages = document.querySelectorAll('#newCardModal .ncm-page');
+        pages.forEach(p => p.classList.remove('active'));
+        document.getElementById('ncmPage1')?.classList.add('active');
+        document.querySelectorAll('#newCardModal .ncm-step').forEach(s => s.classList.remove('active', 'done'));
+        document.getElementById('ncmStep1')?.classList.add('active');
+        document.querySelectorAll('#newCardModal .ncm-step-line').forEach(l => l.classList.remove('active'));
+        const backBtn = document.getElementById('ncmBtnBack');
+        const nextBtn = document.getElementById('ncmBtnNext');
+        const createBtn = document.getElementById('ncmBtnCreate');
+        const info = document.getElementById('ncmFooterInfo');
+        if (backBtn) backBtn.style.display = 'none';
+        if (nextBtn) nextBtn.style.display = '';
+        if (createBtn) createBtn.style.display = 'none';
+        if (info) info.textContent = 'Étape 1 sur 3';
+        document.getElementById('ncmHeaderSub').textContent = 'Choisis un type de carte';
     }
 
     function _cmdNew() {
@@ -8486,6 +8702,22 @@
         const ti = document.getElementById('ncmTitleInput'); if (ti) ti.value = '';
 
         _ncmInitDropZone();
+        // Reset à l'étape 1
+        const pages = document.querySelectorAll('#newCardModal .ncm-page');
+        pages.forEach(p => p.classList.remove('active'));
+        document.getElementById('ncmPage1')?.classList.add('active');
+        document.querySelectorAll('#newCardModal .ncm-step').forEach(s => s.classList.remove('active', 'done'));
+        document.getElementById('ncmStep1')?.classList.add('active');
+        document.querySelectorAll('#newCardModal .ncm-step-line').forEach(l => l.classList.remove('active'));
+        const backBtn = document.getElementById('ncmBtnBack');
+        const nextBtn = document.getElementById('ncmBtnNext');
+        const createBtn = document.getElementById('ncmBtnCreate');
+        const info = document.getElementById('ncmFooterInfo');
+        if (backBtn) backBtn.style.display = 'none';
+        if (nextBtn) nextBtn.style.display = '';
+        if (createBtn) createBtn.style.display = 'none';
+        if (info) info.textContent = 'Étape 1 sur 3';
+        document.getElementById('ncmHeaderSub').textContent = 'Choisis un type de carte';
         document.getElementById('newCardModal')?.classList.add('is-open');
     }
 
@@ -8609,6 +8841,122 @@
             editLog('ok', `Carte "${kind}" créée dans ${sectionId} : ${title} (stockage local uniquement)`);
             _ncmShowToast(badge || kind, title);
         }
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    //  /NEW — Navigation entre étapes
+    // ══════════════════════════════════════════════════════════════
+    function _ncmGoToStep(step) {
+        const total = 3;
+        if (step < 1 || step > total) return;
+        const pages = document.querySelectorAll('#newCardModal .ncm-page');
+        const steps = document.querySelectorAll('#newCardModal .ncm-step');
+        const lines = document.querySelectorAll('#newCardModal .ncm-step-line');
+        const backBtn = document.getElementById('ncmBtnBack');
+        const nextBtn = document.getElementById('ncmBtnNext');
+        const createBtn = document.getElementById('ncmBtnCreate');
+        const info = document.getElementById('ncmFooterInfo');
+        const sub = document.getElementById('ncmHeaderSub');
+        pages.forEach((p, i) => {
+            p.classList.remove('active');
+            if (i + 1 === step) p.classList.add('active');
+        });
+        steps.forEach((s, i) => {
+            const idx = i + 1;
+            s.classList.remove('active', 'done');
+            if (idx < step) s.classList.add('done');
+            else if (idx === step) s.classList.add('active');
+        });
+        lines.forEach((l, i) => {
+            l.classList.toggle('active', i + 1 < step);
+        });
+        backBtn.style.display = step === 1 ? 'none' : '';
+        if (step < total) {
+            nextBtn.style.display = '';
+            createBtn.style.display = 'none';
+        } else {
+            nextBtn.style.display = 'none';
+            createBtn.style.display = '';
+        }
+        const labels = ['', 'Choisis un type de carte', 'Remplis le contenu de la carte', 'Vérifie et publie'];
+        if (sub) sub.textContent = labels[step] || '';
+        if (info) info.textContent = `Étape ${step} sur ${total}`;
+        // Mettre à jour le recap à l'arrivée sur l'étape 3
+        if (step === 3) _ncmUpdateRecap();
+    }
+
+    function _ncmNextStep() {
+        const active = document.querySelector('#newCardModal .ncm-step.active');
+        if (!active) return;
+        const cur = parseInt(active.dataset.step, 10);
+        _ncmGoToStep(cur + 1);
+    }
+
+    function _ncmPrevStep() {
+        const active = document.querySelector('#newCardModal .ncm-step.active');
+        if (!active) return;
+        const cur = parseInt(active.dataset.step, 10);
+        _ncmGoToStep(cur - 1);
+    }
+
+    function _ncmUpdateRecap() {
+        const kind = document.querySelector('#newCardModal input[name="ncmKind"]:checked')?.value || 'standard';
+        const isActus = kind === 'actus';
+        const isMessage = kind === 'message';
+        const wrap = document.getElementById('ncmRecapCard');
+        const details = document.getElementById('ncmRecapDetails');
+        if (!wrap || !details) return;
+        // Cloner la preview active dans le recap
+        let previewId = 'ncmPreviewStandard';
+        if (isActus) previewId = 'ncmPreviewActus';
+        else if (isMessage) previewId = 'ncmPreviewMessage';
+        const src = document.getElementById(previewId);
+        wrap.innerHTML = '';
+        if (src) {
+            const clone = src.cloneNode(true);
+            // Supprimer les contenteditable et hints du clone
+            clone.querySelectorAll('[contenteditable]').forEach(el => el.removeAttribute('contenteditable'));
+            const hint = clone.querySelector('.ncm-preview-hint');
+            if (hint) hint.style.display = 'none';
+            wrap.appendChild(clone);
+        }
+        // Détails
+        let title = '', section = '', mediaInfo = '';
+        if (isActus) {
+            title = document.getElementById('ncmActusTitle')?.textContent?.trim() || 'Dossier';
+            section = 'Actus';
+            mediaInfo = 'Article + commentaires';
+        } else if (isMessage) {
+            title = document.getElementById('ncmMsgTitle')?.textContent?.trim() || 'Message';
+            section = 'Messages cryptés';
+            mediaInfo = 'Texte crypté + image';
+        } else {
+            title = document.getElementById('ncmEditTitle')?.textContent?.trim() || 'Sans titre';
+            const secEl = document.getElementById('ncmSection');
+            section = secEl ? secEl.options[secEl.selectedIndex]?.textContent || '—' : '—';
+            const isVideo = document.querySelector('#newCardModal input[name="ncmType"]:checked')?.value === 'video';
+            mediaInfo = isVideo ? 'Vidéo' : 'Image';
+        }
+        details.innerHTML = `
+            <div class="ncm-recap-row"><span>Type</span><strong>${isActus ? 'Actus / Dossier' : isMessage ? 'Message crypté' : 'Leak / Showcase'}</strong></div>
+            <div class="ncm-recap-row"><span>Titre</span><strong>${_ccEsc(title)}</strong></div>
+            <div class="ncm-recap-row"><span>Section</span><strong>${section}</strong></div>
+            <div class="ncm-recap-row"><span>Média</span><strong>${mediaInfo}</strong></div>
+        `;
+    }
+
+    function _ncmActusSyncPreview() {
+        const ta = document.getElementById('ncmActusContent');
+        const preview = document.getElementById('ncmActusText');
+        if (!ta || !preview) return;
+        let val = ta.value;
+        // Appliquer le marquage léger
+        val = val.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
+        val = val.replace(/==(.+?)==/g, '<mark style="background:rgba(255,200,50,0.2);color:#ffd966;padding:0 3px;border-radius:3px">$1</mark>');
+        val = val.replace(/__(.+?)__/g, '<u>$1</u>');
+        val = val.replace(/~~(.+?)~~/g, '<s>$1</s>');
+        val = val.replace(/\n/g, '<br>');
+        preview.innerHTML = val || 'Écris le contenu du dossier ici…';
     }
 
     // ══════════════════════════════════════════════════════════════
