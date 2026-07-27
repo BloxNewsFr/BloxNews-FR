@@ -2979,16 +2979,16 @@
             flex-direction: row; gap: 0; padding: 0;
         }
         #newCardModal .ncm-preview-col {
-            width: 310px; flex-shrink: 0;
+            width: 340px; flex-shrink: 0;
             padding: 20px 18px;
             background: rgba(255,255,255,0.015);
             border-right: 1px solid rgba(255,255,255,0.05);
             display: flex; flex-direction: column; gap: 14px;
-            overflow-y: auto;
+            overflow-y: auto; align-items: center;
         }
         #newCardModal .ncm-preview-label {
             font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px;
-            color: rgba(255,255,255,0.25); font-weight: 700;
+            color: rgba(255,255,255,0.25); font-weight: 700; align-self: stretch; text-align: center;
         }
         #newCardModal .ncm-card {
             border-radius: 18px; overflow: hidden;
@@ -3054,14 +3054,15 @@
         }
         #newCardModal .ncm-preview-hint strong { color: rgba(255,255,255,0.45); }
 
-        #ncmPreviewStandard { display: block; }
-        #ncmPreviewMessage  { display: none; }
-        #ncmPreviewActus    { display: none; }
+        #ncmPreviewStandard { display: block; width: 100%; }
+        #ncmPreviewMessage  { display: none; width: 100%; }
+        #ncmPreviewActus    { display: none; width: 100%; }
 
         .ncm-msg-preview {
             border-radius: 16px; overflow: hidden;
             background: #111; border: 1px solid rgba(255,255,255,0.07);
             box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            width: 100%;
         }
         .ncm-msg-header {
             height: 80px; display: flex; align-items: center; justify-content: center;
@@ -3111,6 +3112,7 @@
             background: #0d0d14;
             border: 1px solid rgba(255,26,26,0.18);
             box-shadow: 0 4px 24px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,26,26,0.06);
+            width: 100%; margin: 0 auto;
         }
         .ncm-actus-preview::after {
             content: ''; position: absolute; left: 0; top: 0; bottom: 0;
