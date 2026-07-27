@@ -394,8 +394,9 @@
 
         /* ── BLOC DOSSIER TOP SECRET — REFONTE ── */
         .secret-bulletin {
-            position: relative; margin-bottom: 40px; border-radius: 20px; overflow: hidden;
+            position: relative; margin-bottom: 24px; border-radius: 20px; overflow: hidden;
             background: #0d0d14;
+            max-width: 860px;
             border: 1px solid rgba(255, 26, 26, 0.18);
             box-shadow:
                 0 0 0 1px rgba(255,26,26,0.06),
@@ -5559,35 +5560,163 @@
         if (shown.length === 0) {
             list.innerHTML = `<div class="card-comments-empty">💬 Sois le premier à commenter ce dossier !</div>`;
         } else {
-            list.innerHTML = shown.map(c => _actusRenderItem(c)).join('');
+            list.innerHTML = shown.map(c => _actusRenderItem(c, cardId)).join('');
         }
         if (seeAll) seeAll.style.display = sorted.length > (_actusShown[cardId] || ACTUS_CC_MAX) ? 'block' : 'none';
     }
 
-    function _actusRenderItem(c) {
-        const isMod = window.currentUser && MODERATORS.includes(window.currentUser.username);
-        const canDel = window.currentUser && (isMod || c.username === window.currentUser.username);
-        const pinBadge = c.pinned ? '<span class="card-comment-item__pin-badge">📌 Épinglé</span>' : '';
-        const pinBtn = isMod ? `<button class="card-comment-item__pin${c.pinned?' is-pinned':''}" onclick="_actusPinComment('${c.id}')">📌</button>` : '';
-        return `<div class="card-comment-item${c.pinned?' card-comment-item--pinned':''}">
-            ${avatarHTML(c, 28)}
-            <div class="card-comment-item__body">
-                <div class="card-comment-item__header">
-                    ${discordTag()}
-                    <span class="card-comment-item__username">${c.username}</span>
-                    <span class="card-comment-item__time">${relativeTime(c.time)}</span>
-                    ${pinBadge}
+    function _actusRenderItem(c, cardId) {
+        const _isMod  = window.currentUser && MODERATORS.includes(window.currentUser.username);
+        const _canDel = window.currentUser && (_isMod || c.username === window.currentUser.username);
+        const pfx     = 'ac-' + (cardId || 'x') + '-';
+        const pinBadge = c.pinned ? `<span class="comment-pin-badge">📌 Épinglé</span>` : '';
+        const pinBtn   = _isMod
+            ? `<button class="comment-btn" onclick="_actusPinComment('${c.id}')" title="${c.pinned?'Désépingler':'Épingler'}">📌</button>`
+            : '';
+        // Réponses
+        const replies = (c.replies||[]).map(r => `
+            <div class="comment-reply" id="${pfx}reply-${r.id}">
+                ${avatarHTML(r, 30)}
+                <div class="comment-reply__body">
+                    <div class="comment-reply__header">
+                        ${discordTag()}
+                        <span class="comment-item__username">${r.username}</span>
+                        <span class="comment-item__time">${relativeTime(r.time)}</span>
+                    </div>
+                    <div class="comment-reply__text">${r.text}</div>
+                    <div class="comment-item__actions" style="margin-top:7px">
+                        <button class="comment-btn ${r.likedByMe?'comment-btn--liked':''}"
+                            onclick="_actusLikeReply('${cardId||''}','${c.id}','${r.id}',this)">
+                            ${r.likedByMe?'❤️':'🤍'} <span class="comment-btn__like-count">${r.likes||0}</span>
+                        </button>
+                        ${(_isMod || (window.currentUser && r.username===window.currentUser.username))
+                            ?`<button class="comment-btn comment-btn--delete" onclick="_actusDeleteReply('${cardId||''}','${c.id}','${r.id}')">🗑 Suppr.</button>`:''}
+                    </div>
                 </div>
-                <div class="card-comment-item__text">${c.text}</div>
-                <div style="display:flex;align-items:center;flex-wrap:wrap;gap:2px">
-                    <button class="card-comment-item__like${c.likedByMe?' liked':''}" onclick="_actusLikeComment('${c.id}',this)">
-                        ${c.likedByMe?'❤️':'🤍'} ${c.likes||0}
+            </div>`).join('');
+        // Réactions
+        const reacts   = c.reactions  || {};
+        const myReacts = c.myReactions || {};
+        const pills    = ['❤️','😂','😮','🔥','👍','💀']
+            .filter(em => reacts[em] > 0)
+            .map(em => `<button class="reaction-btn${myReacts[em]?' reacted':''}"
+                onclick="_actusToggleReaction('${cardId||''}','${c.id}','${em}')" title="${em}">
+                ${em} <span class="reaction-btn__count">${reacts[em]||0}</span></button>`).join('');
+        const reactBar = `<div class="comment-reactions" id="${pfx}reacts-${c.id}">
+            ${pills}
+            <button class="reaction-add-btn" onclick="_actusOpenEmoji(event,'${cardId||''}','${c.id}')" title="Réagir">+</button>
+        </div>`;
+
+        return `<div class="comment-item${c.pinned?' comment-item--pinned':''}" id="${pfx}comment-${c.id}">
+            ${avatarHTML(c, 38)}
+            <div class="comment-item__body">
+                <div class="comment-item__header">
+                    ${discordTag()}
+                    <span class="comment-item__username">${c.username}</span>
+                    ${pinBadge}
+                    <span class="comment-item__time">${relativeTime(c.time)}</span>
+                </div>
+                <div class="comment-item__text">${c.text}</div>
+                ${reactBar}
+                <div class="comment-item__actions">
+                    <button class="comment-btn ${c.likedByMe?'comment-btn--liked':''}"
+                        onclick="_actusLikeComment('${c.id}',this)">
+                        ${c.likedByMe?'❤️':'🤍'} <span class="comment-btn__like-count">${c.likes||0}</span>
                     </button>
-                    ${canDel?`<button class="card-comment-item__delete" onclick="_actusDeleteComment('${c.id}')">🗑</button>`:''}
+                    ${window.currentUser?`<button class="comment-btn" onclick="_actusToggleReplyBox('${pfx}rw-${c.id}')">↩ Répondre</button>`:''}
+                    ${_canDel?`<button class="comment-btn comment-btn--delete" onclick="_actusDeleteComment('${c.id}')">🗑 Suppr.</button>`:''}
                     ${pinBtn}
+                </div>
+                ${replies?`<div class="comment-replies">${replies}</div>`:''}
+                <div class="comment-reply-write" id="${pfx}rw-${c.id}">
+                    ${avatarHTML(window.currentUser,30)}
+                    <textarea class="comment-reply-input" placeholder="Ta réponse…" rows="1" oninput="autoResize(this)"></textarea>
+                    <button class="comment-reply-submit" onclick="_actusPostReply('${cardId||''}','${c.id}','${pfx}rw-${c.id}')">Poster</button>
                 </div>
             </div>
         </div>`;
+    }
+
+    // ── Helpers réactions actus ──
+    window._actusToggleReaction = function(cardId, cid, em) {
+        const db = _actusCommentsDB[cardId]; if (!db) return;
+        const c = db.find(x => x.id === cid); if (!c) return;
+        c.reactions   = c.reactions   || {};
+        c.myReactions = c.myReactions || {};
+        const had = !!c.myReactions[em];
+        c.myReactions[em] = !had;
+        c.reactions[em]   = Math.max(0, (c.reactions[em]||0) + (had?-1:1));
+        if (c.reactions[em] === 0) delete c.reactions[em];
+        _actusRenderComments(cardId);
+        _actusFirebaseSave(cardId);
+    };
+    window._actusOpenEmoji = function(e, cardId, cid) {
+        e.stopPropagation();
+        const picker = document.getElementById('emojiPicker');
+        if (!picker) return;
+        _emojiPickerTarget = { cid, pfx: null, cardId, isActus: true };
+        picker.innerHTML = ['❤️','😂','😮','🔥','👍','💀'].map(em =>
+            `<button onclick="pickEmoji('${em}')">${em}</button>`).join('');
+        picker.style.display = 'flex';
+        const r = e.currentTarget.getBoundingClientRect();
+        picker.style.left = Math.min(r.left, window.innerWidth-190)+'px';
+        picker.style.top  = (r.bottom+4)+'px';
+        picker.style.position = 'fixed';
+        setTimeout(() => document.addEventListener('click', closeEmojiPickerOutside, {once:true}), 50);
+    };
+    // Patch pickEmoji pour gérer le cas actus
+    const _origPickEmoji = window.pickEmoji;
+    window.pickEmoji = function(em) {
+        if (_emojiPickerTarget?.isActus) {
+            _actusToggleReaction(_emojiPickerTarget.cardId, _emojiPickerTarget.cid, em);
+            closeEmojiPickerOutside(); return;
+        }
+        if (typeof _origPickEmoji === 'function') _origPickEmoji(em);
+    };
+    window._actusToggleReplyBox = function(id) {
+        const el = document.getElementById(id); if (!el) return;
+        el.classList.toggle('is-open');
+        const ta = el.querySelector('textarea');
+        if (ta && el.classList.contains('is-open')) ta.focus();
+    };
+    window._actusPostReply = function(cardId, cid, rwId) {
+        if (!window.currentUser) return;
+        const box = document.getElementById(rwId); if (!box) return;
+        const ta = box.querySelector('textarea'); if (!ta) return;
+        const txt = ta.value.trim(); if (!txt) return;
+        const db = _actusCommentsDB[cardId]; if (!db) return;
+        const c = db.find(x => x.id === cid); if (!c) return;
+        c.replies = c.replies || [];
+        c.replies.push({ id: uid(), username: window.currentUser.username,
+            avatar: window.currentUser.avatar||'', text: txt, time: isoNow(), likes: 0, likedByMe: false });
+        ta.value = ''; box.classList.remove('is-open');
+        _actusRenderComments(cardId);
+        _actusFirebaseSave(cardId);
+    };
+    window._actusLikeReply = function(cardId, cid, rid, btn) {
+        const db = _actusCommentsDB[cardId]; if (!db) return;
+        const c = db.find(x => x.id === cid); if (!c) return;
+        const r = (c.replies||[]).find(x => x.id === rid); if (!r) return;
+        r.likedByMe = !r.likedByMe;
+        r.likes = Math.max(0, (r.likes||0) + (r.likedByMe?1:-1));
+        if (btn) { btn.className = 'comment-btn'+(r.likedByMe?' comment-btn--liked':'');
+            btn.innerHTML = `${r.likedByMe?'❤️':'🤍'} <span class="comment-btn__like-count">${r.likes}</span>`; }
+        _actusFirebaseSave(cardId);
+    };
+    window._actusDeleteReply = function(cardId, cid, rid) {
+        const db = _actusCommentsDB[cardId]; if (!db) return;
+        const c = db.find(x => x.id === cid); if (!c) return;
+        c.replies = (c.replies||[]).filter(x => x.id !== rid);
+        _actusRenderComments(cardId);
+        _actusFirebaseSave(cardId);
+    };
+    // Helper save Firebase
+    function _actusFirebaseSave(cardId) {
+        const db = _actusCommentsDB[cardId]; if (!db) return;
+        FB_DB.ref('card_comments/' + cardId)
+            .set(db.map(x => { const n={...x}; delete n.likedByMe; delete n.myReactions;
+                n.replies = (n.replies||[]).map(r=>{ const q={...r}; delete q.likedByMe; return q; }); return n; }))
+            .catch(e => console.error('[actus] save error:', e));
     }
 
     window._actusPostComment = function(cardId) {
@@ -5601,9 +5730,7 @@
         const db = _actusCommentsDB[cardId] || [];
         db.unshift(c);
         _actusCommentsDB[cardId] = db;
-        const ref = FB_DB.ref('card_comments/' + cardId);
-        ref.set(db.map(x => { const n={...x}; delete n.likedByMe; return n; }))
-            .catch(e => console.error('[actus-comments] write error:', e));
+        _actusFirebaseSave(cardId);
         inp.value = ''; inp.style.height = '';
         window._actusUpdateCharCounter(inp, cardId);
         _actusRenderComments(cardId);
@@ -5672,7 +5799,7 @@
             if (sorted.length === 0) {
                 list.innerHTML = `<div style="text-align:center;padding:30px 0;color:rgba(255,255,255,0.25);font-size:14px">💬 Aucun commentaire pour ce dossier.</div>`;
             } else {
-                list.innerHTML = sorted.map(c => _actusRenderItem(c)).join('');
+                list.innerHTML = sorted.map(c => _actusRenderItem(c, cardId)).join('');
             }
         }
         modal.setAttribute('data-actus-modal-id', cardId);
