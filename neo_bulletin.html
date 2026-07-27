@@ -5633,7 +5633,13 @@
     }
 
     // ── Helpers réactions actus ──
+    const _actusReactLock = new Set();
     window._actusToggleReaction = function(cardId, cid, em) {
+        const lockKey = cardId + '|' + cid + '|' + em;
+        if (_actusReactLock.has(lockKey)) return;
+        _actusReactLock.add(lockKey);
+        setTimeout(() => _actusReactLock.delete(lockKey), 800);
+
         const db = _actusCommentsDB[cardId]; if (!db) return;
         const c = db.find(x => x.id === cid); if (!c) return;
         c.reactions   = c.reactions   || {};
@@ -5740,7 +5746,12 @@
         _actusRenderComments(cardId);
     };
 
+    const _actusLikeLock = new Set();
     function _actusLikeComment(cid, btn) {
+        if (_actusLikeLock.has(cid)) return;
+        _actusLikeLock.add(cid);
+        setTimeout(() => _actusLikeLock.delete(cid), 800);
+
         let found = null; let cardId = '';
         Object.keys(_actusCommentsDB).forEach(k => {
             const c = _actusCommentsDB[k].find(x => x.id === cid);
@@ -5749,11 +5760,9 @@
         if (!found) return;
         found.likedByMe = !found.likedByMe;
         found.likes = Math.max(0, (found.likes||0) + (found.likedByMe ? 1 : -1));
-        btn.className = 'card-comment-item__like' + (found.likedByMe?' liked':'');
-        btn.innerHTML = (found.likedByMe?'❤️':'🤍') + ' ' + found.likes;
-        const ref = FB_DB.ref('card_comments/' + cardId);
-        ref.set(_actusCommentsDB[cardId].map(x => { const n={...x}; delete n.likedByMe; return n; }))
-            .catch(e => console.error('[actus-comments] like error:', e));
+        btn.className = 'comment-btn' + (found.likedByMe?' comment-btn--liked':'');
+        btn.innerHTML = `${found.likedByMe?'❤️':'🤍'} <span class="comment-btn__like-count">${found.likes}</span>`;
+        _actusFirebaseSave(cardId);
     }
 
     function _actusDeleteComment(cid) {
