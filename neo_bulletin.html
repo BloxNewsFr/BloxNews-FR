@@ -5669,7 +5669,8 @@
         const _isMod  = window.currentUser && MODERATORS.includes(window.currentUser.username);
         const _canDel = window.currentUser && (_isMod || c.username === window.currentUser.username);
         const isPinned = !!c.pinned;
-        const isFirst  = _ccDB.length > 0 && _ccDB[0].id === c.id;
+        const isFirst  = _ccDB.length > 0 && _ccDB.reduce((oldest, x) =>
+            x.time < oldest.time ? x : oldest, _ccDB[0]).id === c.id;
         const pfx      = 'cc-';
         // Replies
         const replies = (c.replies||[]).map(r => {
@@ -5724,8 +5725,8 @@
                     </button>
                     ${window.currentUser?`<button class="comment-btn" onclick="_ccToggleReplyBox('${pfx}rw-${c.id}')">↩ Répondre</button>`:''}
                     ${_canDel?`<button class="comment-btn comment-btn--delete" onclick="_ccDelete('${c.id}')">🗑 Suppr.</button>`:''}
-                    ${_isMod&&!isPinned?`<button class="comment-btn" onclick="_ccPinComment('${c.id}')" title="Épingler">📌</button>`:''}
-                    ${_isMod&&isPinned?`<button class="comment-btn is-pinned" onclick="_ccUnpinComment('${c.id}')" title="Désépingler">📌</button>`:''}
+                    ${_isMod&&!isPinned?`<button class="comment-btn comment-btn--pin" onclick="_ccPinComment('${c.id}')" title="Épingler">📌</button>`:''}
+                    ${_isMod&&isPinned?`<button class="comment-btn comment-btn--pin is-pinned" onclick="_ccUnpinComment('${c.id}')" title="Désépingler">📌</button>`:''}
                 </div>
                 ${replies?`<div class="comment-replies">${replies}</div>`:''}
                 <div class="comment-reply-write" id="${pfx}rw-${c.id}" style="display:none">
