@@ -3333,6 +3333,48 @@
             margin: 8px 0;
         }
 
+        /* ── FORMAT BAR (actus editor) ── */
+        .ncm-format-bar {
+            display: flex; align-items: center; gap: 4px;
+            padding: 6px 8px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 10px 10px 0 0;
+            border-bottom: none;
+            position: relative;
+        }
+        .ncm-format-btn {
+            width: 30px; height: 28px; border: none; border-radius: 6px;
+            background: transparent; color: rgba(255,255,255,0.5);
+            font-size: 13px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.15s; font-family: inherit;
+        }
+        .ncm-format-btn:hover { background: rgba(255,255,255,0.08); color: #fff; }
+        .ncm-format-btn:active { background: rgba(255,255,255,0.12); }
+        .ncm-format-sep {
+            width: 1px; height: 18px; background: rgba(255,255,255,0.08);
+            margin: 0 4px;
+        }
+        .ncm-format-btn b { font-weight: 700; }
+        .ncm-format-btn i { font-style: italic; }
+        .ncm-format-btn u { text-decoration: underline; }
+        .ncm-format-btn s { text-decoration: line-through; }
+        .ncm-hl-picker {
+            display: none; position: absolute; top: 100%; left: 0;
+            margin-top: 4px; z-index: 10;
+            background: #1a1a2e; border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px; padding: 6px; gap: 4px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+            grid-template-columns: repeat(5, 1fr);
+        }
+        .ncm-hl-picker.is-open { display: grid; }
+        .ncm-hl-color {
+            width: 26px; height: 26px; border-radius: 6px; cursor: pointer;
+            border: 2px solid transparent; transition: all 0.15s;
+        }
+        .ncm-hl-color:hover { border-color: rgba(255,255,255,0.5); transform: scale(1.15); }
+
         /* ══ STEP 3 : RECAP ══ */
         .ncm-page--recap {
             align-items: center; gap: 16px;
@@ -5096,11 +5138,27 @@
                             </div>
                             <div class="ncm-field">
                                 <label><span class="ncm-lbl-icon">📄</span> Contenu</label>
+                                <div class="ncm-format-bar">
+                                    <button class="ncm-format-btn" onclick="_ncmFormatText('bold')" title="Gras"><b>B</b></button>
+                                    <button class="ncm-format-btn" onclick="_ncmFormatText('italic')" title="Italique"><i>I</i></button>
+                                    <button class="ncm-format-btn" onclick="_ncmFormatText('underline')" title="Souligné"><u>U</u></button>
+                                    <button class="ncm-format-btn" onclick="_ncmFormatText('strike')" title="Barré"><s>S</s></button>
+                                    <span class="ncm-format-sep"></span>
+                                    <button class="ncm-format-btn" onclick="_ncmToggleHighlightPicker()" title="Surligner" id="ncmHlBtn">
+                                        <span style="background:rgba(255,200,50,0.3);padding:0 5px;border-radius:3px">H</span>
+                                    </button>
+                                    <div class="ncm-hl-picker" id="ncmHlPicker">
+                                        <div class="ncm-hl-color" style="background:#ffd700" onclick="_ncmFormatText('highlight','#ffd700')"></div>
+                                        <div class="ncm-hl-color" style="background:#ff6b6b" onclick="_ncmFormatText('highlight','#ff6b6b')"></div>
+                                        <div class="ncm-hl-color" style="background:#51cf66" onclick="_ncmFormatText('highlight','#51cf66')"></div>
+                                        <div class="ncm-hl-color" style="background:#74c0fc" onclick="_ncmFormatText('highlight','#74c0fc')"></div>
+                                        <div class="ncm-hl-color" style="background:#da77f2" onclick="_ncmFormatText('highlight','#da77f2')"></div>
+                                    </div>
+                                </div>
                                 <textarea id="ncmActusContent" rows="6"
                                     placeholder="Texte du dossier…"
                                     oninput="_ncmActusSyncPreview()"
-                                    style="width:100%;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);border-radius:10px;padding:10px 14px;color:#fff;font-size:13px;font-family:monospace;outline:none;resize:vertical;box-sizing:border-box;line-height:1.6;"></textarea>
-                                <div class="ncm-field-hint">**gras** &nbsp;==surligné== &nbsp;__souligné__ &nbsp;~~barré~~</div>
+                                    style="width:100%;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);border-radius:0 0 10px 10px;padding:10px 14px;color:#fff;font-size:13px;font-family:monospace;outline:none;resize:vertical;box-sizing:border-box;line-height:1.6;border-top:none;"></textarea>
                             </div>
                             <div class="ncm-field">
                                 <span class="ncm-field-info">💬 Section commentaires ajoutée automatiquement</span>
@@ -9044,14 +9102,60 @@
         const preview = document.getElementById('ncmActusText');
         if (!ta || !preview) return;
         let val = ta.value;
-        // Appliquer le marquage léger
         val = val.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
-        val = val.replace(/==(.+?)==/g, '<mark style="background:rgba(255,200,50,0.2);color:#ffd966;padding:0 3px;border-radius:3px">$1</mark>');
+        val = val.replace(/\*(.+?)\*/g, '<i>$1</i>');
+        val = val.replace(/==#([0-9a-fA-F]{6}) (.+?)==/g, '<mark style="background:$1;color:#fff;padding:0 3px;border-radius:3px">$2</mark>');
+        val = val.replace(/==(.+?)==/g, '<mark style="background:rgba(255,200,50,0.25);color:#ffd966;padding:0 3px;border-radius:3px">$1</mark>');
         val = val.replace(/__(.+?)__/g, '<u>$1</u>');
         val = val.replace(/~~(.+?)~~/g, '<s>$1</s>');
         val = val.replace(/\n/g, '<br>');
         preview.innerHTML = val || 'Écris le contenu du dossier ici…';
     }
+
+    function _ncmWrapSelection(ta, before, after) {
+        const start = ta.selectionStart;
+        const end = ta.selectionEnd;
+        const text = ta.value;
+        const selected = text.substring(start, end) || 'texte';
+        ta.value = text.substring(0, start) + before + selected + after + text.substring(end);
+        const newPos = start + before.length;
+        ta.selectionStart = newPos;
+        ta.selectionEnd = newPos + selected.length;
+        ta.focus();
+        _ncmActusSyncPreview();
+    }
+
+    function _ncmFormatText(type, color) {
+        const ta = document.getElementById('ncmActusContent');
+        if (!ta) return;
+        const map = {
+            bold: ['**', '**'],
+            italic: ['*', '*'],
+            underline: ['__', '__'],
+            strike: ['~~', '~~'],
+        };
+        if (type === 'highlight') {
+            const tag = color ? '==#' + color.replace('#','') + ' ' : '==';
+            _ncmWrapSelection(ta, tag, '==');
+            document.getElementById('ncmHlPicker')?.classList.remove('is-open');
+            return;
+        }
+        const pair = map[type];
+        if (pair) _ncmWrapSelection(ta, pair[0], pair[1]);
+    }
+
+    function _ncmToggleHighlightPicker() {
+        const picker = document.getElementById('ncmHlPicker');
+        if (!picker) return;
+        picker.classList.toggle('is-open');
+    }
+    document.addEventListener('click', function _ncmCloseHl(e) {
+        const picker = document.getElementById('ncmHlPicker');
+        const btn = document.getElementById('ncmHlBtn');
+        if (picker && btn && !picker.contains(e.target) && !btn.contains(e.target)) {
+            picker.classList.remove('is-open');
+        }
+    });
 
     // ══════════════════════════════════════════════════════════════
     //  COMMANDE /DELETE — Suppression de N'IMPORTE QUELLE carte
