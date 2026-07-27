@@ -5034,6 +5034,80 @@
         'GAMEPLAY': 'gameplay', 'Gameplay': 'gameplay', 'gameplay': 'gameplay',
     };
 
+    function _normalizeBadge(b) {
+        return b.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/s$/i, '').toLowerCase();
+    }
+
+    let _autoGroupCounter = 0;
+
+    function _autoCreateGroups(fbCards) {
+        const groups = new Map();
+        fbCards.forEach(card => {
+            if (!card.badge) return;
+            const key = _normalizeBadge(card.badge);
+            if (!groups.has(key)) groups.set(key, []);
+            groups.get(key).push(card);
+        });
+        groups.forEach((cards, key) => {
+            if (cards.length < 2) return;
+            if (GROUP_BADGE_MAP[cards[0].badge]) return;
+            _autoGroupCounter++;
+            const gid = 'auto_' + _autoGroupCounter;
+            const first = cards[0];
+            const section = document.getElementById(first.sectionId);
+            if (!section) return;
+            let grid = section.querySelector('.news-grid');
+            if (!grid) {
+                grid = document.createElement('div');
+                grid.className = 'news-grid';
+                const ref = section.querySelector('.secret-bulletin');
+                if (ref) ref.after(grid); else section.appendChild(grid);
+            }
+            const displayBadge = first.badge;
+            const hex = '#ff6600';
+            const rgb = '255,102,0';
+            GROUP_DATA[gid] = {
+                badge: displayBadge, title: displayBadge + ' — Tous les leaks',
+                hex: hex, rgb: rgb, items: []
+            };
+            cards.forEach(c => {
+                GROUP_BADGE_MAP[c.badge] = gid;
+                const _cardTs = c.createdAt
+                    ? new Date(c.createdAt)
+                    : (c.id && c.id.startsWith('cc_') ? new Date(parseInt(c.id.slice(3), 10)) : new Date());
+                const _dateStr = isNaN(_cardTs.getTime())
+                    ? ''
+                    : _cardTs.toLocaleDateString('fr-FR', { day:'numeric', month:'short', year:'numeric' });
+                GROUP_DATA[gid].items.push({
+                    type: c.mediaType === 'video' ? 'video' : 'image',
+                    src: c.src,
+                    label: c.title || c.badge,
+                    sub: c.eyebrow || 'Leak',
+                    date: _dateStr,
+                    _fromFirebase: true,
+                    _ccId: c.id,
+                });
+            });
+            const wrapper = document.createElement('div');
+            wrapper.innerHTML = `<article class="group-card" style="--cat-hex:${hex};--cat-rgb:${rgb}"
+                onclick="openGroupDrawer('${gid}')" data-auto-group="${gid}">
+                <div class="group-card__image-wrapper">
+                    <img src="${cards[0].src || ''}" class="group-card__image" alt="${displayBadge}" loading="lazy">
+                    <div class="group-card__badge">${displayBadge}</div>
+                    <div class="group-card__count-pill">${cards.length} leak${cards.length > 1 ? 's' : ''}</div>
+                </div>
+                <div class="group-card__content">
+                    <div class="group-card__eyebrow">Leaks</div>
+                    <div class="group-card__date">Derniers leaks</div>
+                    <h2 class="group-card__title">${displayBadge} — Tous les leaks</h2>
+                    <button class="group-card__open-btn">Voir tous les leaks →</button>
+                </div>
+                <div class="group-card__bar"></div>
+            </article>`;
+            grid.prepend(wrapper.firstChild);
+        });
+    }
+
     function _syncGroupCards(fbCards) {
         // Réinitialiser les items Firebase de chaque groupe (garder les statiques)
         Object.values(GROUP_DATA).forEach(g => {
@@ -8000,8 +8074,9 @@
     }
 
     function _renderCustomCards() {
-        // Rendu initial depuis localStorage (offline fallback)
-        _ccLoad().forEach(_renderOneCard);
+        const cards = _ccLoad();
+        _autoCreateGroups(cards);
+        cards.forEach(_renderOneCard);
     }
 
     // ── Handler bouton modale (réutilisable) ────────────────────────
@@ -8568,6 +8643,7 @@
                     ? (Array.isArray(raw) ? raw : Object.values(raw))
                     : [];
                 _ccSave(fbCards);
+                _autoCreateGroups(fbCards);
                 fbCards.forEach(_renderOneCard);
                 // Retirer du DOM les cards supprimées
                 const fbIds = new Set(fbCards.map(c => c.id));
