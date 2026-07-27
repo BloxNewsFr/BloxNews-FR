@@ -2976,19 +2976,25 @@
 
         /* ══ STEP 2 : EDITOR ══ */
         .ncm-page--editor {
-            flex-direction: row; gap: 0; padding: 0;
+            flex-direction: column; gap: 0; padding: 0; overflow-y: auto;
         }
         #newCardModal .ncm-preview-col {
-            width: 340px; flex-shrink: 0;
-            padding: 20px 18px;
-            background: rgba(255,255,255,0.015);
-            border-right: 1px solid rgba(255,255,255,0.05);
+            padding: 24px 24px 20px;
             display: flex; flex-direction: column; gap: 14px;
-            overflow-y: auto; align-items: center;
+            align-items: center; flex-shrink: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.025), rgba(255,255,255,0.008));
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            margin: 12px 12px 0; border-radius: 18px;
+            border: 1px solid rgba(255,255,255,0.04);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.04);
         }
         #newCardModal .ncm-preview-label {
             font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px;
-            color: rgba(255,255,255,0.25); font-weight: 700; align-self: stretch; text-align: center;
+            color: rgba(255,255,255,0.25); font-weight: 700; text-align: center;
+        }
+        .ncm-preview-col-inner {
+            display: flex; flex-direction: column; align-items: center;
+            width: 100%;
         }
         /* ── PREVIEW CARTE STANDARD (calque la vraie news-card) ── */
         #newCardModal .ncm-card {
@@ -3074,8 +3080,8 @@
         }
         #newCardModal .ncm-preview-hint strong { color: rgba(255,255,255,0.45); }
 
-        #ncmPreviewStandard { display: block; width: 100%; }
-        #ncmPreviewMessage  { display: none; width: 100%; }
+        #ncmPreviewStandard { display: block; width: 100%; max-width: 360px; }
+        #ncmPreviewMessage  { display: none; width: 100%; max-width: 360px; }
         #ncmPreviewActus    { display: none; width: 100%; }
 
         /* ── PREVIEW MESSAGE (calque la vraie msg-card) ── */
@@ -3241,8 +3247,8 @@
 
         /* Formulaire colonne */
         #newCardModal .ncm-form-col {
-            flex: 1; padding: 20px 24px;
-            overflow-y: auto; display: flex; flex-direction: column; gap: 4px;
+            padding: 20px 28px 24px;
+            display: flex; flex-direction: column; gap: 4px;
         }
         #newCardModal .ncm-form-col::-webkit-scrollbar { width: 4px; }
         #newCardModal .ncm-form-col::-webkit-scrollbar-track { background: transparent; }
@@ -4060,10 +4066,11 @@
                 height: 100dvh !important; border-radius: 0 !important;
                 flex-direction: column !important; max-height: 100dvh !important;
             }
-            #newCardModal .ncm-page--editor { flex-direction: column !important; }
-            #newCardModal .ncm-preview-col { width: 100% !important; border-right: none !important; border-bottom: 1px solid rgba(255,255,255,0.05) !important; max-height: 260px !important; }
-            #newCardModal .ncm-form-col { border-left: none !important; max-height: none !important; }
-            #newCardModal .ncm-card-img { height: 140px !important; }
+            #newCardModal .ncm-preview-col { margin: 8px 8px 0 !important; padding: 16px 16px 12px !important; max-height: 240px !important; }
+            #newCardModal .ncm-form-col { padding: 16px !important; }
+            #ncmPreviewStandard { max-width: 100% !important; }
+            #ncmPreviewMessage { max-width: 100% !important; }
+            .ncm-preview-col-inner { max-width: 100% !important; }
             .ncm-type-grid { grid-template-columns: 1fr !important; }
             .ncm-page--type { padding: 18px !important; }
             #newCardModal .ncm-steps { padding: 12px 16px 10px !important; gap: 0 !important; }
@@ -4958,6 +4965,7 @@
 
                     <div class="ncm-preview-col">
                         <div class="ncm-preview-label">Aperçu en direct</div>
+                        <div class="ncm-preview-col-inner">
 
                         <div id="ncmPreviewStandard">
                             <div class="ncm-card">
@@ -5034,6 +5042,7 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
                         </div>
                     </div>
 
@@ -8677,6 +8686,8 @@
                 ? 'Colle un lien vidéo hébergé<br><span style="opacity:.5;font-size:11px">ci-dessous (pas de dépôt de fichier)</span>'
                 : 'Glisse une image<br>ou clique ici';
         }
+        const btn = document.getElementById('ncmEditBtn');
+        if (btn) btn.textContent = isVideo ? 'VOIR LA VIDÉO' : "Voir l'image →";
         const fi = document.getElementById('ncmFileInput');
         if (fi) fi.accept = 'image/*';
         // Lier le champ URL : quand l'utilisateur tape dedans, ça annule le drag-drop
