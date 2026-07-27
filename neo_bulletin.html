@@ -8889,8 +8889,8 @@
             src = document.getElementById('ncmMsgSrc')?.value?.trim() || _ncmMsgImageData || '';
         } else if (isActus) {
             title     = document.getElementById('ncmActusTitle')?.textContent?.trim() || 'Dossier';
-            actusText = document.getElementById('ncmActusText')?.textContent?.trim()
-                     || document.getElementById('ncmActusContent')?.value?.trim() || '';
+            actusText = document.getElementById('ncmActusContent')?.value?.trim()
+                     || document.getElementById('ncmActusText')?.textContent?.trim() || '';
             badge = '';
             eyebrow = 'Actus'; btnLabel = 'Lire →'; src = '';
         } else {
