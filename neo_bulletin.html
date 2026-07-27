@@ -5527,9 +5527,18 @@
             if (!val) { _actusCommentsDB[cardId] = []; }
             else {
                 if (!Array.isArray(val)) val = Object.keys(val).sort((a,b)=>Number(a)-Number(b)).map(k=>val[k]);
-                const likes = {};
-                (_actusCommentsDB[cardId] || []).forEach(c => { likes[c.id] = c.likedByMe; });
-                _actusCommentsDB[cardId] = val.map(c => ({ ...c, likedByMe: !!likes[c.id] }));
+                // Préserver likedByMe ET myReactions locaux
+                const likes    = {};
+                const myReacts = {};
+                (_actusCommentsDB[cardId] || []).forEach(c => {
+                    likes[c.id]    = c.likedByMe;
+                    myReacts[c.id] = c.myReactions || {};
+                });
+                _actusCommentsDB[cardId] = val.map(c => ({
+                    ...c,
+                    likedByMe:   !!likes[c.id],
+                    myReactions: myReacts[c.id] || {}
+                }));
             }
             _actusRenderComments(cardId);
         }, err => console.warn('[actus-comments] Firebase error for', cardId, err));
@@ -5733,11 +5742,14 @@
         _actusFirebaseSave(cardId);
     };
     window._actusDeleteReply = function(cardId, cid, rid) {
-        const db = _actusCommentsDB[cardId]; if (!db) return;
-        const c = db.find(x => x.id === cid); if (!c) return;
-        c.replies = (c.replies||[]).filter(x => x.id !== rid);
-        _actusRenderComments(cardId);
-        _actusFirebaseSave(cardId);
+        _pendingDelete = () => {
+            const db = _actusCommentsDB[cardId]; if (!db) return;
+            const c = db.find(x => x.id === cid); if (!c) return;
+            c.replies = (c.replies||[]).filter(x => x.id !== rid);
+            _actusRenderComments(cardId);
+            _actusFirebaseSave(cardId);
+        };
+        openDeleteModal();
     };
     // Helper save Firebase
     function _actusFirebaseSave(cardId) {
@@ -5794,17 +5806,17 @@
     }
 
     function _actusDeleteComment(cid) {
-        if (!confirm('Supprimer ce commentaire ?')) return;
-        let cardId = ''; let db = [];
-        Object.keys(_actusCommentsDB).forEach(k => {
-            const idx = _actusCommentsDB[k].findIndex(x => x.id === cid);
-            if (idx !== -1) { _actusCommentsDB[k].splice(idx, 1); cardId = k; db = _actusCommentsDB[k]; }
-        });
-        if (!cardId) return;
-        const ref = FB_DB.ref('card_comments/' + cardId);
-        ref.set(db.map(x => { const n={...x}; delete n.likedByMe; return n; }))
-            .catch(e => console.error('[actus-comments] delete error:', e));
-        _actusRenderComments(cardId);
+        _pendingDelete = () => {
+            let cardId = '';
+            Object.keys(_actusCommentsDB).forEach(k => {
+                const idx = _actusCommentsDB[k].findIndex(x => x.id === cid);
+                if (idx !== -1) { _actusCommentsDB[k].splice(idx, 1); cardId = k; }
+            });
+            if (!cardId) return;
+            _actusRenderComments(cardId);
+            _actusFirebaseSave(cardId);
+        };
+        openDeleteModal();
     }
 
     function _actusPinComment(cid) {
