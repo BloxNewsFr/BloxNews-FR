@@ -3933,6 +3933,7 @@
             <button class="leaks-tab" data-target="cat-map" style="--cat-hex: #00d238; --cat-rgb: 0, 210, 56;">Map</button>
             <button class="leaks-tab" data-target="cat-gui" style="--cat-hex: #0088ff; --cat-rgb: 0, 136, 255;">GUI</button>
             <button class="leaks-tab" data-target="cat-messages" style="--cat-hex: #ff8800; --cat-rgb: 255, 136, 0;">Messages</button>
+            <button class="leaks-tab" data-target="cat-gameplay" style="--cat-hex: #ff6600; --cat-rgb: 255, 102, 0;">Gameplay</button>
         </div>
     </nav>
 
@@ -3960,6 +3961,7 @@
             <button class="leaks-tab" data-target="cat-map" style="--cat-hex: #00d238; --cat-rgb: 0, 210, 56;">MAP</button>
             <button class="leaks-tab" data-target="cat-gui" style="--cat-hex: #0088ff; --cat-rgb: 0, 136, 255;">GUI</button>
             <button class="leaks-tab" data-target="cat-messages" style="--cat-hex: #ff8800; --cat-rgb: 255, 136, 0;">MESSAGES</button>
+            <button class="leaks-tab" data-target="cat-gameplay" style="--cat-hex: #ff6600; --cat-rgb: 255, 102, 0;">GAMEPLAY</button>
         </div>
 
                 <section id="cat-actus" class="category-section active-section">
@@ -4260,6 +4262,12 @@
             </div>
         </section>
 
+        <!--🎮 GAMEPLAY-->
+        <section id="cat-gameplay" class="category-section" style="--cat-hex: #ff6600; --cat-rgb: 255, 102, 0;">
+            <div class="category-title">🎮 GAMEPLAY & MÉCANIQUES</div>
+            <div class="news-grid">
+            </div>
+        </section>
 
         <!--✉️ MESSAGES & LORE-->
         <section id="cat-messages" class="category-section" style="--cat-hex: #ff8800; --cat-rgb: 255, 136, 0;">
@@ -4879,7 +4887,8 @@
                 'cat-map':      '🗺️ Map & Build',
                 'cat-gui':      '💻 GUI & Systèmes',
                 'cat-messages': '✉️ Messages & Lore',
-                'cat-actus':    '📰 Actus'
+                'cat-actus':    '📰 Actus',
+                'cat-gameplay': '🎮 Gameplay & Mécaniques',
             };
             const modal    = document.getElementById('videoModal');
             const openBtns = document.querySelectorAll('.open-modal-btn');
@@ -7986,7 +7995,8 @@
         const SECTION_LABELS = {
             'cat-fruit':'🍎 Fruits & Reworks','cat-vfx':'✨ VFX',
             'cat-map':'🗺️ Map & Build','cat-gui':'💻 GUI & Systèmes',
-            'cat-messages':'✉️ Messages & Lore','cat-actus':'📰 Actus'
+            'cat-messages':'✉️ Messages & Lore','cat-actus':'📰 Actus',
+            'cat-gameplay':'🎮 Gameplay & Mécaniques'
         };
         const modal = document.getElementById('videoModal');
         const video = document.getElementById('fruitVideo');

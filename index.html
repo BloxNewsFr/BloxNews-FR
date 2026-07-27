@@ -1866,7 +1866,7 @@
             "020": { status: "" },
             "021": { status: "" },
             "023": { className: "glitch-card", badge: "#023", status: "HACK", eyebrow: "Terminal compromis", title: "BULLETIN #023", button: "Accéder au terminal" },
-            "024": { className: "soon-card", badge: "#024", status: "BIENTÔT", eyebrow: "À venir", title: "Bulletin #024", button: "Voir le compte à rebours" },
+            "024": { className: "soon-card", badge: "#024", dateLabel: "Bientôt", status: "BIENTÔT", eyebrow: "À venir", title: "Bulletin #024", button: "Voir le compte à rebours" },
         };
 
         // ════════════════════════════════════════════════════════
@@ -2389,7 +2389,7 @@
                         </div>
                         <div class="news-card__content">
                             <div class="news-card__eyebrow">${special.eyebrow || "The Blox Bulletin"}</div>
-                            <div class="news-card__date">${relativeTime(b.date)}</div>
+                            <div class="news-card__date">${special.dateLabel || relativeTime(b.date)}</div>
                             <h2 class="news-card__title">${special.title || `Bulletin #${b.num}`}</h2>
                             <a href="${b.href}" class="news-card__button" onclick="event.stopPropagation()">${special.button || "Lire maintenant →"}</a>
                         </div>
