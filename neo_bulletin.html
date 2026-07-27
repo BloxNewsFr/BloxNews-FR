@@ -5574,11 +5574,21 @@
                     _ccId: c.id,
                 });
             });
+            // Choisir la meilleure cover : première image, sinon premier média, sinon rien
+            const coverCard = cards.find(c => c.src && c.mediaType !== 'video')
+                          || cards.find(c => c.src)
+                          || cards[0];
+            const isVideoCover = coverCard.mediaType === 'video' && !!coverCard.src;
+            const coverImg = isVideoCover
+                ? `<video src="${coverCard.src}" class="group-card__image" preload="metadata" muted playsinline></video>`
+                : coverCard.src
+                    ? `<img src="${coverCard.src}" class="group-card__image" alt="${displayBadge}" loading="lazy">`
+                    : `<div class="group-card__image" style="display:flex;align-items:center;justify-content:center;background:#0d0d18;color:rgba(255,255,255,0.15);font-size:28px">📰</div>`;
             const wrapper = document.createElement('div');
             wrapper.innerHTML = `<article class="group-card" style="--cat-hex:${hex};--cat-rgb:${rgb}"
                 onclick="openGroupDrawer('${gid}')" data-auto-group="${gid}">
                 <div class="group-card__image-wrapper">
-                    <img src="${cards[0].src || ''}" class="group-card__image" alt="${displayBadge}" loading="lazy">
+                    ${coverImg}
                     <div class="group-card__badge">${displayBadge}</div>
                     <div class="group-card__count-pill">${cards.length} leak${cards.length > 1 ? 's' : ''}</div>
                 </div>
@@ -5633,11 +5643,44 @@
             if (!gcCard) return;
             const pill = gcCard.querySelector('.group-card__count-pill');
             if (pill) pill.textContent = g.items.length + ' leak' + (g.items.length > 1 ? 's' : '');
-            // Mettre à jour l'image de preview avec l'item le plus récent
-            const firstImg = g.items[0];
-            if (firstImg && firstImg.type === 'image') {
-                const img = gcCard.querySelector('.group-card__image');
-                if (img && img.src !== firstImg.src) img.src = firstImg.src;
+            // Mettre à jour l'image de preview : chercher la meilleure cover
+            const cover = g.items.find(it => it.type !== 'video' && it.src)
+                       || g.items.find(it => it.src)
+                       || null;
+            const imgEl = gcCard.querySelector('.group-card__image');
+            if (!imgEl) return;
+            if (cover) {
+                if (cover.type !== 'video') {
+                    if (imgEl.tagName === 'IMG' && imgEl.src !== cover.src) imgEl.src = cover.src;
+                    else if (imgEl.tagName === 'VIDEO') {
+                        const newImg = document.createElement('img');
+                        newImg.className = imgEl.className;
+                        newImg.src = cover.src;
+                        newImg.alt = g.badge || '';
+                        newImg.loading = 'lazy';
+                        imgEl.replaceWith(newImg);
+                    }
+                } else {
+                    // Cover est une vidéo — remplacer par <video> si besoin
+                    if (imgEl.tagName !== 'VIDEO') {
+                        const newVid = document.createElement('video');
+                        newVid.className = imgEl.className;
+                        newVid.src = cover.src;
+                        newVid.muted = true; newVid.playsInline = true; newVid.preload = 'metadata';
+                        imgEl.replaceWith(newVid);
+                    } else if (imgEl.src !== cover.src) {
+                        imgEl.src = cover.src;
+                    }
+                }
+            } else {
+                // Aucun média — placeholder
+                if (imgEl.tagName !== 'IMG' && imgEl.tagName !== 'DIV') {
+                    const placeholder = document.createElement('div');
+                    placeholder.className = 'group-card__image';
+                    placeholder.style.cssText = 'display:flex;align-items:center;justify-content:center;background:#0d0d18;color:rgba(255,255,255,0.15);font-size:28px';
+                    placeholder.textContent = '📰';
+                    imgEl.replaceWith(placeholder);
+                }
             }
         });
     }
