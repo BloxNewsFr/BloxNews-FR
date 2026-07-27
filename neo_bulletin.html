@@ -2903,21 +2903,16 @@
         #newCardModal .ncm-page {
             position: absolute; inset: 0;
             display: flex; flex-direction: column;
-            opacity: 0; visibility: hidden;
+            opacity: 0; visibility: hidden; pointer-events: none;
             transform: translateX(24px) scale(0.98);
             transition: opacity 0.35s, transform 0.35s, visibility 0s 0.35s;
             overflow-y: auto;
         }
         #newCardModal .ncm-page.active {
-            opacity: 1; visibility: visible;
+            opacity: 1; visibility: visible; pointer-events: auto;
             transform: translateX(0) scale(1);
             transition: opacity 0.35s, transform 0.35s, visibility 0s 0s;
-        }
-        #newCardModal .ncm-page.active.slide-from-right {
-            transform: translateX(0) scale(1);
-        }
-        #newCardModal .ncm-page.exit-left {
-            opacity: 0; transform: translateX(-30px) scale(0.97);
+            z-index: 2;
         }
 
         /* ══ STEP 1 : TYPE SELECTION ══ */
