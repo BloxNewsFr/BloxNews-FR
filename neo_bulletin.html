@@ -470,8 +470,9 @@
         /* Suppression des overrides thème hérités — la card est dark by design */
 
         .category-title {
-            display: flex; align-items: center; gap: 20px; font-size: 32px; font-weight: 900; text-transform: uppercase; margin-bottom: 30px; color: #111; font-family: 'LuckiestGuy Regular', cursive; letter-spacing: 1px;
+            display: flex; align-items: center; gap: 20px; font-size: 32px; font-weight: 900; text-transform: uppercase; margin-bottom: 30px; color: rgba(255,255,255,0.85); font-family: 'LuckiestGuy Regular', cursive; letter-spacing: 1px;
         }
+        html:not([data-theme="dark"]) .category-title { color: rgba(0,0,0,0.55); }
         .category-title::after {
             content: ''; flex-grow: 1; height: 4px; border-radius: 4px;
             background: linear-gradient(90deg, var(--cat-hex) 0%, rgba(var(--cat-rgb),0.3) 60%, transparent 100%); border-radius: 4px;
@@ -870,10 +871,16 @@
 
         /* ── Comments inside decrypt panel → always dark ── */
         .decrypt-panel .card-comments-section {
-            margin: 12px 16px 16px;
+            margin: 8px 12px 12px;
             border-color: rgba(255,255,255,0.08);
             background: linear-gradient(145deg, rgba(14,14,28,0.98), rgba(10,10,22,0.96));
             box-shadow: 0 4px 24px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.05);
+        }
+        .decrypt-panel .card-comments-toggle {
+            padding: 8px 14px;
+        }
+        .decrypt-panel .card-comments-toggle__icon {
+            width: 24px; height: 24px; font-size: 12px;
         }
         .decrypt-panel .card-comments-toggle {
             background: rgba(255,255,255,0.02);
@@ -1214,8 +1221,8 @@
             overflow: hidden;
         }
         .card-comments-toggle {
-            display: flex; align-items: center; gap: 10px;
-            padding: 14px 20px; cursor: pointer; user-select: none;
+            display: flex; align-items: center; gap: 8px;
+            padding: 10px 16px; cursor: pointer; user-select: none;
             transition: background 0.2s;
             background: rgba(0,0,0,0.015);
             border-bottom: 1px solid transparent;
@@ -1226,32 +1233,41 @@
             background: linear-gradient(180deg, rgba(0,0,0,0.02), transparent);
         }
         .card-comments-toggle__icon {
-            font-size: 16px;
-            width: 34px; height: 34px; border-radius: 10px;
+            font-size: 14px;
+            width: 28px; height: 28px; border-radius: 8px;
             background: linear-gradient(135deg, rgba(255,26,26,0.08), rgba(255,26,26,0.02));
             display: flex; align-items: center; justify-content: center; flex-shrink: 0;
             color: rgba(204,0,0,0.55);
             box-shadow: 0 1px 4px rgba(255,26,26,0.06);
         }
-        .card-comments-toggle__label { font-size: 13px; font-weight: 700; color: rgba(0,0,0,0.55); flex: 1; letter-spacing: 0.3px; }
+        .card-comments-toggle__label { font-size: 12px; font-weight: 700; color: rgba(0,0,0,0.55); flex: 1; letter-spacing: 0.3px; }
         .card-comments-toggle__count {
-            font-size: 11px; font-weight: 800; background: rgba(255,26,26,0.1);
-            color: rgba(204,0,0,0.75); padding: 2px 8px; border-radius: 100px;
-            min-width: 22px; text-align: center; box-shadow: 0 1px 3px rgba(255,26,26,0.06);
+            font-size: 10px; font-weight: 800; background: rgba(255,26,26,0.1);
+            color: rgba(204,0,0,0.75); padding: 1px 6px; border-radius: 100px;
+            min-width: 18px; text-align: center; box-shadow: 0 1px 3px rgba(255,26,26,0.06);
         }
-        .card-comments-toggle__arrow { font-size: 11px; color: rgba(0,0,0,0.25); transition: transform 0.25s; font-weight: 900; }
+        .card-comments-toggle__arrow { font-size: 10px; color: rgba(0,0,0,0.25); transition: transform 0.25s; font-weight: 900; }
         .card-comments-toggle.is-open .card-comments-toggle__arrow { transform: rotate(180deg); }
 
         .card-comments-body {
             max-height: 0; overflow: hidden;
             transition: max-height 0.35s cubic-bezier(0.4,0,0.2,1);
-            padding: 0 20px;
+            padding: 0 16px;
         }
-        .card-comments-body.is-open { max-height: 420px; overflow-y: auto; padding: 0 20px 14px; }
+        .card-comments-body.is-open { max-height: 420px; overflow-y: auto; padding: 0 16px 12px; }
         .card-comments-body::-webkit-scrollbar { width: 4px; }
         .card-comments-body::-webkit-scrollbar-track { background: transparent; }
         .card-comments-body::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.08); border-radius: 2px; }
         .card-comments-body::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.15); }
+        .card-comment-more {
+            display: block; width: 100%; margin-top: 8px; padding: 8px 0;
+            background: transparent; border: none; color: rgba(0,0,0,0.35);
+            font-size: 12px; font-weight: 600; cursor: pointer;
+            font-family: 'Inter', sans-serif; transition: color 0.2s;
+        }
+        .card-comment-more:hover { color: #cc0000; }
+        html[data-theme="dark"] .card-comment-more { color: rgba(255,255,255,0.3); }
+        html[data-theme="dark"] .card-comment-more:hover { color: #ff6666; }
 
         .card-comment-login {
             display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
