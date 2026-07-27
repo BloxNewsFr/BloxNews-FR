@@ -8491,10 +8491,20 @@
             ...document.querySelectorAll('.news-card, .group-card, .msg-card'),
             ...document.querySelectorAll('.secret-bulletin[data-cc-id], .secret-bulletin[data-static-id]'),
         ];
-        if (allCards.length === 0) {
+        // Ajouter les cartes individuelles cachées dans les groupes
+        const groupItems = [];
+        Object.entries(GROUP_DATA).forEach(([gid, g]) => {
+            (g.items || []).forEach((item, idx) => {
+                if (!item._ccId) return;
+                groupItems.push({ gid, idx, item });
+            });
+        });
+        if (allCards.length === 0 && groupItems.length === 0) {
             list.innerHTML = '<div class="dcm-empty"><div class="dcm-empty-icon">🗂️</div><div class="dcm-empty-text">Aucune carte dans la page</div></div>';
         } else {
-            list.innerHTML = allCards.map((card, i) => {
+            let idx = 0;
+            let html = '';
+            allCards.forEach(card => {
                 const isGroup  = card.classList.contains('group-card');
                 const isActus  = card.classList.contains('secret-bulletin');
                 const isMsg    = card.classList.contains('msg-card');
@@ -8503,7 +8513,7 @@
                 const section  = card.closest('[id^="cat-"]');
                 const sectionName = section?.id?.replace('cat-','') || 'inconnu';
                 const ccId     = card.dataset.ccId || null;
-                const staticId = card.dataset.staticId || ('static_' + i);
+                const staticId = card.dataset.staticId || ('static_' + (idx++));
                 const uid      = ccId || staticId;
                 const isCustom = !!ccId;
                 const imgEl    = card.querySelector('.news-card__image, .group-card__image');
@@ -8517,7 +8527,7 @@
                             ? `<img src="${_ccEsc(imgSrc)}" alt="" style="width:100%;height:100%;object-fit:cover;display:block;">`
                             : `<span style="font-size:20px">${isGroup ? '📦' : isVideo ? '🎬' : '🖼️'}</span>`;
                 const typeLabel = isActus ? ' · actus' : isMsg ? ' · message' : isGroup ? ' · groupe' : isCustom ? ' · personnalisée' : '';
-                return `<div class="dcm-item" id="dcm-item-${uid}">
+                html += `<div class="dcm-item" id="dcm-item-${uid}">
                     <div class="dcm-item-thumb">${thumb}</div>
                     <div class="dcm-item-info">
                         <div class="dcm-item-badge">${_ccEsc(badge)}</div>
@@ -8534,8 +8544,31 @@
                         <button class="dcm-confirm-ok" onclick="_cmdDeleteConfirm('${uid}','${ccId||''}','${staticId}')">🗑️ Confirmer</button>
                     </div>
                 </div>`;
-            }).join('');
-        }
+            });
+            groupItems.forEach(({ gid, idx: gi, item }) => {
+                const uid = 'grp_' + gid + '_' + gi;
+                const thumb = item.type === 'video'
+                    ? `<span style="font-size:22px">🎬</span>`
+                    : `<span style="font-size:22px">🖼️</span>`;
+                html += `<div class="dcm-item" id="dcm-item-${uid}">
+                    <div class="dcm-item-thumb">${thumb}</div>
+                    <div class="dcm-item-info">
+                        <div class="dcm-item-badge">${_ccEsc(item.badge || g.badge)}</div>
+                        <div class="dcm-item-title">${_ccEsc(item.label)}</div>
+                        <div class="dcm-item-section">${gid} · dans le groupe</div>
+                    </div>
+                    <button class="dcm-item-del" onclick="_dcmOpenConfirm('${uid}')">Supprimer</button>
+                </div>
+                <div class="dcm-confirm-zone" id="dcm-confirm-${uid}">
+                    <div class="dcm-confirm-label">🔒 Mot de passe requis</div>
+                    <input class="dcm-confirm-pwd" type="password" placeholder="Entrer le mot de passe…" id="dcm-pwd-${uid}" onkeydown="if(event.key==='Enter')_cmdDeleteConfirm('${uid}','${item._ccId}','')">
+                    <div class="dcm-confirm-actions">
+                        <button class="dcm-confirm-cancel" onclick="_dcmCloseConfirm('${uid}')">Annuler</button>
+                        <button class="dcm-confirm-ok" onclick="_cmdDeleteConfirm('${uid}','${item._ccId}','')">🗑️ Confirmer</button>
+                    </div>
+                </div>`;
+            });
+            list.innerHTML = html;
         document.getElementById('deleteCardModal')?.classList.add('is-open');
     }
     function _dcmOpenConfirm(uid) {
@@ -8570,6 +8603,17 @@
                 });
             }
             _ccRemove(ccId);
+            // Retirer des groupes si la carte était dedans
+            Object.values(GROUP_DATA).forEach(g => {
+                g.items = g.items.filter(it => it._ccId !== ccId);
+            });
+            Object.keys(GROUP_DATA).forEach(k => {
+                if (k.startsWith('auto_') && GROUP_DATA[k].items.length < 2) {
+                    delete GROUP_DATA[k];
+                    const gcEl = document.querySelector(`[data-auto-group="${k}"]`);
+                    if (gcEl) gcEl.remove();
+                }
+            });
             const el = document.querySelector(`[data-cc-id="${ccId}"]`);
             if (el) el.remove();
         } else {
