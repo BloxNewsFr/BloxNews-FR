@@ -381,12 +381,14 @@
         }
         .discord-skeleton.is-visible { display: block; }
         @keyframes skeletonShimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
-            /* ── DARK MODE ── */
+                    /* ── DARK MODE ── */
         body.dark-mode { background-color: #0b0b12; }
         body.dark-mode .site-background { display: none; }
         body.dark-mode .site-header { background-color: rgba(10,10,18,0.75); border-bottom-color: rgba(255,255,255,0.06); }
         body.dark-mode .site-header__logo img { filter: brightness(0) invert(1); }
+        body.dark-mode .site-header__icons { color: #ccc; }
         body.dark-mode .site-nav a { color: #ccc; }
+        body.dark-mode .site-nav a:hover { background: var(--color-primary); color: #000; }
         body.dark-mode .mobile-nav-dropdown { background: rgba(15,15,25,0.98); border-color: rgba(255,255,255,0.06); }
         body.dark-mode .mobile-nav-dropdown a { color: #ccc; border-color: #2a2a35; }
         body.dark-mode .journal-title { color: #eee; }
@@ -427,6 +429,7 @@
         <li><a href="#">Game</a></li>
         <li><a href="../index.html" class="nav-news">News</a></li>
         <li><a href="../neo_bulletin.html" class="nav-leaks">Leaks</a></li>
+        <li><a href="../archives.html">Archives</a></li>
     </ul></nav>
     <div class="site-header__icons">
                         <span class="material-symbols-outlined dark-mode-toggle" id="darkModeToggle" onclick="toggleDarkMode()" title="Dark Mode">dark_mode</span>
@@ -466,6 +469,7 @@
     <a href="https://www.roblox.com/fr/games/2753915549/Blox-Fruits">Game</a>
     <a href="../index.html" class="nav-news">News</a>
     <a href="../neo_bulletin.html" class="nav-leaks">Leaks</a>
+        <a href="../archives.html">Archives</a>
 </div>
 
 <main class="bulletin-container">
