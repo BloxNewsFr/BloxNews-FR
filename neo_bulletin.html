@@ -5049,6 +5049,7 @@
             if (k.startsWith('auto_')) delete GROUP_DATA[k];
         });
         document.querySelectorAll('[data-auto-group]').forEach(el => el.remove());
+        const groupedIds = new Set();
         // Re-grouper
         const groups = new Map();
         fbCards.forEach(card => {
@@ -5081,6 +5082,7 @@
             };
             cards.forEach(c => {
                 GROUP_BADGE_MAP[c.badge] = gid;
+                groupedIds.add(c.id);
                 const _cardTs = c.createdAt
                     ? new Date(c.createdAt)
                     : (c.id && c.id.startsWith('cc_') ? new Date(parseInt(c.id.slice(3), 10)) : new Date());
@@ -5114,6 +5116,11 @@
                 <div class="group-card__bar"></div>
             </article>`;
             grid.prepend(wrapper.firstChild);
+        });
+        // Supprimer les anciennes cards individuelles qui sont maintenant dans un groupe
+        groupedIds.forEach(id => {
+            const el = document.querySelector(`[data-cc-id="${id}"]`);
+            if (el) el.remove();
         });
     }
 
