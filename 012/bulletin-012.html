@@ -476,9 +476,6 @@
                 background: linear-gradient(135deg, #00cc35, #00ff41);
                 box-shadow: 0 6px 18px rgba(0,255,65,0.35);
             }
-            
-                background: #00ff41; color: #000; border-color: transparent;
-            }
         }
     
         .search-overlay {
@@ -984,6 +981,8 @@ setInterval(drawMatrix, 35);
 window.addEventListener('resize', () => {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
+    columns = Math.floor(canvas.width / fontSize);
+    drops = Array(columns).fill(1);
 });
 
         const menuBtn = document.getElementById('menuToggle');
@@ -1181,7 +1180,7 @@ window.addEventListener('resize', () => {
     }
     function _discordAvatarUrl(user) {
         if (user.avatar) return 'https://cdn.discordapp.com/avatars/' + user.id + '/' + user.avatar + '.webp?size=80';
-        const idx = user.discriminator !== '0' ? parseInt(user.discriminator) % 5 : parseInt(user.id) >> 22 % 6;
+        const idx = user.discriminator !== '0' ? parseInt(user.discriminator) % 5 : (parseInt(user.id) >> 22) % 6;
         return 'https://cdn.discordapp.com/embed/avatars/' + idx + '.png';
     }
     function _discordShowUser(user) {

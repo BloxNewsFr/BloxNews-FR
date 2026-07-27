@@ -881,7 +881,7 @@
     }
     function _discordAvatarUrl(user) {
         if (user.avatar) return 'https://cdn.discordapp.com/avatars/' + user.id + '/' + user.avatar + '.webp?size=80';
-        const idx = user.discriminator !== '0' ? parseInt(user.discriminator) % 5 : parseInt(user.id) >> 22 % 6;
+        const idx = user.discriminator !== '0' ? parseInt(user.discriminator) % 5 : (parseInt(user.id) >> 22) % 6;
         return 'https://cdn.discordapp.com/embed/avatars/' + idx + '.png';
     }
     function _discordShowUser(user) {
