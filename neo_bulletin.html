@@ -5579,8 +5579,11 @@
                           || cards.find(c => c.src)
                           || cards[0];
             const isVideoCover = coverCard.mediaType === 'video' && !!coverCard.src;
+            const videoThumb = isVideoCover ? _getVideoThumb(coverCard.src) : null;
             const coverImg = isVideoCover
-                ? `<video src="${coverCard.src}" class="group-card__image" preload="metadata" muted playsinline></video>`
+                ? (videoThumb
+                    ? `<img src="${videoThumb}" class="group-card__image" alt="${displayBadge}" loading="lazy" style="aspect-ratio:16/10;object-fit:cover">`
+                    : `<video src="${coverCard.src}" class="group-card__image" preload="metadata" muted playsinline></video>`)
                 : coverCard.src
                     ? `<img src="${coverCard.src}" class="group-card__image" alt="${displayBadge}" loading="lazy">`
                     : `<div class="group-card__image" style="display:flex;align-items:center;justify-content:center;background:#0d0d18;color:rgba(255,255,255,0.15);font-size:28px">📰</div>`;
@@ -5661,15 +5664,31 @@
                         imgEl.replaceWith(newImg);
                     }
                 } else {
-                    // Cover est une vidéo — remplacer par <video> si besoin
-                    if (imgEl.tagName !== 'VIDEO') {
-                        const newVid = document.createElement('video');
-                        newVid.className = imgEl.className;
-                        newVid.src = cover.src;
-                        newVid.muted = true; newVid.playsInline = true; newVid.preload = 'metadata';
-                        imgEl.replaceWith(newVid);
-                    } else if (imgEl.src !== cover.src) {
-                        imgEl.src = cover.src;
+                    // Cover est une vidéo — essayer la vignette YouTube d'abord
+                    const vThumb = _getVideoThumb(cover.src);
+                    if (vThumb) {
+                        if (imgEl.tagName !== 'IMG') {
+                            const newImg = document.createElement('img');
+                            newImg.className = imgEl.className;
+                            newImg.src = vThumb;
+                            newImg.alt = g.badge || '';
+                            newImg.loading = 'lazy';
+                            newImg.style.cssText = 'aspect-ratio:16/10;object-fit:cover';
+                            imgEl.replaceWith(newImg);
+                        } else if (imgEl.src !== vThumb) {
+                            imgEl.src = vThumb;
+                        }
+                    } else {
+                        // Pas de vignette dispo — remplacer par <video>
+                        if (imgEl.tagName !== 'VIDEO') {
+                            const newVid = document.createElement('video');
+                            newVid.className = imgEl.className;
+                            newVid.src = cover.src;
+                            newVid.muted = true; newVid.playsInline = true; newVid.preload = 'metadata';
+                            imgEl.replaceWith(newVid);
+                        } else if (imgEl.src !== cover.src) {
+                            imgEl.src = cover.src;
+                        }
                     }
                 }
             } else {
@@ -5683,6 +5702,14 @@
                 }
             }
         });
+    }
+
+    function _getVideoThumb(src) {
+        if (!src) return null;
+        // YouTube
+        const ytMatch = src.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+        if (ytMatch) return 'https://img.youtube.com/vi/' + ytMatch[1] + '/0.jpg';
+        return null;
     }
 
     /* ── Rerender du drawer avec likes ─────────────────────────────── */
@@ -5705,10 +5732,13 @@
         grid.innerHTML = data.items.map((item, i) => {
             const isExternal = item.src && (item.src.startsWith('http://') || item.src.startsWith('https://'));
             const videoSrc   = isExternal ? item.src : (item.src + '#t=0.5');
+            const videoThumb = item.type === 'video' ? _getVideoThumb(item.src) : null;
             const thumb = item.type === 'video'
-                ? (isExternal
-                    ? `<div class="group-drawer__item-img group-drawer__item-vid-ext" style="display:flex;align-items:center;justify-content:center;background:#0d0d18;aspect-ratio:16/10"><span style="font-size:32px">▶️</span></div>`
-                    : `<video src="${videoSrc}" preload="metadata" muted playsinline class="group-drawer__item-img"></video>`)
+                ? (videoThumb
+                    ? `<img src="${videoThumb}" class="group-drawer__item-img" alt="${item.label}" loading="lazy" style="aspect-ratio:16/10;object-fit:cover">`
+                    : isExternal
+                        ? `<div class="group-drawer__item-img group-drawer__item-vid-ext" style="display:flex;align-items:center;justify-content:center;background:#0d0d18;aspect-ratio:16/10"><span style="font-size:32px">▶️</span></div>`
+                        : `<video src="${videoSrc}" preload="metadata" muted playsinline class="group-drawer__item-img"></video>`)
                 : `<img src="${item.src}" class="group-drawer__item-img" alt="${item.label}" loading="lazy">`;
             const likeId = _drawerLikeId(groupId, i);
             const local  = _plLoadLocal();
