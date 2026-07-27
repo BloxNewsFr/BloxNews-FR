@@ -300,6 +300,14 @@
             @keyframes shimmerBanner { 0%{background-position:0% center} 100%{background-position:200% center} }
 
         .blue-banner { font-size: 24px; padding: 12px 30px; }
+            .site-header__icons { gap: 6px; }
+            .site-header__icons .dark-mode-toggle { font-size: 20px; }
+            .discord-login-btn { padding: 4px 8px; font-size: 11px; gap: 4px; }
+            .discord-login-btn svg { width: 14px; height: 14px; }
+            .discord-user-pill { padding: 2px 6px 2px 2px; gap: 4px; }
+            .discord-avatar { width: 24px; height: 24px; }
+            .discord-username { max-width: 60px; font-size: 11px; }
+            .site-header__logo img { height: 32px; }
             .mobile-menu-btn { display: block; }
             .mobile-nav-dropdown {
                 display: flex; flex-direction: column;
@@ -591,8 +599,8 @@
             </ul>
         </nav>
         <div class="site-header__icons">
-                        <span class="material-symbols-outlined dark-mode-toggle" id="darkModeToggle" onclick="toggleDarkMode()" title="Dark Mode">dark_mode</span>
-            <span class="material-symbols-outlined" onclick="openSearch()">search</span>
+                        <span class="material-symbols-outlined" onclick="openSearch()">search</span>
+            <span class="material-symbols-outlined dark-mode-toggle" id="darkModeToggle" onclick="toggleDarkMode()" title="Dark Mode">dark_mode</span>
                         <!-- Auth Discord -->
             <div class="discord-skeleton" id="discordSkeleton"></div>
             <button class="discord-login-btn" id="discordLoginBtn" onclick="_discordLogin()" style="display:none">
