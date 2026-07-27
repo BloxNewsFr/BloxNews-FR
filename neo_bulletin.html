@@ -3364,16 +3364,17 @@
             display: none; position: absolute; top: 100%; left: 0;
             margin-top: 4px; z-index: 10;
             background: #1a1a2e; border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 10px; padding: 6px; gap: 4px;
+            border-radius: 10px; padding: 6px;             gap: 4px;
             box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-            grid-template-columns: repeat(5, 1fr);
         }
-        .ncm-hl-picker.is-open { display: grid; }
-        .ncm-hl-color {
-            width: 26px; height: 26px; border-radius: 6px; cursor: pointer;
-            border: 2px solid transparent; transition: all 0.15s;
+        .ncm-hl-wrap { position: relative; display: flex; align-items: center; }
+        .ncm-format-btn.is-hl { color: #ffd966; }
+        .ncm-hl-swatch {
+            width: 18px; height: 18px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.15);
+            cursor: pointer; padding: 0; flex-shrink: 0;
+            transition: border-color 0.15s; margin-left: 2px;
         }
-        .ncm-hl-color:hover { border-color: rgba(255,255,255,0.5); transform: scale(1.15); }
+        .ncm-hl-swatch:hover { border-color: rgba(255,255,255,0.5); }
 
         /* ══ STEP 3 : RECAP ══ */
         .ncm-page--recap {
@@ -5144,15 +5145,10 @@
                                     <button class="ncm-format-btn" onclick="_ncmFormatText('underline')" title="Souligné"><u>U</u></button>
                                     <button class="ncm-format-btn" onclick="_ncmFormatText('strike')" title="Barré"><s>S</s></button>
                                     <span class="ncm-format-sep"></span>
-                                    <button class="ncm-format-btn" onclick="_ncmToggleHighlightPicker()" title="Surligner" id="ncmHlBtn">
-                                        <span style="background:rgba(255,200,50,0.3);padding:0 5px;border-radius:3px">H</span>
-                                    </button>
-                                    <div class="ncm-hl-picker" id="ncmHlPicker">
-                                        <div class="ncm-hl-color" style="background:#ffd700" onclick="_ncmFormatText('highlight','#ffd700')"></div>
-                                        <div class="ncm-hl-color" style="background:#ff6b6b" onclick="_ncmFormatText('highlight','#ff6b6b')"></div>
-                                        <div class="ncm-hl-color" style="background:#51cf66" onclick="_ncmFormatText('highlight','#51cf66')"></div>
-                                        <div class="ncm-hl-color" style="background:#74c0fc" onclick="_ncmFormatText('highlight','#74c0fc')"></div>
-                                        <div class="ncm-hl-color" style="background:#da77f2" onclick="_ncmFormatText('highlight','#da77f2')"></div>
+                                    <div class="ncm-hl-wrap">
+                                        <button class="ncm-format-btn is-hl" onclick="_ncmFormatText('highlight')" title="Surligner (Ctrl+Shift+E)" id="ncmHlBtn">H</button>
+                                        <button class="ncm-hl-swatch" id="ncmHlSwatch" style="background:#ffc832" title="Choisir une couleur"></button>
+                                        <input type="color" id="ncmHlColorInput" value="#ffc832" style="display:none">
                                     </div>
                                 </div>
                                 <textarea id="ncmActusContent" rows="6"
@@ -9104,7 +9100,7 @@
         let val = ta.value;
         val = val.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
         val = val.replace(/\*(.+?)\*/g, '<i>$1</i>');
-        val = val.replace(/==#([0-9a-fA-F]{6}) (.+?)==/g, '<mark style="background:$1;color:#fff;padding:0 3px;border-radius:3px">$2</mark>');
+        val = val.replace(/==#([0-9a-fA-F]{6}) (.+?)==/g, '<mark style="background:#$1;color:#fff;padding:0 3px;border-radius:3px">$2</mark>');
         val = val.replace(/==(.+?)==/g, '<mark style="background:rgba(255,200,50,0.25);color:#ffd966;padding:0 3px;border-radius:3px">$1</mark>');
         val = val.replace(/__(.+?)__/g, '<u>$1</u>');
         val = val.replace(/~~(.+?)~~/g, '<s>$1</s>');
@@ -9125,7 +9121,9 @@
         _ncmActusSyncPreview();
     }
 
-    function _ncmFormatText(type, color) {
+    let _ncmHlColor = '#ffc832';
+
+    function _ncmFormatText(type) {
         const ta = document.getElementById('ncmActusContent');
         if (!ta) return;
         const map = {
@@ -9135,25 +9133,37 @@
             strike: ['~~', '~~'],
         };
         if (type === 'highlight') {
-            const tag = color ? '==#' + color.replace('#','') + ' ' : '==';
+            const tag = '==#' + _ncmHlColor.replace('#','') + ' ';
             _ncmWrapSelection(ta, tag, '==');
-            document.getElementById('ncmHlPicker')?.classList.remove('is-open');
             return;
         }
         const pair = map[type];
         if (pair) _ncmWrapSelection(ta, pair[0], pair[1]);
     }
 
-    function _ncmToggleHighlightPicker() {
-        const picker = document.getElementById('ncmHlPicker');
-        if (!picker) return;
-        picker.classList.toggle('is-open');
-    }
-    document.addEventListener('click', function _ncmCloseHl(e) {
-        const picker = document.getElementById('ncmHlPicker');
-        const btn = document.getElementById('ncmHlBtn');
-        if (picker && btn && !picker.contains(e.target) && !btn.contains(e.target)) {
-            picker.classList.remove('is-open');
+    document.addEventListener('click', function(e) {
+        const swatch = document.getElementById('ncmHlSwatch');
+        const input = document.getElementById('ncmHlColorInput');
+        if (swatch && input && swatch.contains(e.target)) {
+            input.click();
+        }
+    });
+
+    document.addEventListener('change', function(e) {
+        if (e.target.id === 'ncmHlColorInput') {
+            _ncmHlColor = e.target.value;
+            const swatch = document.getElementById('ncmHlSwatch');
+            if (swatch) swatch.style.background = _ncmHlColor;
+        }
+    });
+
+    document.addEventListener('keydown', function(e) {
+        if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'e') {
+            const ta = document.getElementById('ncmActusContent');
+            if (ta && document.activeElement === ta) {
+                e.preventDefault();
+                _ncmFormatText('highlight');
+            }
         }
     });
 
