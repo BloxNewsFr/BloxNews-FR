@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500">
+  <rect width="800" height="500" fill="#0a0a14"/>
+  <rect x="50" y="50" width="700" height="400" rx="20" fill="none" stroke="rgba(255,218,0,0.15)" stroke-width="2" stroke-dasharray="8 6"/>
+  <text x="400" y="220" font-family="Inter,sans-serif" font-size="80" font-weight="900" fill="rgba(255,218,0,0.08)" text-anchor="middle" letter-spacing="4">#024</text>
+  <text x="400" y="280" font-family="Inter,sans-serif" font-size="18" font-weight="600" fill="rgba(255,255,255,0.15)" text-anchor="middle" letter-spacing="6">BIENTÔT</text>
+  <circle cx="400" cy="250" r="120" fill="none" stroke="rgba(255,218,0,0.06)" stroke-width="1">
+    <animateTransform attributeName="transform" type="rotate" from="0 400 250" to="360 400 250" dur="8s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="400" cy="250" r="80" fill="none" stroke="rgba(88,101,242,0.06)" stroke-width="1">
+    <animateTransform attributeName="transform" type="rotate" from="360 400 250" to="0 400 250" dur="6s" repeatCount="indefinite"/>
+  </circle>
+</svg>
