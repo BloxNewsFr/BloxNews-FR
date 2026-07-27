@@ -4598,176 +4598,255 @@
     <!-- ── BULLE /NEW ── -->
     <div id="newCardModal">
         <div class="ncm-panel">
-            <!-- Header -->
+
+            <!-- ── HEADER ── -->
             <div class="ncm-header">
                 <div class="ncm-header-icon">✦</div>
                 <div class="ncm-header-text">
                     <div class="ncm-header-title">Nouvelle carte</div>
-                    <div class="ncm-header-sub">Clique sur chaque élément de la carte pour l'éditer</div>
+                    <div class="ncm-header-sub" id="ncmHeaderSub">Choisis un type pour commencer</div>
                 </div>
                 <button class="ncm-header-close" onclick="document.getElementById('newCardModal').classList.remove('is-open')">✕</button>
             </div>
 
-            <!-- Body -->
-            <div class="ncm-body">
-                <!-- Colonne prévisualisation -->
-                <div class="ncm-preview-col">
-                    <div class="ncm-preview-label">Aperçu</div>
-
-                    <!-- Preview STANDARD (leak) -->
-                    <div id="ncmPreviewStandard">
-                        <div class="ncm-card">
-                            <div class="ncm-card-img" id="ncmDropZone" onclick="document.getElementById('ncmFileInput').click()">
-                                <div class="ncm-card-empty" id="ncmDropHint">
-                                    <div class="ncm-card-empty-icon">🖼️</div>
-                                    <div class="ncm-card-empty-text">Glisse une image<br>ou clique ici</div>
-                                </div>
-                                <div class="ncm-card-badge" contenteditable="true" id="ncmEditBadge" spellcheck="false">EXCLU</div>
-                            </div>
-                            <input type="file" id="ncmFileInput" accept="image/*" style="display:none" onchange="_ncmFileSelected(this)">
-                            <div class="ncm-card-body">
-                                <div class="ncm-card-eyebrow" contenteditable="true" id="ncmEditEyebrow" spellcheck="false">Leak</div>
-                                <h2 class="ncm-card-title" contenteditable="true" id="ncmEditTitle" spellcheck="false">Titre de la carte</h2>
-                                <div class="ncm-card-btn" contenteditable="true" id="ncmEditBtn" spellcheck="false">Voir l'image →</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Preview MESSAGE -->
-                    <div id="ncmPreviewMessage">
-                        <div class="ncm-msg-preview">
-                            <div class="ncm-msg-header" contenteditable="true" id="ncmMsgInitials" spellcheck="false">E.</div>
-                            <div class="ncm-msg-body">
-                                <div class="ncm-msg-eyebrow">Cryptage</div>
-                                <div class="ncm-msg-title" contenteditable="true" id="ncmMsgTitle" spellcheck="false">Message de E. - Quake</div>
-                                <div class="ncm-msg-text" contenteditable="true" id="ncmMsgText" spellcheck="false">Écris le contenu du message ici…</div>
-                                <div class="ncm-msg-btn">Décrypter →</div>
-                                <!-- Champ image décrypté -->
-                                <div class="ncm-msg-img-field" id="ncmMsgImgField" onclick="document.getElementById('ncmMsgFileInput').click()">
-                                    <span>🔓</span>
-                                    <span id="ncmMsgImgLabel">Image révélée au décryptage (cliquer ou URL)</span>
-                                </div>
-                                <input type="file" id="ncmMsgFileInput" accept="image/*" style="display:none" onchange="_ncmMsgFileSelected(this)">
-                                <input type="text" id="ncmMsgSrc" placeholder="ou coller une URL d'image…"
-                                    style="margin-top:6px;width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,180,0,0.15);border-radius:8px;padding:7px 10px;color:rgba(255,220,80,0.7);font-size:11px;font-family:monospace;outline:none;"
-                                    oninput="_ncmMsgSrcChange(this.value)">
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Preview ACTUS -->
-                    <div id="ncmPreviewActus">
-                        <div class="ncm-actus-preview">
-                            <div class="ncm-actus-topbar">
-                                Blox Leaks Network
-                                <span class="ncm-actus-topbar-dot"></span>
-                                Actus
-                            </div>
-                            <div class="ncm-actus-inner">
-                            <div class="ncm-actus-header">
-                                <div class="ncm-actus-h2" contenteditable="true" id="ncmActusTitle" spellcheck="false">TITRE DU DOSSIER</div>
-                                <div class="ncm-actus-meta">STATUT : ACTIF<br>À L'INSTANT</div>
-                            </div>
-                            <div class="ncm-actus-text" contenteditable="true" id="ncmActusText" spellcheck="false">Écris le contenu du dossier ici. Tu peux utiliser **gras**, ==surligné==, __souligné__…</div>
-                            <div class="ncm-actus-comments">
-                                <div class="ncm-actus-comments-icon">
-                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.002.022.015.043.033.055a19.91 19.91 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
-                                </div>
-                                Commentaires — section incluse automatiquement
-                            </div>
-                            </div><!-- /ncm-actus-inner -->
-                        </div>
-                    </div>
-
-                    <div class="ncm-preview-hint" id="ncmPreviewHint">
-                        Clique sur le <strong>badge</strong>, le <strong>titre</strong> ou le <strong>bouton</strong> pour les modifier directement.
-                    </div>
+            <!-- ── STEPS INDICATOR ── -->
+            <div class="ncm-steps">
+                <div class="ncm-step is-active" id="ncmStep1">
+                    <div class="ncm-step-num">1</div>
+                    <div class="ncm-step-label">Type</div>
                 </div>
-
-                <!-- Colonne formulaire -->
-                <div class="ncm-form-col">
-                    <div class="ncm-section-title">Configuration</div>
-
-                    <!-- TYPE DE CARTE -->
-                    <div class="ncm-field">
-                        <label><span class="ncm-lbl-icon">🗂️</span> Type de carte</label>
-                        <div class="ncm-type-group">
-                            <label class="ncm-type-pill active" id="ncmKindStandard">
-                                <input type="radio" name="ncmKind" value="standard" checked onchange="_ncmKindChange()">
-                                <span class="ncm-type-dot"></span>
-                                <span class="ncm-type-emoji">📌</span>
-                                <span class="ncm-type-name">Leak</span>
-                            </label>
-                            <label class="ncm-type-pill" id="ncmKindActus">
-                                <input type="radio" name="ncmKind" value="actus" onchange="_ncmKindChange()">
-                                <span class="ncm-type-dot"></span>
-                                <span class="ncm-type-emoji">📰</span>
-                                <span class="ncm-type-name">Actus</span>
-                            </label>
-                            <label class="ncm-type-pill" id="ncmKindMessage">
-                                <input type="radio" name="ncmKind" value="message" onchange="_ncmKindChange()">
-                                <span class="ncm-type-dot"></span>
-                                <span class="ncm-type-emoji">✉️</span>
-                                <span class="ncm-type-name">Message</span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <!-- Section (masquée si actus/message car fixe) -->
-                    <div class="ncm-field" id="ncmSectionField">
-                        <label><span class="ncm-lbl-icon">📂</span> Section</label>
-                        <select id="ncmSection"></select>
-                    </div>
-
-                    <div class="ncm-field">
-                        <label><span class="ncm-lbl-icon">🎞️</span> Type de média</label>
-                        <div class="ncm-type-group">
-                            <label class="ncm-type-pill active" id="ncmPillImage">
-                                <input type="radio" name="ncmType" value="image" checked onchange="_ncmTypeChange()">
-                                <span class="ncm-type-dot"></span>
-                                <span class="ncm-type-emoji">🖼️</span>
-                                <span class="ncm-type-name">Image</span>
-                            </label>
-                            <label class="ncm-type-pill" id="ncmPillVideo">
-                                <input type="radio" name="ncmType" value="video" onchange="_ncmTypeChange()">
-                                <span class="ncm-type-dot"></span>
-                                <span class="ncm-type-emoji">🎬</span>
-                                <span class="ncm-type-name">Vidéo</span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="ncm-field" id="ncmVideoField" style="display:none">
-                        <label><span class="ncm-lbl-icon">🔗</span> URL de la vidéo</label>
-                        <input id="ncmSrc" type="text" placeholder="https://…">
-                    </div>
-
-                    <!-- Champ contenu texte (actus uniquement) -->
-                    <div class="ncm-field" id="ncmActusField" style="display:none">
-                        <label><span class="ncm-lbl-icon">📝</span> Contenu de l'actus</label>
-                        <textarea id="ncmActusContent" rows="4" placeholder="Texte du dossier, avec **gras**, ==surligné==, etc." style="width:100%;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);border-radius:10px;padding:8px 12px;color:#fff;font-size:13px;font-family:monospace;outline:none;resize:vertical;"></textarea>
-                        <div style="font-size:11px;color:rgba(255,255,255,0.3);margin-top:4px;">Markdown léger : **gras** ==surligné== __souligné__ ~~barré~~</div>
-                    </div>
-
-                    <div class="ncm-divider"></div>
-                    <div class="ncm-section-title">Aperçu rapide</div>
-
-                    <div class="ncm-field">
-                        <label><span class="ncm-lbl-icon">🏷️</span> Texte du badge</label>
-                        <input type="text" id="ncmBadgeInput" placeholder="EXCLU, LEAK, NOUVEAU…" oninput="document.getElementById('ncmEditBadge').textContent=this.value||'EXCLU'">
-                    </div>
-                    <div class="ncm-field">
-                        <label><span class="ncm-lbl-icon">✏️</span> Titre de la carte</label>
-                        <input type="text" id="ncmTitleInput" placeholder="Titre visible sur la carte" oninput="document.getElementById('ncmEditTitle').textContent=this.value||'Titre de la carte'">
-                    </div>
+                <div class="ncm-step-line"></div>
+                <div class="ncm-step" id="ncmStep2">
+                    <div class="ncm-step-num">2</div>
+                    <div class="ncm-step-label">Contenu</div>
+                </div>
+                <div class="ncm-step-line"></div>
+                <div class="ncm-step" id="ncmStep3">
+                    <div class="ncm-step-num">3</div>
+                    <div class="ncm-step-label">Publier</div>
                 </div>
             </div>
 
-            <!-- Footer actions -->
+            <!-- ── BODY ── -->
+            <div class="ncm-body">
+
+                <!-- ══ STEP 1 : CHOIX DU TYPE ══ -->
+                <div class="ncm-step-page is-active" id="ncmPage1">
+                    <div class="ncm-type-grid">
+
+                        <label class="ncm-type-card" id="ncmKindStandard">
+                            <input type="radio" name="ncmKind" value="standard" checked onchange="_ncmKindChange()">
+                            <div class="ncm-type-card-inner">
+                                <div class="ncm-type-card-icon">📌</div>
+                                <div class="ncm-type-card-name">Leak / Showcase</div>
+                                <div class="ncm-type-card-desc">Image ou vidéo avec badge, titre et bouton. Pour les leaks, exclus, showcases.</div>
+                                <div class="ncm-type-card-check">✓</div>
+                            </div>
+                        </label>
+
+                        <label class="ncm-type-card" id="ncmKindActus">
+                            <input type="radio" name="ncmKind" value="actus" onchange="_ncmKindChange()">
+                            <div class="ncm-type-card-inner">
+                                <div class="ncm-type-card-icon">📰</div>
+                                <div class="ncm-type-card-name">Actus / Dossier</div>
+                                <div class="ncm-type-card-desc">Article avec titre, texte riche et commentaires. Pour les annonces et résumés.</div>
+                                <div class="ncm-type-card-check">✓</div>
+                            </div>
+                        </label>
+
+                        <label class="ncm-type-card" id="ncmKindMessage">
+                            <input type="radio" name="ncmKind" value="message" onchange="_ncmKindChange()">
+                            <div class="ncm-type-card-inner">
+                                <div class="ncm-type-card-icon">✉️</div>
+                                <div class="ncm-type-card-name">Message crypté</div>
+                                <div class="ncm-type-card-desc">Contenu chiffré révélé au clic. Pour les messages mystère et teasers.</div>
+                                <div class="ncm-type-card-check">✓</div>
+                            </div>
+                        </label>
+
+                    </div>
+                </div>
+
+                <!-- ══ STEP 2 : CONTENU (preview + champs) ══ -->
+                <div class="ncm-step-page" id="ncmPage2">
+                    <div class="ncm-editor">
+
+                        <!-- Colonne preview -->
+                        <div class="ncm-preview-col">
+                            <div class="ncm-preview-label">Aperçu en direct</div>
+
+                            <div id="ncmPreviewStandard">
+                                <div class="ncm-card">
+                                    <div class="ncm-card-img" id="ncmDropZone" onclick="document.getElementById('ncmFileInput').click()">
+                                        <div class="ncm-card-empty" id="ncmDropHint">
+                                            <div class="ncm-card-empty-icon">🖼️</div>
+                                            <div class="ncm-card-empty-text">Glisse une image<br>ou clique ici</div>
+                                        </div>
+                                        <div class="ncm-card-badge" contenteditable="true" id="ncmEditBadge" spellcheck="false">EXCLU</div>
+                                    </div>
+                                    <input type="file" id="ncmFileInput" accept="image/*" style="display:none" onchange="_ncmFileSelected(this)">
+                                    <div class="ncm-card-body">
+                                        <div class="ncm-card-eyebrow" contenteditable="true" id="ncmEditEyebrow" spellcheck="false">Leak</div>
+                                        <h2 class="ncm-card-title" contenteditable="true" id="ncmEditTitle" spellcheck="false">Titre de la carte</h2>
+                                        <div class="ncm-card-btn" contenteditable="true" id="ncmEditBtn" spellcheck="false">Voir l'image →</div>
+                                    </div>
+                                </div>
+                                <div class="ncm-preview-hint">Clique sur le <strong>badge</strong>, le <strong>titre</strong> ou le <strong>bouton</strong> pour modifier directement.</div>
+                            </div>
+
+                            <div id="ncmPreviewMessage">
+                                <div class="ncm-msg-preview">
+                                    <div class="ncm-msg-header" contenteditable="true" id="ncmMsgInitials" spellcheck="false">E.</div>
+                                    <div class="ncm-msg-body">
+                                        <div class="ncm-msg-eyebrow">Cryptage</div>
+                                        <div class="ncm-msg-title" contenteditable="true" id="ncmMsgTitle" spellcheck="false">Message de E. - Quake</div>
+                                        <div class="ncm-msg-text" contenteditable="true" id="ncmMsgText" spellcheck="false">Écris le contenu du message ici…</div>
+                                        <div class="ncm-msg-btn">Décrypter →</div>
+                                        <div class="ncm-msg-img-field" id="ncmMsgImgField" onclick="document.getElementById('ncmMsgFileInput').click()">
+                                            <span>🔓</span>
+                                            <span id="ncmMsgImgLabel">Image révélée au décryptage (cliquer ou URL)</span>
+                                        </div>
+                                        <input type="file" id="ncmMsgFileInput" accept="image/*" style="display:none" onchange="_ncmMsgFileSelected(this)">
+                                        <input type="text" id="ncmMsgSrc" placeholder="ou coller une URL d'image…"
+                                            style="margin-top:6px;width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,180,0,0.15);border-radius:8px;padding:7px 10px;color:rgba(255,220,80,0.7);font-size:11px;font-family:monospace;outline:none;"
+                                            oninput="_ncmMsgSrcChange(this.value)">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="ncmPreviewActus">
+                                <div class="ncm-actus-preview">
+                                    <div class="ncm-actus-topbar">
+                                        Blox Leaks Network
+                                        <span class="ncm-actus-topbar-dot"></span>
+                                        Actus
+                                    </div>
+                                    <div class="ncm-actus-inner">
+                                        <div class="ncm-actus-header">
+                                            <div class="ncm-actus-h2" contenteditable="true" id="ncmActusTitle" spellcheck="false">TITRE DU DOSSIER</div>
+                                            <div class="ncm-actus-meta">STATUT : ACTIF<br>À L'INSTANT</div>
+                                        </div>
+                                        <div class="ncm-actus-text" contenteditable="true" id="ncmActusText" spellcheck="false">Écris le contenu du dossier ici…</div>
+                                        <div class="ncm-actus-comments">
+                                            <div class="ncm-actus-comments-icon">
+                                                <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.002.022.015.043.033.055a19.91 19.91 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
+                                            </div>
+                                            Commentaires inclus automatiquement
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Colonne formulaire contextuel -->
+                        <div class="ncm-form-col" id="ncmFormCol">
+
+                            <!-- CHAMPS STANDARD -->
+                            <div id="ncmFieldsStandard">
+                                <div class="ncm-field-group-title">Média</div>
+                                <div class="ncm-field">
+                                    <label><span class="ncm-lbl-icon">🎞️</span> Type de média</label>
+                                    <div class="ncm-type-group">
+                                        <label class="ncm-type-pill active" id="ncmPillImage">
+                                            <input type="radio" name="ncmType" value="image" checked onchange="_ncmTypeChange()">
+                                            <span class="ncm-type-dot"></span>
+                                            <span class="ncm-type-emoji">🖼️</span>
+                                            <span class="ncm-type-name">Image</span>
+                                        </label>
+                                        <label class="ncm-type-pill" id="ncmPillVideo">
+                                            <input type="radio" name="ncmType" value="video" onchange="_ncmTypeChange()">
+                                            <span class="ncm-type-dot"></span>
+                                            <span class="ncm-type-emoji">🎬</span>
+                                            <span class="ncm-type-name">Vidéo</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="ncm-field" id="ncmVideoField" style="display:none">
+                                    <label><span class="ncm-lbl-icon">🔗</span> URL de la vidéo</label>
+                                    <input id="ncmSrc" type="text" placeholder="https://cdn.example.com/video.mp4">
+                                    <div class="ncm-field-hint">Lien direct vers un fichier .mp4 ou .mov hébergé</div>
+                                </div>
+                                <div class="ncm-field-group-title" style="margin-top:18px">Texte de la carte</div>
+                                <div class="ncm-field">
+                                    <label><span class="ncm-lbl-icon">🏷️</span> Badge</label>
+                                    <input type="text" id="ncmBadgeInput" placeholder="EXCLU, LEAK, NOUVEAU…" oninput="document.getElementById('ncmEditBadge').textContent=this.value||'EXCLU'">
+                                </div>
+                                <div class="ncm-field">
+                                    <label><span class="ncm-lbl-icon">✏️</span> Titre</label>
+                                    <input type="text" id="ncmTitleInput" placeholder="Titre visible sur la carte" oninput="document.getElementById('ncmEditTitle').textContent=this.value||'Titre de la carte'">
+                                </div>
+                                <div class="ncm-field">
+                                    <label><span class="ncm-lbl-icon">📂</span> Section</label>
+                                    <select id="ncmSection"></select>
+                                </div>
+                            </div>
+
+                            <!-- CHAMPS ACTUS -->
+                            <div id="ncmFieldsActus" style="display:none">
+                                <div class="ncm-field-group-title">Dossier</div>
+                                <div class="ncm-field">
+                                    <label><span class="ncm-lbl-icon">📝</span> Titre du dossier</label>
+                                    <input type="text" id="ncmActusTitleInput" placeholder="NOM DU DOSSIER"
+                                        oninput="document.getElementById('ncmActusTitle').textContent=this.value||'TITRE DU DOSSIER'">
+                                </div>
+                                <div class="ncm-field">
+                                    <label><span class="ncm-lbl-icon">📄</span> Contenu</label>
+                                    <textarea id="ncmActusContent" rows="6"
+                                        placeholder="Texte du dossier…"
+                                        oninput="_ncmActusSyncPreview()"
+                                        style="width:100%;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);border-radius:10px;padding:10px 14px;color:#fff;font-size:13px;font-family:monospace;outline:none;resize:vertical;box-sizing:border-box;line-height:1.6;"></textarea>
+                                    <div class="ncm-field-hint">**gras** &nbsp;==surligné== &nbsp;__souligné__ &nbsp;~~barré~~</div>
+                                </div>
+                                <div class="ncm-field ncm-field--inline">
+                                    <span class="ncm-field-info">💬 Section commentaires ajoutée automatiquement</span>
+                                </div>
+                            </div>
+
+                            <!-- CHAMPS MESSAGE -->
+                            <div id="ncmFieldsMessage" style="display:none">
+                                <div class="ncm-field-group-title">Message crypté</div>
+                                <div class="ncm-field">
+                                    <label><span class="ncm-lbl-icon">🔤</span> Initiales</label>
+                                    <input type="text" id="ncmMsgInitialsInput" placeholder="E." maxlength="4"
+                                        oninput="document.getElementById('ncmMsgInitials').textContent=this.value||'E.'">
+                                </div>
+                                <div class="ncm-field">
+                                    <label><span class="ncm-lbl-icon">✏️</span> Titre</label>
+                                    <input type="text" id="ncmMsgTitleInput" placeholder="Message de E. - Quake"
+                                        oninput="document.getElementById('ncmMsgTitle').textContent=this.value||'Message de E.'">
+                                </div>
+                                <div class="ncm-field">
+                                    <label><span class="ncm-lbl-icon">📝</span> Contenu crypté</label>
+                                    <textarea id="ncmMsgTextInput" rows="4" placeholder="Contenu visible après décryptage…"
+                                        oninput="document.getElementById('ncmMsgText').textContent=this.value||''"
+                                        style="width:100%;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);border-radius:10px;padding:10px 14px;color:#fff;font-size:13px;font-family:inherit;outline:none;resize:vertical;box-sizing:border-box;"></textarea>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ══ STEP 3 : RÉCAP + PUBLIER ══ -->
+                <div class="ncm-step-page" id="ncmPage3">
+                    <div class="ncm-recap">
+                        <div class="ncm-recap-icon">🚀</div>
+                        <div class="ncm-recap-title">Prêt à publier ?</div>
+                        <div class="ncm-recap-sub">Vérifie le récap avant de créer la carte.</div>
+                        <div class="ncm-recap-card" id="ncmRecapCard"></div>
+                        <div class="ncm-recap-warning">⚠️ La carte sera visible immédiatement pour tous les visiteurs.</div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ── FOOTER ── -->
             <div class="ncm-footer">
-                <div class="ncm-footer-info">💾 Sauvegardé en local</div>
+                <button class="ncm-btn-back" id="ncmBtnBack" onclick="_ncmPrevStep()" style="display:none">← Retour</button>
+                <div class="ncm-footer-info" id="ncmFooterInfo">Étape 1 sur 3</div>
                 <button class="ncm-btn-cancel" onclick="document.getElementById('newCardModal').classList.remove('is-open')">Annuler</button>
-                <button class="ncm-btn-create" onclick="_cmdNewSubmit()">
+                <button class="ncm-btn-next" id="ncmBtnNext" onclick="_ncmNextStep()">Suivant →</button>
+                <button class="ncm-btn-create" id="ncmBtnCreate" onclick="_cmdNewSubmit()" style="display:none">
                     <span>✦</span> Créer la carte
                 </button>
             </div>
