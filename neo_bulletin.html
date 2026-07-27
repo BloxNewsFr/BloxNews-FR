@@ -5613,55 +5613,58 @@
     }
 
     function _actusRenderItem(c, cardId) {
-        const _isMod  = window.currentUser && MODERATORS.includes(window.currentUser.username);
-        const _canDel = window.currentUser && (_isMod || c.username === window.currentUser.username);
-        const pfx     = 'ac-' + (cardId || 'x') + '-';
-        const pinBadge = c.pinned ? `<span class="comment-pin-badge">📌 Épinglé</span>` : '';
-        const pinBtn   = _isMod
-            ? `<button class="comment-btn" onclick="_actusPinComment('${c.id}')" title="${c.pinned?'Désépingler':'Épingler'}">📌</button>`
-            : '';
+        const db       = _actusCommentsDB[cardId] || [];
+        const _isMod   = window.currentUser && MODERATORS.includes(window.currentUser.username);
+        const _canDel  = window.currentUser && (_isMod || c.username === window.currentUser.username);
+        const pfx      = 'ac-' + (cardId || 'x') + '-';
+        const isPinned = !!c.pinned;
+        const isFirst  = db.length === 1 && db[0].id === c.id;
+
         // Réponses
-        const replies = (c.replies||[]).map(r => `
-            <div class="comment-reply" id="${pfx}reply-${r.id}">
+        const replies = (c.replies||[]).map(r => {
+            const canDelR = window.currentUser && (_isMod || r.username === window.currentUser.username);
+            return `<div class="comment-reply" id="${pfx}reply-${r.id}">
                 ${avatarHTML(r, 30)}
                 <div class="comment-reply__body">
                     <div class="comment-reply__header">
                         ${discordTag()}
                         <span class="comment-item__username">${r.username}</span>
-                        <span class="comment-item__time">${relativeTime(r.time)}</span>
+                        <span class="comment-item__time" title="${r.time}">${relativeTime(r.time)}</span>
                     </div>
                     <div class="comment-reply__text">${r.text}</div>
                     <div class="comment-item__actions" style="margin-top:7px">
                         <button class="comment-btn ${r.likedByMe?'comment-btn--liked':''}"
-                            onclick="_actusLikeReply('${cardId||''}','${c.id}','${r.id}',this)">
+                            onclick="_actusLikeReply('${cardId}','${c.id}','${r.id}',this)">
                             ${r.likedByMe?'❤️':'🤍'} <span class="comment-btn__like-count">${r.likes||0}</span>
                         </button>
-                        ${(_isMod || (window.currentUser && r.username===window.currentUser.username))
-                            ?`<button class="comment-btn comment-btn--delete" onclick="_actusDeleteReply('${cardId||''}','${c.id}','${r.id}')">🗑 Suppr.</button>`:''}
+                        ${canDelR?`<button class="comment-btn comment-btn--delete" onclick="_actusDeleteReply('${cardId}','${c.id}','${r.id}')">🗑 Suppr.</button>`:''}
                     </div>
                 </div>
-            </div>`).join('');
+            </div>`;
+        }).join('');
+
         // Réactions
         const reacts   = c.reactions  || {};
         const myReacts = c.myReactions || {};
-        const pills    = ['❤️','😂','😮','🔥','👍','💀']
+        const pills    = REACTION_EMOJIS
             .filter(em => reacts[em] > 0)
             .map(em => `<button class="reaction-btn${myReacts[em]?' reacted':''}"
-                onclick="_actusToggleReaction('${cardId||''}','${c.id}','${em}')" title="${em}">
+                onclick="_actusToggleReaction('${cardId}','${c.id}','${em}')" title="${em}">
                 ${em} <span class="reaction-btn__count">${reacts[em]||0}</span></button>`).join('');
         const reactBar = `<div class="comment-reactions" id="${pfx}reacts-${c.id}">
             ${pills}
-            <button class="reaction-add-btn" onclick="_actusOpenEmoji(event,'${cardId||''}','${c.id}')" title="Réagir">+</button>
+            <button class="reaction-add-btn" onclick="_actusOpenEmoji(event,'${cardId}','${c.id}')" title="Ajouter une réaction">+</button>
         </div>`;
 
-        return `<div class="comment-item${c.pinned?' comment-item--pinned':''}" id="${pfx}comment-${c.id}">
+        return `<div class="comment-item${isPinned?' comment-item--pinned':''}" id="${pfx}comment-${c.id}">
             ${avatarHTML(c, 38)}
             <div class="comment-item__body">
                 <div class="comment-item__header">
                     ${discordTag()}
                     <span class="comment-item__username">${c.username}</span>
-                    ${pinBadge}
-                    <span class="comment-item__time">${relativeTime(c.time)}</span>
+                    ${isFirst?`<span class="comment-first-badge">Premier 🎉</span>`:''}
+                    ${isPinned?`<span class="comment-pin-badge">📌 Épinglé</span>`:''}
+                    <span class="comment-item__time" title="${c.time}">${relativeTime(c.time)}</span>
                 </div>
                 <div class="comment-item__text">${c.text}</div>
                 ${reactBar}
@@ -5672,13 +5675,14 @@
                     </button>
                     ${window.currentUser?`<button class="comment-btn" onclick="_actusToggleReplyBox('${pfx}rw-${c.id}')">↩ Répondre</button>`:''}
                     ${_canDel?`<button class="comment-btn comment-btn--delete" onclick="_actusDeleteComment('${c.id}')">🗑 Suppr.</button>`:''}
-                    ${pinBtn}
+                    ${_isMod&&!isPinned?`<button class="comment-btn" onclick="_actusPinComment('${cardId}','${c.id}')" title="Épingler">📌</button>`:''}
+                    ${_isMod&&isPinned?`<button class="comment-btn comment-btn is-pinned" onclick="_actusUnpinComment('${cardId}','${c.id}')" title="Désépingler">📌</button>`:''}
                 </div>
                 ${replies?`<div class="comment-replies">${replies}</div>`:''}
                 <div class="comment-reply-write" id="${pfx}rw-${c.id}">
                     ${avatarHTML(window.currentUser,30)}
                     <textarea class="comment-reply-input" placeholder="Ta réponse…" rows="1" oninput="autoResize(this)"></textarea>
-                    <button class="comment-reply-submit" onclick="_actusPostReply('${cardId||''}','${c.id}','${pfx}rw-${c.id}')">Poster</button>
+                    <button class="comment-reply-submit" onclick="_actusPostReply('${cardId}','${c.id}','${pfx}rw-${c.id}')">Poster</button>
                 </div>
             </div>
         </div>`;
