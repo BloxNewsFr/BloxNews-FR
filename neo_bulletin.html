@@ -1615,33 +1615,31 @@
             background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.1); color: rgba(255,255,255,0.8);
         }
 
-        /* ── Commentaires dans secret-bulletin (toujours dark) ── */
-        .secret-bulletin .card-comments-section .comment-item { border-bottom-color: rgba(255,255,255,0.05); }
-        .secret-bulletin .card-comments-section .comment-item__username { color: rgba(255,255,255,0.85); }
-        .secret-bulletin .card-comments-section .comment-item__time { color: rgba(255,255,255,0.3); }
-        .secret-bulletin .card-comments-section .comment-item__text { color: rgba(255,255,255,0.65); }
-        .secret-bulletin .card-comments-section .comment-item--pinned { background: linear-gradient(90deg, rgba(255,215,0,0.04), transparent); }
-        .secret-bulletin .card-comments-section .comment-item--pinned .comment-item__body { border-left-color: rgba(255,215,0,0.3); }
-        .secret-bulletin .card-comments-section .comment-pin-badge { color: #cc8800; border-color: rgba(255,215,0,0.3); background: rgba(255,215,0,0.15); }
-        .secret-bulletin .card-comments-section .comment-btn { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.4); }
-        .secret-bulletin .card-comments-section .comment-btn:hover { background: rgba(255,26,26,0.12); color: #ff6666; }
-        .secret-bulletin .card-comments-section .comment-btn--liked { background: rgba(255,26,26,0.15); color: #ff6666; }
-        .secret-bulletin .card-comments-section .comment-btn--delete { color: rgba(255,80,80,0.35); }
-        .secret-bulletin .card-comments-section .comment-btn--delete:hover { background: rgba(255,26,26,0.1); color: #ff6666; }
-        .secret-bulletin .card-comments-section .comment-btn--pin { color: rgba(255,215,0,0.35); }
-        .secret-bulletin .card-comments-section .comment-btn--pin:hover { background: rgba(255,215,0,0.1); color: #ffcc00; }
-        .secret-bulletin .card-comments-section .comment-btn--pin.is-pinned { color: #ffcc00; }
-        .secret-bulletin .card-comments-section .reaction-btn { border-color: rgba(255,255,255,0.08); background: rgba(255,255,255,0.04); color: rgba(255,255,255,0.5); }
-        .secret-bulletin .card-comments-section .reaction-btn:hover { background: rgba(255,255,255,0.08); }
-        .secret-bulletin .card-comments-section .reaction-btn.reacted { background: rgba(255,26,26,0.18); border-color: rgba(255,26,26,0.35); color: #ff8080; }
-        .secret-bulletin .card-comments-section .reaction-add-btn { border-color: rgba(255,255,255,0.12); color: rgba(255,255,255,0.25); }
-        .secret-bulletin .card-comments-section .reaction-add-btn:hover { border-color: rgba(255,255,255,0.3); color: rgba(255,255,255,0.5); }
-        .secret-bulletin .card-comments-section .comment-reply-write { border-top-color: rgba(255,255,255,0.05); }
-        .secret-bulletin .card-comments-section .comment-reply-input {
-            background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.1); color: rgba(255,255,255,0.8);
-        }
-        .secret-bulletin .card-comments-section .comment-reply-input::placeholder { color: rgba(255,255,255,0.25); }
-        .secret-bulletin .card-comments-section .comment-item__discord-tag { opacity: 0.7; }
+        /* ── Commentaires dans secret-bulletin Firebase (toujours dark) ── */
+        .secret-bulletin--firebase .card-comments-section .comment-item { border-bottom-color: rgba(255,255,255,0.05); }
+        .secret-bulletin--firebase .card-comments-section .comment-item__username { color: rgba(255,255,255,0.85); }
+        .secret-bulletin--firebase .card-comments-section .comment-item__time { color: rgba(255,255,255,0.3); }
+        .secret-bulletin--firebase .card-comments-section .comment-item__text { color: rgba(255,255,255,0.65); }
+        .secret-bulletin--firebase .card-comments-section .comment-item--pinned { background: linear-gradient(90deg, rgba(255,215,0,0.04), transparent); }
+        .secret-bulletin--firebase .card-comments-section .comment-item--pinned .comment-item__body { border-left-color: rgba(255,215,0,0.3); }
+        .secret-bulletin--firebase .card-comments-section .comment-pin-badge { color: #cc8800; border-color: rgba(255,215,0,0.3); background: rgba(255,215,0,0.15); }
+        .secret-bulletin--firebase .card-comments-section .comment-btn { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.4); }
+        .secret-bulletin--firebase .card-comments-section .comment-btn:hover { background: rgba(255,26,26,0.12); color: #ff6666; }
+        .secret-bulletin--firebase .card-comments-section .comment-btn--liked { background: rgba(255,26,26,0.15); color: #ff6666; }
+        .secret-bulletin--firebase .card-comments-section .comment-btn--delete { color: rgba(255,80,80,0.35); }
+        .secret-bulletin--firebase .card-comments-section .comment-btn--delete:hover { background: rgba(255,26,26,0.1); color: #ff6666; }
+        .secret-bulletin--firebase .card-comments-section .comment-btn--pin { color: rgba(255,215,0,0.35); }
+        .secret-bulletin--firebase .card-comments-section .comment-btn--pin:hover { background: rgba(255,215,0,0.1); color: #ffcc00; }
+        .secret-bulletin--firebase .card-comments-section .comment-btn--pin.is-pinned { color: #ffcc00; }
+        .secret-bulletin--firebase .card-comments-section .reaction-btn { border-color: rgba(255,255,255,0.08); background: rgba(255,255,255,0.04); color: rgba(255,255,255,0.5); }
+        .secret-bulletin--firebase .card-comments-section .reaction-btn:hover { background: rgba(255,255,255,0.08); }
+        .secret-bulletin--firebase .card-comments-section .reaction-btn.reacted { background: rgba(255,26,26,0.18); border-color: rgba(255,26,26,0.35); color: #ff8080; }
+        .secret-bulletin--firebase .card-comments-section .reaction-add-btn { border-color: rgba(255,255,255,0.12); color: rgba(255,255,255,0.25); }
+        .secret-bulletin--firebase .card-comments-section .reaction-add-btn:hover { border-color: rgba(255,255,255,0.3); color: rgba(255,255,255,0.5); }
+        .secret-bulletin--firebase .card-comments-section .comment-reply-write { border-top-color: rgba(255,255,255,0.05); }
+        .secret-bulletin--firebase .card-comments-section .comment-reply-input { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.1); color: rgba(255,255,255,0.8); }
+        .secret-bulletin--firebase .card-comments-section .comment-reply-input::placeholder { color: rgba(255,255,255,0.25); }
+        .secret-bulletin--firebase .card-comments-section .comment-item__discord-tag { opacity: 0.7; }
 
         /* ══════════════════════════════════════════════
            GROUP CARDS — Fruit groupé
@@ -7286,7 +7284,7 @@
                 ? renderMarkdown(card.actusText || card.msgText || '')
                 : e(card.actusText || '');
             const likeId = 'dossier-' + _plSlug(card.title);
-            const actHtml = `<div class="secret-bulletin" data-cc-id="${card.id}" data-date="${_cardTs}" style="margin-bottom:24px;">
+            const actHtml = `<div class="secret-bulletin secret-bulletin--firebase" data-cc-id="${card.id}" data-date="${_cardTs}" style="margin-bottom:24px;">
                 <div class="bulletin-topbar">
                     <span class="bulletin-topbar__label">Blox Leaks Network</span>
                     <span class="bulletin-topbar__dot"></span>
