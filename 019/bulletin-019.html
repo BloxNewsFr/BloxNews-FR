@@ -142,6 +142,13 @@
             width: 100%; height: auto; display: block;
             border-radius: 24px;
             box-shadow: 0 8px 40px rgba(0,0,0,0.3);
+            position: relative; z-index: 1;
+        }
+        .hero-image-wrapper .glass-rose-overlay {
+            position: absolute; inset: 0; z-index: 2;
+            border-radius: 24px;
+            pointer-events: none;
+            background: linear-gradient(135deg, rgba(255,105,180,0.2), rgba(255,20,147,0.1));
         }
 
         .hero-overlay-hearts {
@@ -185,8 +192,8 @@
         }
 
         .section-card {
-            background: rgba(255,245,247,0.45);
-            backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+            background: rgba(255,245,247,0.25);
+            backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
             border-radius: 20px;
             padding: 28px;
             margin-bottom: 28px;
@@ -197,8 +204,8 @@
             transition: background 0.3s;
         }
         .section-card:hover {
-            background: rgba(255,235,240,0.55);
-            box-shadow: 0 12px 48px rgba(194,24,91,0.12), 0 0 0 1px rgba(212,160,23,0.25);
+            background: rgba(255,235,240,0.35);
+            box-shadow: 0 12px 48px rgba(194,24,91,0.18), 0 0 0 1px rgba(212,160,23,0.25);
         }
 
         .section-card::before {
@@ -281,8 +288,8 @@
 
         .side-article {
             flex: 1;
-            background: rgba(255,245,247,0.45);
-            backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+            background: rgba(255,245,247,0.25);
+            backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
             border-radius: 20px;
             padding: 24px;
             box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 0 0 1px rgba(212,160,23,0.15);
@@ -291,7 +298,7 @@
             transition: background 0.3s;
         }
         .side-article:hover {
-            background: rgba(255,235,240,0.55);
+            background: rgba(255,235,240,0.35);
         }
 
         .side-article:nth-child(2) {
@@ -693,7 +700,7 @@
 
         <div class="hero-image-wrapper">
             <img src="./img/Mygame.png" class="hero-image" alt="The Blox Bulletin 019">
-            <div class="glass-rose-overlay" style="border-radius:24px;background:linear-gradient(135deg,rgba(255,105,180,0.12),rgba(255,20,147,0.06))"></div>
+            <div class="glass-rose-overlay" style="position:absolute;inset:0;z-index:2;border-radius:24px;pointer-events:none;background:linear-gradient(135deg,rgba(255,105,180,0.2),rgba(255,20,147,0.1))"></div>
         </div>
 
         <div class="journal-header">

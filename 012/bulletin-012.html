@@ -632,57 +632,63 @@
                 0deg,
                 transparent,
                 transparent 3px,
-                rgba(0,255,65,0.015) 3px,
-                rgba(0,255,65,0.015) 4px
+                rgba(0,255,65,0.08) 3px,
+                rgba(0,255,65,0.08) 4px
             );
             pointer-events: none; z-index: 99998;
         }
         .hacked-watermark {
-            position: fixed; bottom: 20px; right: 20px; z-index: 99997;
+            position: fixed; bottom: 30px; right: 30px; z-index: 99997;
             font-family: 'Share Tech Mono', monospace;
-            font-size: 12px; color: rgba(0,255,65,0.12);
+            font-size: 16px; color: rgba(0,255,65,0.5);
             text-transform: uppercase; letter-spacing: 4px;
             transform: rotate(-4deg); user-select: none;
-            text-shadow: 0 0 20px rgba(0,255,65,0.05);
-            animation: watermarkPulse 3s ease-in-out infinite;
+            text-shadow: 0 0 20px rgba(0,255,65,0.3);
+            animation: watermarkPulse 2s ease-in-out infinite;
+            background: rgba(0,0,0,0.6);
+            padding: 10px 18px;
+            border: 1px solid rgba(0,255,65,0.3);
+            border-radius: 4px;
         }
         @keyframes watermarkPulse {
-            0%, 100% { opacity: 0.6; }
+            0%, 100% { opacity: 0.7; }
             50% { opacity: 1; }
         }
         .glitch-img {
             position: relative; overflow: hidden;
-            animation: imgGlitch 6s infinite;
+            animation: imgGlitch 4s infinite;
         }
         @keyframes imgGlitch {
-            0%, 90%, 100% { filter: none; }
-            92% { filter: hue-rotate(90deg) saturate(3) brightness(1.4); transform: translateX(3px); }
-            94% { filter: hue-rotate(-90deg) saturate(3) brightness(0.6); transform: translateX(-3px); }
-            96% { filter: none; transform: none; }
+            0%, 85%, 100% { filter: none; }
+            87% { filter: hue-rotate(90deg) saturate(3) brightness(1.4); transform: translateX(5px); }
+            89% { filter: hue-rotate(-90deg) saturate(3) brightness(0.6); transform: translateX(-5px); }
+            91% { filter: none; transform: none; }
         }
         body::after {
             content: '';
             position: fixed; inset: 0;
             pointer-events: none; z-index: 99999;
             background: transparent;
-            animation: crtFlicker 0.15s infinite;
+            animation: crtFlicker 0.1s infinite;
             opacity: 0;
         }
         @keyframes crtFlicker {
             0% { opacity: 0; }
-            80% { opacity: 0; }
-            81% { opacity: 0.03; }
-            82% { opacity: 0; }
-            99% { opacity: 0; }
-            100% { opacity: 0.015; }
+            60% { opacity: 0; }
+            61% { opacity: 0.06; }
+            62% { opacity: 0; }
+            95% { opacity: 0; }
+            96% { opacity: 0.03; }
+            100% { opacity: 0; }
         }
         .hacked-box, .glitch-section, .inventory-section, .journal-header {
-            animation: sectionGlitch 8s infinite;
+            animation: sectionGlitch 6s infinite;
         }
         @keyframes sectionGlitch {
-            0%, 99%, 100% { clip-path: none; }
-            99.3% { clip-path: inset(10% 0 60% 0); }
-            99.6% { clip-path: inset(40% 0 20% 0); }
+            0%, 95%, 100% { clip-path: none; }
+            96% { clip-path: inset(10% 0 60% 0); transform: translateX(4px); }
+            97% { clip-path: inset(40% 0 20% 0); transform: translateX(-4px); }
+            98% { clip-path: none; transform: none; }
         }
     </style>
     <link rel="stylesheet" href="../shared/bulletin-lightbox.css">

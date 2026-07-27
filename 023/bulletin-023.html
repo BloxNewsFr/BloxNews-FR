@@ -742,15 +742,15 @@
             font-family: 'Times New Roman', Georgia, serif;
             font-size: clamp(60px, 12vw, 140px);
             font-weight: 900; font-style: italic;
-            color: rgba(139,0,0,0.07);
+            color: rgba(139,0,0,0.18);
             text-transform: uppercase; letter-spacing: 12px;
-            text-shadow: 0 0 60px rgba(139,0,0,0.05);
-            animation: indraStamp 4s ease-in-out infinite;
+            text-shadow: 0 0 60px rgba(139,0,0,0.15);
+            animation: indraStamp 3s ease-in-out infinite;
             white-space: nowrap;
         }
         @keyframes indraStamp {
             0%, 100% { opacity: 0.5; transform: translate(-50%,-50%) rotate(-12deg) scale(1); }
-            50% { opacity: 1; transform: translate(-50%,-50%) rotate(-10deg) scale(1.04); }
+            50% { opacity: 1; transform: translate(-50%,-50%) rotate(-10deg) scale(1.06); }
         }
         .corrupted-overlay {
             position: fixed; inset: 0; z-index: 99994;
@@ -760,17 +760,17 @@
                     90deg,
                     transparent,
                     transparent 4px,
-                    rgba(255,0,0,0.008) 4px,
-                    rgba(255,0,0,0.008) 5px
+                    rgba(255,0,0,0.06) 4px,
+                    rgba(255,0,0,0.06) 5px
                 ),
                 repeating-linear-gradient(
                     0deg,
                     transparent,
                     transparent 20px,
-                    rgba(0,255,65,0.005) 20px,
-                    rgba(0,255,65,0.005) 21px
+                    rgba(0,255,65,0.04) 20px,
+                    rgba(0,255,65,0.04) 21px
                 );
-            animation: corruptShift 8s linear infinite;
+            animation: corruptShift 6s linear infinite;
         }
         @keyframes corruptShift {
             0% { background-position: 0 0, 0 0; }
@@ -781,25 +781,26 @@
             position: fixed; inset: 0;
             pointer-events: none; z-index: 99999;
             background: transparent;
-            animation: crtFlicker 0.12s infinite;
+            animation: crtFlicker 0.1s infinite;
             opacity: 0;
         }
         @keyframes crtFlicker {
             0% { opacity: 0; }
-            75% { opacity: 0; }
-            76% { opacity: 0.025; }
-            77% { opacity: 0; }
-            98% { opacity: 0; }
-            99% { opacity: 0.01; }
+            60% { opacity: 0; }
+            61% { opacity: 0.06; }
+            62% { opacity: 0; }
+            95% { opacity: 0; }
+            96% { opacity: 0.03; }
             100% { opacity: 0; }
         }
         .article-main, .dm-section, .hack-col, .hack-col-narrow, .journal-header {
-            animation: contentGlitch 10s infinite;
+            animation: contentGlitch 6s infinite;
         }
         @keyframes contentGlitch {
-            0%, 99.5%, 100% { clip-path: none; }
-            99.55% { clip-path: inset(5% 0 70% 0); }
-            99.7% { clip-path: inset(50% 0 15% 0); }
+            0%, 95%, 100% { clip-path: none; }
+            96% { clip-path: inset(5% 0 70% 0); transform: translateX(4px); }
+            97% { clip-path: inset(50% 0 15% 0); transform: translateX(-4px); }
+            98% { clip-path: none; transform: none; }
         }
     </style>
     <link rel="stylesheet" href="../shared/bulletin-lightbox.css">
