@@ -3714,21 +3714,7 @@
             display: block; width: 13px; height: 13px;
             border-radius: 3px; border: 1.5px solid rgba(255,255,255,0.3);
         }
-        #fmtHlPalette {
-            position: fixed; z-index: 999999;
-            background: rgba(14,14,22,0.97); border: 1px solid rgba(255,255,255,0.12);
-            border-radius: 12px; padding: 10px; box-shadow: 0 16px 48px rgba(0,0,0,0.65);
-            display: none;
-            grid-template-columns: repeat(4, 1fr); gap: 6px;
-            width: 120px;
-        }
-        #fmtHlPalette.is-open { display: grid; }
-        .hl-swatch {
-            width: 22px; height: 22px; border-radius: 5px; cursor: pointer;
-            transition: transform 0.15s, outline 0.1s;
-            outline: 2px solid transparent; outline-offset: 2px;
-        }
-        .hl-swatch:hover { transform: scale(1.18); outline-color: rgba(255,255,255,0.5); }
+        #fmtHlColorInput { position: fixed; opacity: 0; width: 0; height: 0; pointer-events: none; }
         .fmt-sep {
             width: 1px; height: 16px; background: rgba(255,255,255,0.1);
             margin: 0 4px; flex-shrink: 0;
@@ -7995,32 +7981,22 @@
         return h;
     }
 
-    // ── Color picker surlignage ──────────────────────────────────────
+    // ── Highlight color — sélecteur natif ────────────────────────────
     let _hlColor = '#ffd000';
+    let _fmtHlPending = false;
+
     function toggleHlPicker(e) {
         e.stopPropagation();
-        const palette = document.getElementById('fmtHlPalette');
-        if (palette.classList.contains('is-open')) {
-            palette.classList.remove('is-open');
-            return;
-        }
-        // Positionner la palette au-dessous du bouton
-        const btn  = document.getElementById('fmtHlBtn');
-        const rect = btn.getBoundingClientRect();
-        const pw   = 120, ph = 80;
-        let left = rect.left + rect.width / 2 - pw / 2;
-        let top  = rect.bottom + 6;
-        if (left + pw > window.innerWidth - 8) left = window.innerWidth - pw - 8;
-        if (left < 8) left = 8;
-        if (top + ph > window.innerHeight - 8) top = rect.top - ph - 6;
-        palette.style.left = left + 'px';
-        palette.style.top  = top  + 'px';
-        palette.classList.add('is-open');
+        const input = document.getElementById('fmtHlColorInput');
+        if (!input) return;
+        _fmtHlPending = true;
+        input.click();
     }
+
     function pickHlColor(hex) {
         _hlColor = hex;
-        document.getElementById('fmtHlDot').style.background = hex;
-        document.getElementById('fmtHlPalette').classList.remove('is-open');
+        const dot = document.getElementById('fmtHlDot');
+        if (dot) dot.style.background = hex;
         const ta = document.getElementById('editInlineTextarea');
         if (!ta) return;
         const s = ta.selectionStart, e = ta.selectionEnd;
@@ -8040,12 +8016,6 @@
         }
         ta.focus();
     }
-    // Fermer la palette si clic ailleurs
-    document.addEventListener('click', e => {
-        if (!e.target.closest('#fmtHlPalette') && !e.target.closest('#fmtHlBtn')) {
-            document.getElementById('fmtHlPalette')?.classList.remove('is-open');
-        }
-    });
 
     // ── Insérer un marqueur autour de la sélection ───────────────────
     function fmtWrap(marker) {
@@ -8238,12 +8208,40 @@
         closeEditInline();
     }
 
+    document.addEventListener('change', function(e) {
+        if (e.target.id === 'fmtHlColorInput') {
+            _hlColor = e.target.value;
+            if (_fmtHlPending) {
+                _fmtHlPending = false;
+                pickHlColor(_hlColor);
+            } else {
+                const dot = document.getElementById('fmtHlDot');
+                if (dot) dot.style.background = _hlColor;
+            }
+        }
+    });
+
     document.addEventListener('keydown', e => {
         if (e.key === 'Escape' && _editEl) { closeEditInline(); return; }
         if (e.key === 'Enter' && !e.shiftKey && _editEl) {
             e.preventDefault(); saveEditInline();
         }
-        if (e.ctrlKey && e.shiftKey && e.key === 'E') { e.preventDefault(); toggleEditMode(); }
+        // Ctrl+Shift+E
+        if (e.ctrlKey && e.shiftKey && e.key === 'E') {
+            const inlineTa = document.getElementById('editInlineTextarea');
+            const actusTa  = document.getElementById('ncmActusContent');
+            // Dans l'inline editor → sélecteur de couleur
+            if (inlineTa && document.activeElement === inlineTa) {
+                e.preventDefault();
+                _fmtHlPending = true;
+                document.getElementById('fmtHlColorInput')?.click();
+                return;
+            }
+            // Dans l'actus editor → laisser le handler bas gérer
+            if (actusTa && document.activeElement === actusTa) return;
+            // Ailleurs → basculer le mode édition
+            e.preventDefault(); toggleEditMode();
+        }
     });
 
     // ══════════════════════════════════════════════════════════════
@@ -9100,7 +9098,11 @@
         let val = ta.value;
         val = val.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
         val = val.replace(/\*(.+?)\*/g, '<i>$1</i>');
-        val = val.replace(/==#([0-9a-fA-F]{6}) (.+?)==/g, '<mark style="background:#$1;color:#fff;padding:0 3px;border-radius:3px">$2</mark>');
+        // Colored highlights: ==[#HEX]text== (renderMarkdown format) and legacy ==#HEX text==
+        val = val.replace(/==\[#([0-9a-fA-F]{3,6})\](.+?)==/g,
+            (m, color, txt) => `<mark style="background:#${color};color:#fff;padding:0 3px;border-radius:3px">${txt}</mark>`);
+        val = val.replace(/==#([0-9a-fA-F]{6}) (.+?)==/g,
+            (m, color, txt) => `<mark style="background:#${color};color:#fff;padding:0 3px;border-radius:3px">${txt}</mark>`);
         val = val.replace(/==(.+?)==/g, '<mark style="background:rgba(255,200,50,0.25);color:#ffd966;padding:0 3px;border-radius:3px">$1</mark>');
         val = val.replace(/__(.+?)__/g, '<u>$1</u>');
         val = val.replace(/~~(.+?)~~/g, '<s>$1</s>');
@@ -9134,8 +9136,10 @@
             strike: ['~~', '~~'],
         };
         if (type === 'highlight') {
-            const tag = '==#' + _ncmHlColor.replace('#','') + ' ';
-            _ncmWrapSelection(ta, tag, '==');
+            const isDefault = (_ncmHlColor === '#ffc832');
+            const tag = isDefault ? '==' : '==[#' + _ncmHlColor.replace('#','') + ']';
+            const close = '==';
+            _ncmWrapSelection(ta, tag, close);
             return;
         }
         const pair = map[type];
@@ -9731,16 +9735,7 @@
         loginBtn.style.display = '';
     })();
     </script>    <!-- Palette de couleurs surlignage — directement dans body pour éviter tout overflow -->
-    <div id="fmtHlPalette">
-        <div class="hl-swatch" style="background:#ffd000" onclick="pickHlColor('#ffd000')" title="Jaune"></div>
-        <div class="hl-swatch" style="background:#ff6b6b" onclick="pickHlColor('#ff6b6b')" title="Rouge"></div>
-        <div class="hl-swatch" style="background:#ff9f43" onclick="pickHlColor('#ff9f43')" title="Orange"></div>
-        <div class="hl-swatch" style="background:#7bc47f" onclick="pickHlColor('#7bc47f')" title="Vert"></div>
-        <div class="hl-swatch" style="background:#4ecdc4" onclick="pickHlColor('#4ecdc4')" title="Cyan"></div>
-         <div class="hl-swatch" style="background:#45b7d1" onclick="pickHlColor('#45b7d1')" title="Bleu"></div>
-        <div class="hl-swatch" style="background:#c98bdb" onclick="pickHlColor('#c98bdb')" title="Violet"></div>
-        <div class="hl-swatch" style="background:#ff85c2" onclick="pickHlColor('#ff85c2')" title="Rose"></div>
-    </div>
+    <input type="color" id="fmtHlColorInput" value="#ffd000" style="display:none">
 
 </body>
 </html>
