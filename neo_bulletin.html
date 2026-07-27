@@ -5041,6 +5041,15 @@
     let _autoGroupCounter = 0;
 
     function _autoCreateGroups(fbCards) {
+        // Nettoyer les anciens groupes auto
+        Object.keys(GROUP_BADGE_MAP).forEach(k => {
+            if (GROUP_BADGE_MAP[k] && GROUP_BADGE_MAP[k].startsWith('auto_')) delete GROUP_BADGE_MAP[k];
+        });
+        Object.keys(GROUP_DATA).forEach(k => {
+            if (k.startsWith('auto_')) delete GROUP_DATA[k];
+        });
+        document.querySelectorAll('[data-auto-group]').forEach(el => el.remove());
+        // Re-grouper
         const groups = new Map();
         fbCards.forEach(card => {
             if (!card.badge) return;
