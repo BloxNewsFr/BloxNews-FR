@@ -78,7 +78,19 @@
 
         .site-background { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; z-index: -1; pointer-events: none; }
         .site-background img { width: 100%; height: 100%; object-fit: cover; display: block; }
-        @media (max-width: 768px) { .site-background { display: none; } }
+        
+        /* ── TABLET ── */
+        @media (max-width: 1024px) {
+            .site-header { padding: 0 28px; }
+            .site-header__logo { left: 28px; }
+            .site-header__logo img { height: 36px; }
+            .site-header__icons { right: 28px; gap: 10px; }
+            .site-nav a { font-size: 15px; padding: 6px 14px; }
+            .archive-toolbar { padding: 14px 18px; }
+            .archive-grid { gap: 16px; padding: 0 14px; }
+        }
+
+@media (max-width: 768px) { .site-background { display: none; } }
 
         .site-header {
             display: flex; align-items: center; justify-content: center;
@@ -180,7 +192,19 @@
         }
         .back-button:hover { transform: scale(1.05); }
 
-        @media (max-width: 768px) {
+        
+        /* ── TABLET ── */
+        @media (max-width: 1024px) {
+            .site-header { padding: 0 28px; }
+            .site-header__logo { left: 28px; }
+            .site-header__logo img { height: 36px; }
+            .site-header__icons { right: 28px; gap: 10px; }
+            .site-nav a { font-size: 15px; padding: 6px 14px; }
+            .archive-toolbar { padding: 14px 18px; }
+            .archive-grid { gap: 16px; padding: 0 14px; }
+        }
+
+@media (max-width: 768px) {
             .site-header { padding: 0 16px; }
             .site-header__logo { left: 16px; }
             .site-header__logo img { height: 34px; }
@@ -245,6 +269,15 @@
                 box-shadow: 0 6px 18px rgba(217,48,37,0.35);
             }
         }
+
+        @media (max-width: 480px) {
+            .blue-banner { font-size: 20px; padding: 10px 20px; }
+            .archive-toolbar { padding: 10px 12px; flex-wrap: wrap; gap: 8px; }
+            .archive-toolbar input { font-size: 14px; padding: 8px 10px; min-width: 0; width: 100%; }
+            .archive-toolbar select { font-size: 12px; padding: 6px 8px; }
+            .archive-grid { gap: 12px; padding: 0 10px; }
+        }
+
     </style>
 </head>
 <body>

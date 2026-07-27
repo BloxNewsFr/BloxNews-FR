@@ -43,7 +43,22 @@
         }
 
         /* Sur mobile, on cache le fond pour garder les performances */
-        @media (max-width: 768px) {
+        
+        /* ── TABLET ── */
+        @media (max-width: 1024px) {
+            .site-header { padding: 0 28px; }
+            .site-header__logo { left: 28px; }
+            .site-header__logo img { height: 36px; }
+            .site-header__icons { right: 28px; gap: 10px; }
+            .site-nav a { font-size: 15px; padding: 6px 14px; }
+            .bulletin-container { padding: 0 20px; margin: 28px auto; }
+            .blue-banner { font-size: 28px; padding: 12px 36px; }
+            .journal-title { font-size: 32px; }
+            .content-columns { gap: 20px; }
+            .right-col { padding: 18px; }
+        }
+
+@media (max-width: 768px) {
             .site-background { display: none; }
         }
 
@@ -130,7 +145,7 @@
         @keyframes shimmerBanner { 0%{background-position:0% center} 100%{background-position:200% center} }
 
         .blue-banner { 
-    display: center; 
+    display: block; text-align: center; 
     background: linear-gradient(135deg, #175ec2, #2980d4, #175ec2); background-size: 200% auto; 
     color: #fff; padding: 16px 60px; font-size: 36px; 
     text-transform: uppercase; letter-spacing: 3px; 
@@ -267,20 +282,22 @@
         .footer-community-links { display: flex; flex-direction: column; gap: 8px; }
         .footer-community-links a { color: #175ec2; text-decoration: none; font-weight: 700; font-size: 14px; transition: color 0.2s; } .footer-community-links a:hover { color: #0d47a1; }
 
-        @media (max-width: 768px) {
+        
+        
+@media (max-width: 768px) {
             .site-header { padding: 12px 20px; }
             .site-nav { display: none; }
             .content-columns { flex-direction: column; }
             .porttown-inner { flex-direction: column; }
             .porttown-img { width: 100%; }
-            .site-footer { flex-direction: column; gap: 30px; padding: 30px 20px; }
+            .site-footer { flex-direction: column; gap: 30px; padding: 30px 20px calc(30px + env(safe-area-inset-bottom, 0px)); }
             @keyframes shimmerBanner { 0%{background-position:0% center} 100%{background-position:200% center} }
 
         .blue-banner { font-size: 24px; padding: 12px 30px; }
             .mobile-menu-btn { display: block; }
             .mobile-nav-dropdown {
                 display: flex; flex-direction: column; gap: 12px;
-                position: fixed; top: 60px; right: -280px; width: 250px;
+                position: fixed; top: 60px; right: -105%; width: min(82vw, 280px);
                 background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
                 padding: 24px; border-radius: 0 0 0 20px; box-shadow: -5px 10px 30px rgba(0,0,0,0.1);
                 transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 999; border: 1px solid rgba(0,0,0,0.05); border-right: none;
@@ -377,14 +394,16 @@
             color: #fff; border-radius: 3px; padding: 1px 4px;
             box-shadow: 0 1px 10px rgba(255,107,53,0.5);
         }
-        @media (max-width: 768px) {
-            .search-overlay { padding-top: 60px; }
+        
+        
+@media (max-width: 768px) {
+            .search-overlay { padding-top: 80px; }
             .search-bar { gap: 4px; padding: 4px 4px 4px 14px; }
             .search-bar .search-icon { display: none; }
             .search-bar input { font-size: 15px; padding: 10px 0; }
             .search-go-btn { padding: 8px 12px; font-size: 11px; }
-            .search-nav-btn { width: 32px; height: 32px; font-size: 14px; }
-            .search-close-btn { width: 32px; height: 32px; font-size: 17px; }
+            .search-nav-btn { width: 44px; height: 44px; font-size: 16px; }
+            .search-close-btn { width: 44px; height: 44px; font-size: 18px; }
         }
 
         /* ── DISCORD AUTH ── */
