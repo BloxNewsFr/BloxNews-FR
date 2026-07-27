@@ -1658,6 +1658,94 @@
         .secret-bulletin--firebase .card-comments-section .comment-reply-input::placeholder { color: rgba(255,255,255,0.25); }
         .secret-bulletin--firebase .card-comments-section .comment-item__discord-tag { opacity: 0.7; }
 
+        /* ── Force dark inside firebase card (all elements) ── */
+        .secret-bulletin--firebase .card-comments-section {
+            background: rgba(12,12,24,0.6);
+        }
+        .secret-bulletin--firebase .card-comments-toggle {
+            background: rgba(255,255,255,0.02);
+            border-bottom-color: transparent;
+        }
+        .secret-bulletin--firebase .card-comments-toggle:hover { background: rgba(255,255,255,0.05); }
+        .secret-bulletin--firebase .card-comments-toggle.is-open {
+            border-bottom-color: rgba(255,255,255,0.06);
+            background: linear-gradient(180deg, rgba(255,255,255,0.03), transparent);
+        }
+        .secret-bulletin--firebase .card-comments-toggle__icon {
+            background: linear-gradient(135deg, rgba(255,26,26,0.15), rgba(255,26,26,0.05));
+            color: rgba(255,100,100,0.7);
+            box-shadow: 0 2px 8px rgba(255,26,26,0.08);
+        }
+        .secret-bulletin--firebase .card-comments-toggle__label { color: rgba(255,255,255,0.6); }
+        .secret-bulletin--firebase .card-comments-toggle__count {
+            background: rgba(255,26,26,0.18);
+            color: rgba(255,100,100,0.9);
+        }
+        .secret-bulletin--firebase .card-comments-toggle__arrow { color: rgba(255,255,255,0.3); }
+        .secret-bulletin--firebase .card-comments-body::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); }
+        .secret-bulletin--firebase .card-comment-login { color: rgba(255,255,255,0.45); }
+        .secret-bulletin--firebase .card-comment-write { border-bottom-color: rgba(255,255,255,0.04); }
+        .secret-bulletin--firebase .card-comment-input {
+            background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.1); color: #fff;
+        }
+        .secret-bulletin--firebase .card-comment-input::placeholder { color: rgba(255,255,255,0.2); }
+        .secret-bulletin--firebase .card-comment-input:focus { border-color: rgba(255,26,26,0.4); box-shadow: 0 0 0 3px rgba(255,26,26,0.06); }
+        .secret-bulletin--firebase .card-comment-char-counter { color: rgba(255,255,255,0.3); }
+        .secret-bulletin--firebase .card-comment-sort-btn { border-color: rgba(255,255,255,0.12); color: rgba(255,255,255,0.45); }
+        .secret-bulletin--firebase .card-comment-sort-btn:not(.active):hover { border-color: rgba(255,26,26,0.35); }
+        .secret-bulletin--firebase .card-comment-divider { color: rgba(255,255,255,0.25); }
+        .secret-bulletin--firebase .card-comment-divider::before,
+        .secret-bulletin--firebase .card-comment-divider::after { background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08) 50%, transparent); }
+        .secret-bulletin--firebase .card-comment-see-all { color: rgba(255,255,255,0.35); }
+        .secret-bulletin--firebase .card-comments-empty { color: rgba(255,255,255,0.25); }
+        .secret-bulletin--firebase .card-comment-submit { box-shadow: 0 2px 12px rgba(204,0,0,0.35); }
+
+        /* ── Light mode: version claire de la card secret-bulletin ── */
+        html:not([data-theme="dark"]) .secret-bulletin {
+            background: #fff;
+            border-color: rgba(255, 26, 26, 0.15);
+            box-shadow: 0 0 0 1px rgba(255,26,26,0.04), 0 4px 16px rgba(0,0,0,0.06), 0 24px 64px rgba(0,0,0,0.08);
+        }
+        html:not([data-theme="dark"]) .secret-bulletin::after { background: linear-gradient(180deg, #ff4444, #cc0000); }
+        html:not([data-theme="dark"]) .secret-bulletin::before { color: rgba(255, 26, 26, 0.05); border-color: rgba(255, 26, 26, 0.05); }
+        html:not([data-theme="dark"]) .bulletin-topbar { background: linear-gradient(90deg, #cc0000 0%, #ff6666 100%); }
+        html:not([data-theme="dark"]) .bulletin-topbar__label { color: #fff; }
+        html:not([data-theme="dark"]) .bulletin-topbar__status { color: rgba(255,255,255,0.5); }
+        html:not([data-theme="dark"]) .bulletin-header { border-bottom-color: rgba(0,0,0,0.07); }
+        html:not([data-theme="dark"]) .bulletin-header h2 { color: #1a1a2e; text-shadow: none; }
+        html:not([data-theme="dark"]) .bulletin-meta { color: rgba(0,0,0,0.4); background: rgba(255,26,26,0.06); border-color: rgba(255,26,26,0.12); }
+        html:not([data-theme="dark"]) .bulletin-content p { color: rgba(0,0,0,0.65); }
+        html:not([data-theme="dark"]) .bulletin-content .highlightr { background: rgba(255, 26, 26, 0.08); }
+        html:not([data-theme="dark"]) .bulletin-content .highlightv { background: rgba(120, 50, 255, 0.08); }
+
+        /* ── Firebase card comment section in light mode (override dark forces) ── */
+        html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comment-login {
+            color: rgba(0,0,0,0.4);
+        }
+        html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comment-sort-label { color: rgba(0,0,0,0.35); }
+
+        /* ── Comment item inside light secret-bulletin ── */
+        html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-section .comment-item { border-bottom-color: rgba(0,0,0,0.05); }
+        html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-section .comment-item__username { color: rgba(0,0,0,0.85) !important; }
+        html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-section .comment-item__time { color: rgba(0,0,0,0.35) !important; }
+        html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-section .comment-item__text { color: rgba(0,0,0,0.65) !important; }
+        html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-section .comment-reply .comment-item__username { color: rgba(0,0,0,0.85) !important; }
+        html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-section .comment-reply .comment-item__time { color: rgba(0,0,0,0.35) !important; }
+        html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-section .comment-reply__text { color: rgba(0,0,0,0.6) !important; }
+        html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-section .comment-btn { background: rgba(0,0,0,0.04); color: rgba(0,0,0,0.4); }
+        html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-section .comment-btn:hover { background: rgba(255,26,26,0.06); color: #cc0000; }
+        html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-section .comment-btn--liked { background: rgba(255,26,26,0.08); color: #cc0000; }
+        html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-section .comment-btn--delete { color: rgba(204,0,0,0.3); }
+        html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-section .comment-btn--delete:hover { background: rgba(255,26,26,0.06); color: #cc0000; }
+        html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-section .reaction-btn { border-color: rgba(0,0,0,0.06); background: rgba(0,0,0,0.03); color: rgba(0,0,0,0.45); }
+        html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-section .reaction-btn:hover { background: rgba(0,0,0,0.06); }
+        html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-section .reaction-btn.reacted { background: rgba(255,26,26,0.08); border-color: rgba(255,26,26,0.15); color: #cc0000; }
+        html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-section .reaction-add-btn { border-color: rgba(0,0,0,0.1); color: rgba(0,0,0,0.2); }
+        html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-section .reaction-add-btn:hover { border-color: rgba(0,0,0,0.25); color: rgba(0,0,0,0.4); }
+        html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-section .comment-reply-write { border-top-color: rgba(0,0,0,0.04); }
+        html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-section .comment-reply-input { background: rgba(0,0,0,0.04); border-color: rgba(0,0,0,0.08); color: rgba(0,0,0,0.75); }
+        html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-section .comment-reply-input::placeholder { color: rgba(0,0,0,0.2); }
+
         /* ══════════════════════════════════════════════
            GROUP CARDS — Fruit groupé
         ══════════════════════════════════════════════ */
