@@ -276,16 +276,44 @@
         /* PILULE MOBILE (CACHÉE SUR PC) */
         .mobile-pagination-pill { display: none; }
 
+        /* ── TABLET (iPad paysage) ── */
+        @media (max-width: 1024px) {
+            .site-header { padding: 0 28px; }
+            .site-header__logo { left: 28px; }
+            .site-header__logo img { height: 36px; }
+            .site-header__icons { right: 28px; gap: 10px; }
+            .site-nav a { font-size: 15px; padding: 6px 14px; }
+            .main-content { padding: 28px 20px 60px; }
+            .pagination-bar { margin-bottom: 28px; }
+            .blue-banner { font-size: 28px; padding: 12px 36px; }
+            .page-title { font-size: 32px; }
+            .news-grid { gap: 20px; }
+            .news-card__content { padding: 18px 18px 16px; }
+            .news-card__title { font-size: 17px; margin-bottom: 12px; }
+            .news-card__eyebrow { font-size: 10px; }
+            .news-card__button { padding: 10px 20px; font-size: 12px; }
+        }
+
         /* ── RESPONSIVE MOBILE ── */
         @media (max-width: 768px) { 
             .site-header { padding: 0 16px; height: auto; min-height: 60px; } 
             .site-header__logo { left: 16px; }
             .site-header__logo img { height: 34px; }
             .site-header__icons { right: 16px; gap: 8px; }
+            .discord-login-btn { padding: 5px 10px; font-size: 11px; gap: 5px; }
+            .discord-login-btn svg { width: 16px; height: 16px; }
+            .discord-avatar { width: 26px; height: 26px; }
+            .discord-username { max-width: 70px; font-size: 11px; }
+            .discord-user-pill { padding: 3px 8px 3px 3px; gap: 5px; }
             .site-nav { display: none; } 
             .mobile-menu-btn { display: block; }
             .news-grid { gap: 20px; padding: 0 12px; } 
             .news-card { width: 100%; border-radius: 20px; } 
+            .news-card__content { padding: 16px 16px 14px; }
+            .news-card__title { font-size: 17px; margin-bottom: 12px; }
+            .news-card__eyebrow { font-size: 10px; letter-spacing: 1.2px; }
+            .news-card__button { padding: 9px 18px; font-size: 12px; }
+            .news-card__badge { font-size: 11px; padding: 4px 10px; top: 10px; left: 10px; }
             .blue-banner { font-size: 24px; padding: 12px 30px; margin: 12px 0 8px; } 
             .page-title { font-size: 28px; margin: 16px 0 8px; padding: 0 12px; }
             
@@ -412,6 +440,31 @@
             .mobile-pagination-pill.is-light .pill-switcher a.active {
                 background: rgba(0,0,0,0.85); color: #fff;
             }
+
+        /* ── Petits mobiles (<480px) ── */
+        @media (max-width: 480px) {
+            .site-header { padding: 0 12px; min-height: 52px; }
+            .site-header__logo img { height: 28px; }
+            .site-header__icons { right: 12px; gap: 6px; }
+            .discord-login-btn { padding: 4px 8px; font-size: 10px; }
+            .discord-login-btn svg { width: 14px; height: 14px; }
+            .discord-avatar { width: 22px; height: 22px; }
+            .discord-username { max-width: 50px; font-size: 10px; }
+            .discord-user-pill { padding: 2px 6px 2px 2px; gap: 4px; }
+            .news-grid { gap: 14px; padding: 0 8px; }
+            .news-card { border-radius: 16px; }
+            .news-card__content { padding: 12px 12px 12px; }
+            .news-card__title { font-size: 15px; margin-bottom: 8px; }
+            .news-card__badge { font-size: 10px; padding: 3px 8px; top: 8px; left: 8px; }
+            .news-card__button { padding: 8px 14px; font-size: 11px; }
+            .news-card__image-wrapper { padding-top: 52%; }
+            .blue-banner { font-size: 18px; padding: 8px 16px; }
+            .page-title { font-size: 22px; margin: 12px 0 6px; padding: 0 8px; }
+            .mobile-pagination-pill { bottom: 18px; padding: 4px 14px; gap: 12px; }
+            .mobile-pagination-pill button { width: 32px; height: 32px; font-size: 17px; }
+            .mobile-pagination-pill .page-info { font-size: 13px; min-width: 36px; }
+            .mobile-pagination-pill .pill-switcher a { font-size: 10px; padding: 10px 10px 2px; }
+        }
 
 
         /* ════════════════════════════════════════════════════════════
