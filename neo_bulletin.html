@@ -3161,19 +3161,18 @@
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: 99995; display: none;
             align-items: center; justify-content: center;
-            background: rgba(0,0,0,0.72); backdrop-filter: blur(8px);
+            background: rgba(0,0,0,0.78); backdrop-filter: blur(10px);
         }
         #deleteCardModal.is-open { display: flex; }
         #deleteCardModal .dcm-panel {
             background: #0e0e18;
             border: 1px solid rgba(255,50,50,0.15);
             border-radius: 24px;
-            width: 520px; max-width: 96vw; max-height: 86vh;
+            width: 620px; max-width: 96vw; max-height: 88vh;
             display: flex; flex-direction: column; overflow: hidden;
-            box-shadow: 0 40px 120px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,50,50,0.08), inset 0 1px 0 rgba(255,255,255,0.04);
+            box-shadow: 0 40px 120px rgba(0,0,0,0.85), 0 0 0 1px rgba(255,50,50,0.08), inset 0 1px 0 rgba(255,255,255,0.04);
             animation: ncmPop 0.3s cubic-bezier(0.34,1.56,0.64,1) both;
         }
-        /* Header danger */
         #deleteCardModal .dcm-header {
             padding: 16px 22px;
             background: linear-gradient(90deg, rgba(180,0,0,0.22), rgba(180,0,0,0.06), transparent);
@@ -3182,18 +3181,12 @@
         }
         #deleteCardModal .dcm-header-icon {
             width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
-            background: rgba(255,50,50,0.12);
-            border: 1px solid rgba(255,50,50,0.25);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 17px;
+            background: rgba(255,50,50,0.12); border: 1px solid rgba(255,50,50,0.25);
+            display: flex; align-items: center; justify-content: center; font-size: 17px;
         }
         #deleteCardModal .dcm-header-text { flex: 1; }
-        #deleteCardModal .dcm-header-title {
-            font-size: 14px; font-weight: 700; color: #fff;
-        }
-        #deleteCardModal .dcm-header-sub {
-            font-size: 11px; color: rgba(255,100,100,0.6); margin-top: 2px;
-        }
+        #deleteCardModal .dcm-header-title { font-size: 14px; font-weight: 700; color: #fff; }
+        #deleteCardModal .dcm-header-sub { font-size: 11px; color: rgba(255,100,100,0.6); margin-top: 2px; }
         #deleteCardModal .dcm-header-close {
             width: 28px; height: 28px; border-radius: 8px; border: none;
             background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.4);
@@ -3202,103 +3195,143 @@
         }
         #deleteCardModal .dcm-header-close:hover { background: rgba(255,50,50,0.3); color: #ff4444; }
 
-        /* Liste scrollable */
-        #deleteCardModal #dcmList {
-            flex: 1; overflow-y: auto; padding: 16px 20px;
+        /* ── Toolbar : recherche + filtres ── */
+        #deleteCardModal .dcm-toolbar {
+            padding: 12px 20px 0; flex-shrink: 0;
+            display: flex; flex-direction: column; gap: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding-bottom: 12px;
         }
+        #deleteCardModal .dcm-search-wrap {
+            display: flex; align-items: center; gap: 8px;
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 10px; padding: 8px 12px;
+        }
+        #deleteCardModal .dcm-search-icon { font-size: 13px; opacity: 0.4; flex-shrink: 0; }
+        #deleteCardModal .dcm-search {
+            flex: 1; background: none; border: none; outline: none;
+            color: #fff; font-size: 13px; font-family: inherit;
+        }
+        #deleteCardModal .dcm-search::placeholder { color: rgba(255,255,255,0.25); }
+        #deleteCardModal .dcm-filters {
+            display: flex; gap: 6px; flex-wrap: wrap;
+        }
+        #deleteCardModal .dcm-filter-btn {
+            padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.04); color: rgba(255,255,255,0.45);
+            font-size: 11px; font-weight: 600; font-family: inherit; cursor: pointer;
+            transition: all 0.15s; display: flex; align-items: center; gap: 5px;
+        }
+        #deleteCardModal .dcm-filter-btn:hover { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.7); }
+        #deleteCardModal .dcm-filter-btn.is-active {
+            background: rgba(255,50,50,0.15); border-color: rgba(255,50,50,0.35);
+            color: #ff6666;
+        }
+        #deleteCardModal .dcm-filter-count {
+            background: rgba(255,255,255,0.1); border-radius: 10px;
+            padding: 0 5px; font-size: 10px; min-width: 16px; text-align: center;
+        }
+        #deleteCardModal .dcm-filter-btn.is-active .dcm-filter-count {
+            background: rgba(255,50,50,0.25);
+        }
+
+        /* ── Séparateur de section ── */
+        #deleteCardModal .dcm-section-sep {
+            font-size: 10px; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 1.5px; color: rgba(255,255,255,0.2);
+            padding: 14px 4px 6px; display: flex; align-items: center; gap: 8px;
+        }
+        #deleteCardModal .dcm-section-sep::after {
+            content: ''; flex: 1; height: 1px; background: rgba(255,255,255,0.06);
+        }
+
+        /* Liste scrollable */
+        #deleteCardModal #dcmList { flex: 1; overflow-y: auto; padding: 8px 20px 16px; }
         #deleteCardModal #dcmList::-webkit-scrollbar { width: 4px; }
         #deleteCardModal #dcmList::-webkit-scrollbar-track { background: transparent; }
         #deleteCardModal #dcmList::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
 
         #deleteCardModal .dcm-empty {
             color: rgba(255,255,255,0.25); font-size: 13px; text-align: center;
-            padding: 40px 20px;
-            display: flex; flex-direction: column; align-items: center; gap: 10px;
+            padding: 40px 20px; display: flex; flex-direction: column; align-items: center; gap: 10px;
         }
         #deleteCardModal .dcm-empty-icon { font-size: 36px; opacity: 0.3; }
         #deleteCardModal .dcm-empty-text { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
 
         /* Item carte */
         #deleteCardModal .dcm-item {
-            display: flex; align-items: center; gap: 16px;
-            padding: 12px 14px; border-radius: 14px;
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.05);
-            margin-bottom: 8px; transition: all 0.18s;
-            position: relative; overflow: hidden;
+            display: flex; align-items: center; gap: 14px;
+            padding: 10px 12px; border-radius: 12px;
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);
+            margin-bottom: 6px; transition: all 0.18s; position: relative; overflow: hidden;
         }
+        #deleteCardModal .dcm-item[data-hidden="1"] { display: none; }
         #deleteCardModal .dcm-item::before {
             content: ''; position: absolute; left: 0; top: 0; bottom: 0;
-            width: 3px; background: rgba(255,50,50,0.3); border-radius: 0 2px 2px 0;
-            transition: width 0.2s;
+            width: 3px; background: rgba(255,50,50,0.3); border-radius: 0 2px 2px 0; transition: width 0.2s;
         }
         #deleteCardModal .dcm-item:hover::before { width: 4px; background: rgba(255,50,50,0.7); }
-        #deleteCardModal .dcm-item:hover { background: rgba(255,50,50,0.04); border-color: rgba(255,50,50,0.12); }
+        #deleteCardModal .dcm-item:hover { background: rgba(255,50,50,0.05); border-color: rgba(255,50,50,0.14); }
 
         #deleteCardModal .dcm-item-thumb {
-            width: 44px; height: 44px; border-radius: 10px; flex-shrink: 0;
+            width: 48px; height: 48px; border-radius: 10px; flex-shrink: 0;
             background: rgba(255,255,255,0.06); overflow: hidden;
             display: flex; align-items: center; justify-content: center;
-            font-size: 18px; border: 1px solid rgba(255,255,255,0.06);
+            font-size: 20px; border: 1px solid rgba(255,255,255,0.06);
         }
-        #deleteCardModal .dcm-item-thumb img {
-            width: 100%; height: 100%; object-fit: cover; display: block;
-        }
+        #deleteCardModal .dcm-item-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
         #deleteCardModal .dcm-item-info { flex: 1; min-width: 0; }
+        #deleteCardModal .dcm-item-top { display: flex; align-items: center; gap: 7px; margin-bottom: 3px; }
         #deleteCardModal .dcm-item-badge {
-            display: inline-block;
             font-size: 9px; text-transform: uppercase; letter-spacing: 1px;
-            color: #ff4444; font-weight: 700;
-            background: rgba(255,50,50,0.1); border-radius: 4px; padding: 1px 6px;
-            margin-bottom: 4px;
+            color: #ff5555; font-weight: 700;
+            background: rgba(255,50,50,0.12); border-radius: 4px; padding: 1px 6px;
+            flex-shrink: 0;
+        }
+        #deleteCardModal .dcm-item-type {
+            font-size: 9px; color: rgba(255,255,255,0.25); text-transform: uppercase; letter-spacing: 0.8px;
         }
         #deleteCardModal .dcm-item-title {
-            font-size: 13px; color: #fff; font-weight: 600;
+            font-size: 13px; color: rgba(255,255,255,0.88); font-weight: 600;
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
         #deleteCardModal .dcm-item-section {
-            font-size: 10px; color: rgba(255,255,255,0.3); margin-top: 2px;
+            font-size: 10px; color: rgba(255,255,255,0.25); margin-top: 2px;
         }
         #deleteCardModal .dcm-item-del {
             padding: 6px 14px; border-radius: 8px; border: none;
             background: rgba(255,50,50,0.1); color: rgba(255,80,80,0.8);
             font-size: 12px; font-weight: 700; cursor: pointer; flex-shrink: 0;
             transition: all 0.18s; font-family: inherit;
-            letter-spacing: 0.3px;
         }
         #deleteCardModal .dcm-item-del:hover {
-            background: rgba(255,50,50,0.25); color: #fff;
+            background: rgba(255,50,50,0.28); color: #fff;
             box-shadow: 0 4px 12px rgba(255,50,50,0.2);
         }
 
         /* Zone confirmation inline */
         #deleteCardModal .dcm-confirm-zone {
-            background: rgba(180,0,0,0.08);
-            border: 1px solid rgba(255,50,50,0.15);
-            border-radius: 10px; padding: 12px 14px; margin-top: 8px;
+            background: rgba(180,0,0,0.08); border: 1px solid rgba(255,50,50,0.15);
+            border-radius: 10px; padding: 12px 14px; margin-top: 6px;
             display: none; flex-direction: column; gap: 8px;
         }
         #deleteCardModal .dcm-confirm-zone.is-open { display: flex; }
         #deleteCardModal .dcm-confirm-label {
-            font-size: 11px; color: rgba(255,150,150,0.7); font-weight: 600;
-            display: flex; align-items: center; gap: 5px;
+            font-size: 11px; color: rgba(255,150,150,0.75); font-weight: 600;
         }
         #deleteCardModal .dcm-confirm-pwd {
             width: 100%; padding: 8px 12px; border-radius: 8px;
-            border: 1px solid rgba(255,50,50,0.2);
-            background: rgba(255,255,255,0.04);
-            color: #fff; font-size: 13px; font-family: 'Inter', monospace;
-            outline: none; transition: border-color 0.2s;
-            box-sizing: border-box;
+            border: 1px solid rgba(255,50,50,0.2); background: rgba(255,255,255,0.04);
+            color: #fff; font-size: 13px; font-family: inherit; outline: none;
+            transition: border-color 0.2s; box-sizing: border-box;
         }
-        #deleteCardModal .dcm-confirm-pwd:focus { border-color: rgba(255,50,50,0.5); }
+        #deleteCardModal .dcm-confirm-pwd:focus { border-color: rgba(255,50,50,0.55); }
         #deleteCardModal .dcm-confirm-pwd::placeholder { color: rgba(255,255,255,0.2); }
         #deleteCardModal .dcm-confirm-actions { display: flex; gap: 8px; }
         #deleteCardModal .dcm-confirm-cancel {
             flex: 1; padding: 7px; border-radius: 8px; border: none;
             background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.4);
-            font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit;
-            transition: all 0.18s;
+            font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.18s;
         }
         #deleteCardModal .dcm-confirm-cancel:hover { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.7); }
         #deleteCardModal .dcm-confirm-ok {
@@ -3307,19 +3340,16 @@
             font-size: 12px; font-weight: 700; cursor: pointer; font-family: inherit;
             transition: all 0.18s; box-shadow: 0 3px 10px rgba(180,0,0,0.35);
         }
-        #deleteCardModal .dcm-confirm-ok:hover { box-shadow: 0 5px 16px rgba(180,0,0,0.5); }
+        #deleteCardModal .dcm-confirm-ok:hover { box-shadow: 0 5px 16px rgba(180,0,0,0.55); }
 
         /* Footer */
         #deleteCardModal .dcm-footer {
-            padding: 12px 20px;
-            border-top: 1px solid rgba(255,255,255,0.05);
-            flex-shrink: 0;
+            padding: 12px 20px; border-top: 1px solid rgba(255,255,255,0.05); flex-shrink: 0;
         }
         #deleteCardModal .dcm-close {
-            display: block; width: 100%; padding: 10px;
-            border-radius: 10px; border: none; background: rgba(255,255,255,0.05);
-            color: rgba(255,255,255,0.4); font-size: 13px; font-weight: 600;
-            cursor: pointer; font-family: inherit; transition: all 0.18s;
+            display: block; width: 100%; padding: 10px; border-radius: 10px; border: none;
+            background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.4);
+            font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.18s;
         }
         #deleteCardModal .dcm-close:hover { background: rgba(255,255,255,0.09); color: rgba(255,255,255,0.7); }
         #editModeToast kbd {
@@ -4747,6 +4777,7 @@
     <!-- ── BULLE /DELETE ── -->
     <div id="deleteCardModal">
         <div class="dcm-panel">
+            <!-- Header -->
             <div class="dcm-header">
                 <div class="dcm-header-icon">🗑️</div>
                 <div class="dcm-header-text">
@@ -4755,7 +4786,27 @@
                 </div>
                 <button class="dcm-header-close" onclick="document.getElementById('deleteCardModal').classList.remove('is-open')">✕</button>
             </div>
+
+            <!-- Barre de recherche + filtres -->
+            <div class="dcm-toolbar">
+                <div class="dcm-search-wrap">
+                    <span class="dcm-search-icon">🔍</span>
+                    <input class="dcm-search" id="dcmSearch" type="text" placeholder="Rechercher une carte…" oninput="_dcmFilter()">
+                </div>
+                <div class="dcm-filters" id="dcmFilters">
+                    <button class="dcm-filter-btn is-active" data-filter="all" onclick="_dcmSetFilter('all')">Tout <span class="dcm-filter-count" id="dcmCount-all"></span></button>
+                    <button class="dcm-filter-btn" data-filter="actus" onclick="_dcmSetFilter('actus')">Actus <span class="dcm-filter-count" id="dcmCount-actus"></span></button>
+                    <button class="dcm-filter-btn" data-filter="fruit" onclick="_dcmSetFilter('fruit')">Fruits <span class="dcm-filter-count" id="dcmCount-fruit"></span></button>
+                    <button class="dcm-filter-btn" data-filter="vfx" onclick="_dcmSetFilter('vfx')">VFX <span class="dcm-filter-count" id="dcmCount-vfx"></span></button>
+                    <button class="dcm-filter-btn" data-filter="map" onclick="_dcmSetFilter('map')">Map <span class="dcm-filter-count" id="dcmCount-map"></span></button>
+                    <button class="dcm-filter-btn" data-filter="gui" onclick="_dcmSetFilter('gui')">GUI <span class="dcm-filter-count" id="dcmCount-gui"></span></button>
+                    <button class="dcm-filter-btn" data-filter="msg" onclick="_dcmSetFilter('msg')">MSG <span class="dcm-filter-count" id="dcmCount-msg"></span></button>
+                    <button class="dcm-filter-btn" data-filter="groupe" onclick="_dcmSetFilter('groupe')">Groupes <span class="dcm-filter-count" id="dcmCount-groupe"></span></button>
+                </div>
+            </div>
+
             <div id="dcmList"></div>
+
             <div class="dcm-footer">
                 <button class="dcm-close" onclick="document.getElementById('deleteCardModal').classList.remove('is-open')">Fermer</button>
             </div>
@@ -8484,93 +8535,171 @@
     // ══════════════════════════════════════════════════════════════
     //  COMMANDE /DELETE — Suppression de N'IMPORTE QUELLE carte
     // ══════════════════════════════════════════════════════════════
+    let _dcmCurrentFilter = 'all';
+
     function _cmdDelete() {
         const list = document.getElementById('dcmList');
         if (!list) return;
-        const allCards = [
-            ...document.querySelectorAll('.news-card, .group-card, .msg-card'),
-            ...document.querySelectorAll('.secret-bulletin[data-cc-id], .secret-bulletin[data-static-id]'),
+
+        // Reset search + filtre
+        const searchEl = document.getElementById('dcmSearch');
+        if (searchEl) searchEl.value = '';
+        _dcmCurrentFilter = 'all';
+        document.querySelectorAll('.dcm-filter-btn').forEach(b => b.classList.toggle('is-active', b.dataset.filter === 'all'));
+
+        // Collecter toutes les cards par section
+        const sections = [
+            { id: 'cat-actus',  label: 'Actus',   filter: 'actus',  icon: '📰' },
+            { id: 'cat-fruit',  label: 'Fruits & Reworks', filter: 'fruit', icon: '🍎' },
+            { id: 'cat-vfx',   label: 'VFX',      filter: 'vfx',    icon: '✨' },
+            { id: 'cat-map',   label: 'Map',       filter: 'map',    icon: '🗺️' },
+            { id: 'cat-gui',   label: 'GUI',       filter: 'gui',    icon: '🖥️' },
+            { id: 'cat-msg',   label: 'Messages',  filter: 'msg',    icon: '🔐' },
         ];
-        // Ajouter les cartes individuelles cachées dans les groupes
+        const counts = { all: 0, actus: 0, fruit: 0, vfx: 0, map: 0, gui: 0, msg: 0, groupe: 0 };
+        let html = '';
+        let totalIdx = 0;
+
+        sections.forEach(sec => {
+            const secEl = document.getElementById(sec.id);
+            if (!secEl) return;
+            const cards = [...secEl.querySelectorAll('.news-card, .group-card, .secret-bulletin, .msg-card')];
+            if (cards.length === 0) return;
+
+            html += `<div class="dcm-section-sep" data-sep-filter="${sec.filter}">${sec.icon} ${sec.label} <span style="color:rgba(255,255,255,0.35);font-weight:400">(${cards.length})</span></div>`;
+
+            cards.forEach(card => {
+                const isGroup  = card.classList.contains('group-card');
+                const isActus  = card.classList.contains('secret-bulletin');
+                const isMsg    = card.classList.contains('msg-card');
+                const title    = card.querySelector('.news-card__title,.group-card__title,.msg-card__title,h2')?.textContent?.trim() || 'Sans titre';
+                const badge    = card.querySelector('.news-card__badge,.group-card__badge')?.textContent?.trim() || (isActus?'ACTUS':isMsg?'MSG':'');
+                const ccId     = card.dataset.ccId || null;
+                const staticId = card.dataset.staticId || ('static_' + (totalIdx++));
+                const uid      = ccId || staticId;
+                const imgEl    = card.querySelector('.news-card__image,.group-card__image');
+                const imgSrc   = imgEl?.tagName === 'IMG' ? imgEl.src : '';
+                const isVideo  = imgEl?.tagName === 'VIDEO';
+                const thumb    = isActus ? `<span style="font-size:22px">📰</span>`
+                    : isMsg    ? `<span style="font-size:22px">🔐</span>`
+                    : imgSrc   ? `<img src="${_ccEsc(imgSrc)}" alt="">`
+                    : `<span style="font-size:20px">${isGroup?'📦':isVideo?'🎬':'🖼️'}</span>`;
+                const typeLabel = isActus?' · actus':isMsg?' · message':isGroup?' · groupe':ccId?' · firebase':' · statique';
+
+                html += `<div class="dcm-item" id="dcm-item-${uid}"
+                    data-section="${sec.filter}" data-title="${_ccEsc(title.toLowerCase())}"
+                    data-badge="${_ccEsc(badge.toLowerCase())}">
+                    <div class="dcm-item-thumb">${thumb}</div>
+                    <div class="dcm-item-info">
+                        <div class="dcm-item-top">
+                            <span class="dcm-item-badge">${_ccEsc(badge)||sec.label}</span>
+                            <span class="dcm-item-type">${typeLabel}</span>
+                        </div>
+                        <div class="dcm-item-title">${_ccEsc(title)}</div>
+                    </div>
+                    <button class="dcm-item-del" onclick="_dcmOpenConfirm('${uid}')">Supprimer</button>
+                </div>
+                <div class="dcm-confirm-zone" id="dcm-confirm-${uid}" data-section="${sec.filter}">
+                    <div class="dcm-confirm-label">🔒 Mot de passe requis pour supprimer <strong style="color:#fff">"${_ccEsc(title)}"</strong></div>
+                    <input class="dcm-confirm-pwd" type="password" placeholder="Entrer le mot de passe…"
+                        id="dcm-pwd-${uid}"
+                        onkeydown="if(event.key==='Enter')_cmdDeleteConfirm('${uid}','${ccId||''}','${staticId}')">
+                    <div class="dcm-confirm-actions">
+                        <button class="dcm-confirm-cancel" onclick="_dcmCloseConfirm('${uid}')">Annuler</button>
+                        <button class="dcm-confirm-ok" onclick="_cmdDeleteConfirm('${uid}','${ccId||''}','${staticId}')">🗑️ Supprimer</button>
+                    </div>
+                </div>`;
+
+                counts[sec.filter] = (counts[sec.filter] || 0) + 1;
+                counts.all++;
+            });
+        });
+
+        // Groupes inline
         const groupItems = [];
         Object.entries(GROUP_DATA).forEach(([gid, g]) => {
-            (g.items || []).forEach((item, idx) => {
+            (g.items||[]).forEach((item, idx) => {
                 if (!item._ccId) return;
                 groupItems.push({ gid, idx, item, groupBadge: g.badge });
             });
         });
-        if (allCards.length === 0 && groupItems.length === 0) {
-            list.innerHTML = '<div class="dcm-empty"><div class="dcm-empty-icon">🗂️</div><div class="dcm-empty-text">Aucune carte dans la page</div></div>';
-        } else {
-            let idx = 0;
-            let html = '';
-            allCards.forEach(card => {
-                const isGroup  = card.classList.contains('group-card');
-                const isActus  = card.classList.contains('secret-bulletin');
-                const isMsg    = card.classList.contains('msg-card');
-                const title    = card.querySelector('.news-card__title, .group-card__title, .msg-card__title, h2')?.textContent?.trim() || 'Sans titre';
-                const badge    = card.querySelector('.news-card__badge, .group-card__badge')?.textContent?.trim() || (isActus ? 'ACTUS' : isMsg ? 'MSG' : '');
-                const section  = card.closest('[id^="cat-"]');
-                const sectionName = section?.id?.replace('cat-','') || 'inconnu';
-                const ccId     = card.dataset.ccId || null;
-                const staticId = card.dataset.staticId || ('static_' + (idx++));
-                const uid      = ccId || staticId;
-                const isCustom = !!ccId;
-                const imgEl    = card.querySelector('.news-card__image, .group-card__image');
-                const imgSrc   = imgEl?.tagName === 'IMG' ? imgEl.src : '';
-                const isVideo  = imgEl?.tagName === 'VIDEO';
-                const thumb    = isActus
-                    ? `<span style="font-size:22px">📰</span>`
-                    : isMsg
-                        ? `<span style="font-size:22px">🔐</span>`
-                        : imgSrc
-                            ? `<img src="${_ccEsc(imgSrc)}" alt="" style="width:100%;height:100%;object-fit:cover;display:block;">`
-                            : `<span style="font-size:20px">${isGroup ? '📦' : isVideo ? '🎬' : '🖼️'}</span>`;
-                const typeLabel = isActus ? ' · actus' : isMsg ? ' · message' : isGroup ? ' · groupe' : isCustom ? ' · personnalisée' : '';
-                html += `<div class="dcm-item" id="dcm-item-${uid}">
-                    <div class="dcm-item-thumb">${thumb}</div>
-                    <div class="dcm-item-info">
-                        <div class="dcm-item-badge">${_ccEsc(badge)}</div>
-                        <div class="dcm-item-title">${_ccEsc(title)}</div>
-                        <div class="dcm-item-section">${sectionName}${typeLabel}</div>
-                    </div>
-                    <button class="dcm-item-del" onclick="_dcmOpenConfirm('${uid}')">Supprimer</button>
-                </div>
-                <div class="dcm-confirm-zone" id="dcm-confirm-${uid}">
-                    <div class="dcm-confirm-label">🔒 Mot de passe requis</div>
-                    <input class="dcm-confirm-pwd" type="password" placeholder="Entrer le mot de passe…" id="dcm-pwd-${uid}" onkeydown="if(event.key==='Enter')_cmdDeleteConfirm('${uid}','${ccId||''}','${staticId}')">
-                    <div class="dcm-confirm-actions">
-                        <button class="dcm-confirm-cancel" onclick="_dcmCloseConfirm('${uid}')">Annuler</button>
-                        <button class="dcm-confirm-ok" onclick="_cmdDeleteConfirm('${uid}','${ccId||''}','${staticId}')">🗑️ Confirmer</button>
-                    </div>
-                </div>`;
-            });
+        if (groupItems.length > 0) {
+            html += `<div class="dcm-section-sep" data-sep-filter="groupe">📦 Items dans les groupes <span style="color:rgba(255,255,255,0.35);font-weight:400">(${groupItems.length})</span></div>`;
             groupItems.forEach(({ gid, idx: gi, item, groupBadge }) => {
                 const uid = 'grp_' + gid + '_' + gi;
-                const thumb = item.type === 'video'
-                    ? `<span style="font-size:22px">🎬</span>`
-                    : `<span style="font-size:22px">🖼️</span>`;
-                html += `<div class="dcm-item" id="dcm-item-${uid}">
+                const thumb = item.type === 'video' ? `<span style="font-size:22px">🎬</span>` : `<span style="font-size:22px">🖼️</span>`;
+                html += `<div class="dcm-item" id="dcm-item-${uid}" data-section="groupe" data-title="${_ccEsc((item.label||'').toLowerCase())}" data-badge="${_ccEsc((item.badge||groupBadge||gid).toLowerCase())}">
                     <div class="dcm-item-thumb">${thumb}</div>
                     <div class="dcm-item-info">
-                        <div class="dcm-item-badge">${_ccEsc(item.badge || groupBadge || gid)}</div>
-                        <div class="dcm-item-title">${_ccEsc(item.label)}</div>
-                        <div class="dcm-item-section">${gid} · dans le groupe</div>
+                        <div class="dcm-item-top">
+                            <span class="dcm-item-badge">${_ccEsc(item.badge||groupBadge||gid)}</span>
+                            <span class="dcm-item-type"> · dans ${gid}</span>
+                        </div>
+                        <div class="dcm-item-title">${_ccEsc(item.label||'Sans titre')}</div>
                     </div>
                     <button class="dcm-item-del" onclick="_dcmOpenConfirm('${uid}')">Supprimer</button>
                 </div>
-                <div class="dcm-confirm-zone" id="dcm-confirm-${uid}">
-                    <div class="dcm-confirm-label">🔒 Mot de passe requis</div>
-                    <input class="dcm-confirm-pwd" type="password" placeholder="Entrer le mot de passe…" id="dcm-pwd-${uid}" onkeydown="if(event.key==='Enter')_cmdDeleteConfirm('${uid}','${item._ccId}','')">
+                <div class="dcm-confirm-zone" id="dcm-confirm-${uid}" data-section="groupe">
+                    <div class="dcm-confirm-label">🔒 Mot de passe requis pour supprimer <strong style="color:#fff">"${_ccEsc(item.label||'')}"</strong></div>
+                    <input class="dcm-confirm-pwd" type="password" placeholder="Entrer le mot de passe…"
+                        id="dcm-pwd-${uid}" onkeydown="if(event.key==='Enter')_cmdDeleteConfirm('${uid}','${item._ccId}','')">
                     <div class="dcm-confirm-actions">
                         <button class="dcm-confirm-cancel" onclick="_dcmCloseConfirm('${uid}')">Annuler</button>
-                        <button class="dcm-confirm-ok" onclick="_cmdDeleteConfirm('${uid}','${item._ccId}','')">🗑️ Confirmer</button>
+                        <button class="dcm-confirm-ok" onclick="_cmdDeleteConfirm('${uid}','${item._ccId}','')">🗑️ Supprimer</button>
                     </div>
                 </div>`;
+                counts.groupe++;
+                counts.all++;
             });
-            list.innerHTML = html;
         }
+
+        if (counts.all === 0) {
+            html = '<div class="dcm-empty"><div class="dcm-empty-icon">🗂️</div><div class="dcm-empty-text">Aucune carte dans la page</div></div>';
+        }
+        list.innerHTML = html;
+        _dcmUpdateCounts(counts);
         document.getElementById('deleteCardModal')?.classList.add('is-open');
+    }
+
+    function _dcmUpdateCounts(counts) {
+        ['all','actus','fruit','vfx','map','gui','msg','groupe'].forEach(k => {
+            const el = document.getElementById('dcmCount-' + k);
+            if (el) el.textContent = counts[k] || 0;
+        });
+    }
+
+    function _dcmSetFilter(filter) {
+        _dcmCurrentFilter = filter;
+        document.querySelectorAll('.dcm-filter-btn').forEach(b => b.classList.toggle('is-active', b.dataset.filter === filter));
+        _dcmApplyFilterSearch();
+    }
+
+    function _dcmFilter() { _dcmApplyFilterSearch(); }
+
+    function _dcmApplyFilterSearch() {
+        const q = (document.getElementById('dcmSearch')?.value || '').toLowerCase().trim();
+        const f = _dcmCurrentFilter;
+        document.querySelectorAll('#dcmList .dcm-item').forEach(item => {
+            const secMatch = f === 'all' || item.dataset.section === f;
+            const titleMatch = !q || item.dataset.title?.includes(q) || item.dataset.badge?.includes(q);
+            item.style.display = (secMatch && titleMatch) ? '' : 'none';
+        });
+        // Séparateurs : cacher si aucun item visible dans leur section
+        document.querySelectorAll('#dcmList .dcm-section-sep').forEach(sep => {
+            const secFilter = sep.dataset.sepFilter;
+            const secMatch = f === 'all' || secFilter === f;
+            if (!secMatch) { sep.style.display = 'none'; return; }
+            // Vérifier si au moins un item visible dans cette section
+            const hasVisible = [...document.querySelectorAll(`#dcmList .dcm-item[data-section="${secFilter}"]`)]
+                .some(el => el.style.display !== 'none');
+            sep.style.display = hasVisible ? '' : 'none';
+        });
+        // Cacher aussi les confirm-zones qui ne sont pas visibles
+        document.querySelectorAll('#dcmList .dcm-confirm-zone').forEach(z => {
+            const uid = z.id.replace('dcm-confirm-', '');
+            const item = document.getElementById('dcm-item-' + uid);
+            if (item && item.style.display === 'none') z.classList.remove('is-open');
+        });
     }
     function _dcmOpenConfirm(uid) {
         document.querySelectorAll('.dcm-confirm-zone').forEach(z => z.classList.remove('is-open'));
