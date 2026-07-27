@@ -1512,13 +1512,13 @@
             display: flex; align-items: center; gap: 7px; margin-bottom: 3px; flex-wrap: wrap;
         }
         .card-comments-section .comment-item__username {
-            font-size: 12px; font-weight: 700; color: rgba(0,0,0,0.8);
+            font-size: 12px; font-weight: 700; color: rgba(0,0,0,0.85) !important;
         }
         .card-comments-section .comment-item__time {
-            font-size: 11px; color: rgba(0,0,0,0.3);
+            font-size: 11px; color: rgba(0,0,0,0.45) !important;
         }
         .card-comments-section .comment-item__text {
-            font-size: 13px; color: rgba(0,0,0,0.6);
+            font-size: 13px; color: rgba(0,0,0,0.72) !important;
             line-height: 1.5; word-break: break-word;
         }
         .card-comments-section .comment-pin-badge {
@@ -1592,9 +1592,9 @@
             font-size: 11px; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif;
         }
         html[data-theme="dark"] .card-comments-section .comment-item { border-bottom-color: rgba(255,255,255,0.05); }
-        html[data-theme="dark"] .card-comments-section .comment-item__username { color: rgba(255,255,255,0.85); }
-        html[data-theme="dark"] .card-comments-section .comment-item__time { color: rgba(255,255,255,0.3); }
-        html[data-theme="dark"] .card-comments-section .comment-item__text { color: rgba(255,255,255,0.65); }
+        html[data-theme="dark"] .card-comments-section .comment-item .comment-item__username { color: rgba(255,255,255,0.85) !important; }
+        html[data-theme="dark"] .card-comments-section .comment-item .comment-item__time { color: rgba(255,255,255,0.35) !important; }
+        html[data-theme="dark"] .card-comments-section .comment-item .comment-item__text { color: rgba(220,210,210,0.72) !important; }
         html[data-theme="dark"] .card-comments-section .comment-item--pinned { background: linear-gradient(90deg, rgba(255,215,0,0.04), transparent); }
         html[data-theme="dark"] .card-comments-section .comment-item--pinned .comment-item__body { border-left-color: rgba(255,215,0,0.3); }
         html[data-theme="dark"] .card-comments-section .comment-pin-badge { color: #cc8800; border-color: rgba(255,215,0,0.3); background: rgba(255,215,0,0.15); }
@@ -1617,9 +1617,12 @@
 
         /* ── Commentaires dans secret-bulletin Firebase (toujours dark) ── */
         .secret-bulletin--firebase .card-comments-section .comment-item { border-bottom-color: rgba(255,255,255,0.05); }
-        .secret-bulletin--firebase .card-comments-section .comment-item__username { color: rgba(255,255,255,0.85); }
-        .secret-bulletin--firebase .card-comments-section .comment-item__time { color: rgba(255,255,255,0.3); }
-        .secret-bulletin--firebase .card-comments-section .comment-item__text { color: rgba(255,255,255,0.65); }
+        .secret-bulletin--firebase .card-comments-section .comment-item .comment-item__username { color: rgba(255,255,255,0.88) !important; }
+        .secret-bulletin--firebase .card-comments-section .comment-item .comment-item__time { color: rgba(255,255,255,0.35) !important; }
+        .secret-bulletin--firebase .card-comments-section .comment-item .comment-item__text { color: rgba(220,210,210,0.75) !important; }
+        .secret-bulletin--firebase .card-comments-section .comment-reply .comment-item__username { color: rgba(255,255,255,0.88) !important; }
+        .secret-bulletin--firebase .card-comments-section .comment-reply .comment-item__time { color: rgba(255,255,255,0.35) !important; }
+        .secret-bulletin--firebase .card-comments-section .comment-reply__text { color: rgba(220,210,210,0.7) !important; }
         .secret-bulletin--firebase .card-comments-section .comment-item--pinned { background: linear-gradient(90deg, rgba(255,215,0,0.04), transparent); }
         .secret-bulletin--firebase .card-comments-section .comment-item--pinned .comment-item__body { border-left-color: rgba(255,215,0,0.3); }
         .secret-bulletin--firebase .card-comments-section .comment-pin-badge { color: #cc8800; border-color: rgba(255,215,0,0.3); background: rgba(255,215,0,0.15); }
