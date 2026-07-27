@@ -5600,10 +5600,13 @@
             let val = snap.val();
             if (!val) { _ccDB = []; } else {
                 if (!Array.isArray(val)) val = Object.keys(val).sort((a,b)=>Number(a)-Number(b)).map(k=>val[k]);
-                // Préserver likedByMe
                 const likes = {};
-                _ccDB.forEach(c => { likes[c.id] = c.likedByMe; });
-                _ccDB = val.map(c => ({ ...c, likedByMe: !!likes[c.id] }));
+                const myReacts = {};
+                _ccDB.forEach(c => {
+                    likes[c.id] = c.likedByMe;
+                    myReacts[c.id] = c.myReactions;
+                });
+                _ccDB = val.map(c => ({ ...c, likedByMe: !!likes[c.id], myReactions: myReacts[c.id] || {} }));
             }
             _ccRender();
         }, err => { console.warn('[card-comments] Firebase error:', err); });
@@ -5659,20 +5662,73 @@
     }
 
     function _ccRenderItem(c) {
-        const canDel = window.currentUser && (MODERATORS.includes(window.currentUser.username) || c.username === window.currentUser.username);
-        return `<div class="card-comment-item" id="cc-${c.id}">
-            ${avatarHTML(c, 28)}
-            <div class="card-comment-item__body">
-                <div class="card-comment-item__header">
-                    ${discordTag()}
-                    <span class="card-comment-item__username">${c.username}</span>
-                    <span class="card-comment-item__time">${relativeTime(c.time)}</span>
+        const _isMod  = window.currentUser && MODERATORS.includes(window.currentUser.username);
+        const _canDel = window.currentUser && (_isMod || c.username === window.currentUser.username);
+        const isPinned = !!c.pinned;
+        const isFirst  = _ccDB.length > 0 && _ccDB[0].id === c.id;
+        const pfx      = 'cc-';
+        // Replies
+        const replies = (c.replies||[]).map(r => {
+            const canDelR = window.currentUser && (_isMod || r.username === window.currentUser.username);
+            return `<div class="comment-reply" id="${pfx}reply-${r.id}">
+                ${avatarHTML(r, 30)}
+                <div class="comment-reply__body">
+                    <div class="comment-reply__header">
+                        ${discordTag()}
+                        <span class="comment-item__username">${r.username}</span>
+                        <span class="comment-item__time" title="${r.time}">${relativeTime(r.time)}</span>
+                    </div>
+                    <div class="comment-reply__text">${r.text}</div>
+                    <div class="comment-item__actions" style="margin-top:7px">
+                        <button class="comment-btn ${r.likedByMe?'comment-btn--liked':''}"
+                            onclick="_ccLikeReply('${c.id}','${r.id}',this)">
+                            ${r.likedByMe?'❤️':'🤍'} <span class="comment-btn__like-count">${r.likes||0}</span>
+                        </button>
+                        ${canDelR?`<button class="comment-btn comment-btn--delete" onclick="_ccDeleteReply('${c.id}','${r.id}')">🗑 Suppr.</button>`:''}
+                    </div>
                 </div>
-                <div class="card-comment-item__text">${c.text}</div>
-                <button class="card-comment-item__like${c.likedByMe?' liked':''}" onclick="_ccLike('${c.id}',this)">
-                    ${c.likedByMe?'❤️':'🤍'} ${c.likes||0}
-                </button>
-                ${canDel?`<button class="card-comment-item__delete" onclick="_ccDelete('${c.id}')">🗑</button>`:''}
+            </div>`;
+        }).join('');
+        // Reactions
+        const reacts   = c.reactions  || {};
+        const myReacts = c.myReactions || {};
+        const pills    = REACTION_EMOJIS
+            .filter(em => reacts[em] > 0)
+            .map(em => `<button class="reaction-btn${myReacts[em]?' reacted':''}"
+                onclick="_ccToggleReaction('${c.id}','${em}',this)" title="${em}">
+                ${em} <span class="reaction-btn__count">${reacts[em]||0}</span></button>`).join('');
+        const reactBar = `<div class="comment-reactions" id="${pfx}reacts-${c.id}">
+            ${pills}
+            <button class="reaction-add-btn" onclick="_ccOpenEmoji(event,'${c.id}')" title="Ajouter une réaction">+</button>
+        </div>`;
+        return `<div class="comment-item${isPinned?' comment-item--pinned':''}" id="cc-${c.id}">
+            ${avatarHTML(c, 28)}
+            <div class="comment-item__body">
+                <div class="comment-item__header">
+                    ${discordTag()}
+                    <span class="comment-item__username">${c.username}</span>
+                    ${isFirst?`<span class="comment-first-badge">Premier 🎉</span>`:''}
+                    ${isPinned?`<span class="comment-pin-badge">📌 Épinglé</span>`:''}
+                    <span class="comment-item__time" title="${c.time}">${relativeTime(c.time)}</span>
+                </div>
+                <div class="comment-item__text">${c.text}</div>
+                ${reactBar}
+                <div class="comment-item__actions">
+                    <button class="comment-btn ${c.likedByMe?'comment-btn--liked':''}"
+                        onclick="_ccLikeComment('${c.id}',this)">
+                        ${c.likedByMe?'❤️':'🤍'} <span class="comment-btn__like-count">${c.likes||0}</span>
+                    </button>
+                    ${window.currentUser?`<button class="comment-btn" onclick="_ccToggleReplyBox('${pfx}rw-${c.id}')">↩ Répondre</button>`:''}
+                    ${_canDel?`<button class="comment-btn comment-btn--delete" onclick="_ccDelete('${c.id}')">🗑 Suppr.</button>`:''}
+                    ${_isMod&&!isPinned?`<button class="comment-btn" onclick="_ccPinComment('${c.id}')" title="Épingler">📌</button>`:''}
+                    ${_isMod&&isPinned?`<button class="comment-btn is-pinned" onclick="_ccUnpinComment('${c.id}')" title="Désépingler">📌</button>`:''}
+                </div>
+                ${replies?`<div class="comment-replies">${replies}</div>`:''}
+                <div class="comment-reply-write" id="${pfx}rw-${c.id}">
+                    ${avatarHTML(window.currentUser,30)}
+                    <textarea class="comment-reply-input" placeholder="Ta réponse..." rows="1" oninput="autoResize(this)"></textarea>
+                    <button class="comment-reply-submit" onclick="_ccPostReply('${c.id}','${pfx}rw-${c.id}')">Poster</button>
+                </div>
             </div>
         </div>`;
     }
@@ -5684,9 +5740,10 @@
         const check = _filterComment(txt);
         if (check.blocked) { _showCommentWarning('Contenu inapproprié.'); return; }
         const c = { id: uid(), username: window.currentUser.username, avatar: window.currentUser.avatar||'',
-            text: txt, time: isoNow(), likes: 0, likedByMe: false };
+            text: txt, time: isoNow(), likes: 0, likedByMe: false,
+            replies: [], reactions: {}, myReactions: {}, pinned: false };
         _ccDB.unshift(c);
-        _ccRef.set(_ccDB.map(x => { const n={...x}; delete n.likedByMe; return n; }))
+        _ccRef.set(_ccDB.map(x => { const n={...x}; delete n.likedByMe; delete n.myReactions; return n; }))
             .catch(e => console.error('[card-comments] write error:', e));
         inp.value = ''; inp.style.height = '';
         _ccRender();
@@ -5698,7 +5755,7 @@
         c.likes = Math.max(0, (c.likes||0) + (c.likedByMe ? 1 : -1));
         btn.className = 'card-comment-item__like' + (c.likedByMe?' liked':'');
         btn.innerHTML = (c.likedByMe?'❤️':'🤍') + ' ' + c.likes;
-        _ccRef.set(_ccDB.map(x => { const n={...x}; delete n.likedByMe; return n; }))
+        _ccRef.set(_ccDB.map(x => { const n={...x}; delete n.likedByMe; delete n.myReactions; return n; }))
             .catch(e => console.error('[card-comments] like error:', e));
     }
 
