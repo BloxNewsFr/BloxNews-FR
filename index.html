@@ -1921,6 +1921,32 @@
         let _depthEls = [];
         const _depthFactors = { '3': 0.6, '2': 0.35, '1': 0.18, '0': 0.08, '-1': 0.03, '-2': 0.01 };
 
+            // ── SCROLL GLOW NAVBAR ──
+            (function initNavbarScroll() {
+                const header = document.querySelector('.site-header');
+                if (!header) return;
+                let ticking = false;
+                const update = () => {
+                    header.classList.toggle('is-scrolled', window.scrollY > 10);
+                    ticking = false;
+                };
+                window.addEventListener('scroll', () => {
+                    if (!ticking) { requestAnimationFrame(update); ticking = true; }
+                }, { passive: true });
+                update();
+            })();
+
+            // ── RESPECTER prefers-reduced-motion ──
+            (function respectReducedMotion() {
+                const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+                if (mq.matches) {
+                    document.documentElement.style.setProperty('--anim-speed', '0s');
+                    const style = document.createElement('style');
+                    style.textContent = '.site-nav li { animation: none !important; opacity: 1 !important; }';
+                    document.head.appendChild(style);
+                }
+            })();
+
         const bulletins = [
             { num: "001", img: "./001/img/img_fruit.png",          href: "./001/bulletin-001.html", date: "2025-03-20" },
             { num: "002", img: "./002/img/1th_img.png",            href: "./002/bulletin-002.html", date: "2025-03-27" },

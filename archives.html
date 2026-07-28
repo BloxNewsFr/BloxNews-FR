@@ -39,7 +39,29 @@
         html[data-theme="dark"] { --color-text: #eef0fa; --color-border: #2a2d45; }
         html[data-theme="dark"] body { background-color: #0e0f1c; }
         html[data-theme="dark"] .site-background { opacity: 0.35; }
-        html[data-theme="dark"] .site-header { background-color: rgba(20,20,35,0.55); border-bottom-color: rgba(255,255,255,0.1); }
+        html[data-theme="dark"] .site-header {
+            background: rgba(40,45,55,0.08);
+            border-top-color: rgba(255,255,255,0.12);
+            border-bottom-color: rgba(255,255,255,0.04);
+            box-shadow:
+                0 0 0 1px rgba(255,255,255,0.04) inset,
+                0 8px 32px rgba(0,0,0,0.35),
+                0 1px 2px rgba(0,0,0,0.2);
+        }
+        .site-header.is-scrolled {
+            border-bottom-color: rgba(226,0,0,0.2);
+            box-shadow:
+                0 0 0 1px rgba(255,255,255,0.08) inset,
+                0 8px 32px rgba(0,0,0,0.08),
+                0 4px 24px rgba(226,0,0,0.06);
+        }
+        html[data-theme="dark"] .site-header.is-scrolled {
+            border-bottom-color: rgba(255,26,26,0.15);
+            box-shadow:
+                0 0 0 1px rgba(255,255,255,0.04) inset,
+                0 8px 32px rgba(0,0,0,0.35),
+                0 4px 24px rgba(255,26,26,0.08);
+        }
         html[data-theme="dark"] .page-subtitle { color: #b7bbd8; }
         html[data-theme="dark"] .archive-toolbar { background: rgba(255,255,255,0.03); border-color: rgba(23,94,194,0.15); }
         html[data-theme="dark"] #archiveJump { color: #eef0fa; }
@@ -93,25 +115,56 @@
 @media (max-width: 768px) { .site-background { display: none; } }
 
         .site-header {
-            display: flex; align-items: center; justify-content: center;
-            padding: 0 55px; position: sticky; top: 0; z-index: 1000; height: 72px;
-            background-color: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(24px) saturate(180%);
-            -webkit-backdrop-filter: blur(24px) saturate(180%);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.2);
-            transform: translateZ(0);
-            will-change: transform;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 55px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            height: 72px;
+
+            /* ── APPLE FROSTED GLASS ── */
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(50px) saturate(180%);
+            -webkit-backdrop-filter: blur(50px) saturate(180%);
+
+            /* Edge highlights (Apple hallmark) */
+            border-top: 1px solid rgba(255,255,255,0.30);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+
+            /* Depth */
+            box-shadow:
+                0 0 0 1px rgba(255,255,255,0.08) inset,
+                0 8px 32px rgba(0,0,0,0.08),
+                0 1px 2px rgba(0,0,0,0.04);
+            transition: box-shadow 0.3s ease, border-bottom-color 0.3s ease;
         }
         .site-header__logo { position: absolute; left: 55px; }
         .site-header__logo img { height: 42px; width: auto; display: block; }
-        .site-nav { display: flex; gap: 8px; padding: 0; margin: 0; list-style: none; font-weight: 900; }
-        .site-nav a {
-            color: var(--color-text); text-decoration: none; font-size: 17px; text-transform: uppercase;
-            font-family: 'LuckiestGuy Regular', cursive; padding: 8px 16px; border-radius: 10px;
+        .site-nav { display: flex; gap: 6px; padding: 0; margin: 0; list-style: none; font-weight: 900; }
+        .site-nav li { opacity: 0; animation: navFadeIn 0.4s ease forwards; }
+        .site-nav li:nth-child(1) { animation-delay: 0.05s; }
+        .site-nav li:nth-child(2) { animation-delay: 0.10s; }
+        .site-nav li:nth-child(3) { animation-delay: 0.15s; }
+        .site-nav li:nth-child(4) { animation-delay: 0.20s; }
+        @keyframes navFadeIn {
+            from { opacity: 0; transform: translateY(-6px); }
+            to   { opacity: 1; transform: translateY(0); }
         }
-        .site-nav a:hover { background: var(--color-primary); color: #000; }
-        .site-nav a.active { background: var(--color-accent); color: #fff; }
+.site-nav a {
+    color: var(--color-text); text-decoration: none; font-weight: 900; font-size: 17px;
+    text-transform: uppercase; font-family: 'LuckiestGuy Regular', cursive;
+    padding: 8px 16px; border-radius: 10px;
+    transition: background 0.2s, color 0.2s, transform 0.2s;
+    position: relative; display: inline-block;
+}
+.site-nav a:hover { background: var(--color-primary); color: #000; transform: scale(1.05); }
+.site-nav a:active { transform: scale(0.95); }
+.site-nav a.-active {
+    background: var(--color-primary); color: #000;
+    box-shadow: 0 2px 12px rgba(255,218,0,0.35);
+}
         .site-header__icons { display: flex; gap: 12px; position: absolute; right: 55px; align-items: center; }
         .site-header__icons span { padding: 8px; border-radius: 10px; transition: background 0.2s; cursor: pointer; }
         .site-header__icons span:hover { background: rgba(0,0,0,0.06); }
