@@ -151,7 +151,10 @@
             margin-bottom: 8px;
             animation: soonPulse 2s ease-in-out infinite;
         }
-        @keyframes soonPulse { 0%,  }
+        @keyframes soonPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
 
         .soon-title {
             font-family: 'LuckiestGuy Regular', cursive;
@@ -255,6 +258,19 @@
             .site-footer { flex-direction: column; gap: 24px; padding: 30px 20px calc(30px + env(safe-area-inset-bottom, 0px)); }
         }
 
+        /* Bulletin reveal */
+        #bulletin-content { display: none; width: 100%; }
+        #countdown-section { transition: opacity 0.6s ease; }
+        #countdown-section.hidden { opacity: 0; pointer-events: none; }
+        #bulletin-content.visible {
+            display: block;
+            animation: fadeInUp 0.8s ease forwards;
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
         @media (max-width: 480px) {
             .countdown { gap: 8px; }
             .countdown-item { min-width: 60px; }
@@ -274,10 +290,10 @@
             animation: particleFloat linear infinite;
         }
         @keyframes particleFloat {
-            
-            
-            
-            
+            0%   { transform: translateY(100vh) scale(0); opacity: 0; }
+            10%  { opacity: 1; }
+            90%  { opacity: 0.6; }
+            100% { transform: translateY(-10vh) scale(1.2); opacity: 0; }
         }
     
 
@@ -401,36 +417,56 @@
     </nav>
 
     <main class="main-content">
-        <div class="soon-badge">&#9679; Bientôt</div>
-        <h1 class="soon-title">Bulletin #024</h1>
-        <p class="soon-subtitle">Le prochain bulletin arrive dans&hellip;</p>
 
-        <div class="countdown" id="countdown">
-            <div class="countdown-item">
-                <div class="countdown-number" id="days">00</div>
-                <div class="countdown-label">Jours</div>
+        <!-- ── COMPTE À REBOURS ── affiché jusqu'à la date cible -->
+        <div id="countdown-section">
+            <div class="soon-badge">&#9679; Bientôt</div>
+            <h1 class="soon-title">Bulletin #024</h1>
+            <p class="soon-subtitle">Le prochain bulletin arrive dans&hellip;</p>
+
+            <div class="countdown" id="countdown">
+                <div class="countdown-item">
+                    <div class="countdown-number" id="days">00</div>
+                    <div class="countdown-label">Jours</div>
+                </div>
+                <div class="countdown-sep">:</div>
+                <div class="countdown-item">
+                    <div class="countdown-number" id="hours">00</div>
+                    <div class="countdown-label">Heures</div>
+                </div>
+                <div class="countdown-sep">:</div>
+                <div class="countdown-item">
+                    <div class="countdown-number" id="minutes">00</div>
+                    <div class="countdown-label">Minutes</div>
+                </div>
+                <div class="countdown-sep">:</div>
+                <div class="countdown-item">
+                    <div class="countdown-number" id="seconds">00</div>
+                    <div class="countdown-label">Secondes</div>
+                </div>
             </div>
-            <div class="countdown-sep">:</div>
-            <div class="countdown-item">
-                <div class="countdown-number" id="hours">00</div>
-                <div class="countdown-label">Heures</div>
-            </div>
-            <div class="countdown-sep">:</div>
-            <div class="countdown-item">
-                <div class="countdown-number" id="minutes">00</div>
-                <div class="countdown-label">Minutes</div>
-            </div>
-            <div class="countdown-sep">:</div>
-            <div class="countdown-item">
-                <div class="countdown-number" id="seconds">00</div>
-                <div class="countdown-label">Secondes</div>
-            </div>
+
+            <a href="../index.html" class="cta-back">
+                <span class="material-symbols-outlined" style="font-size:18px">arrow_back</span>
+                Retour aux bulletins
+            </a>
         </div>
 
-        <a href="../index.html" class="cta-back">
-            <span class="material-symbols-outlined" style="font-size:18px">arrow_back</span>
-            Retour aux bulletins
-        </a>
+        <!-- ── VRAI BULLETIN ── caché jusqu'à expiration du compte à rebours -->
+        <!-- ════════════════════════════════════════════════════════════════
+             COLLE TON CONTENU DE BULLETIN ICI (sections, articles, images…)
+             Ce bloc apparaîtra automatiquement quand le compte à rebours
+             atteindra zéro.
+        ════════════════════════════════════════════════════════════════ -->
+        <div id="bulletin-content">
+
+            <!-- EXEMPLE — remplace tout ce bloc par ton vrai contenu -->
+            <p style="color:rgba(255,255,255,0.4);font-style:italic;">
+                [Contenu du bulletin #024 à coller ici]
+            </p>
+
+        </div>
+
     </main>
 
     <footer class="site-footer">
@@ -462,14 +498,25 @@
 
         function pad(n) { return String(n).padStart(2, '0'); }
 
+        let revealed = false;
+
+        function revealBulletin() {
+            if (revealed) return;
+            revealed = true;
+            const cdSection = document.getElementById('countdown-section');
+            const bulletin  = document.getElementById('bulletin-content');
+            cdSection.classList.add('hidden');
+            setTimeout(() => {
+                cdSection.style.display = 'none';
+                bulletin.classList.add('visible');
+            }, 650);
+        }
+
         function updateCountdown() {
             const now = Date.now();
             const diff = TARGET.getTime() - now;
             if (diff <= 0) {
-                document.getElementById('days').textContent = '00';
-                document.getElementById('hours').textContent = '00';
-                document.getElementById('minutes').textContent = '00';
-                document.getElementById('seconds').textContent = '00';
+                revealBulletin();
                 return;
             }
             const totalSec = Math.floor(diff / 1000);
@@ -483,7 +530,10 @@
             document.getElementById('seconds').textContent = pad(s);
         }
         updateCountdown();
-        setInterval(updateCountdown, 1000);
+        const cdInterval = setInterval(() => {
+            updateCountdown();
+            if (revealed) clearInterval(cdInterval);
+        }, 1000);
 
         // Floating particles
         (function() {

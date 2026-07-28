@@ -6578,7 +6578,7 @@
         const video  = document.getElementById('fruitVideo');
         const img    = document.getElementById('modalImage');
         document.getElementById('modalBadge').textContent   = data.badge;
-        document.getElementById('modalSection').textContent = '🍎 Fruits & Reworks';
+        document.getElementById('modalSection').textContent = data.title || data.badge;
         document.getElementById('modalMetaTitle').textContent = item.label;
         video.style.display = 'none'; img.style.display = 'none';
         if (item.type === 'video') {
@@ -6647,6 +6647,7 @@
     document.addEventListener('keydown', e => {
         if (e.key === 'Escape') {
             document.getElementById('groupDrawerOverlay')?.classList.remove('is-active');
+            document.body.style.overflow = '';
         }
     });
     </script>
@@ -10533,7 +10534,6 @@
 
                 // Si token valide, vérifier en arrière-plan
                 if (stored && stored.expiresAt > Date.now()) {
-                    _discordFetchUserInterval = _discordFetchUser(stored.token);
                     try {
                         const freshUser = await _discordFetchUser(stored.token);
                         localStorage.setItem(DISCORD_USER_KEY, JSON.stringify(freshUser));

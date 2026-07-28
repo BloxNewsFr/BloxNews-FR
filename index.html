@@ -2453,7 +2453,6 @@
             _waterEngines.forEach(e => e.destroy());  _waterEngines = [];
             _fireEngines.forEach(e  => e.destroy());  _fireEngines  = [];
             _iceEngines.forEach(e   => e.destroy());  _iceEngines   = [];
-            _fireEngines = [];
 
             const list  = _activeList();
             const total = _totalPages();
@@ -2496,7 +2495,7 @@
                     if (b.num === "015") {
                         deco = `<canvas class="fire-canvas" aria-hidden="true"></canvas>`;
                     } else if (b.num === "016") {
-                        deco = `<div class="water-surface" aria-hidden="true"></div><div class="water-deco" aria-hidden="true"></div>`;
+                        deco = `<div class="water-surface" aria-hidden="true"><canvas class="fluid-canvas"></canvas><canvas class="bubble-canvas"></canvas></div><div class="water-deco" aria-hidden="true"></div>`;
                     } else if (b.num === "017") {
                         deco = `<div class="hw-deco" aria-hidden="true"><span class="hw-bat" style="--bx:10%;--bd:-0.2s;--bt:-12px"></span><span class="hw-bat" style="--bx:60%;--bd:-2.4s;--bt:-8px"></span><span class="hw-bat" style="--bx:34%;--bd:-1.2s;--bt:-10px"></span><span class="hw-skull"></span></div>`;
                     } else if (b.num === "018") {
@@ -2861,16 +2860,7 @@
             }
             requestAnimationFrame(tick);
         }
-        function smoothFilterScale(el, from, to, dur) {
-            const start = performance.now();
-            function tick(now) {
-                const t = Math.min((now - start) / dur, 1);
-                const ease = 1 - Math.pow(1 - t, 3);
-                el.setAttribute('scale', String(Math.round(from + (to - from) * ease)));
-                if (t < 1) requestAnimationFrame(tick);
-            }
-            requestAnimationFrame(tick);
-        }
+
 
         // ── 3D DEPTH ENGINE ──
         function assignDepth() {
