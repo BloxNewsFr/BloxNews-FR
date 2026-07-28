@@ -4294,7 +4294,81 @@
             .mobile-switcher-pill { bottom: 18px; padding: 3px; }
             .mobile-switcher-pill a { font-size: 11px; padding: 12px 14px 5px; }
         }
-    </style>
+    
+
+        /* ═══════════════════════════════════════════════════
+           APPLE EDGE HIGHLIGHT — cartes, boutons, onglets
+           Effet "liquid glass" avec bords 1px brillants
+        ═══════════════════════════════════════════════════ */
+        .news-card {
+            border: 1px solid rgba(255,255,255,0.12) !important;
+            border-top-color: rgba(255,255,255,0.25) !important;
+        }
+        .news-card__content {
+            position: relative; z-index: 1;
+            border-top: 1px solid rgba(255,255,255,0.10);
+            box-shadow: 0 -1px 0 rgba(255,255,255,0.06) inset;
+        }
+        .news-card__button {
+            border: 1px solid rgba(255,255,255,0.18) !important;
+            border-top-color: rgba(255,255,255,0.35) !important;
+            box-shadow: 0 0 0 1px rgba(255,255,255,0.08) inset, 0 4px 16px rgba(var(--cat-rgb),0.45) !important;
+        }
+        .msg-card {
+            border: 1px solid rgba(255,215,0,0.22) !important;
+            border-top-color: rgba(255,215,0,0.35) !important;
+            box-shadow: 0 0 0 1px rgba(255,215,0,0.06) inset, 0 8px 32px rgba(0,0,0,0.15) !important;
+        }
+        .leaks-tab {
+            border: 1px solid rgba(255,255,255,0.10);
+            border-top-color: rgba(255,255,255,0.22);
+            box-shadow: 0 0 0 1px rgba(255,255,255,0.04) inset;
+        }
+        .leaks-banner {
+            border: 1px solid rgba(255,255,255,0.12);
+            border-top-color: rgba(255,255,255,0.26);
+            box-shadow: 0 0 0 1px rgba(255,255,255,0.06) inset;
+        }
+        .category-title {
+            border-bottom: 1px solid rgba(255,255,255,0.08) !important;
+            box-shadow: 0 1px 0 rgba(255,255,255,0.04) inset;
+        }
+        .group-card {
+            border: 1px solid rgba(255,255,255,0.12);
+            border-top-color: rgba(255,255,255,0.25);
+            box-shadow: 0 0 0 1px rgba(255,255,255,0.06) inset;
+        }
+
+        html[data-theme="dark"] .news-card {
+            border-color: rgba(255,255,255,0.07) !important;
+            border-top-color: rgba(255,255,255,0.18) !important;
+        }
+        html[data-theme="dark"] .news-card__content {
+            border-top-color: rgba(255,255,255,0.06);
+            box-shadow: 0 -1px 0 rgba(255,255,255,0.03) inset;
+        }
+        html[data-theme="dark"] .news-card__button {
+            border-color: rgba(255,255,255,0.10) !important;
+            border-top-color: rgba(255,255,255,0.22) !important;
+        }
+        html[data-theme="dark"] .msg-card {
+            border-color: rgba(255,215,0,0.12) !important;
+            border-top-color: rgba(255,215,0,0.25) !important;
+        }
+        html[data-theme="dark"] .leaks-tab {
+            border-color: rgba(255,255,255,0.06);
+            border-top-color: rgba(255,255,255,0.15);
+        }
+        html[data-theme="dark"] .leaks-banner {
+            border-color: rgba(255,255,255,0.06);
+            border-top-color: rgba(255,255,255,0.14);
+        }
+        html[data-theme="dark"] .group-card {
+            border-color: rgba(255,255,255,0.07);
+            border-top-color: rgba(255,255,255,0.16);
+        }
+
+</style>
 </head>
 <body>
 

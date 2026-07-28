@@ -46,9 +46,36 @@
         html[data-theme="dark"] body { background-color: #0e0f1c; }
         html[data-theme="dark"] .site-background { opacity: 0.35; }
         html[data-theme="dark"] .site-header {
-            background-color: rgba(20,20,35,0.55);
-            border-bottom-color: rgba(255,255,255,0.08);
-        }
+        html[data-theme="dark"]             display: flex;
+        html[data-theme="dark"]             align-items: center;
+        html[data-theme="dark"]             justify-content: center;
+        html[data-theme="dark"]             padding: 0 55px;
+        html[data-theme="dark"]             position: sticky;
+        html[data-theme="dark"]             top: 0;
+        html[data-theme="dark"]             z-index: 1000;
+        html[data-theme="dark"]             height: 72px;
+
+        html[data-theme="dark"]             /* ── APPLE FROSTED GLASS ── */
+        html[data-theme="dark"]             background: rgba(255,255,255,0.15);
+        html[data-theme="dark"]             backdrop-filter: blur(50px) saturate(180%);
+        html[data-theme="dark"]             -webkit-backdrop-filter: blur(50px) saturate(180%);
+
+        html[data-theme="dark"]             /* Edge highlights (Apple hallmark) */
+        html[data-theme="dark"]             border-top: 1px solid rgba(255,255,255,0.30);
+        html[data-theme="dark"]             border-bottom: 1px solid rgba(255,255,255,0.08);
+
+        html[data-theme="dark"]             /* Depth */
+        html[data-theme="dark"]             box-shadow:
+        html[data-theme="dark"]                         0 0 0 1px rgba(255,255,255,0.08) inset,
+        html[data-theme="dark"]                         0 8px 32px rgba(0,0,0,0.08),
+        html[data-theme="dark"]                         0 1px 2px rgba(0,0,0,0.04);
+        html[data-theme="dark"] }
+
+        html[data-theme="dark"] html[data-theme="dark"] .site-header {
+        html[data-theme="dark"]             background: rgba(40,45,55,0.08);
+        html[data-theme="dark"]             border-top-color: rgba(255,255,255,0.12);
+        html[data-theme="dark"]             border-bottom-color: rgba(255,255,255,0.04);
+        html[data-theme="dark"] }
         html[data-theme="dark"] .news-card:not(.glitch-card):not(.fire-card):not(.water-card):not(.halloween-card):not(.ice-card):not(.valentine-card) { background: #171827; }
         html[data-theme="dark"] .news-card:not(.glitch-card):not(.fire-card):not(.water-card):not(.halloween-card):not(.ice-card):not(.valentine-card) .news-card__content { background: #171827; }
         html[data-theme="dark"] .news-card:not(.glitch-card):not(.fire-card):not(.water-card):not(.halloween-card):not(.ice-card):not(.valentine-card) .news-card__title { color: #f0f2ff; }
@@ -273,7 +300,7 @@
         .news-card__image-wrapper::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 30%, rgba(0,0,0,0.15) 60%, rgba(0,0,0,0.5) 100%); pointer-events: none; }
         .news-card__badge { position: absolute; top: 14px; left: 14px; background: var(--color-primary); color: #000; font-weight: 900; font-size: 13px; padding: 5px 12px; border-radius: 100px; font-family: 'LuckiestGuy Regular', cursive; letter-spacing: 1px; z-index: 2; border: 2px solid rgba(255,255,255,0.6); }
         .news-card__new { position: absolute; top: 14px; right: 14px; background: linear-gradient(135deg, #ff4d4d, #ff0000); color: #fff; font-weight: 900; font-size: 11px; padding: 4px 10px; border-radius: 100px; font-family: 'Inter', sans-serif; letter-spacing: 1px; text-transform: uppercase; z-index: 2; animation: pulseBadge 2s ease-in-out infinite; }
-        @keyframes pulseBadge { 0%,100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+        @keyframes pulseBadge { 0%,  }
         .news-card__content { padding: 22px 22px 20px; display: flex; flex-direction: column; flex-grow: 1; background: #fff; border-radius: 0 0 24px 24px; }
         .news-card__eyebrow { font-size: 11px; font-weight: 700; color: var(--color-accent); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px; }
         .news-card__date { font-size: 11px; font-weight: 500; color: var(--color-muted); margin-bottom: 6px; }
@@ -763,8 +790,8 @@
             animation: fadeInUp 0.4s ease both, soonBorderPulse 3s ease-in-out infinite;
         }
         @keyframes soonBorderPulse {
-            0%, 100% { border-color: rgba(255,218,0,0.4); box-shadow: 0 0 30px rgba(255,218,0,0.15), 0 0 60px rgba(255,218,0,0.06), 0 30px 80px rgba(0,0,0,0.6); }
-            50% { border-color: rgba(255,218,0,0.7); box-shadow: 0 0 40px rgba(255,218,0,0.3), 0 0 80px rgba(255,218,0,0.12), 0 30px 80px rgba(0,0,0,0.6); }
+            0%, 
+            
         }
         .news-card.soon-card .news-card__image-wrapper {
             background: linear-gradient(180deg, #0a0a14, #05050a);
@@ -798,8 +825,8 @@
             animation: badgeGoldShimmer 2s ease-in-out infinite;
         }
         @keyframes badgeGoldShimmer {
-            0%, 100% { background-position: 0% center; }
-            50% { background-position: 100% center; }
+            0%, 
+            
         }
         .news-card.soon-card .news-card__content {
             background:
@@ -845,8 +872,8 @@
             animation: barShimmer 2s ease-in-out infinite;
         }
         @keyframes barShimmer {
-            0%, 100% { background-position: -100% center; }
-            50% { background-position: 100% center; }
+            0%, 
+            
         }
 
         /* 015 ── FEU VERT "HELLFIRE EMERALD" — redesign complet */
@@ -1125,10 +1152,10 @@
         }
         @keyframes water-flow {
             0%   { background-position: 0% 0%; }
-            100% { background-position: 100% 60%; }
+            
         }
         @keyframes water-sheen {
-            0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.2; }
+            0%, 
             25%  { transform: translate(22%, 12%) scale(1.25); opacity: 0.5; }
             50%  { transform: translate(-18%, 28%) scale(0.85); opacity: 0.08; }
             75%  { transform: translate(10%, -8%) scale(1.15); opacity: 0.35; }
@@ -1387,17 +1414,17 @@
         @keyframes glitch-image-break{ 0%,14%,20%,63%,100%{transform:scale(1.12);filter:sepia(1) hue-rotate(82deg) saturate(420%) contrast(150%) brightness(.86)} 15%{transform:translateX(8px) skewX(-8deg) scale(1.18);filter:invert(1) hue-rotate(180deg) contrast(220%)} 17%{transform:translateX(-8px) skewX(8deg) scale(1.16);filter:sepia(1) hue-rotate(120deg) saturate(520%) contrast(220%)} 64%{transform:translateY(-5px) scale(1.2);filter:brightness(2.4) contrast(260%)} 66%{transform:translateY(3px) scale(1.1)} }
         @keyframes glitch-label-blink{0%,55%,100%{opacity:1}56%,62%{opacity:0}63%,66%{opacity:1}}
         @keyframes glitch-text-break{ 0%{transform:translate(0,0);text-shadow:2px 0 #ff0058,-2px 0 #00a2ff,0 0 14px #00ff41} 50%{transform:translate(1px,-1px);text-shadow:-3px 0 #ff0058,3px 0 #00a2ff,0 0 18px #00ff41} 100%{transform:translate(-1px,1px)} }
-        @keyframes hw-border-pulse{ 0%,100%{box-shadow:0 0 0 1px rgba(255,140,0,.06) inset,0 0 38px rgba(255,106,0,.9),0 0 85px rgba(200,50,0,.44),0 30px 80px rgba(0,0,0,.75);border-color:rgba(255,106,0,.7)} 50% {box-shadow:0 0 0 1px rgba(255,160,0,.09) inset,0 0 58px rgba(255,106,0,1), 0 0 125px rgba(200,60,0,.62),0 30px 92px rgba(0,0,0,.82);border-color:rgba(255,140,0,1)} }
-        @keyframes hw-title-haunt{ 0%,100%{text-shadow:0 0 22px rgba(255,106,0,1),0 0 55px rgba(200,50,0,.7),2px 0 rgba(100,30,0,.5),-2px 0 rgba(255,160,0,.4)} 50% {text-shadow:0 0 36px rgba(255,140,0,1),0 0 82px rgba(255,80,0,.88),-3px 0 rgba(80,20,0,.62),3px 0 rgba(255,180,50,.52)} }
+        @keyframes hw-border-pulse{ 0%,100%{box-shadow:0 0 0 1px rgba(255,140,0,.06) inset,0 0 38px rgba(255,106,0,.9),0 0 85px rgba(200,50,0,.44),0 30px 80px rgba(0,0,0,.75);border-color:rgba(255,106,0,.7)}  }
+        @keyframes hw-title-haunt{ 0%,100%{text-shadow:0 0 22px rgba(255,106,0,1),0 0 55px rgba(200,50,0,.7),2px 0 rgba(100,30,0,.5),-2px 0 rgba(255,160,0,.4)}  }
         @keyframes hw-btn-shine{0%,60%,100%{opacity:0;transform:translateX(-120%)}74%{opacity:.9;transform:translateX(122%)}}
-        @keyframes hw-bat-fly{ 0% {opacity:0;transform:translate(0,0) scale(.7) rotate(-5deg)} 8% {opacity:.9} 50% {opacity:.85;transform:translate(32px,-36vh) scale(1.12) rotate(15deg)} 92% {opacity:.28} 100%{opacity:0;transform:translate(-22px,-102vh) scale(.8) rotate(-22deg)} }
+        @keyframes hw-bat-fly{     100%{opacity:0;transform:translate(-22px,-102vh) scale(.8) rotate(-22deg)} }
         @keyframes hw-skull-pop{ 0%,55%,100%{opacity:0;transform:translateX(22px) scale(.7)} 62%{opacity:1;transform:translateX(0) scale(1.12)} 74%{opacity:1;transform:translateX(-4px) scale(1)} 88%{opacity:0;transform:translateX(-22px) scale(.7)} }
-        @keyframes val-heartbeat{ 0% {transform:scale(1)} 8% {transform:scale(1.034)} 16% {transform:scale(.994)} 24% {transform:scale(1.022)} 36% {transform:scale(1)} 100%{transform:scale(1)} }
-        @keyframes val-halo-pulse{ 0%,36%,100%{opacity:.5;transform:scale(1)} 8% {opacity:1; transform:scale(1.05)} 24% {opacity:.88;transform:scale(1.028)} }
-        @keyframes val-vignette-beat{ 0%,36%,100%{opacity:.82} 8% {opacity:1} 24% {opacity:.94} }
-        @keyframes val-heart-icon-beat{ 0%,36%,100%{transform:scale(1)} 8% {transform:scale(1.38)} 16% {transform:scale(.94)} 24% {transform:scale(1.22)} }
-        @keyframes val-silk-sweep{ 0% {background-position:-150% 0;opacity:.6} 50% {opacity:1} 100%{background-position:252% 0;opacity:.6} }
-        @keyframes val-heart-rise{ 0% {opacity:0;transform:translateY(0) scale(.7) rotate(-10deg)} 10% {opacity:.9} 55% {opacity:.8;transform:translateY(-46vh) scale(1.12) rotate(8deg)} 90% {opacity:.2} 100%{opacity:0;transform:translateY(-96vh) scale(.8) rotate(-5deg)} }
+        @keyframes val-heartbeat{      100%{transform:scale(1)} }
+        @keyframes val-halo-pulse{ 0%,36%,100%{opacity:.5;transform:scale(1)}   }
+        @keyframes val-vignette-beat{ 0%,36%,100%{opacity:.82}   }
+        @keyframes val-heart-icon-beat{ 0%,36%,100%{transform:scale(1)}    }
+        @keyframes val-silk-sweep{   100%{background-position:252% 0;opacity:.6} }
+        @keyframes val-heart-rise{     100%{opacity:0;transform:translateY(-96vh) scale(.8) rotate(-5deg)} }
         @keyframes val-btn-shine{0%,62%,100%{opacity:0;transform:translateX(-120%)}76%{opacity:.88;transform:translateX(122%)}}
         @keyframes fire-btn-shine{0%,60%,100%{opacity:0;transform:translateX(-120%)}74%{opacity:.88;transform:translateX(124%)}}
         @keyframes water-droplets-sway{
@@ -1412,16 +1439,16 @@
             0%   { opacity: 0.4; transform: scale(0.94); filter: blur(1px); }
             30%  { opacity: 0.9; transform: scale(1);    filter: blur(0px); }
             70%  { opacity: 0.9; transform: scale(1);    filter: blur(0px); }
-            100% { opacity: 0.3; transform: scale(1.01); filter: blur(1.5px); }
+            
         }
         @keyframes liquid-frost-droplets {
-            0%,25% { transform: scaleY(0); opacity: 0; transform-origin: top center; }
+            0%,
             40%    { transform: scaleY(1); opacity: 0.7; }
             80%    { transform: scaleY(1); opacity: 0.4; }
             100%   { transform: scaleY(1.1) translateY(8px); opacity: 0; }
         }
         @keyframes liquid-ice-edge {
-            0%,100% { background-position: 0% 0%, 0% 0%, 0% 0%, 0% 0%; opacity: 0.85; }
+            0%,
             50%     { background-position: 0% 0%, 0% 0%, 0% 0%, 100% 0%; opacity: 1; }
         }
         .news-card.ice-card .ice-frost-overlay {
@@ -1477,34 +1504,14 @@
             50%    {opacity:1}
         }
         @keyframes liquid-ice-flow{
-            0%,100% {
-                background-position:
-                    0% 0%, 0% 0%, 0% 0%, 0% 0%,
-                    0% 0%, 0% 0%, 0% 0%,
-                    0% 0%,
-                    0% 0%,
-                    0% 0%, 0% 0%, 0% 0%,
-                    0% 0%, 0% 0%,
-                    0% 0%, 0% 0%;
-                opacity: 1;
-            }
-            50% {
-                background-position:
-                    0% 0%, 0% 0%, 0% 0%, 0% 0%,
-                    4% 2%, -3% 1%, 2% -1%,
-                    100% 0%,
-                    60% 0%,
-                    0% 0%, 0% 0%, 0% 0%,
-                    1% 0%, -1% 0%,
-                    0% 0%, 0% 0%;
-                opacity: 0.92;
-            }
+            0%,
+            
         }
         @keyframes ice-crystal-fall{
             0%  {opacity:0;transform:translateY(0)    rotate(-10deg) scale(.7)}
             8%  {opacity:.88}
-            50% {opacity:.72;transform:translateY(52vh) rotate(14deg) scale(1.12)}
-            92% {opacity:.14}
+            
+            
             100%{opacity:0; transform:translateY(104vh) rotate(-6deg) scale(.4)}
         }
         @keyframes ice-btn-shine{0%,60%,100%{opacity:0;transform:translateX(-120%)}76%{opacity:.84;transform:translateX(124%)}}
@@ -1642,8 +1649,8 @@
             box-shadow: 0 0 30px rgba(255,215,0,0.6), 0 0 60px rgba(255,215,0,0.3) !important;
         }
         @keyframes searchPulse {
-            0%, 100% { box-shadow: 0 0 10px rgba(255,215,0,0.3); }
-            50% { box-shadow: 0 0 30px rgba(255,215,0,0.6), 0 0 60px rgba(255,215,0,0.3); }
+            0%, 
+            
         }
 
         /* ── Barre de filtre actif ── */
@@ -1685,7 +1692,81 @@
             .search-nav-btn { width: 28px; height: 28px; font-size: 12px; }
             .search-close-btn { width: 28px; height: 28px; font-size: 14px; }
         }
-    </style>
+    
+
+        /* ═══════════════════════════════════════════════════
+           APPLE EDGE HIGHLIGHT — cartes, boutons, onglets
+           Effet "liquid glass" avec bords 1px brillants
+        ═══════════════════════════════════════════════════ */
+        .news-card {
+            border: 1px solid rgba(255,255,255,0.12) !important;
+            border-top-color: rgba(255,255,255,0.25) !important;
+        }
+        .news-card__content {
+            position: relative; z-index: 1;
+            border-top: 1px solid rgba(255,255,255,0.10);
+            box-shadow: 0 -1px 0 rgba(255,255,255,0.06) inset;
+        }
+        .news-card__button {
+            border: 1px solid rgba(255,255,255,0.18) !important;
+            border-top-color: rgba(255,255,255,0.35) !important;
+            box-shadow: 0 0 0 1px rgba(255,255,255,0.08) inset, 0 4px 16px rgba(var(--cat-rgb),0.45) !important;
+        }
+        .msg-card {
+            border: 1px solid rgba(255,215,0,0.22) !important;
+            border-top-color: rgba(255,215,0,0.35) !important;
+            box-shadow: 0 0 0 1px rgba(255,215,0,0.06) inset, 0 8px 32px rgba(0,0,0,0.15) !important;
+        }
+        .leaks-tab {
+            border: 1px solid rgba(255,255,255,0.10);
+            border-top-color: rgba(255,255,255,0.22);
+            box-shadow: 0 0 0 1px rgba(255,255,255,0.04) inset;
+        }
+        .leaks-banner {
+            border: 1px solid rgba(255,255,255,0.12);
+            border-top-color: rgba(255,255,255,0.26);
+            box-shadow: 0 0 0 1px rgba(255,255,255,0.06) inset;
+        }
+        .category-title {
+            border-bottom: 1px solid rgba(255,255,255,0.08) !important;
+            box-shadow: 0 1px 0 rgba(255,255,255,0.04) inset;
+        }
+        .group-card {
+            border: 1px solid rgba(255,255,255,0.12);
+            border-top-color: rgba(255,255,255,0.25);
+            box-shadow: 0 0 0 1px rgba(255,255,255,0.06) inset;
+        }
+
+        html[data-theme="dark"] .news-card {
+            border-color: rgba(255,255,255,0.07) !important;
+            border-top-color: rgba(255,255,255,0.18) !important;
+        }
+        html[data-theme="dark"] .news-card__content {
+            border-top-color: rgba(255,255,255,0.06);
+            box-shadow: 0 -1px 0 rgba(255,255,255,0.03) inset;
+        }
+        html[data-theme="dark"] .news-card__button {
+            border-color: rgba(255,255,255,0.10) !important;
+            border-top-color: rgba(255,255,255,0.22) !important;
+        }
+        html[data-theme="dark"] .msg-card {
+            border-color: rgba(255,215,0,0.12) !important;
+            border-top-color: rgba(255,215,0,0.25) !important;
+        }
+        html[data-theme="dark"] .leaks-tab {
+            border-color: rgba(255,255,255,0.06);
+            border-top-color: rgba(255,255,255,0.15);
+        }
+        html[data-theme="dark"] .leaks-banner {
+            border-color: rgba(255,255,255,0.06);
+            border-top-color: rgba(255,255,255,0.14);
+        }
+        html[data-theme="dark"] .group-card {
+            border-color: rgba(255,255,255,0.07);
+            border-top-color: rgba(255,255,255,0.16);
+        }
+
+</style>
 </head>
 <body>
 

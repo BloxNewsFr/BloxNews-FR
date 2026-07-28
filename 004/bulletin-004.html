@@ -71,33 +71,38 @@
            ══════════════════════════════════════ */
         /* ── CORRECTION COULEUR INTELLIGENTE DU TEXTE ── */
         .site-header {
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    padding: 0 55px;
-    position: sticky; 
-    top: 0; 
-    z-index: 1000; 
-    height: 72px;
-    
-    /* Effet Liquid Glass */
-    background-color: rgba(255, 255, 255, 0.08); background-image: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.05) 50%, transparent 100%); background-size: 200% 100%;
-    backdrop-filter: blur(24px) saturate(180%);           /* Le flou "glass" */
-    -webkit-backdrop-filter: blur(24px) saturate(180%);  /* Compatibilité Safari */
-    
-    /* Bordures subtiles pour le relief */
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255,255,255,0.2);
-    
-    /* Animation douce */
-    transition: background 0.5s cubic-bezier(0.4, 0, 0.2, 1), backdrop-filter 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    animation: navbarSheen 6s ease-in-out infinite;
-}
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 55px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            height: 72px;
 
-        @keyframes navbarSheen {
-            0%, 100% { background-position: 200% 0; }
-            50% { background-position: 0% 0; }
+            /* ── APPLE FROSTED GLASS ── */
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(50px) saturate(180%);
+            -webkit-backdrop-filter: blur(50px) saturate(180%);
+
+            /* Edge highlights (Apple hallmark) */
+            border-top: 1px solid rgba(255,255,255,0.30);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+
+            /* Depth */
+            box-shadow:
+                0 0 0 1px rgba(255,255,255,0.08) inset,
+                0 8px 32px rgba(0,0,0,0.08),
+                0 1px 2px rgba(0,0,0,0.04);
         }
+
+        html[data-theme="dark"] .site-header {
+            background: rgba(40,45,55,0.08);
+            border-top-color: rgba(255,255,255,0.12);
+            border-bottom-color: rgba(255,255,255,0.04);
+        }
+
+        
 
         /* ── MAGIE DU BLEND MODE ICI ── */
         .site-nav { display: flex; gap: 8px; padding: 0; margin: 0; list-style: none; font-weight: 900; }
@@ -726,7 +731,81 @@
         body.dark-mode .note-box { background: #8b7500; border-color: #bba000; color: #fff; }
         body.dark-mode .note-box .red { color: #ff7060; }
         body.dark-mode .note-box .bold-dark { color: #fff; font-weight: 700; }
-    </style>
+    
+
+        /* ═══════════════════════════════════════════════════
+           APPLE EDGE HIGHLIGHT — cartes, boutons, onglets
+           Effet "liquid glass" avec bords 1px brillants
+        ═══════════════════════════════════════════════════ */
+        .news-card {
+            border: 1px solid rgba(255,255,255,0.12) !important;
+            border-top-color: rgba(255,255,255,0.25) !important;
+        }
+        .news-card__content {
+            position: relative; z-index: 1;
+            border-top: 1px solid rgba(255,255,255,0.10);
+            box-shadow: 0 -1px 0 rgba(255,255,255,0.06) inset;
+        }
+        .news-card__button {
+            border: 1px solid rgba(255,255,255,0.18) !important;
+            border-top-color: rgba(255,255,255,0.35) !important;
+            box-shadow: 0 0 0 1px rgba(255,255,255,0.08) inset, 0 4px 16px rgba(var(--cat-rgb),0.45) !important;
+        }
+        .msg-card {
+            border: 1px solid rgba(255,215,0,0.22) !important;
+            border-top-color: rgba(255,215,0,0.35) !important;
+            box-shadow: 0 0 0 1px rgba(255,215,0,0.06) inset, 0 8px 32px rgba(0,0,0,0.15) !important;
+        }
+        .leaks-tab {
+            border: 1px solid rgba(255,255,255,0.10);
+            border-top-color: rgba(255,255,255,0.22);
+            box-shadow: 0 0 0 1px rgba(255,255,255,0.04) inset;
+        }
+        .leaks-banner {
+            border: 1px solid rgba(255,255,255,0.12);
+            border-top-color: rgba(255,255,255,0.26);
+            box-shadow: 0 0 0 1px rgba(255,255,255,0.06) inset;
+        }
+        .category-title {
+            border-bottom: 1px solid rgba(255,255,255,0.08) !important;
+            box-shadow: 0 1px 0 rgba(255,255,255,0.04) inset;
+        }
+        .group-card {
+            border: 1px solid rgba(255,255,255,0.12);
+            border-top-color: rgba(255,255,255,0.25);
+            box-shadow: 0 0 0 1px rgba(255,255,255,0.06) inset;
+        }
+
+        html[data-theme="dark"] .news-card {
+            border-color: rgba(255,255,255,0.07) !important;
+            border-top-color: rgba(255,255,255,0.18) !important;
+        }
+        html[data-theme="dark"] .news-card__content {
+            border-top-color: rgba(255,255,255,0.06);
+            box-shadow: 0 -1px 0 rgba(255,255,255,0.03) inset;
+        }
+        html[data-theme="dark"] .news-card__button {
+            border-color: rgba(255,255,255,0.10) !important;
+            border-top-color: rgba(255,255,255,0.22) !important;
+        }
+        html[data-theme="dark"] .msg-card {
+            border-color: rgba(255,215,0,0.12) !important;
+            border-top-color: rgba(255,215,0,0.25) !important;
+        }
+        html[data-theme="dark"] .leaks-tab {
+            border-color: rgba(255,255,255,0.06);
+            border-top-color: rgba(255,255,255,0.15);
+        }
+        html[data-theme="dark"] .leaks-banner {
+            border-color: rgba(255,255,255,0.06);
+            border-top-color: rgba(255,255,255,0.14);
+        }
+        html[data-theme="dark"] .group-card {
+            border-color: rgba(255,255,255,0.07);
+            border-top-color: rgba(255,255,255,0.16);
+        }
+
+</style>
     <link rel="stylesheet" href="../shared/bulletin-lightbox.css">
 </head>
 <body>
