@@ -1280,9 +1280,6 @@
         }
         .modal-editor-saved-tag.is-visible { opacity: 1; }
 
-        /* ══════════════════════════════════════════════
-           COMMENTAIRES DANS LA LIGHTBOX (par card)
-        ══════════════════════════════════════════════ */
         /* ═══════════════════════════════════════════════════════════
            COMMENTS — Premium Redesign (Discord/Reddit/Linear inspired)
            ═══════════════════════════════════════════════════════════ */
@@ -1517,7 +1514,7 @@
             border-color: #e20000; color: #fff;
             box-shadow: 0 2px 8px rgba(226,0,0,0.2);
         }
-        .card-comment-sort-btn:not(.active):hover { border-color: rgba(226,0,0,0.3); color: #cc0000; }
+        .card-comment-sort-btn:not(.active):hover { border-color: rgba(226,0,0,0.3); color: #e20000; }
 
         /* ── Divider ── */
         .card-comment-divider {
@@ -4538,25 +4535,34 @@
 
             /* ── Card-comments mobile ── */
             .card-comments-section { border-radius: 12px; }
-            .card-comments-toggle { padding: 12px 14px; }
-            .card-comments-toggle__icon { width: 30px; height: 30px; border-radius: 8px; }
-            .card-comments-toggle__label { font-size: 12px; }
+            .card-comments-toggle { padding: 10px 14px; }
+            .card-comments-toggle__icon { width: 26px; height: 26px; border-radius: 8px; font-size: 12px; }
+            .card-comments-toggle__label { font-size: 11px; letter-spacing: 0.2px; }
             .card-comments-toggle__count { font-size: 10px; padding: 1px 7px; min-width: 20px; }
             .card-comments-body.is-open { max-height: 360px; padding: 0 14px 10px; }
             .card-comment-login { padding: 10px 0; gap: 8px; }
             .card-comment-login__btn { padding: 6px 14px; font-size: 11px; width: 100%; text-align: center; }
             .card-comment-write { padding: 10px 0; gap: 8px; flex-wrap: wrap; }
             .card-comment-input { padding: 8px 10px; font-size: 13px; }
-            .card-comment-submit { padding: 6px 14px; font-size: 11px; }
+            .card-comment-submit { padding: 5px 12px; font-size: 11px; right: 4px; bottom: 4px; }
             .card-comment-sort-bar { flex-wrap: wrap; gap: 4px; }
             .card-comment-sort-btn { padding: 4px 10px; font-size: 10px; }
-            .card-comment-item { gap: 8px; padding: 8px 0; }
+            .card-comment-item { gap: 8px; padding: 10px 0; }
             .card-comment-item__header { flex-wrap: wrap; gap: 4px; }
             .card-comment-item__time { font-size: 10px; }
             .card-comment-item__text { font-size: 13px; }
             .card-comment-item__like { padding: 3px 8px; font-size: 10px; }
+            .card-comment-item__actions { margin-top: 6px; gap: 2px; }
+            .card-comment-item__reaction { font-size: 12px; padding: 2px 7px; }
+            .card-comment-item__reaction-add { width: 22px; height: 22px; font-size: 12px; }
+            .card-comment-item__reply-input { font-size: 12px; padding: 6px 10px; }
+            .card-comment-item__reply-submit { padding: 5px 10px; font-size: 11px; }
             .card-comment-see-all { padding: 8px; font-size: 11px; margin-top: 8px; }
             .card-comment-char-counter { right: 72px; bottom: 11px; font-size: 10px; }
+            .card-comments-section .comment-item { gap: 8px; padding: 10px 0; }
+            .card-comments-section .comment-item__text { font-size: 13px; }
+            .card-comments-section .comment-btn { padding: 3px 8px; font-size: 11px; }
+            .card-comments-section .reaction-btn { font-size: 12px; padding: 2px 7px; }
 
             /* ── msg-card mobile ── */
             .msg-card__header { padding: 22px 18px 0; gap: 16px; }
@@ -5291,7 +5297,7 @@
                         <!-- Write box -->
                         <div class="card-comment-write is-hidden" id="cardCommentWriteBox">
                             <div class="card-comment-avatar-wrap" id="cardCommentAvatarWrap"></div>
-                            <div style="flex:1;min-width:0">
+                            <div class="card-comment-input-wrap" style="flex:1;min-width:0">
                                 <textarea class="card-comment-input" id="cardCommentInput"
                                     placeholder="Écris un commentaire sur ce leak…" rows="1"
                                     oninput="autoResize(this)" maxlength="240"></textarea>
@@ -5345,7 +5351,7 @@
                         </div>
                         <div class="card-comment-write is-hidden" id="decryptCommentWriteBox">
                             <div class="card-comment-avatar-wrap" id="decryptCommentAvatarWrap"></div>
-                            <div style="flex:1;min-width:0">
+                            <div class="card-comment-input-wrap" style="flex:1;min-width:0">
                                 <textarea class="card-comment-input" id="decryptCommentInput"
                                     placeholder="Ton avis sur ce dossier déclassifié…" rows="1"
                                     oninput="autoResize(this)" maxlength="240"></textarea>
