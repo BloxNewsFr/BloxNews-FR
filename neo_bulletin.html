@@ -46,13 +46,7 @@
         html[data-theme="dark"] body::before {
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.6' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
         }
-
-        /* Light mode enhancements */
-        html:not([data-theme="dark"]) body { background-color: #f4f5fa; }
-        html:not([data-theme="dark"]) body::before {
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.5' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.015'/%3E%3C/svg%3E");
-        }
-        html:not([data-theme="dark"]) .site-background { opacity: 0.5; }
+        html[data-theme="dark"] .site-background { opacity: 0.35; }
         html[data-theme="dark"] .leaks-tab { background: #171827; color: #dcdff2; border-color: #2a2d45; }
         /* secret-bulletin : toujours dark, overrides thème supprimés */
 
