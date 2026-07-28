@@ -128,24 +128,52 @@
 
         /* ── NAVBAR LIQUID GLASS ── */
         .site-header {
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
             padding: 0 55px;
-            position: sticky; 
-            top: 0; 
-            z-index: 1000; 
+            position: sticky;
+            top: 0;
+            z-index: 1000;
             height: 72px;
-            background-color: rgba(255, 255, 255, 0.08);
-            background-image: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.05) 50%, transparent 100%);
-            background-size: 200% 100%;
-            backdrop-filter: blur(24px) saturate(180%);
-            -webkit-backdrop-filter: blur(24px) saturate(180%);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.2);
-            transition: background 0.5s cubic-bezier(0.4, 0, 0.2, 1), backdrop-filter 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            /* ── LIQUID GLASS ── */
+            background: linear-gradient(135deg, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.14) 100%);
+            backdrop-filter: blur(20px) saturate(180%) brightness(1.05);
+            -webkit-backdrop-filter: blur(20px) saturate(180%) brightness(1.05);
+            border-bottom: 1px solid rgba(255,255,255,0.28);
+            border-top: 1px solid rgba(255,255,255,0.35);
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,0.35),
+                inset 0 -1px 0 rgba(255,255,255,0.08),
+                0 4px 24px rgba(0,0,0,0.15),
+                0 16px 48px rgba(0,0,0,0.1);
+            transition: background 0.4s ease, box-shadow 0.4s ease;
             transform: translateZ(0);
             will-change: transform;
+        }
+        /* Reflet haut */
+        .site-header::before {
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0; height: 45%;
+            background: linear-gradient(180deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 100%);
+            pointer-events: none;
+        }
+        /* Ligne lumineuse basse */
+        .site-header::after {
+            content: '';
+            position: absolute; bottom: 0; left: 5%; right: 5%; height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.45), transparent);
+            pointer-events: none;
+        }
+        html[data-theme="dark"] .site-header {
+            background: linear-gradient(135deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.04) 50%, rgba(255,255,255,0.07) 100%);
+            border-bottom-color: rgba(255,255,255,0.12);
+            border-top-color: rgba(255,255,255,0.15);
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,0.15),
+                inset 0 -1px 0 rgba(255,255,255,0.04),
+                0 4px 24px rgba(0,0,0,0.4),
+                0 16px 48px rgba(0,0,0,0.3);
         }
         .site-header__logo { position: absolute; left: 55px; }
         /* Le logo ne change plus jamais de couleur */
@@ -1679,6 +1707,25 @@
                 <animate attributeName="baseFrequency" values="0.015 0.025;0.018 0.029;0.013 0.022;0.016 0.027;0.015 0.025" dur="14s" repeatCount="indefinite" />
             </feTurbulence>
             <feDisplacementMap in="SourceGraphic" in2="waveNoise" scale="8" xChannelSelector="R" yChannelSelector="G" />
+        </filter>
+        <!-- ── LIQUID GLASS FILTERS ── -->
+        <filter id="lg-distort" x="-15%" y="-15%" width="130%" height="130%" color-interpolation-filters="sRGB">
+            <feTurbulence type="fractalNoise" baseFrequency="0.62 0.62" numOctaves="1" seed="5" result="noise"/>
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="7" xChannelSelector="R" yChannelSelector="G" result="displaced"/>
+            <feGaussianBlur in="displaced" stdDeviation="0.5" result="blurred"/>
+            <feComposite in="blurred" in2="SourceGraphic" operator="atop"/>
+        </filter>
+        <filter id="lg-distort-hover" x="-15%" y="-15%" width="130%" height="130%" color-interpolation-filters="sRGB">
+            <feTurbulence type="fractalNoise" baseFrequency="0.62 0.62" numOctaves="1" seed="5" result="noise"/>
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="13" xChannelSelector="R" yChannelSelector="G" result="displaced"/>
+            <feGaussianBlur in="displaced" stdDeviation="0.7" result="blurred"/>
+            <feComposite in="blurred" in2="SourceGraphic" operator="atop"/>
+        </filter>
+        <filter id="lg-distort-sm" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
+            <feTurbulence type="fractalNoise" baseFrequency="0.72 0.72" numOctaves="1" seed="3" result="noise"/>
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="4" xChannelSelector="R" yChannelSelector="G" result="displaced"/>
+            <feGaussianBlur in="displaced" stdDeviation="0.3" result="blurred"/>
+            <feComposite in="blurred" in2="SourceGraphic" operator="atop"/>
         </filter>
     </svg>
 
