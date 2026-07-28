@@ -128,6 +128,25 @@
         /* ── FOND DU SITE ── */
         .site-background { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; z-index: -1; pointer-events: none; }
         .site-background img { width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; }
+
+        /* Subtle animated gradient overlay */
+        .site-background::after {
+            content: '';
+            position: absolute; inset: 0;
+            background:
+                radial-gradient(ellipse 80% 50% at 30% 20%, rgba(226,0,0,0.03) 0%, transparent 70%),
+                radial-gradient(ellipse 60% 40% at 70% 80%, rgba(255,218,0,0.02) 0%, transparent 70%);
+            animation: bgDrift 20s ease-in-out infinite alternate;
+            pointer-events: none;
+        }
+        @keyframes bgDrift {
+            0%   { transform: translate(0, 0); opacity: 0.6; }
+            50%  { transform: translate(2%, 1%); opacity: 1; }
+            100% { transform: translate(-1%, -1%); opacity: 0.6; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .site-background::after { animation: none; opacity: 0.8; }
+        }
         /* ═══════════════════════════════════════════════════
            ADAPTATION MOBILE — REFONTE COMPLÈTE
         ═══════════════════════════════════════════════════ */
@@ -157,6 +176,15 @@
                 0 0 0 1px rgba(255,255,255,0.08) inset,
                 0 8px 32px rgba(0,0,0,0.08),
                 0 1px 2px rgba(0,0,0,0.04);
+            transition: box-shadow 0.3s ease, border-bottom-color 0.3s ease;
+        }
+
+        .site-header.is-scrolled {
+            border-bottom-color: rgba(226,0,0,0.2);
+            box-shadow:
+                0 0 0 1px rgba(255,255,255,0.08) inset,
+                0 8px 32px rgba(0,0,0,0.08),
+                0 4px 24px rgba(226,0,0,0.06);
         }
 
         html[data-theme="dark"] .site-header {
@@ -168,11 +196,38 @@
                 0 8px 32px rgba(0,0,0,0.35),
                 0 1px 2px rgba(0,0,0,0.2);
         }
+        html[data-theme="dark"] .site-header.is-scrolled {
+            border-bottom-color: rgba(255,26,26,0.15);
+            box-shadow:
+                0 0 0 1px rgba(255,255,255,0.04) inset,
+                0 8px 32px rgba(0,0,0,0.35),
+                0 4px 24px rgba(255,26,26,0.08);
+        }
         .site-header__logo { position: absolute; left: 55px; }
         .site-header__logo img { height: 42px; width: auto; display: block; }
-        .site-nav { display: flex; gap: 8px; padding: 0; margin: 0; list-style: none; font-weight: 900; }
-.site-nav a { color: var(--color-text); text-decoration: none; font-weight: 900; font-size: 17px; text-transform: uppercase; font-family: 'LuckiestGuy Regular', cursive; padding: 8px 16px; border-radius: 10px; transition: background 0.2s, color 0.2s; }
-.site-nav a:hover { background: var(--color-primary); color: #000; }
+        .site-nav { display: flex; gap: 6px; padding: 0; margin: 0; list-style: none; font-weight: 900; }
+        .site-nav li { opacity: 0; animation: navFadeIn 0.4s ease forwards; }
+        .site-nav li:nth-child(1) { animation-delay: 0.05s; }
+        .site-nav li:nth-child(2) { animation-delay: 0.10s; }
+        .site-nav li:nth-child(3) { animation-delay: 0.15s; }
+        .site-nav li:nth-child(4) { animation-delay: 0.20s; }
+        @keyframes navFadeIn {
+            from { opacity: 0; transform: translateY(-6px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+.site-nav a {
+    color: var(--color-text); text-decoration: none; font-weight: 900; font-size: 17px;
+    text-transform: uppercase; font-family: 'LuckiestGuy Regular', cursive;
+    padding: 8px 16px; border-radius: 10px;
+    transition: background 0.2s, color 0.2s, transform 0.2s;
+    position: relative; display: inline-block;
+}
+.site-nav a:hover { background: var(--color-primary); color: #000; transform: scale(1.05); }
+.site-nav a:active { transform: scale(0.95); }
+.site-nav a.-active {
+    background: var(--color-primary); color: #000;
+    box-shadow: 0 2px 12px rgba(255,218,0,0.35);
+}
         .site-header__icons { position: absolute; right: 55px; display: flex; gap: 12px; color: var(--color-text); cursor: pointer; align-items: center; }
 
         /* ── DISCORD AUTH ── */
@@ -621,17 +676,18 @@
         .news-card { 
             border-radius: 24px; overflow: hidden; position: relative; background: #fff; 
             box-shadow: 0 2px 4px rgba(0,0,0,0.05), 0 8px 24px rgba(0,0,0,0.06); 
-            transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.4s ease; 
+            transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.4s ease, border-color 0.3s ease; 
             display: flex; flex-direction: column; height: 100%;
             animation: fadeInUp 0.45s ease both;
             contain: layout paint;
+            will-change: transform;
         }
         .news-card:hover { 
-            transform: translateY(-8px) scale(1.01); 
+            transform: translateY(-6px) scale(1.01); 
             box-shadow: 0 12px 40px rgba(var(--cat-rgb), 0.2), 0 4px 12px rgba(0,0,0,0.1), 0 0 0 2px rgba(var(--cat-rgb), 0.3); 
         }
         .news-card__image-wrapper { width: 100%; padding-top: 58%; position: relative; overflow: hidden; background: #1a1a3e; }
-        .news-card__image { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+        .news-card__image { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; will-change: transform; }
         .news-card:hover .news-card__image { transform: scale(1.06); }
         .news-card__image-wrapper::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 30%, rgba(0,0,0,0.15) 60%, rgba(0,0,0,0.5) 100%); pointer-events: none; transition: opacity 0.3s ease; z-index: 1; }
         .news-card:hover .news-card__image-wrapper::after { opacity: 0.8; }
@@ -4845,7 +4901,7 @@
             <ul class="site-nav">
                 <li><a href="https://www.roblox.com/fr/games/2753915549/Blox-Fruits">Game</a></li>
                 <li><a href="./index.html" class="nav-news">News</a></li>
-                <li><a href="./neo_bulletin.html" class="nav-leaks">Leaks</a></li>
+                <li><a href="./neo_bulletin.html" class="nav-leaks -active">Leaks</a></li>
                 <li><a href="./archives.html">Archives</a></li>
             </ul>
         </nav>
@@ -5904,6 +5960,32 @@
             const mobileNav = document.getElementById('mobileNav');
             const mobileNavBackdrop = document.getElementById('mobileNavBackdrop');
             const mobileNavClose = document.getElementById('mobileNavClose');
+
+            // ── SCROLL GLOW NAVBAR ──
+            (function initNavbarScroll() {
+                const header = document.querySelector('.site-header');
+                if (!header) return;
+                let ticking = false;
+                const update = () => {
+                    header.classList.toggle('is-scrolled', window.scrollY > 10);
+                    ticking = false;
+                };
+                window.addEventListener('scroll', () => {
+                    if (!ticking) { requestAnimationFrame(update); ticking = true; }
+                }, { passive: true });
+                update();
+            })();
+
+            // ── RESPECTER prefers-reduced-motion ──
+            (function respectReducedMotion() {
+                const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+                if (mq.matches) {
+                    document.documentElement.style.setProperty('--anim-speed', '0s');
+                    const style = document.createElement('style');
+                    style.textContent = '.site-nav li { animation: none !important; opacity: 1 !important; }';
+                    document.head.appendChild(style);
+                }
+            })();
 
             // ── 1. SYSTÈME MENU DROPDOWN MOBILE ──
             function _closeMobileNav() {
