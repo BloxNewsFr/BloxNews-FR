@@ -937,46 +937,51 @@
         /* ── Comments inside decrypt panel → always dark ── */
         .decrypt-panel .card-comments-section {
             margin: 8px 12px 12px;
-            border-color: rgba(255,255,255,0.08);
+            border-color: rgba(255,255,255,0.06);
             background: linear-gradient(145deg, rgba(14,14,28,0.98), rgba(10,10,22,0.96));
-            box-shadow: 0 4px 24px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.05);
+            box-shadow: 0 4px 28px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.04);
+            border-radius: 18px;
         }
         .decrypt-panel .card-comments-toggle {
-            padding: 8px 14px;
-        }
-        .decrypt-panel .card-comments-toggle__icon {
-            width: 24px; height: 24px; font-size: 12px;
-        }
-        .decrypt-panel .card-comments-toggle {
+            padding: 10px 14px;
             background: rgba(255,255,255,0.02);
         }
-        .decrypt-panel .card-comments-toggle:hover { background: rgba(255,255,255,0.05); }
+        .decrypt-panel .card-comments-toggle:hover { background: rgba(255,255,255,0.04); }
         .decrypt-panel .card-comments-toggle.is-open {
-            border-bottom-color: rgba(255,255,255,0.06);
-            background: linear-gradient(180deg, rgba(255,255,255,0.03), transparent);
+            border-bottom-color: rgba(255,255,255,0.05);
+            background: linear-gradient(180deg, rgba(255,26,26,0.03), transparent);
         }
         .decrypt-panel .card-comments-toggle__icon {
+            width: 28px; height: 28px; font-size: 12px;
             background: linear-gradient(135deg, rgba(255,26,26,0.15), rgba(255,26,26,0.05));
-            color: rgba(255,100,100,0.7);
-            box-shadow: 0 2px 8px rgba(255,26,26,0.08);
+            color: rgba(255,80,80,0.7);
+            border-radius: 10px;
         }
-        .decrypt-panel .card-comments-toggle__label { color: rgba(255,255,255,0.6); }
+        .decrypt-panel .card-comments-toggle__label {
+            color: rgba(255,255,255,0.5);
+            font-size: 12px;
+        }
         .decrypt-panel .card-comments-toggle__count {
-            background: rgba(255,26,26,0.18);
-            color: rgba(255,100,100,0.9);
+            background: rgba(255,26,26,0.15);
+            color: rgba(255,80,80,0.85);
         }
-        .decrypt-panel .card-comments-toggle__arrow { color: rgba(255,255,255,0.3); }
-        .decrypt-panel .card-comments-body::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); }
-        .decrypt-panel .card-comments-body::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.15); }
-        .decrypt-panel .card-comment-login { color: rgba(255,255,255,0.45); border-bottom-color: rgba(255,255,255,0.04); }
+        .decrypt-panel .card-comments-toggle__arrow { color: rgba(255,255,255,0.25); }
+        .decrypt-panel .card-comments-body::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.06); border-radius: 3px; }
+        .decrypt-panel .card-comments-body::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.12); }
+        .decrypt-panel .card-comment-login { color: rgba(255,255,255,0.4); border-bottom-color: rgba(255,255,255,0.04); }
         .decrypt-panel .card-comment-write { border-bottom-color: rgba(255,255,255,0.04); }
         .decrypt-panel .card-comment-input {
-            background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.1); color: #fff;
+            background: rgba(255,255,255,0.05); border-color: transparent; color: #fff;
+            border-radius: 12px;
         }
-        .decrypt-panel .card-comment-input:focus { border-color: rgba(255,26,26,0.4); box-shadow: 0 0 0 3px rgba(255,26,26,0.06); }
+        .decrypt-panel .card-comment-input:focus { border-color: rgba(255,26,26,0.3); box-shadow: 0 0 0 3px rgba(255,26,26,0.06); background: rgba(255,255,255,0.07); }
         .decrypt-panel .card-comment-input::placeholder { color: rgba(255,255,255,0.2); }
-        .decrypt-panel .card-comment-submit { box-shadow: 0 2px 12px rgba(204,0,0,0.35); }
-        .decrypt-panel .card-comment-item { border-bottom-color: rgba(255,255,255,0.05); }
+        .decrypt-panel .card-comment-submit {
+            box-shadow: 0 2px 12px rgba(204,0,0,0.35);
+            border-radius: 100px;
+            position: absolute; right: 6px; bottom: 6px;
+        }
+        .decrypt-panel .card-comment-item { border-bottom-color: rgba(255,255,255,0.04); }
         .decrypt-panel .card-comment-item__username { color: rgba(255,255,255,0.85); }
         .decrypt-panel .card-comment-item__time { color: rgba(255,255,255,0.3); }
         .decrypt-panel .card-comment-item__text { color: rgba(255,255,255,0.65); }
@@ -1278,350 +1283,328 @@
         /* ══════════════════════════════════════════════
            COMMENTAIRES DANS LA LIGHTBOX (par card)
         ══════════════════════════════════════════════ */
+        /* ═══════════════════════════════════════════════════════════
+           COMMENTS — Premium Redesign (Discord/Reddit/Linear inspired)
+           ═══════════════════════════════════════════════════════════ */
         .card-comments-section {
-            border: 1px solid rgba(0,0,0,0.07);
-            border-radius: 16px;
+            border-radius: 18px;
             background: #fff;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.02);
+            box-shadow: 0 1px 4px rgba(0,0,0,0.04), 0 4px 20px rgba(0,0,0,0.04);
             overflow: hidden;
         }
+
+        /* ── Toggle header ── */
         .card-comments-toggle {
-            display: flex; align-items: center; gap: 8px;
-            padding: 10px 16px; cursor: pointer; user-select: none;
+            display: flex; align-items: center; gap: 10px;
+            padding: 14px 20px; cursor: pointer; user-select: none;
             transition: background 0.2s;
             background: rgba(0,0,0,0.015);
             border-bottom: 1px solid transparent;
         }
-        .card-comments-toggle:hover { background: rgba(0,0,0,0.03); }
+        .card-comments-toggle:hover { background: rgba(0,0,0,0.025); }
         .card-comments-toggle.is-open {
             border-bottom-color: rgba(0,0,0,0.05);
-            background: linear-gradient(180deg, rgba(0,0,0,0.02), transparent);
+            background: linear-gradient(180deg, rgba(226,0,0,0.02), transparent);
         }
         .card-comments-toggle__icon {
-            font-size: 14px;
-            width: 28px; height: 28px; border-radius: 8px;
-            background: linear-gradient(135deg, rgba(255,26,26,0.08), rgba(255,26,26,0.02));
+            font-size: 13px;
+            width: 30px; height: 30px; border-radius: 10px;
+            background: linear-gradient(135deg, rgba(226,0,0,0.1), rgba(226,0,0,0.03));
             display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-            color: rgba(204,0,0,0.55);
-            box-shadow: 0 1px 4px rgba(255,26,26,0.06);
+            color: rgba(226,0,0,0.55);
         }
-        .card-comments-toggle__label { font-size: 12px; font-weight: 700; color: rgba(0,0,0,0.55); flex: 1; letter-spacing: 0.3px; }
+        .card-comments-toggle__label {
+            font-size: 13px; font-weight: 800; color: rgba(0,0,0,0.55);
+            flex: 1; letter-spacing: 0.2px; text-transform: uppercase;
+        }
         .card-comments-toggle__count {
-            font-size: 10px; font-weight: 800; background: rgba(255,26,26,0.1);
-            color: rgba(204,0,0,0.75); padding: 1px 6px; border-radius: 100px;
-            min-width: 18px; text-align: center; box-shadow: 0 1px 3px rgba(255,26,26,0.06);
+            font-size: 11px; font-weight: 700;
+            background: rgba(226,0,0,0.1);
+            color: rgba(226,0,0,0.8);
+            padding: 2px 8px; border-radius: 100px;
+            min-width: 20px; text-align: center;
         }
-        .card-comments-toggle__arrow { font-size: 10px; color: rgba(0,0,0,0.25); transition: transform 0.25s; font-weight: 900; }
+        .card-comments-toggle__arrow {
+            font-size: 10px; color: rgba(0,0,0,0.2);
+            transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+        }
         .card-comments-toggle.is-open .card-comments-toggle__arrow { transform: rotate(180deg); }
 
+        /* ── Body ── */
         .card-comments-body {
             max-height: 0; overflow: hidden;
             transition: max-height 0.35s cubic-bezier(0.4,0,0.2,1);
-            padding: 0 16px;
+            padding: 0 20px;
         }
-        .card-comments-body.is-open { max-height: 420px; overflow-y: auto; padding: 0 16px 12px; }
-        .card-comments-body::-webkit-scrollbar { width: 4px; }
+        .card-comments-body.is-open { max-height: 420px; overflow-y: auto; padding: 0 20px 16px; }
+        .card-comments-body::-webkit-scrollbar { width: 5px; }
         .card-comments-body::-webkit-scrollbar-track { background: transparent; }
-        .card-comments-body::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.08); border-radius: 2px; }
-        .card-comments-body::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.15); }
+        .card-comments-body::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.07); border-radius: 3px; }
+        .card-comments-body::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.14); }
         .card-comment-more {
-            display: block; width: 100%; margin-top: 8px; padding: 8px 0;
-            background: transparent; border: none; color: rgba(0,0,0,0.35);
+            display: block; width: 100%; margin-top: 10px; padding: 10px 0;
+            background: transparent; border: 1px dashed rgba(0,0,0,0.08);
+            border-radius: 10px; color: rgba(0,0,0,0.3);
             font-size: 12px; font-weight: 600; cursor: pointer;
-            font-family: 'Inter', sans-serif; transition: color 0.2s;
+            font-family: 'Inter', sans-serif; transition: all 0.2s;
         }
-        .card-comment-more:hover { color: #cc0000; }
-        html[data-theme="dark"] .card-comment-more { color: rgba(255,255,255,0.3); }
-        html[data-theme="dark"] .card-comment-more:hover { color: #ff6666; }
+        .card-comment-more:hover { border-color: rgba(226,0,0,0.3); color: #e20000; }
 
+        /* ── Login prompt ── */
         .card-comment-login {
-            display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
-            padding: 14px 0; font-size: 13px; color: rgba(0,0,0,0.4);
+            display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+            padding: 16px 0; font-size: 13px; color: rgba(0,0,0,0.4);
             border-bottom: 1px solid rgba(0,0,0,0.04);
         }
-        .card-comment-login__sub { color: rgba(0,0,0,0.3); }
-        .card-comment-login__btn {
-            padding: 7px 16px; border-radius: 100px; border: none;
-            background: linear-gradient(135deg, #5865F2, #4752c4); color: #fff; font-size: 12px; font-weight: 700;
-            cursor: pointer; font-family: 'Inter', sans-serif; flex-shrink: 0;
-            box-shadow: 0 2px 8px rgba(88,101,242,0.25);
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        .card-comment-login__btn:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(88,101,242,0.35); }
+        .card-comment-login__sub { color: rgba(0,0,0,0.3); font-size: 12px; }
+        .card-comment-login__btn,
         .card-comment-login button {
-            padding: 7px 16px; border-radius: 100px; border: none;
-            background: linear-gradient(135deg, #5865F2, #4752c4); color: #fff; font-size: 12px; font-weight: 700;
+            padding: 8px 18px; border-radius: 100px; border: none;
+            background: linear-gradient(135deg, #5865F2, #4752c4); color: #fff;
+            font-size: 12px; font-weight: 700;
             cursor: pointer; font-family: 'Inter', sans-serif; flex-shrink: 0;
-            box-shadow: 0 2px 8px rgba(88,101,242,0.25);
+            box-shadow: 0 2px 8px rgba(88,101,242,0.2);
             transition: transform 0.2s, box-shadow 0.2s;
         }
+        .card-comment-login__btn:hover,
         .card-comment-login button:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(88,101,242,0.35); }
+
+        /* ── Write box ── */
         .card-comment-write {
-            display: flex; align-items: flex-start; gap: 10px; padding: 12px 0;
+            display: flex; align-items: flex-start; gap: 12px; padding: 14px 0;
             border-bottom: 1px solid rgba(0,0,0,0.04);
         }
         .card-comment-write.is-hidden { display: none; }
         .card-comment-avatar-wrap img,
         .card-comment-avatar-wrap .comment-avatar--placeholder {
-            width: 30px !important; height: 30px !important;
-            font-size: 13px !important; border-radius: 50%; flex-shrink: 0;
+            width: 34px !important; height: 34px !important;
+            font-size: 14px !important; border-radius: 50%; flex-shrink: 0;
         }
+        .card-comment-input-wrap { flex: 1; position: relative; }
         .card-comment-input {
-            width: 100%; background: rgba(0,0,0,0.04); border: 1px solid rgba(0,0,0,0.08);
-            border-radius: 10px; color: #111; font-size: 13px; font-family: 'Inter', sans-serif;
-            padding: 9px 12px; resize: none; outline: none; line-height: 1.5;
-            transition: border-color 0.2s, box-shadow 0.2s;
+            width: 100%; background: #f4f5f8;
+            border: 1.5px solid transparent; border-radius: 12px;
+            color: #111; font-size: 14px; font-family: 'Inter', sans-serif;
+            padding: 10px 14px; resize: none; outline: none; line-height: 1.5;
+            transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
         }
-        .card-comment-input:focus { border-color: rgba(255,26,26,0.3); box-shadow: 0 0 0 3px rgba(255,26,26,0.04); }
+        .card-comment-input:focus {
+            border-color: rgba(226,0,0,0.25);
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(226,0,0,0.05);
+        }
         .card-comment-input::placeholder { color: rgba(0,0,0,0.2); }
         .card-comment-submit {
-            display: block; margin-top: 6px; margin-left: auto;
-            padding: 7px 16px; border-radius: 100px; border: none;
-            background: linear-gradient(135deg, #ff1a1a, #cc0000); color: #fff;
-            font-size: 12px; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif;
+            position: absolute; right: 6px; bottom: 6px;
+            padding: 6px 16px; border-radius: 100px; border: none;
+            background: linear-gradient(135deg, #e20000, #b30000); color: #fff;
+            font-size: 12px; font-weight: 700; cursor: pointer;
+            font-family: 'Inter', sans-serif;
             box-shadow: 0 2px 8px rgba(204,0,0,0.2);
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
         }
         .card-comment-submit:hover { transform: scale(1.04); box-shadow: 0 4px 14px rgba(204,0,0,0.35); }
+        .card-comment-submit:active { transform: scale(0.97); }
+        .card-comment-char-counter {
+            position: absolute; right: 90px; bottom: 10px;
+            font-size: 11px; color: rgba(0,0,0,0.25); font-weight: 600;
+            pointer-events: none; transition: color 0.2s;
+        }
+        .card-comment-char-counter.warn { color: #ff8800; }
+        .card-comment-char-counter.danger { color: #e20000; }
+
+        /* ── Empty state ── */
         .card-comments-empty {
-            text-align: center; padding: 20px 0; font-size: 13px;
-            color: rgba(0,0,0,0.25);
+            text-align: center; padding: 24px 0; font-size: 13px;
+            color: rgba(0,0,0,0.2);
         }
-        html[data-theme="dark"] .card-comments-empty {
-            color: rgba(255,255,255,0.25);
-        }
+
+        /* ── Comment item ── */
         .card-comment-item {
-            display: flex; gap: 10px; padding: 10px 0;
+            display: flex; gap: 12px; padding: 14px 0;
             border-bottom: 1px solid rgba(0,0,0,0.04);
         }
         .card-comment-item:last-child { border-bottom: none; }
         .card-comment-item img, .card-comment-item .comment-avatar--placeholder {
-            width: 28px !important; height: 28px !important; font-size: 12px !important;
-            border-radius: 50%; flex-shrink: 0;
+            width: 32px !important; height: 32px !important; font-size: 13px !important;
+            border-radius: 50%; flex-shrink: 0; margin-top: 2px;
         }
         .card-comment-item__body { flex: 1; min-width: 0; }
-        .card-comment-item__header { display: flex; align-items: center; gap: 7px; margin-bottom: 3px; flex-wrap: wrap; }
-        .card-comment-item__username { font-size: 12px; font-weight: 700; color: rgba(0,0,0,0.8); }
-        .card-comment-item__time { font-size: 11px; color: rgba(0,0,0,0.3); }
-        .card-comment-item__text { font-size: 13px; color: rgba(0,0,0,0.6); line-height: 1.5; word-break: break-word; }
+        .card-comment-item__header {
+            display: flex; align-items: center; gap: 8px; margin-bottom: 4px; flex-wrap: wrap;
+        }
+        .card-comment-item__username {
+            font-size: 13px; font-weight: 700; color: rgba(0,0,0,0.85);
+        }
+        .card-comment-item__time {
+            font-size: 12px; font-weight: 500; color: rgba(0,0,0,0.3);
+        }
+        .card-comment-item__text {
+            font-size: 14px; color: rgba(0,0,0,0.7);
+            line-height: 1.6; word-break: break-word;
+        }
+        .card-comment-item__actions {
+            display: flex; align-items: center; flex-wrap: wrap; gap: 4px;
+            margin-top: 8px;
+        }
         .card-comment-item__like {
             display: inline-flex; align-items: center; gap: 4px;
-            padding: 4px 10px; border-radius: 100px; border: 1px solid rgba(0,0,0,0.06);
-            background: rgba(0,0,0,0.03); color: rgba(0,0,0,0.4);
-            font-size: 11px; cursor: pointer; margin-top: 5px;
-            font-family: 'Inter', sans-serif; transition: all 0.2s;
+            padding: 5px 12px; border-radius: 100px;
+            border: 1px solid rgba(0,0,0,0.06);
+            background: rgba(0,0,0,0.025); color: rgba(0,0,0,0.4);
+            font-size: 12px; font-weight: 600; cursor: pointer;
+            font-family: 'Inter', sans-serif; transition: all 0.18s;
         }
-        .card-comment-item__like:hover { background: rgba(255,26,26,0.06); border-color: rgba(255,26,26,0.15); color: #cc0000; }
-        .card-comment-item__like.liked { background: rgba(255,26,26,0.08); border-color: rgba(255,26,26,0.15); color: #cc0000; box-shadow: 0 1px 6px rgba(255,26,26,0.08); }
-        .card-comment-item__delete {
-            display: inline-flex; align-items: center;
-            padding: 3px 8px; border-radius: 100px; border: none;
-            background: transparent; color: rgba(204,0,0,0.3);
-            font-size: 11px; cursor: pointer; margin-top: 5px; margin-left: 4px;
-            font-family: 'Inter', sans-serif; transition: all 0.2s;
+        .card-comment-item__like:hover {
+            background: rgba(226,0,0,0.06);
+            border-color: rgba(226,0,0,0.15); color: #e20000;
         }
-        .card-comment-item__delete:hover { background: rgba(255,26,26,0.06); color: #cc0000; }
+        .card-comment-item__like.liked {
+            background: rgba(226,0,0,0.08);
+            border-color: rgba(226,0,0,0.18); color: #e20000;
+            box-shadow: 0 2px 8px rgba(226,0,0,0.06);
+        }
+        .card-comment-item__delete,
+        .card-comment-item__pin {
+            display: inline-flex; align-items: center; gap: 4px;
+            padding: 4px 10px; border-radius: 100px; border: none;
+            background: transparent; color: rgba(200,0,0,0.3);
+            font-size: 11px; font-weight: 600; cursor: pointer;
+            font-family: 'Inter', sans-serif; transition: all 0.18s;
+        }
+        .card-comment-item__delete:hover { background: rgba(226,0,0,0.06); color: #e20000; }
+        .card-comment-item__pin { color: rgba(200,160,0,0.4); }
+        .card-comment-item__pin:hover { background: rgba(255,215,0,0.08); color: #b8860b; }
+        .card-comment-item__pin.is-pinned { color: #b8860b; }
 
-        /* ── Unified sort bar / divider / char counter / see-all ── */
+        /* ── Pin badge (pill inside header) ── */
+        .card-comment-item__pin-badge {
+            font-size: 10px; font-weight: 700; color: #b8860b;
+            background: linear-gradient(135deg, rgba(255,215,0,0.12), rgba(255,180,0,0.05));
+            border-radius: 100px; padding: 2px 9px; margin-left: auto; white-space: nowrap;
+            border: 1px solid rgba(200,160,0,0.2);
+            display: inline-flex; align-items: center; gap: 4px;
+        }
+
+        /* ── Pinned comment highlight ── */
+        .card-comment-item--pinned {
+            background: linear-gradient(90deg, rgba(255,215,0,0.03), transparent);
+            border-radius: 10px; margin: 0 -20px; padding: 10px 20px;
+        }
+        .card-comment-item--pinned .card-comment-item__body {
+            border-left: 2px solid rgba(200,160,0,0.25);
+            padding-left: 12px;
+        }
+
+        /* ── Sort bar ── */
         .card-comment-sort-bar {
-            display: flex; align-items: center; gap: 6px;
-            padding: 10px 0 6px; margin-bottom: 2px;
+            display: flex; align-items: center; gap: 8px;
+            padding: 12px 0 8px; margin-bottom: 0;
         }
         .card-comment-sort-label {
-            font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.35);
+            font-size: 11px; font-weight: 700; color: rgba(0,0,0,0.25);
             text-transform: uppercase; letter-spacing: 0.8px; flex-shrink: 0;
         }
         .card-comment-sort-btn {
-            padding: 5px 14px; border-radius: 100px; border: 1.5px solid rgba(0,0,0,0.12);
+            padding: 5px 14px; border-radius: 100px;
+            border: 1.5px solid rgba(0,0,0,0.1);
             font-size: 11px; font-weight: 700; cursor: pointer; background: none;
-            color: rgba(0,0,0,0.5); font-family: 'Inter', sans-serif; transition: all 0.18s;
+            color: rgba(0,0,0,0.45);
+            font-family: 'Inter', sans-serif; transition: all 0.18s;
         }
         .card-comment-sort-btn.active {
-            background: linear-gradient(135deg, #ff1a1a, #cc0000); border-color: #ff1a1a; color: #fff;
-            box-shadow: 0 2px 8px rgba(255,26,26,0.25);
+            background: linear-gradient(135deg, #e20000, #b30000);
+            border-color: #e20000; color: #fff;
+            box-shadow: 0 2px 8px rgba(226,0,0,0.2);
         }
-        .card-comment-sort-btn:not(.active):hover { border-color: rgba(255,26,26,0.3); color: #e60000; }
+        .card-comment-sort-btn:not(.active):hover { border-color: rgba(226,0,0,0.3); color: #cc0000; }
+
+        /* ── Divider ── */
         .card-comment-divider {
             display: flex; align-items: center; gap: 10px;
-            color: rgba(255,255,255,0.25); font-size: 10px; font-weight: 700; letter-spacing: 1.2px;
-            text-transform: uppercase; margin: 6px 0 4px;
+            color: rgba(0,0,0,0.2); font-size: 10px; font-weight: 700; letter-spacing: 1.2px;
+            text-transform: uppercase; margin: 8px 0 6px;
         }
         .card-comment-divider::before, .card-comment-divider::after {
-            content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08) 50%, transparent);
+            content: ""; flex: 1; height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(0,0,0,0.06) 50%, transparent);
         }
-        .card-comment-char-counter {
-            position: absolute; right: 80px; bottom: 13px;
-            font-size: 11px; color: rgba(255,255,255,0.3); font-weight: 600;
-            pointer-events: none; transition: color 0.2s;
-        }
-        .card-comment-char-counter.warn { color: #ff8800; }
-        .card-comment-char-counter.danger { color: #ff1a1a; }
-        .card-comment-input-wrap { position: relative; }
+
+        /* ── See all ── */
         .card-comment-see-all {
-            width: 100%; padding: 10px; border: 1px dashed rgba(255,255,255,0.12); border-radius: 10px;
-            background: rgba(255,255,255,0.02); color: rgba(255,255,255,0.35); font-size: 12px; font-weight: 600;
-            cursor: pointer; font-family: 'Inter', sans-serif; margin-top: 10px; transition: all 0.2s;
+            width: 100%; padding: 12px;
+            border: 1px dashed rgba(0,0,0,0.08); border-radius: 12px;
+            background: transparent; color: rgba(0,0,0,0.3);
+            font-size: 12px; font-weight: 600; cursor: pointer;
+            font-family: 'Inter', sans-serif; margin-top: 12px;
+            transition: all 0.2s;
         }
         .card-comment-see-all.is-hidden { display: none; }
-        .card-comment-see-all:hover { border-color: rgba(255,26,26,0.35); color: rgba(255,100,100,0.8); background: rgba(255,26,26,0.04); }
-        /* Pin badge for card comments */
-        .card-comment-item__pin-badge {
-            font-size: 10px; font-weight: 800; color: #d4a800;
-            background: linear-gradient(135deg, rgba(255,215,0,0.18), rgba(255,180,0,0.08));
-            border-radius: 6px; padding: 1px 7px; margin-left: auto; white-space: nowrap;
-            border: 1px solid rgba(255,215,0,0.25);
-            box-shadow: 0 1px 4px rgba(255,215,0,0.08);
-        }
-        .card-comment-item--pinned {
-            background: linear-gradient(90deg, rgba(255,215,0,0.04), transparent);
-            border-radius: 8px;
-            margin: 0 -12px;
-            padding: 6px 12px;
-        }
-        .card-comment-item--pinned .card-comment-item__body {
-            border-left: 2px solid rgba(255,215,0,0.3);
-            padding-left: 10px;
-        }
-        .card-comment-item__pin {
-            display: inline-flex; align-items: center;
-            padding: 3px 8px; border-radius: 100px; border: none;
-            background: transparent; color: rgba(255,215,0,0.35);
-            font-size: 11px; cursor: pointer; margin-top: 5px; margin-left: 4px;
-            font-family: 'Inter', sans-serif; transition: all 0.2s;
-        }
-        .card-comment-item__pin:hover { background: rgba(255,215,0,0.1); color: #ffcc00; }
-        .card-comment-item__pin.is-pinned { color: #ffcc00; }
-        /* Actus all-comments modal */
-        #actusAllCommentsModal {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 9998; display: flex; align-items: center; justify-content: center;
-            background: rgba(10,10,20,0.72); backdrop-filter: blur(10px);
-            opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
-        }
-        #actusAllCommentsModal.is-active { opacity: 1; pointer-events: auto; }
-        .actus-comments-modal {
-            background: #fff; border-radius: 22px;
-            width: 90%; max-width: 640px; max-height: 82vh;
-            display: flex; flex-direction: column;
-            box-shadow: 0 40px 100px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.1);
-            transform: translateY(20px) scale(0.97);
-            transition: transform 0.32s cubic-bezier(0.34,1.56,0.64,1);
-            overflow: hidden;
-        }
-        #actusAllCommentsModal.is-active .actus-comments-modal { transform: translateY(0) scale(1); }
-        .actus-comments-modal__header {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 20px 24px; border-bottom: 1px solid #f2f2f2; flex-shrink: 0;
-            background: linear-gradient(135deg, #fff9f9, #fff);
-        }
-        .actus-comments-modal__title {
-            font-family: 'LuckiestGuy Regular', cursive; font-size: 19px; color: #111;
-            display: flex; align-items: center; gap: 10px;
-        }
-        .actus-comments-modal__close {
-            width: 32px; height: 32px; border-radius: 50%; border: none;
-            background: #f5f5f5; color: #999; font-size: 16px; cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-            transition: all 0.18s; line-height: 1;
-        }
-        .actus-comments-modal__close:hover { background: #ff1a1a; color: #fff; }
-        .actus-comments-modal__body {
-            flex: 1; overflow-y: auto; padding: 20px 24px;
-            display: flex; flex-direction: column; gap: 6px;
-        }
-        .actus-comments-modal__body::-webkit-scrollbar { width: 5px; }
-        .actus-comments-modal__body::-webkit-scrollbar-track { background: transparent; }
-        .actus-comments-modal__body::-webkit-scrollbar-thumb { background: #e0e0e0; border-radius: 3px; }
-        html[data-theme="dark"] .actus-comments-modal { background: #171827; }
-        html[data-theme="dark"] .actus-comments-modal__header { background: linear-gradient(135deg, #1c1420, #171827); border-bottom-color: #2a2d45; }
-        html[data-theme="dark"] .actus-comments-modal__title { color: #f0f2ff; }
-        html[data-theme="dark"] .actus-comments-modal__close { background: #1c1e30; color: #9ea3c9; }
-        html[data-theme="dark"] .actus-comments-modal__close:hover { background: #ff1a1a; color: #fff; }
-        html[data-theme="dark"] .actus-comments-modal__body .card-comment-item { border-bottom-color: rgba(255,255,255,0.06); }
-        html[data-theme="dark"] .actus-comments-modal__body .card-comment-item__text { color: #cdd0ea; }
-
-        /* ── Dark mode: card-comment-* overrides ── */
-        html[data-theme="dark"] .card-comments-section {
-            border-color: rgba(255,255,255,0.08);
-            background: linear-gradient(145deg, rgba(12,12,24,0.99), rgba(8,8,20,0.97));
-            box-shadow: 0 4px 24px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.06);
-        }
-        html[data-theme="dark"] .card-comments-toggle {
-            background: rgba(255,255,255,0.02);
-            border-bottom-color: transparent;
-        }
-        html[data-theme="dark"] .card-comments-toggle:hover { background: rgba(255,255,255,0.05); }
-        html[data-theme="dark"] .card-comments-toggle.is-open {
-            border-bottom-color: rgba(255,255,255,0.06);
-            background: linear-gradient(180deg, rgba(255,255,255,0.03), transparent);
-        }
-        html[data-theme="dark"] .card-comments-toggle__icon {
-            background: linear-gradient(135deg, rgba(255,26,26,0.15), rgba(255,26,26,0.05));
-            color: rgba(255,100,100,0.7);
-            box-shadow: 0 2px 8px rgba(255,26,26,0.08);
-        }
-        html[data-theme="dark"] .card-comments-toggle__label { color: rgba(255,255,255,0.6); }
-        html[data-theme="dark"] .card-comments-toggle__count {
-            background: rgba(255,26,26,0.18);
-            color: rgba(255,100,100,0.9);
-        }
-        html[data-theme="dark"] .card-comments-toggle__arrow { color: rgba(255,255,255,0.3); }
-        html[data-theme="dark"] .card-comments-body::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); }
-        html[data-theme="dark"] .card-comments-body::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.15); }
-        html[data-theme="dark"] .card-comment-login { color: rgba(255,255,255,0.45); border-bottom-color: rgba(255,255,255,0.04); }
-        html[data-theme="dark"] .card-comment-login__sub { color: rgba(255,255,255,0.35); }
-        html[data-theme="dark"] .card-comment-write { border-bottom-color: rgba(255,255,255,0.04); }
-        html[data-theme="dark"] .card-comment-input {
-            background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.1); color: #fff;
-        }
-        html[data-theme="dark"] .card-comment-input:focus { border-color: rgba(255,26,26,0.4); box-shadow: 0 0 0 3px rgba(255,26,26,0.06); }
-        html[data-theme="dark"] .card-comment-input::placeholder { color: rgba(255,255,255,0.2); }
-        html[data-theme="dark"] .card-comment-item { border-bottom-color: rgba(255,255,255,0.05); }
-        html[data-theme="dark"] .card-comment-item__username { color: rgba(255,255,255,0.85); }
-        html[data-theme="dark"] .card-comment-item__time { color: rgba(255,255,255,0.3); }
-        html[data-theme="dark"] .card-comment-item__text { color: rgba(255,255,255,0.65); }
-        html[data-theme="dark"] .card-comment-item__like {
-            border-color: rgba(255,255,255,0.06);
-            background: rgba(255,255,255,0.04); color: rgba(255,255,255,0.4);
-        }
-        html[data-theme="dark"] .card-comment-item__like:hover { background: rgba(255,26,26,0.1); border-color: rgba(255,26,26,0.2); color: #ff6666; }
-        html[data-theme="dark"] .card-comment-item__like.liked { background: rgba(255,26,26,0.12); border-color: rgba(255,26,26,0.2); color: #ff6666; box-shadow: 0 1px 6px rgba(255,26,26,0.1); }
-        html[data-theme="dark"] .card-comment-item__delete { color: rgba(255,80,80,0.35); }
-        html[data-theme="dark"] .card-comment-item__delete:hover { background: rgba(255,26,26,0.1); color: #ff6666; }
-        html[data-theme="dark"] .card-comment-char-counter { color: rgba(255,255,255,0.3); }
-        html[data-theme="dark"] .card-comment-see-all {
-            border-color: rgba(255,255,255,0.08); color: rgba(255,255,255,0.3);
-            background: rgba(255,255,255,0.02);
-        }
-        html[data-theme="dark"] .card-comment-see-all:hover { border-color: rgba(255,26,26,0.35); color: rgba(255,100,100,0.8); background: rgba(255,26,26,0.04); }
-        html[data-theme="dark"] .card-comment-sort-label { color: rgba(255,255,255,0.35); }
-        html[data-theme="dark"] .card-comment-sort-btn { border-color: rgba(255,255,255,0.12); color: rgba(255,255,255,0.4); }
-        html[data-theme="dark"] .card-comment-sort-btn.active {
-            background: linear-gradient(135deg, #ff1a1a, #cc0000); border-color: #ff1a1a; color: #fff;
-            box-shadow: 0 2px 8px rgba(255,26,26,0.25);
-        }
-        html[data-theme="dark"] .card-comment-sort-btn:not(.active):hover { border-color: rgba(255,26,26,0.3); color: #ff6666; }
-        html[data-theme="dark"] .card-comment-divider { color: rgba(255,255,255,0.25); }
-        html[data-theme="dark"] .card-comment-divider::before,
-        html[data-theme="dark"] .card-comment-divider::after { background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08) 50%, transparent); }
-
-        /* ── Section commentaires dans secret-bulletin statique : fond blanc isolé ── */
-        .secret-bulletin:not(.secret-bulletin--firebase) .card-comments-section {
-            background: #fff; border-radius: 14px; padding: 16px;
-            margin: 0 -4px;
-        }
-        html[data-theme="dark"] .secret-bulletin:not(.secret-bulletin--firebase) .card-comments-section {
-            background: rgba(255,255,255,0.05);
+        .card-comment-see-all:hover {
+            border-color: rgba(226,0,0,0.3);
+            color: #e20000;
+            background: rgba(226,0,0,0.03);
         }
 
-        /* ── Section commentaires dans card Firebase : fond sombre intégré ── */
-        .secret-bulletin--firebase .card-comments-section {
-            background: transparent;
+        /* ── Reactions ── */
+        .card-comment-item__reactions {
+            display: flex; align-items: center; gap: 4px; flex-wrap: wrap; margin-top: 8px;
         }
+        .card-comment-item__reaction {
+            display: inline-flex; align-items: center; gap: 4px;
+            padding: 3px 9px; border-radius: 8px;
+            border: 1px solid rgba(0,0,0,0.05);
+            background: rgba(0,0,0,0.025); color: rgba(0,0,0,0.45);
+            font-size: 13px; cursor: pointer; font-family: 'Inter', sans-serif;
+            transition: all 0.15s; line-height: 1;
+        }
+        .card-comment-item__reaction:hover { background: rgba(0,0,0,0.05); }
+        .card-comment-item__reaction.is-reacted {
+            background: rgba(226,0,0,0.07);
+            border-color: rgba(226,0,0,0.15);
+            color: #e20000;
+        }
+        .card-comment-item__reaction-add {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 26px; height: 26px; border-radius: 8px;
+            border: 1px dashed rgba(0,0,0,0.08);
+            background: transparent; color: rgba(0,0,0,0.2);
+            font-size: 14px; cursor: pointer;
+            font-family: 'Inter', sans-serif; transition: all 0.15s;
+        }
+        .card-comment-item__reaction-add:hover { border-color: rgba(0,0,0,0.2); color: rgba(0,0,0,0.4); }
 
-        /* ── Unify .comment-item inside .card-comments-section ── */
+        /* ── Reply write box (inline) ── */
+        .card-comment-item__reply-write {
+            display: flex; align-items: flex-start; gap: 10px;
+            margin-top: 10px; padding-top: 10px;
+        }
+        .card-comment-item__reply-input {
+            flex: 1; background: #f4f5f8;
+            border: 1.5px solid transparent; border-radius: 10px;
+            color: #111; font-size: 13px;
+            font-family: 'Inter', sans-serif; padding: 8px 12px;
+            resize: none; outline: none; line-height: 1.5;
+            transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+        }
+        .card-comment-item__reply-input:focus {
+            border-color: rgba(226,0,0,0.2);
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(226,0,0,0.04);
+        }
+        .card-comment-item__reply-submit {
+            padding: 6px 14px; border-radius: 100px; border: none; flex-shrink: 0;
+            background: linear-gradient(135deg, #e20000, #b30000); color: #fff;
+            font-size: 12px; font-weight: 700; cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .card-comment-item__reply-submit:hover { transform: scale(1.04); }
+        .card-comment-item__reply-submit:active { transform: scale(0.97); }
+
+        /* ── Unified .comment-item inside .card-comments-section ── */
         .card-comments-section .comment-item {
-            display: flex; gap: 10px; padding: 12px 0;
+            display: flex; gap: 12px; padding: 14px 0;
             border-bottom: 1px solid rgba(0,0,0,0.04);
             background: transparent; animation: none;
         }
@@ -1633,142 +1616,377 @@
             box-shadow: none !important;
         }
         .card-comments-section .comment-item--pinned {
-            background: linear-gradient(90deg, rgba(255,215,0,0.04), transparent);
-            border-radius: 8px; margin: 0 -12px; padding: 8px 12px;
+            background: linear-gradient(90deg, rgba(255,215,0,0.03), transparent);
+            border-radius: 10px; margin: 0 -20px; padding: 10px 20px;
         }
         .card-comments-section .comment-item--pinned .comment-item__body {
-            border-left: 2px solid rgba(200,160,0,0.3) !important;
-            padding-left: 10px;
+            border-left: 2px solid rgba(200,160,0,0.25) !important;
+            padding-left: 12px;
         }
         .card-comments-section .comment-item__header {
-            display: flex; align-items: center; gap: 7px; margin-bottom: 3px; flex-wrap: wrap;
+            display: flex; align-items: center; gap: 8px; margin-bottom: 4px; flex-wrap: wrap;
         }
         .card-comments-section .comment-item__username {
-            font-size: 12px; font-weight: 700; color: rgba(0,0,0,0.85) !important;
+            font-size: 13px; font-weight: 700; color: rgba(0,0,0,0.85) !important;
         }
         .card-comments-section .comment-item__time {
-            font-size: 11px; color: rgba(0,0,0,0.45) !important;
+            font-size: 12px; font-weight: 500; color: rgba(0,0,0,0.3) !important;
         }
         .card-comments-section .comment-item__text {
-            font-size: 13px; color: rgba(0,0,0,0.72) !important;
-            line-height: 1.5; word-break: break-word;
+            font-size: 14px; color: rgba(0,0,0,0.7) !important;
+            line-height: 1.6; word-break: break-word;
         }
         .card-comments-section .comment-pin-badge {
-            font-size: 10px; font-weight: 800; color: #b8860b;
-            background: linear-gradient(135deg, rgba(255,215,0,0.12), rgba(255,180,0,0.06));
-            border-radius: 6px; padding: 1px 7px; margin-left: auto; white-space: nowrap;
+            font-size: 10px; font-weight: 700; color: #b8860b;
+            background: linear-gradient(135deg, rgba(255,215,0,0.12), rgba(255,180,0,0.05));
+            border-radius: 100px; padding: 2px 9px; margin-left: auto; white-space: nowrap;
             border: 1px solid rgba(200,160,0,0.2);
+            display: inline-flex; align-items: center; gap: 4px;
         }
         .card-comments-section .comment-item__actions {
-            display: flex; align-items: center; flex-wrap: wrap; gap: 2px; margin-top: 5px;
+            display: flex; align-items: center; flex-wrap: wrap; gap: 4px; margin-top: 8px;
         }
         .card-comments-section .comment-btn {
             display: inline-flex; align-items: center; gap: 4px;
-            padding: 3px 8px; border-radius: 100px; border: none;
-            background: rgba(0,0,0,0.04); color: rgba(0,0,0,0.4);
-            font-size: 11px; cursor: pointer; font-family: 'Inter', sans-serif;
-            transition: all 0.2s;
+            padding: 5px 12px; border-radius: 100px; border: none;
+            background: rgba(0,0,0,0.025); color: rgba(0,0,0,0.4);
+            font-size: 12px; font-weight: 600; cursor: pointer;
+            font-family: 'Inter', sans-serif; transition: all 0.18s;
         }
-        .card-comments-section .comment-btn:hover { background: rgba(255,26,26,0.06); color: #cc0000; }
-        .card-comments-section .comment-btn--liked { background: rgba(255,26,26,0.08); color: #cc0000; }
+        .card-comments-section .comment-btn:hover { background: rgba(226,0,0,0.06); color: #e20000; }
+        .card-comments-section .comment-btn--liked { background: rgba(226,0,0,0.08); color: #e20000; }
         .card-comments-section .comment-btn--delete,
         .card-comments-section .comment-btn--pin {
             display: inline-flex; align-items: center; gap: 4px;
-            padding: 3px 8px; border-radius: 100px; border: none;
+            padding: 4px 10px; border-radius: 100px; border: none;
             background: transparent; color: rgba(200,0,0,0.3);
-            font-size: 11px; cursor: pointer; font-family: 'Inter', sans-serif;
-            transition: all 0.2s;
+            font-size: 11px; font-weight: 600; cursor: pointer;
+            font-family: 'Inter', sans-serif; transition: all 0.18s;
         }
-        .card-comments-section .comment-btn--delete:hover { background: rgba(255,26,26,0.06); color: #cc0000; }
+        .card-comments-section .comment-btn--delete:hover { background: rgba(226,0,0,0.06); color: #e20000; }
         .card-comments-section .comment-btn--pin { color: rgba(200,160,0,0.4); }
         .card-comments-section .comment-btn--pin:hover { background: rgba(255,215,0,0.08); color: #b8860b; }
         .card-comments-section .comment-btn--pin.is-pinned { color: #b8860b; }
         .card-comments-section .comment-reactions {
-            display: flex; align-items: center; gap: 4px; flex-wrap: wrap; margin-top: 4px;
+            display: flex; align-items: center; gap: 4px; flex-wrap: wrap; margin-top: 6px;
         }
         .card-comments-section .reaction-btn {
-            display: inline-flex; align-items: center; gap: 3px;
-            padding: 2px 6px; border-radius: 6px; border: 1px solid rgba(0,0,0,0.06);
-            background: rgba(0,0,0,0.03); color: rgba(0,0,0,0.45);
-            font-size: 12px; cursor: pointer; font-family: 'Inter', sans-serif;
-            transition: all 0.15s;
+            display: inline-flex; align-items: center; gap: 4px;
+            padding: 3px 9px; border-radius: 8px;
+            border: 1px solid rgba(0,0,0,0.05);
+            background: rgba(0,0,0,0.025); color: rgba(0,0,0,0.45);
+            font-size: 13px; cursor: pointer; font-family: 'Inter', sans-serif;
+            transition: all 0.15s; line-height: 1;
         }
-        .card-comments-section .reaction-btn:hover { background: rgba(0,0,0,0.06); }
+        .card-comments-section .reaction-btn:hover { background: rgba(0,0,0,0.05); }
+        .card-comments-section .reaction-btn.reacted {
+            background: rgba(226,0,0,0.07);
+            border-color: rgba(226,0,0,0.15);
+            color: #e20000;
+        }
         .card-comments-section .reaction-add-btn {
             display: inline-flex; align-items: center; justify-content: center;
-            width: 22px; height: 22px; border-radius: 6px; border: 1px dashed rgba(0,0,0,0.1);
-            background: transparent; color: rgba(0,0,0,0.2); font-size: 13px; cursor: pointer;
+            width: 26px; height: 26px; border-radius: 8px;
+            border: 1px dashed rgba(0,0,0,0.08);
+            background: transparent; color: rgba(0,0,0,0.2);
+            font-size: 14px; cursor: pointer;
             font-family: 'Inter', sans-serif; transition: all 0.15s;
         }
-        .card-comments-section .reaction-add-btn:hover { border-color: rgba(0,0,0,0.25); color: rgba(0,0,0,0.4); }
+        .card-comments-section .reaction-add-btn:hover { border-color: rgba(0,0,0,0.2); color: rgba(0,0,0,0.4); }
         .card-comments-section .comment-item .comment-avatar,
         .card-comments-section .comment-item .comment-avatar--placeholder {
-            width: 28px !important; height: 28px !important; font-size: 12px !important;
+            width: 32px !important; height: 32px !important; font-size: 13px !important;
         }
         .card-comments-section .comment-reply-write {
-            display: flex; align-items: flex-start; gap: 8px; margin-top: 10px; padding-top: 8px;
+            display: flex; align-items: flex-start; gap: 10px;
+            margin-top: 12px; padding-top: 10px;
             border-top: 1px solid rgba(0,0,0,0.04);
         }
         .card-comments-section .comment-reply-write .comment-avatar--placeholder {
-            width: 24px !important; height: 24px !important; font-size: 10px !important;
+            width: 26px !important; height: 26px !important; font-size: 11px !important;
         }
         .card-comments-section .comment-reply-input {
-            flex: 1; background: rgba(0,0,0,0.04); border: 1px solid rgba(0,0,0,0.08);
-            border-radius: 8px; color: rgba(0,0,0,0.75); font-size: 12px;
-            font-family: 'Inter', sans-serif; padding: 6px 10px; resize: none; outline: none;
+            flex: 1; background: #f4f5f8;
+            border: 1.5px solid transparent; border-radius: 10px;
+            color: #111; font-size: 13px;
+            font-family: 'Inter', sans-serif; padding: 8px 12px;
+            resize: none; outline: none; line-height: 1.5;
+            transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
         }
-        .card-comments-section .comment-reply-input:focus { border-color: rgba(255,26,26,0.3); }
+        .card-comments-section .comment-reply-input:focus {
+            border-color: rgba(226,0,0,0.2);
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(226,0,0,0.04);
+        }
         .card-comments-section .comment-reply-submit {
-            padding: 5px 12px; border-radius: 100px; border: none; flex-shrink: 0;
-            background: linear-gradient(135deg, #ff1a1a, #cc0000); color: #fff;
-            font-size: 11px; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif;
+            padding: 6px 14px; border-radius: 100px; border: none; flex-shrink: 0;
+            background: linear-gradient(135deg, #e20000, #b30000); color: #fff;
+            font-size: 12px; font-weight: 700; cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
-        html[data-theme="dark"] .card-comments-section .comment-item { border-bottom-color: rgba(255,255,255,0.05); }
+        .card-comments-section .comment-reply-submit:hover { transform: scale(1.04); }
+
+        /* ── Section commentaires dans secret-bulletin statique ── */
+        .secret-bulletin:not(.secret-bulletin--firebase) .card-comments-section {
+            background: #fff; border-radius: 18px; padding: 0;
+            margin: 0 -4px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.04), 0 4px 20px rgba(0,0,0,0.04);
+        }
+        html[data-theme="dark"] .secret-bulletin:not(.secret-bulletin--firebase) .card-comments-section {
+            background: linear-gradient(145deg, rgba(12,12,24,0.99), rgba(8,8,20,0.97));
+        }
+
+        /* ── Section commentaires dans card Firebase ── */
+        .secret-bulletin--firebase .card-comments-section {
+            background: transparent;
+        }
+
+        /* ── Actus all-comments modal ── */
+        #actusAllCommentsModal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 9998; display: flex; align-items: center; justify-content: center;
+            background: rgba(10,10,20,0.72); backdrop-filter: blur(10px);
+            opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+        }
+        #actusAllCommentsModal.is-active { opacity: 1; pointer-events: auto; }
+        .actus-comments-modal {
+            background: #fff; border-radius: 22px;
+            width: 90%; max-width: 640px; max-height: 82vh;
+            display: flex; flex-direction: column;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.08);
+            transform: translateY(20px) scale(0.97);
+            transition: transform 0.32s cubic-bezier(0.34,1.56,0.64,1);
+            overflow: hidden;
+        }
+        #actusAllCommentsModal.is-active .actus-comments-modal { transform: translateY(0) scale(1); }
+        .actus-comments-modal__header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 20px 24px; border-bottom: 1px solid rgba(0,0,0,0.05); flex-shrink: 0;
+            background: linear-gradient(135deg, #fff5f5, #fff);
+        }
+        .actus-comments-modal__title {
+            font-family: 'LuckiestGuy Regular', cursive; font-size: 19px; color: #111;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .actus-comments-modal__close {
+            width: 34px; height: 34px; border-radius: 50%; border: none;
+            background: rgba(0,0,0,0.04); color: rgba(0,0,0,0.3); font-size: 16px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.18s; line-height: 1;
+        }
+        .actus-comments-modal__close:hover { background: #e20000; color: #fff; }
+        .actus-comments-modal__body {
+            flex: 1; overflow-y: auto; padding: 16px 24px;
+            display: flex; flex-direction: column; gap: 0;
+        }
+        .actus-comments-modal__body::-webkit-scrollbar { width: 5px; }
+        .actus-comments-modal__body::-webkit-scrollbar-track { background: transparent; }
+        .actus-comments-modal__body::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.08); border-radius: 3px; }
+
+        /* ═══════════════════════════════════════════════════════════
+           DARK MODE — Comment overrides
+           ═══════════════════════════════════════════════════════════ */
+        html[data-theme="dark"] .card-comments-section {
+            border-color: rgba(255,255,255,0.06);
+            background: linear-gradient(145deg, rgba(12,12,24,0.99), rgba(8,8,20,0.97));
+            box-shadow: 0 4px 28px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.04);
+        }
+        html[data-theme="dark"] .card-comments-toggle { background: rgba(255,255,255,0.02); }
+        html[data-theme="dark"] .card-comments-toggle:hover { background: rgba(255,255,255,0.04); }
+        html[data-theme="dark"] .card-comments-toggle.is-open {
+            border-bottom-color: rgba(255,255,255,0.05);
+            background: linear-gradient(180deg, rgba(255,26,26,0.03), transparent);
+        }
+        html[data-theme="dark"] .card-comments-toggle__icon {
+            background: linear-gradient(135deg, rgba(255,26,26,0.15), rgba(255,26,26,0.05));
+            color: rgba(255,80,80,0.7);
+        }
+        html[data-theme="dark"] .card-comments-toggle__label { color: rgba(255,255,255,0.5); }
+        html[data-theme="dark"] .card-comments-toggle__count {
+            background: rgba(255,26,26,0.15);
+            color: rgba(255,80,80,0.85);
+        }
+        html[data-theme="dark"] .card-comments-toggle__arrow { color: rgba(255,255,255,0.25); }
+        html[data-theme="dark"] .card-comments-body::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.06); }
+        html[data-theme="dark"] .card-comments-body::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.12); }
+        html[data-theme="dark"] .card-comment-more {
+            border-color: rgba(255,255,255,0.06);
+            color: rgba(255,255,255,0.25);
+        }
+        html[data-theme="dark"] .card-comment-more:hover { border-color: rgba(255,26,26,0.3); color: #ff6666; }
+        html[data-theme="dark"] .card-comment-login {
+            color: rgba(255,255,255,0.4);
+            border-bottom-color: rgba(255,255,255,0.04);
+        }
+        html[data-theme="dark"] .card-comment-login__sub { color: rgba(255,255,255,0.3); }
+        html[data-theme="dark"] .card-comment-write { border-bottom-color: rgba(255,255,255,0.04); }
+        html[data-theme="dark"] .card-comment-input {
+            background: rgba(255,255,255,0.05);
+            border-color: transparent;
+            color: #fff;
+        }
+        html[data-theme="dark"] .card-comment-input:focus {
+            border-color: rgba(255,26,26,0.3);
+            background: rgba(255,255,255,0.07);
+            box-shadow: 0 0 0 3px rgba(255,26,26,0.06);
+        }
+        html[data-theme="dark"] .card-comment-input::placeholder { color: rgba(255,255,255,0.2); }
+        html[data-theme="dark"] .card-comment-char-counter { color: rgba(255,255,255,0.25); }
+        html[data-theme="dark"] .card-comments-empty { color: rgba(255,255,255,0.2); }
+        html[data-theme="dark"] .card-comment-item { border-bottom-color: rgba(255,255,255,0.04); }
+        html[data-theme="dark"] .card-comment-item__username { color: rgba(255,255,255,0.85); }
+        html[data-theme="dark"] .card-comment-item__time { color: rgba(255,255,255,0.3); }
+        html[data-theme="dark"] .card-comment-item__text { color: rgba(255,255,255,0.65); }
+        html[data-theme="dark"] .card-comment-item__like {
+            border-color: rgba(255,255,255,0.06);
+            background: rgba(255,255,255,0.03);
+            color: rgba(255,255,255,0.4);
+        }
+        html[data-theme="dark"] .card-comment-item__like:hover {
+            background: rgba(255,26,26,0.1);
+            border-color: rgba(255,26,26,0.2);
+            color: #ff6666;
+        }
+        html[data-theme="dark"] .card-comment-item__like.liked {
+            background: rgba(255,26,26,0.12);
+            border-color: rgba(255,26,26,0.2);
+            color: #ff6666;
+            box-shadow: 0 2px 8px rgba(255,26,26,0.08);
+        }
+        html[data-theme="dark"] .card-comment-item__delete { color: rgba(255,80,80,0.35); }
+        html[data-theme="dark"] .card-comment-item__delete:hover { background: rgba(255,26,26,0.1); color: #ff6666; }
+        html[data-theme="dark"] .card-comment-item__pin { color: rgba(255,215,0,0.35); }
+        html[data-theme="dark"] .card-comment-item__pin:hover { background: rgba(255,215,0,0.1); color: #ffcc00; }
+        html[data-theme="dark"] .card-comment-item__pin.is-pinned { color: #ffcc00; }
+        html[data-theme="dark"] .card-comment-item__pin-badge {
+            color: #cc8800;
+            border-color: rgba(255,215,0,0.25);
+            background: rgba(255,215,0,0.12);
+        }
+        html[data-theme="dark"] .card-comment-item--pinned {
+            background: linear-gradient(90deg, rgba(255,215,0,0.04), transparent);
+        }
+        html[data-theme="dark"] .card-comment-item--pinned .card-comment-item__body {
+            border-left-color: rgba(255,215,0,0.3);
+        }
+        html[data-theme="dark"] .card-comment-item__reaction {
+            border-color: rgba(255,255,255,0.06);
+            background: rgba(255,255,255,0.03);
+            color: rgba(255,255,255,0.45);
+        }
+        html[data-theme="dark"] .card-comment-item__reaction:hover { background: rgba(255,255,255,0.06); }
+        html[data-theme="dark"] .card-comment-item__reaction.is-reacted {
+            background: rgba(255,26,26,0.14);
+            border-color: rgba(255,26,26,0.3);
+            color: #ff8080;
+        }
+        html[data-theme="dark"] .card-comment-item__reaction-add {
+            border-color: rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.2);
+        }
+        html[data-theme="dark"] .card-comment-item__reaction-add:hover { border-color: rgba(255,255,255,0.25); color: rgba(255,255,255,0.4); }
+        html[data-theme="dark"] .card-comment-item__reply-input {
+            background: rgba(255,255,255,0.05);
+            border-color: transparent;
+            color: #fff;
+        }
+        html[data-theme="dark"] .card-comment-item__reply-input:focus {
+            border-color: rgba(255,26,26,0.3);
+            background: rgba(255,255,255,0.07);
+            box-shadow: 0 0 0 3px rgba(255,26,26,0.06);
+        }
+        html[data-theme="dark"] .card-comment-see-all {
+            border-color: rgba(255,255,255,0.06);
+            color: rgba(255,255,255,0.25);
+            background: transparent;
+        }
+        html[data-theme="dark"] .card-comment-see-all:hover {
+            border-color: rgba(255,26,26,0.35);
+            color: #ff6666;
+            background: rgba(255,26,26,0.04);
+        }
+        html[data-theme="dark"] .card-comment-sort-label { color: rgba(255,255,255,0.25); }
+        html[data-theme="dark"] .card-comment-sort-btn {
+            border-color: rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.35);
+        }
+        html[data-theme="dark"] .card-comment-sort-btn.active {
+            background: linear-gradient(135deg, #e20000, #b30000);
+            border-color: #e20000; color: #fff;
+            box-shadow: 0 2px 8px rgba(226,0,0,0.25);
+        }
+        html[data-theme="dark"] .card-comment-sort-btn:not(.active):hover { border-color: rgba(255,26,26,0.3); color: #ff6666; }
+        html[data-theme="dark"] .card-comment-divider { color: rgba(255,255,255,0.2); }
+        html[data-theme="dark"] .card-comment-divider::before,
+        html[data-theme="dark"] .card-comment-divider::after {
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06) 50%, transparent);
+        }
+        html[data-theme="dark"] .actus-comments-modal { background: #131420; }
+        html[data-theme="dark"] .actus-comments-modal__header {
+            background: linear-gradient(135deg, rgba(200,30,30,0.08), rgba(19,20,32,1));
+            border-bottom-color: rgba(255,255,255,0.06);
+        }
+        html[data-theme="dark"] .actus-comments-modal__title { color: #eef0ff; }
+        html[data-theme="dark"] .actus-comments-modal__close { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.4); }
+        html[data-theme="dark"] .actus-comments-modal__close:hover { background: #e20000; color: #fff; }
+        html[data-theme="dark"] .actus-comments-modal__body .card-comment-item { border-bottom-color: rgba(255,255,255,0.04); }
+        html[data-theme="dark"] .actus-comments-modal__body .card-comment-item__text { color: rgba(255,255,255,0.65); }
+
+        /* Dark: unified .comment-item inside .card-comments-section */
+        html[data-theme="dark"] .card-comments-section .comment-item { border-bottom-color: rgba(255,255,255,0.04); }
         html[data-theme="dark"] .card-comments-section .comment-item .comment-item__username { color: rgba(255,255,255,0.85) !important; }
-        html[data-theme="dark"] .card-comments-section .comment-item .comment-item__time { color: rgba(255,255,255,0.35) !important; }
+        html[data-theme="dark"] .card-comments-section .comment-item .comment-item__time { color: rgba(255,255,255,0.3) !important; }
         html[data-theme="dark"] .card-comments-section .comment-item .comment-item__text { color: rgba(220,210,210,0.72) !important; }
         html[data-theme="dark"] .card-comments-section .comment-item--pinned { background: linear-gradient(90deg, rgba(255,215,0,0.04), transparent); }
         html[data-theme="dark"] .card-comments-section .comment-item--pinned .comment-item__body { border-left-color: rgba(255,215,0,0.3); }
-        html[data-theme="dark"] .card-comments-section .comment-pin-badge { color: #cc8800; border-color: rgba(255,215,0,0.3); background: rgba(255,215,0,0.15); }
-        html[data-theme="dark"] .card-comments-section .comment-btn { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.4); }
-        html[data-theme="dark"] .card-comments-section .comment-btn:hover { background: rgba(255,26,26,0.12); color: #ff6666; }
-        html[data-theme="dark"] .card-comments-section .comment-btn--liked { background: rgba(255,26,26,0.15); color: #ff6666; }
+        html[data-theme="dark"] .card-comments-section .comment-pin-badge { color: #cc8800; border-color: rgba(255,215,0,0.25); background: rgba(255,215,0,0.12); }
+        html[data-theme="dark"] .card-comments-section .comment-btn { background: rgba(255,255,255,0.03); color: rgba(255,255,255,0.4); }
+        html[data-theme="dark"] .card-comments-section .comment-btn:hover { background: rgba(255,26,26,0.1); color: #ff6666; }
+        html[data-theme="dark"] .card-comments-section .comment-btn--liked { background: rgba(255,26,26,0.12); color: #ff6666; }
         html[data-theme="dark"] .card-comments-section .comment-btn--delete { color: rgba(255,80,80,0.35); }
         html[data-theme="dark"] .card-comments-section .comment-btn--delete:hover { background: rgba(255,26,26,0.1); color: #ff6666; }
         html[data-theme="dark"] .card-comments-section .comment-btn--pin { color: rgba(255,215,0,0.35); }
         html[data-theme="dark"] .card-comments-section .comment-btn--pin:hover { background: rgba(255,215,0,0.1); color: #ffcc00; }
         html[data-theme="dark"] .card-comments-section .comment-btn--pin.is-pinned { color: #ffcc00; }
-        html[data-theme="dark"] .card-comments-section .reaction-btn { border-color: rgba(255,255,255,0.08); background: rgba(255,255,255,0.04); color: rgba(255,255,255,0.5); }
-        html[data-theme="dark"] .card-comments-section .reaction-btn:hover { background: rgba(255,255,255,0.08); }
-        html[data-theme="dark"] .card-comments-section .reaction-add-btn { border-color: rgba(255,255,255,0.12); color: rgba(255,255,255,0.25); }
-        html[data-theme="dark"] .card-comments-section .reaction-add-btn:hover { border-color: rgba(255,255,255,0.3); color: rgba(255,255,255,0.5); }
-        html[data-theme="dark"] .card-comments-section .comment-reply-write { border-top-color: rgba(255,255,255,0.05); }
+        html[data-theme="dark"] .card-comments-section .reaction-btn { border-color: rgba(255,255,255,0.06); background: rgba(255,255,255,0.03); color: rgba(255,255,255,0.45); }
+        html[data-theme="dark"] .card-comments-section .reaction-btn:hover { background: rgba(255,255,255,0.06); }
+        html[data-theme="dark"] .card-comments-section .reaction-btn.reacted { background: rgba(255,26,26,0.14); border-color: rgba(255,26,26,0.3); color: #ff8080; }
+        html[data-theme="dark"] .card-comments-section .reaction-add-btn { border-color: rgba(255,255,255,0.1); color: rgba(255,255,255,0.2); }
+        html[data-theme="dark"] .card-comments-section .reaction-add-btn:hover { border-color: rgba(255,255,255,0.25); color: rgba(255,255,255,0.4); }
+        html[data-theme="dark"] .card-comments-section .comment-reply-write { border-top-color: rgba(255,255,255,0.04); }
         html[data-theme="dark"] .card-comments-section .comment-reply-input {
-            background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.1); color: rgba(255,255,255,0.8);
+            background: rgba(255,255,255,0.05);
+            border-color: transparent;
+            color: rgba(255,255,255,0.85);
+        }
+        html[data-theme="dark"] .card-comments-section .comment-reply-input:focus {
+            border-color: rgba(255,26,26,0.3);
+            background: rgba(255,255,255,0.07);
         }
 
-        /* ── Commentaires dans secret-bulletin Firebase (toujours dark) ── */
-        .secret-bulletin--firebase .card-comments-section .comment-item { border-bottom-color: rgba(255,255,255,0.05); }
+        /* ── Firebase (always dark) comment overrides ── */
+        .secret-bulletin--firebase .card-comments-section .comment-item { border-bottom-color: rgba(255,255,255,0.04); }
         .secret-bulletin--firebase .card-comments-section .comment-item .comment-item__username { color: rgba(255,255,255,0.88) !important; }
-        .secret-bulletin--firebase .card-comments-section .comment-item .comment-item__time { color: rgba(255,255,255,0.35) !important; }
+        .secret-bulletin--firebase .card-comments-section .comment-item .comment-item__time { color: rgba(255,255,255,0.3) !important; }
         .secret-bulletin--firebase .card-comments-section .comment-item .comment-item__text { color: rgba(220,210,210,0.75) !important; }
         .secret-bulletin--firebase .card-comments-section .comment-reply .comment-item__username { color: rgba(255,255,255,0.88) !important; }
-        .secret-bulletin--firebase .card-comments-section .comment-reply .comment-item__time { color: rgba(255,255,255,0.35) !important; }
+        .secret-bulletin--firebase .card-comments-section .comment-reply .comment-item__time { color: rgba(255,255,255,0.3) !important; }
         .secret-bulletin--firebase .card-comments-section .comment-reply__text { color: rgba(220,210,210,0.7) !important; }
         .secret-bulletin--firebase .card-comments-section .comment-item--pinned { background: linear-gradient(90deg, rgba(255,215,0,0.04), transparent); }
         .secret-bulletin--firebase .card-comments-section .comment-item--pinned .comment-item__body { border-left-color: rgba(255,215,0,0.3); }
-        .secret-bulletin--firebase .card-comments-section .comment-pin-badge { color: #cc8800; border-color: rgba(255,215,0,0.3); background: rgba(255,215,0,0.15); }
-        .secret-bulletin--firebase .card-comments-section .comment-btn { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.4); }
-        .secret-bulletin--firebase .card-comments-section .comment-btn:hover { background: rgba(255,26,26,0.12); color: #ff6666; }
-        .secret-bulletin--firebase .card-comments-section .comment-btn--liked { background: rgba(255,26,26,0.15); color: #ff6666; }
+        .secret-bulletin--firebase .card-comments-section .comment-pin-badge { color: #cc8800; border-color: rgba(255,215,0,0.25); background: rgba(255,215,0,0.12); }
+        .secret-bulletin--firebase .card-comments-section .comment-btn { background: rgba(255,255,255,0.03); color: rgba(255,255,255,0.4); }
+        .secret-bulletin--firebase .card-comments-section .comment-btn:hover { background: rgba(255,26,26,0.1); color: #ff6666; }
+        .secret-bulletin--firebase .card-comments-section .comment-btn--liked { background: rgba(255,26,26,0.12); color: #ff6666; }
         .secret-bulletin--firebase .card-comments-section .comment-btn--delete { color: rgba(255,80,80,0.35); }
         .secret-bulletin--firebase .card-comments-section .comment-btn--delete:hover { background: rgba(255,26,26,0.1); color: #ff6666; }
         .secret-bulletin--firebase .card-comments-section .comment-btn--pin { color: rgba(255,215,0,0.35); }
         .secret-bulletin--firebase .card-comments-section .comment-btn--pin:hover { background: rgba(255,215,0,0.1); color: #ffcc00; }
         .secret-bulletin--firebase .card-comments-section .comment-btn--pin.is-pinned { color: #ffcc00; }
-        .secret-bulletin--firebase .card-comments-section .reaction-btn { border-color: rgba(255,255,255,0.08); background: rgba(255,255,255,0.04); color: rgba(255,255,255,0.5); }
-        .secret-bulletin--firebase .card-comments-section .reaction-btn:hover { background: rgba(255,255,255,0.08); }
-        .secret-bulletin--firebase .card-comments-section .reaction-btn.reacted { background: rgba(255,26,26,0.18); border-color: rgba(255,26,26,0.35); color: #ff8080; }
+        .secret-bulletin--firebase .card-comments-section .reaction-btn { border-color: rgba(255,255,255,0.06); background: rgba(255,255,255,0.03); color: rgba(255,255,255,0.45); }
+        .secret-bulletin--firebase .card-comments-section .reaction-btn:hover { background: rgba(255,255,255,0.06); }
+        .secret-bulletin--firebase .card-comments-section .reaction-btn.reacted { background: rgba(255,26,26,0.14); border-color: rgba(255,26,26,0.3); color: #ff8080; }
         .secret-bulletin--firebase .card-comments-section .reaction-add-btn { border-color: rgba(255,255,255,0.12); color: rgba(255,255,255,0.25); }
         .secret-bulletin--firebase .card-comments-section .reaction-add-btn:hover { border-color: rgba(255,255,255,0.3); color: rgba(255,255,255,0.5); }
         .secret-bulletin--firebase .card-comments-section .comment-reply-write { border-top-color: rgba(255,255,255,0.05); }
@@ -1910,96 +2128,111 @@
         /* ── Firebase card comments section in light mode ── */
         html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-section { background: transparent; }
         html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-toggle {
-            background: rgba(0,0,0,0.02);
+            background: rgba(0,0,0,0.015);
             border-bottom: 1px solid transparent;
+            padding: 14px 20px;
         }
-        html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-toggle:hover { background: rgba(0,0,0,0.04); }
+        html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-toggle:hover { background: rgba(0,0,0,0.025); }
         html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-toggle.is-open {
             border-bottom-color: rgba(0,0,0,0.04);
-            background: linear-gradient(180deg, rgba(0,0,0,0.02), transparent);
+            background: linear-gradient(180deg, rgba(226,0,0,0.02), transparent);
         }
         html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-toggle__icon {
-            background: linear-gradient(135deg, rgba(204,0,0,0.08), rgba(204,0,0,0.02));
-            color: rgba(204,0,0,0.55);
-            box-shadow: 0 2px 6px rgba(204,0,0,0.04);
+            background: linear-gradient(135deg, rgba(226,0,0,0.1), rgba(226,0,0,0.03));
+            color: rgba(226,0,0,0.55);
+            width: 30px; height: 30px; border-radius: 10px;
         }
-        html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-toggle__label { color: rgba(0,0,0,0.5); }
+        html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-toggle__label {
+            color: rgba(0,0,0,0.5);
+            font-size: 13px; font-weight: 800; letter-spacing: 0.2px;
+        }
         html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-toggle__count {
-            background: rgba(204,0,0,0.08);
-            color: #c62828;
+            background: rgba(226,0,0,0.1);
+            color: rgba(226,0,0,0.8);
             border-radius: 100px;
+            font-size: 11px; font-weight: 700; padding: 2px 8px;
         }
         html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-toggle__arrow { color: rgba(0,0,0,0.18); }
-        html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-body::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.08); border-radius: 4px; }
+        html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-body::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.07); border-radius: 3px; }
         html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comment-login { color: rgba(0,0,0,0.45); }
         html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comment-login__sub { color: rgba(0,0,0,0.35) !important; }
         html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comment-login .card-comment-login__btn { background: linear-gradient(135deg, #5865F2, #4752c4); }
         html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comment-write { border-bottom-color: rgba(0,0,0,0.04); }
         html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comment-input {
-            background: rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.08); color: #111;
-            border-radius: 8px;
+            background: #f4f5f8; border: 1.5px solid transparent; color: #111;
+            border-radius: 12px;
         }
         html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comment-input::placeholder { color: rgba(0,0,0,0.25); }
-        html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comment-input:focus { border-color: rgba(204,0,0,0.3); box-shadow: 0 0 0 3px rgba(204,0,0,0.06); }
+        html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comment-input:focus {
+            border-color: rgba(226,0,0,0.25);
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(226,0,0,0.05);
+        }
         html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comment-char-counter { color: rgba(0,0,0,0.2); }
-        html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comment-sort-label { color: rgba(0,0,0,0.3); }
+        html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comment-sort-label { color: rgba(0,0,0,0.25); }
         html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comment-sort-btn {
-            border: 1px solid rgba(0,0,0,0.08); color: rgba(0,0,0,0.45);
-            border-radius: 6px; padding: 4px 10px;
+            border: 1.5px solid rgba(0,0,0,0.1); color: rgba(0,0,0,0.45);
+            border-radius: 100px; padding: 5px 14px;
+            font-size: 11px; font-weight: 700;
         }
         html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comment-sort-btn.active {
-            background: rgba(204,0,0,0.06); border-color: rgba(204,0,0,0.2); color: #c62828;
+            background: linear-gradient(135deg, #e20000, #b30000);
+            border-color: #e20000; color: #fff;
+            box-shadow: 0 2px 8px rgba(226,0,0,0.2);
         }
-        html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comment-sort-btn:not(.active):hover { border-color: rgba(204,0,0,0.25); }
+        html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comment-sort-btn:not(.active):hover { border-color: rgba(226,0,0,0.3); color: #cc0000; }
         html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comment-divider { color: rgba(0,0,0,0.2); }
         html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comment-divider::before,
         html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comment-divider::after { background: linear-gradient(90deg, transparent, rgba(0,0,0,0.06) 50%, transparent); }
-        html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comment-see-all { color: rgba(0,0,0,0.35); }
+        html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comment-see-all { color: rgba(0,0,0,0.3); border-color: rgba(0,0,0,0.08); }
         html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-empty { color: rgba(0,0,0,0.2); }
         html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comment-submit {
-            background: linear-gradient(135deg, #c62828, #e53935);
-            box-shadow: 0 2px 8px rgba(198,40,40,0.2);
-            border-radius: 8px;
+            background: linear-gradient(135deg, #e20000, #b30000);
+            box-shadow: 0 2px 8px rgba(204,0,0,0.2);
+            border-radius: 100px;
+            position: static; margin-top: 6px;
         }
 
         /* ── Comment items inside light firebase card ── */
-        html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-section .comment-item { border-bottom: 1px solid rgba(0,0,0,0.05); }
-        html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-section .comment-item__username { color: #111 !important; font-weight: 600; }
-        html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-section .comment-item__time { color: rgba(0,0,0,0.3) !important; }
-        html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-section .comment-item__text { color: #333 !important; line-height: 1.6; }
+        html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-section .comment-item { border-bottom: 1px solid rgba(0,0,0,0.04); }
+        html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-section .comment-item__username { color: #111 !important; font-weight: 700; }
+        html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-section .comment-item__time { color: rgba(0,0,0,0.3) !important; font-weight: 500; }
+        html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-section .comment-item__text { color: #444 !important; line-height: 1.6; }
         html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-section .comment-reply .comment-item__username { color: #111 !important; }
         html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-section .comment-reply .comment-item__time { color: rgba(0,0,0,0.3) !important; }
-        html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-section .comment-reply__text { color: #333 !important; }
-        html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-section .comment-reply__body { background: #f5f5f5 !important; border: 1px solid #e8e8e8 !important; border-radius: 8px !important; }
+        html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-section .comment-reply__text { color: #444 !important; }
+        html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-section .comment-reply__body { background: #f5f5f5 !important; border: 1px solid #e8e8e8 !important; border-radius: 10px !important; }
         html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-section .comment-btn {
-            background: transparent; color: rgba(0,0,0,0.45);
-            border-radius: 6px; padding: 4px 8px;
+            background: rgba(0,0,0,0.025); color: rgba(0,0,0,0.4);
+            border-radius: 100px; padding: 5px 12px;
+            font-size: 12px; font-weight: 600;
         }
-        html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-section .comment-btn:hover { background: rgba(204,0,0,0.06); color: #c62828; }
-        html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-section .comment-btn--liked { background: rgba(204,0,0,0.08); color: #c62828; }
-        html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-section .comment-btn--delete { color: rgba(198,40,40,0.3); }
-        html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-section .comment-btn--delete:hover { background: rgba(204,0,0,0.06); color: #c62828; }
+        html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-section .comment-btn:hover { background: rgba(226,0,0,0.06); color: #e20000; }
+        html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-section .comment-btn--liked { background: rgba(226,0,0,0.08); color: #e20000; }
+        html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-section .comment-btn--delete { color: rgba(226,0,0,0.3); }
+        html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-section .comment-btn--delete:hover { background: rgba(226,0,0,0.06); color: #e20000; }
         html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-section .comment-btn--pin { color: rgba(180,140,0,0.35); }
         html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-section .comment-btn--pin:hover { background: rgba(220,180,0,0.08); color: #a67a00; }
         html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-section .comment-btn--pin.is-pinned { color: #a67a00; }
         html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-section .reaction-btn {
-            border: 1px solid rgba(0,0,0,0.06); background: rgba(0,0,0,0.03); color: rgba(0,0,0,0.45);
-            border-radius: 6px;
+            border: 1px solid rgba(0,0,0,0.05); background: rgba(0,0,0,0.025); color: rgba(0,0,0,0.45);
+            border-radius: 8px;
+            font-size: 13px; padding: 3px 9px;
         }
-        html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-section .reaction-btn:hover { background: rgba(0,0,0,0.06); }
-        html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-section .reaction-btn.reacted { background: rgba(204,0,0,0.08); border-color: rgba(204,0,0,0.15); color: #c62828; }
-        html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-section .reaction-add-btn { border: 1px dashed rgba(0,0,0,0.1); color: rgba(0,0,0,0.2); }
+        html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-section .reaction-btn:hover { background: rgba(0,0,0,0.05); }
+        html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-section .reaction-btn.reacted { background: rgba(226,0,0,0.07); border-color: rgba(226,0,0,0.15); color: #e20000; }
+        html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-section .reaction-add-btn { border: 1px dashed rgba(0,0,0,0.08); color: rgba(0,0,0,0.2); }
         html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-section .reaction-add-btn:hover { border-color: rgba(0,0,0,0.2); color: rgba(0,0,0,0.35); }
         html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-section .comment-reply-write { border-top: 1px solid rgba(0,0,0,0.04); }
         html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-section .comment-reply-input {
-            background: rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.08); color: #111;
-            border-radius: 8px;
+            background: #f4f5f8; border: 1.5px solid transparent; color: #111;
+            border-radius: 10px;
         }
         html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-section .comment-reply-input::placeholder { color: rgba(0,0,0,0.2); }
         html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-section .comment-item__discord-tag { opacity: 0.5; }
         html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-section .comment-item--pinned { background: linear-gradient(90deg, rgba(220,180,0,0.06), transparent); }
         html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-section .comment-item--pinned .comment-item__body { border-left-color: rgba(180,140,0,0.25) !important; }
-        html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-section .comment-pin-badge { color: #a67a00; border: 1px solid rgba(180,140,0,0.2); background: rgba(220,180,0,0.08); border-radius: 6px; }
+        html:not([data-theme="dark"]) .secret-bulletin--firebase .card-comments-section .comment-pin-badge { color: #a67a00; border: 1px solid rgba(180,140,0,0.2); background: rgba(220,180,0,0.08); border-radius: 100px; }
 
         /* ══════════════════════════════════════════════
            GROUP CARDS — Fruit groupé
