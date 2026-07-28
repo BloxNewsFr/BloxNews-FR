@@ -74,13 +74,14 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
         /* ── ACCESSIBILITÉ : respecter "réduire les animations" du système ── */
-@media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after {
-        animation-duration: 0.001ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.001ms !important;
-    }
-}
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.001ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.001ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
 
         /* ── 3D LAYERED DEPTH SYSTEM ── */
         [data-depth] {
