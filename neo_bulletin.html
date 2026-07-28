@@ -6578,7 +6578,7 @@
         const video  = document.getElementById('fruitVideo');
         const img    = document.getElementById('modalImage');
         document.getElementById('modalBadge').textContent   = data.badge;
-        document.getElementById('modalSection').textContent = data.title || data.badge;
+        document.getElementById('modalSection').textContent = '🍎 Fruits & Reworks';
         document.getElementById('modalMetaTitle').textContent = item.label;
         video.style.display = 'none'; img.style.display = 'none';
         if (item.type === 'video') {
@@ -6647,7 +6647,6 @@
     document.addEventListener('keydown', e => {
         if (e.key === 'Escape') {
             document.getElementById('groupDrawerOverlay')?.classList.remove('is-active');
-            document.body.style.overflow = '';
         }
     });
     </script>
@@ -10077,13 +10076,14 @@
                 </div>
                 <div class="dcm-confirm-zone" id="dcm-confirm-${uid}" data-section="${sec.filter}">
                     <div class="dcm-confirm-label">🔒 Mot de passe requis pour supprimer <strong style="color:#fff">"${_ccEsc(title)}"</strong></div>
-                    <input class="dcm-confirm-pwd" type="password" placeholder="Entrer le mot de passe…"
-                        id="dcm-pwd-${uid}"
-                        onkeydown="if(event.key==='Enter')_cmdDeleteConfirm('${uid}','${ccId||''}','${staticId}')">
-                    <div class="dcm-confirm-actions">
-                        <button class="dcm-confirm-cancel" onclick="_dcmCloseConfirm('${uid}')">Annuler</button>
-                        <button class="dcm-confirm-ok" onclick="_cmdDeleteConfirm('${uid}','${ccId||''}','${staticId}')">🗑️ Supprimer</button>
-                    </div>
+                    <form action="javascript:void(0)" onsubmit="_cmdDeleteConfirm('${uid}','${ccId||''}','${staticId}')" autocomplete="on">
+                        <input class="dcm-confirm-pwd" type="password" placeholder="Entrer le mot de passe…"
+                            id="dcm-pwd-${uid}" name="bloxnews-delete-pwd" autocomplete="current-password">
+                        <div class="dcm-confirm-actions">
+                            <button type="button" class="dcm-confirm-cancel" onclick="_dcmCloseConfirm('${uid}')">Annuler</button>
+                            <button type="submit" class="dcm-confirm-ok">🗑️ Supprimer</button>
+                        </div>
+                    </form>
                 </div>`;
 
                 counts[sec.filter] = (counts[sec.filter] || 0) + 1;
@@ -10117,12 +10117,14 @@
                 </div>
                 <div class="dcm-confirm-zone" id="dcm-confirm-${uid}" data-section="groupe">
                     <div class="dcm-confirm-label">🔒 Mot de passe requis pour supprimer <strong style="color:#fff">"${_ccEsc(item.label||'')}"</strong></div>
-                    <input class="dcm-confirm-pwd" type="password" placeholder="Entrer le mot de passe…"
-                        id="dcm-pwd-${uid}" onkeydown="if(event.key==='Enter')_cmdDeleteConfirm('${uid}','${item._ccId}','')">
-                    <div class="dcm-confirm-actions">
-                        <button class="dcm-confirm-cancel" onclick="_dcmCloseConfirm('${uid}')">Annuler</button>
-                        <button class="dcm-confirm-ok" onclick="_cmdDeleteConfirm('${uid}','${item._ccId}','')">🗑️ Supprimer</button>
-                    </div>
+                    <form action="javascript:void(0)" onsubmit="_cmdDeleteConfirm('${uid}','${item._ccId}','')" autocomplete="on">
+                        <input class="dcm-confirm-pwd" type="password" placeholder="Entrer le mot de passe…"
+                            id="dcm-pwd-${uid}" name="bloxnews-delete-pwd" autocomplete="current-password">
+                        <div class="dcm-confirm-actions">
+                            <button type="button" class="dcm-confirm-cancel" onclick="_dcmCloseConfirm('${uid}')">Annuler</button>
+                            <button type="submit" class="dcm-confirm-ok">🗑️ Supprimer</button>
+                        </div>
+                    </form>
                 </div>`;
                 counts.groupe++;
                 counts.all++;
@@ -10534,6 +10536,7 @@
 
                 // Si token valide, vérifier en arrière-plan
                 if (stored && stored.expiresAt > Date.now()) {
+                    _discordFetchUserInterval = _discordFetchUser(stored.token);
                     try {
                         const freshUser = await _discordFetchUser(stored.token);
                         localStorage.setItem(DISCORD_USER_KEY, JSON.stringify(freshUser));
