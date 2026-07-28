@@ -44,11 +44,7 @@
             --color-text: #eef0fa; --color-border: #2a2d45; --color-accent: #5b9bd5; --color-muted: #7a7a8a;
         }
         html[data-theme="dark"] body { background-color: #0e0f1c; }
-        html:not([data-theme="dark"]) body { background-color: #f4f5fa; }
-        html:not([data-theme="dark"]) body::before {
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.5' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.015'/%3E%3C/svg%3E");
-        }
-        html:not([data-theme="dark"]) .site-background { opacity: 0.5; }
+
         html[data-theme="dark"] .site-background { opacity: 0.35; }
         html[data-theme="dark"] .news-card:not(.glitch-card):not(.fire-card):not(.water-card):not(.halloween-card):not(.ice-card):not(.valentine-card) { background: #171827; }
         html[data-theme="dark"] .news-card:not(.glitch-card):not(.fire-card):not(.water-card):not(.halloween-card):not(.ice-card):not(.valentine-card) .news-card__content { background: #171827; }
