@@ -38,6 +38,11 @@
         /* ── MODE SOMBRE ── */
         html[data-theme="dark"] { --color-text: #eef0fa; --color-border: #2a2d45; }
         html[data-theme="dark"] body { background-color: #0e0f1c; }
+        html:not([data-theme="dark"]) body { background-color: #f4f5fa; }
+        html:not([data-theme="dark"]) body::before {
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.5' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.015'/%3E%3C/svg%3E");
+        }
+        html:not([data-theme="dark"]) .site-background { opacity: 0.5; }
         html[data-theme="dark"] .site-background { opacity: 0.35; }
         html[data-theme="dark"] .site-header {
             background: rgba(40,45,55,0.08);
@@ -100,6 +105,25 @@
 
         .site-background { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; z-index: -1; pointer-events: none; }
         .site-background img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+        /* Subtle animated gradient overlay */
+        .site-background::after {
+            content: '';
+            position: absolute; inset: 0;
+            background:
+                radial-gradient(ellipse 80% 50% at 30% 20%, rgba(226,0,0,0.03) 0%, transparent 70%),
+                radial-gradient(ellipse 60% 40% at 70% 80%, rgba(255,218,0,0.02) 0%, transparent 70%);
+            animation: bgDrift 20s ease-in-out infinite alternate;
+            pointer-events: none;
+        }
+        @keyframes bgDrift {
+            0%   { transform: translate(0, 0); opacity: 0.6; }
+            50%  { transform: translate(2%, 1%); opacity: 1; }
+            100% { transform: translate(-1%, -1%); opacity: 0.6; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .site-background::after { animation: none; opacity: 0.8; }
+        }
         
         /* ── TABLET ── */
         @media (max-width: 1024px) {
@@ -349,7 +373,7 @@
                 <li><a href="https://www.roblox.com/fr/games/2753915549/Blox-Fruits">Game</a></li>
                 <li><a href="./index.html">News</a></li>
                 <li><a href="./neo_bulletin.html">Leaks</a></li>
-                <li><a href="./archives.html" class="active">Archives</a></li>
+                <li><a href="./archives.html" class="-active">Archives</a></li>
             </ul>
         </nav>
         <div class="site-header__icons">
@@ -429,6 +453,32 @@
             { num: "022", img: "./022/img/SummerBanner.png",      href: "./022/bulletin-022.html" },
             { num: "023", img: "./023/img/INDRAATTACK.png",      href: "./022/bulletin-023.html" },
         ];
+
+            // ── SCROLL GLOW NAVBAR ──
+            (function initNavbarScroll() {
+                const header = document.querySelector('.site-header');
+                if (!header) return;
+                let ticking = false;
+                const update = () => {
+                    header.classList.toggle('is-scrolled', window.scrollY > 10);
+                    ticking = false;
+                };
+                window.addEventListener('scroll', () => {
+                    if (!ticking) { requestAnimationFrame(update); ticking = true; }
+                }, { passive: true });
+                update();
+            })();
+
+            // ── RESPECTER prefers-reduced-motion ──
+            (function respectReducedMotion() {
+                const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+                if (mq.matches) {
+                    document.documentElement.style.setProperty('--anim-speed', '0s');
+                    const style = document.createElement('style');
+                    style.textContent = '.site-nav li { animation: none !important; opacity: 1 !important; }';
+                    document.head.appendChild(style);
+                }
+            })();
 
         const grid  = document.getElementById('archiveGrid');
         const count = document.getElementById('archiveCount');
