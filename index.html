@@ -44,6 +44,11 @@
             --color-text: #eef0fa; --color-border: #2a2d45; --color-accent: #5b9bd5; --color-muted: #7a7a8a;
         }
         html[data-theme="dark"] body { background-color: #0e0f1c; }
+        html:not([data-theme="dark"]) body { background-color: #f4f5fa; }
+        html:not([data-theme="dark"]) body::before {
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.5' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.015'/%3E%3C/svg%3E");
+        }
+        html:not([data-theme="dark"]) .site-background { opacity: 0.5; }
         html[data-theme="dark"] .site-background { opacity: 0.35; }
         html[data-theme="dark"] .news-card:not(.glitch-card):not(.fire-card):not(.water-card):not(.halloween-card):not(.ice-card):not(.valentine-card) { background: #171827; }
         html[data-theme="dark"] .news-card:not(.glitch-card):not(.fire-card):not(.water-card):not(.halloween-card):not(.ice-card):not(.valentine-card) .news-card__content { background: #171827; }
@@ -122,6 +127,24 @@
             .site-background { display: none; }
         }
 
+        .site-background::after {
+            content: '';
+            position: absolute; inset: 0;
+            background:
+                radial-gradient(ellipse 80% 50% at 30% 20%, rgba(226,0,0,0.03) 0%, transparent 70%),
+                radial-gradient(ellipse 60% 40% at 70% 80%, rgba(255,218,0,0.02) 0%, transparent 70%);
+            animation: bgDrift 20s ease-in-out infinite alternate;
+            pointer-events: none;
+        }
+        @keyframes bgDrift {
+            0%   { transform: translate(0, 0); opacity: 0.6; }
+            50%  { transform: translate(2%, 1%); opacity: 1; }
+            100% { transform: translate(-1%, -1%); opacity: 0.6; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .site-background::after { animation: none; opacity: 0.8; }
+        }
+
         /* ── NAVBAR LIQUID GLASS ── */
         .site-header {
             display: flex;
@@ -142,6 +165,7 @@
                 0 0 0 1px rgba(255,255,255,0.08) inset,
                 0 8px 32px rgba(0,0,0,0.08),
                 0 1px 2px rgba(0,0,0,0.04);
+            transition: box-shadow 0.3s ease, border-bottom-color 0.3s ease;
         }
         /* Reflet haut */
         .site-header::before {
@@ -159,13 +183,36 @@
                 0 8px 32px rgba(0,0,0,0.35),
                 0 1px 2px rgba(0,0,0,0.2);
         }
+        .site-header.is-scrolled {
+            border-bottom-color: rgba(226,0,0,0.2);
+            box-shadow:
+                0 0 0 1px rgba(255,255,255,0.08) inset,
+                0 8px 32px rgba(0,0,0,0.08),
+                0 4px 24px rgba(226,0,0,0.06);
+        }
+        html[data-theme="dark"] .site-header.is-scrolled {
+            border-bottom-color: rgba(255,26,26,0.15);
+            box-shadow:
+                0 0 0 1px rgba(255,255,255,0.04) inset,
+                0 8px 32px rgba(0,0,0,0.35),
+                0 4px 24px rgba(255,26,26,0.08);
+        }
         .site-header__logo { position: absolute; left: 55px; }
         /* Le logo ne change plus jamais de couleur */
         .site-header__logo img { 
             height: 42px; width: auto; display: block; filter: none !important; 
         }
 
-        .site-nav { display: flex; gap: 8px; padding: 0; margin: 0; list-style: none; font-weight: 900; position: relative; z-index: 1; }
+        .site-nav { display: flex; gap: 6px; padding: 0; margin: 0; list-style: none; font-weight: 900; position: relative; z-index: 1; }
+        .site-nav li { opacity: 0; animation: navFadeIn 0.4s ease forwards; }
+        .site-nav li:nth-child(1) { animation-delay: 0.05s; }
+        .site-nav li:nth-child(2) { animation-delay: 0.10s; }
+        .site-nav li:nth-child(3) { animation-delay: 0.15s; }
+        .site-nav li:nth-child(4) { animation-delay: 0.20s; }
+        @keyframes navFadeIn {
+            from { opacity: 0; transform: translateY(-6px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
         .site-nav a, .site-header__icons {
             color: var(--color-text);
             transition: color 0.55s cubic-bezier(0.4, 0, 0.2, 1);
@@ -178,8 +225,19 @@
             text-shadow: 0 2px 8px rgba(0,0,0,0.35);
         }
 
-        .site-nav a { text-decoration: none; font-size: 17px; text-transform: uppercase; font-family: 'LuckiestGuy Regular', cursive; padding: 8px 16px; border-radius: 10px; }
-        .site-nav a:hover { background: var(--color-primary); color: #000; }
+        .site-nav a {
+    text-decoration: none; font-weight: 900; font-size: 17px;
+    text-transform: uppercase; font-family: 'LuckiestGuy Regular', cursive;
+    padding: 8px 16px; border-radius: 10px;
+    transition: background 0.2s, color 0.2s, transform 0.2s;
+    position: relative; display: inline-block;
+}
+.site-nav a:hover { background: var(--color-primary); color: #000; transform: scale(1.05); }
+.site-nav a:active { transform: scale(0.95); }
+.site-nav a.-active {
+    background: var(--color-primary); color: #000;
+    box-shadow: 0 2px 12px rgba(255,218,0,0.35);
+}
         .site-header__icons { display: flex; gap: 12px; cursor: pointer; align-items: center; position: absolute; right: 55px; }
         .site-header__icons span { padding: 8px; border-radius: 10px; transition: background 0.2s; }
         .site-header__icons span:hover { background: rgba(0,0,0,0.06); }
@@ -1761,7 +1819,7 @@
         <nav>
             <ul class="site-nav">
                 <li><a href="https://www.roblox.com/fr/games/2753915549/Blox-Fruits">Game</a></li>
-                <li><a href="./index.html" class="nav-news">News</a></li>
+                <li><a href="./index.html" class="nav-news -active">News</a></li>
                 <li><a href="./neo_bulletin.html" class="nav-leaks">Leaks</a></li>
                 <li><a href="./archives.html">Archives</a></li>
             </ul>
