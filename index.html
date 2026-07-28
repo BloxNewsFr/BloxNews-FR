@@ -127,6 +127,10 @@
         }
 
         /* ── NAVBAR LIQUID GLASS ── */
+        @keyframes lgShimmer {
+            0%   { background-position: 0% center; }
+            100% { background-position: 200% center; }
+        }
         .site-header {
             display: flex;
             align-items: center;
@@ -137,7 +141,8 @@
             z-index: 1000;
             height: 72px;
             /* ── LIQUID GLASS ── */
-            background: linear-gradient(135deg, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.14) 100%);
+            background: linear-gradient(105deg, rgba(255,255,255,0.24) 0%, rgba(255,255,255,0.06) 30%, rgba(255,255,255,0.16) 50%, rgba(255,255,255,0.06) 70%, rgba(255,255,255,0.20) 100%);
+            background-size: 200% 100%;
             backdrop-filter: blur(20px) saturate(180%) brightness(1.05);
             -webkit-backdrop-filter: blur(20px) saturate(180%) brightness(1.05);
             border-bottom: 1px solid rgba(255,255,255,0.28);
@@ -147,9 +152,8 @@
                 inset 0 -1px 0 rgba(255,255,255,0.08),
                 0 4px 24px rgba(0,0,0,0.15),
                 0 16px 48px rgba(0,0,0,0.1);
-            transition: background 0.4s ease, box-shadow 0.4s ease;
-            transform: translateZ(0);
-            will-change: transform;
+            transition: box-shadow 0.3s ease;
+            animation: lgShimmer 8s linear infinite;
         }
         /* Reflet haut */
         .site-header::before {
@@ -166,7 +170,8 @@
             pointer-events: none;
         }
         html[data-theme="dark"] .site-header {
-            background: linear-gradient(135deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.04) 50%, rgba(255,255,255,0.07) 100%);
+            background: linear-gradient(105deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 30%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 70%, rgba(255,255,255,0.09) 100%);
+            background-size: 200% 100%;
             border-bottom-color: rgba(255,255,255,0.12);
             border-top-color: rgba(255,255,255,0.15);
             box-shadow:
@@ -1710,20 +1715,26 @@
         </filter>
         <!-- ── LIQUID GLASS FILTERS ── -->
         <filter id="lg-distort" x="-15%" y="-15%" width="130%" height="130%" color-interpolation-filters="sRGB">
-            <feTurbulence type="fractalNoise" baseFrequency="0.62 0.62" numOctaves="1" seed="5" result="noise"/>
-            <feDisplacementMap in="SourceGraphic" in2="noise" scale="7" xChannelSelector="R" yChannelSelector="G" result="displaced"/>
-            <feGaussianBlur in="displaced" stdDeviation="0.5" result="blurred"/>
+            <feTurbulence type="fractalNoise" baseFrequency="0.55 0.55" numOctaves="2" seed="7" result="noise"/>
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="5" xChannelSelector="R" yChannelSelector="G" result="displaced"/>
+            <feGaussianBlur in="displaced" stdDeviation="0.3" result="blurred"/>
             <feComposite in="blurred" in2="SourceGraphic" operator="atop"/>
         </filter>
-        <filter id="lg-distort-hover" x="-15%" y="-15%" width="130%" height="130%" color-interpolation-filters="sRGB">
-            <feTurbulence type="fractalNoise" baseFrequency="0.62 0.62" numOctaves="1" seed="5" result="noise"/>
-            <feDisplacementMap in="SourceGraphic" in2="noise" scale="13" xChannelSelector="R" yChannelSelector="G" result="displaced"/>
-            <feGaussianBlur in="displaced" stdDeviation="0.7" result="blurred"/>
-            <feComposite in="blurred" in2="SourceGraphic" operator="atop"/>
+        <filter id="lg-distort-hover" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
+            <feTurbulence type="fractalNoise" baseFrequency="0.48 0.55" numOctaves="2" seed="7" result="noise"/>
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="18" xChannelSelector="R" yChannelSelector="G" result="displaced"/>
+            <feGaussianBlur in="displaced" stdDeviation="0.8" result="blurred"/>
+            <feOffset in="SourceGraphic" dx="2" dy="0" result="red-shift"/>
+            <feColorMatrix in="red-shift" type="matrix" values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.7 0" result="red"/>
+            <feOffset in="SourceGraphic" dx="-2" dy="0" result="blue-shift"/>
+            <feColorMatrix in="blue-shift" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 0.7 0" result="blue"/>
+            <feBlend mode="screen" in="red" in2="blue" result="chroma"/>
+            <feBlend mode="screen" in="chroma" in2="blurred" result="final"/>
+            <feComposite in="final" in2="SourceGraphic" operator="in"/>
         </filter>
         <filter id="lg-distort-sm" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
-            <feTurbulence type="fractalNoise" baseFrequency="0.72 0.72" numOctaves="1" seed="3" result="noise"/>
-            <feDisplacementMap in="SourceGraphic" in2="noise" scale="4" xChannelSelector="R" yChannelSelector="G" result="displaced"/>
+            <feTurbulence type="fractalNoise" baseFrequency="0.65 0.65" numOctaves="2" seed="3" result="noise"/>
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="5" xChannelSelector="R" yChannelSelector="G" result="displaced"/>
             <feGaussianBlur in="displaced" stdDeviation="0.3" result="blurred"/>
             <feComposite in="blurred" in2="SourceGraphic" operator="atop"/>
         </filter>
@@ -2956,6 +2967,33 @@
         } catch(e) {}
         loginBtn.style.display = '';
     })();
+    </script>
+
+    <!-- ── LIQUID GLASS ── -->
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        function applyLG(el, distortId = 'lg-distort', distortHoverId = 'lg-distort-hover') {
+            el.addEventListener('mouseenter', () => {
+                el.style.filter = `url(#${distortHoverId})`;
+            });
+            el.addEventListener('mouseleave', () => {
+                el.style.filter = distortId ? `url(#${distortId})` : '';
+            });
+        }
+        const header = document.querySelector('.site-header');
+        if (header) applyLG(header, '', 'lg-distort');
+        document.querySelectorAll('.news-card, .msg-card, .group-card, .secret-bulletin').forEach(el => applyLG(el, 'lg-distort', 'lg-distort-hover'));
+        document.querySelectorAll('.leaks-tab:not([data-lg])').forEach(el => {
+            el.setAttribute('data-lg', '1');
+            applyLG(el, 'lg-distort-sm', 'lg-distort-sm');
+        });
+        new MutationObserver(() => {
+            document.querySelectorAll('.leaks-tab:not([data-lg])').forEach(el => {
+                el.setAttribute('data-lg', '1');
+                applyLG(el, 'lg-distort-sm', 'lg-distort-sm');
+            });
+        }).observe(document.body, { childList: true, subtree: true });
+    });
     </script>
 
 </body>
