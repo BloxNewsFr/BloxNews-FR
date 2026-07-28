@@ -44,6 +44,11 @@
             --color-text: #eef0fa; --color-border: #2a2d45; --color-accent: #5b9bd5; --color-muted: #7a7a8a;
         }
         html[data-theme="dark"] body { background-color: #0e0f1c; }
+        html:not([data-theme="dark"]) body { background-color: #f4f5fa; }
+        html:not([data-theme="dark"]) body::before {
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.5' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.015'/%3E%3C/svg%3E");
+        }
+        html:not([data-theme="dark"]) .site-background { opacity: 0.5; }
         html[data-theme="dark"] .site-background { opacity: 0.35; }
         html[data-theme="dark"] .news-card:not(.glitch-card):not(.fire-card):not(.water-card):not(.halloween-card):not(.ice-card):not(.valentine-card) { background: #171827; }
         html[data-theme="dark"] .news-card:not(.glitch-card):not(.fire-card):not(.water-card):not(.halloween-card):not(.ice-card):not(.valentine-card) .news-card__content { background: #171827; }
@@ -1915,32 +1920,6 @@
         // ── 3D DEPTH ENGINE (déclaré tôt : renderPage() appelle assignDepth() dès le premier rendu) ──
         let _depthEls = [];
         const _depthFactors = { '3': 0.6, '2': 0.35, '1': 0.18, '0': 0.08, '-1': 0.03, '-2': 0.01 };
-
-            // ── SCROLL GLOW NAVBAR ──
-            (function initNavbarScroll() {
-                const header = document.querySelector('.site-header');
-                if (!header) return;
-                let ticking = false;
-                const update = () => {
-                    header.classList.toggle('is-scrolled', window.scrollY > 10);
-                    ticking = false;
-                };
-                window.addEventListener('scroll', () => {
-                    if (!ticking) { requestAnimationFrame(update); ticking = true; }
-                }, { passive: true });
-                update();
-            })();
-
-            // ── RESPECTER prefers-reduced-motion ──
-            (function respectReducedMotion() {
-                const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
-                if (mq.matches) {
-                    document.documentElement.style.setProperty('--anim-speed', '0s');
-                    const style = document.createElement('style');
-                    style.textContent = '.site-nav li { animation: none !important; opacity: 1 !important; }';
-                    document.head.appendChild(style);
-                }
-            })();
 
         const bulletins = [
             { num: "001", img: "./001/img/img_fruit.png",          href: "./001/bulletin-001.html", date: "2025-03-20" },
