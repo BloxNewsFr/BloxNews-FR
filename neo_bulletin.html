@@ -5483,7 +5483,7 @@
                     </div>
                 </section>
 
-                <section id="cat-actus" class="category-section">
+                <section id="cat-actus" class="category-section active-section">
             <div class="secret-bulletin">
                 <div class="bulletin-topbar">
                     <span class="bulletin-topbar__label">Blox Leaks Network</span>
@@ -6658,11 +6658,6 @@
                         }
                     });
 
-                    // Si on clique sur "tout", remplir la grille avec toutes les cards
-                    if (targetId === 'cat-all') {
-                        populateAllSection();
-                    }
-
                     // Referme le menu mobile si on vient de cliquer sur un choix
                     _closeMobileNav();
 
@@ -6670,44 +6665,6 @@
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 });
             });
-
-            // ── 2.1. REMPLIR LA SECTION "TOUT" ──
-            function populateAllSection() {
-                const allGrid = document.getElementById('allGrid');
-                if (!allGrid) return;
-
-                // Vider la grille
-                allGrid.innerHTML = '';
-
-                // Sections à exclure (updates et actus ont leur propre structure)
-                const excludedSections = ['cat-all', 'cat-updates', 'cat-actus'];
-
-                // Parcourir toutes les sections et collecter les cards
-                sections.forEach(section => {
-                    if (excludedSections.includes(section.id)) return;
-
-                    // Trouver toutes les cards dans cette section
-                    const cards = section.querySelectorAll('.news-card, .update-card');
-                    cards.forEach(card => {
-                        // Cloner la card pour l'ajouter à la section "tout"
-                        const clone = card.cloneNode(true);
-                        allGrid.appendChild(clone);
-                    });
-                });
-
-                // Ajouter aussi les updates cards
-                const updatesSection = document.getElementById('cat-updates');
-                if (updatesSection) {
-                    const updateCards = updatesSection.querySelectorAll('.update-card');
-                    updateCards.forEach(card => {
-                        const clone = card.cloneNode(true);
-                        allGrid.appendChild(clone);
-                    });
-                }
-            }
-
-            // Initialiser la section "tout" au chargement
-            populateAllSection();
 
             // ── 3. BOUTONS « VOIR L'IMAGE / VIDÉO » → bulle modale ──
             const SECTION_LABELS = {
