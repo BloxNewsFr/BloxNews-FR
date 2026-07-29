@@ -6119,6 +6119,11 @@
                 <div class="ncm-step-line" id="ncmStepLine2"></div>
                 <div class="ncm-step" id="ncmStep3" data-step="3">
                     <div class="ncm-step-circle"><span>3</span></div>
+                    <div class="ncm-step-label">Détails</div>
+                </div>
+                <div class="ncm-step-line" id="ncmStepLine3" style="display:none"></div>
+                <div class="ncm-step" id="ncmStep4" data-step="4" style="display:none">
+                    <div class="ncm-step-circle"><span>4</span></div>
                     <div class="ncm-step-label">Publier</div>
                 </div>
             </div>
@@ -6265,7 +6270,7 @@
                                         <span class="update-card__date" id="ncmUpdateDatePreview">Juillet 2026</span>
                                     </div>
                                     <h2 class="update-card__title" id="ncmUpdateTitlePreview">Blox Fruits Update 28</h2>
-                                    <p class="update-card__desc" id="ncmUpdateDescPreview">Description de l'update...</p>
+                                    <p class="update-card__desc" id="ncmUpdateShortDescPreview">Description de l'update...</p>
                                     <div class="update-card__linked">
                                         <span class="update-card__chip">Dark Rework</span>
                                         <span class="update-card__chip">Celestial Fruit</span>
@@ -10599,6 +10604,23 @@
         const isUpdate = kind === 'update';
         const total = isUpdate ? 4 : 3;
         if (step < 1 || step > total) return;
+
+        // Afficher/masquer le 4ème indicateur d'étape selon le type
+        const step4 = document.getElementById('ncmStep4');
+        const line3 = document.getElementById('ncmStepLine3');
+        const step3Label = document.querySelector('#ncmStep3 .ncm-step-label');
+        if (step4 && line3 && step3Label) {
+            if (isUpdate) {
+                step4.style.display = '';
+                line3.style.display = '';
+                step3Label.textContent = 'Détails';
+            } else {
+                step4.style.display = 'none';
+                line3.style.display = 'none';
+                step3Label.textContent = 'Publier';
+            }
+        }
+
         const pages = document.querySelectorAll('#newCardModal .ncm-page');
         const steps = document.querySelectorAll('#newCardModal .ncm-step');
         const lines = document.querySelectorAll('#newCardModal .ncm-step-line');
@@ -10655,6 +10677,7 @@
         const kind = document.querySelector('#newCardModal input[name="ncmKind"]:checked')?.value || 'standard';
         const isActus = kind === 'actus';
         const isMessage = kind === 'message';
+        const isUpdate = kind === 'update';
         const wrap = document.getElementById('ncmRecapCard');
         const details = document.getElementById('ncmRecapDetails');
         if (!wrap || !details) return;
@@ -10662,6 +10685,7 @@
         let previewId = 'ncmPreviewStandard';
         if (isActus) previewId = 'ncmPreviewActus';
         else if (isMessage) previewId = 'ncmPreviewMessage';
+        else if (isUpdate) previewId = 'ncmPreviewUpdate';
         const src = document.getElementById(previewId);
         wrap.innerHTML = '';
         if (src) {
@@ -10682,6 +10706,11 @@
             title = document.getElementById('ncmMsgTitle')?.textContent?.trim() || 'Message';
             section = 'Messages cryptés';
             mediaInfo = 'Texte crypté + image';
+        } else if (isUpdate) {
+            title = document.getElementById('ncmUpdateTitle')?.value?.trim() || 'Sans titre';
+            section = 'Updates';
+            const version = document.getElementById('ncmUpdateVersion')?.value?.trim() || 'Update';
+            mediaInfo = `Version: ${version}`;
         } else {
             title = document.getElementById('ncmEditTitle')?.textContent?.trim() || 'Sans titre';
             const secEl = document.getElementById('ncmSection');
@@ -10690,7 +10719,7 @@
             mediaInfo = isVideo ? 'Vidéo' : 'Image';
         }
         details.innerHTML = `
-            <div class="ncm-recap-row"><span>Type</span><strong>${isActus ? 'Actus / Dossier' : isMessage ? 'Message crypté' : 'Leak / Showcase'}</strong></div>
+            <div class="ncm-recap-row"><span>Type</span><strong>${isActus ? 'Actus / Dossier' : isMessage ? 'Message crypté' : isUpdate ? 'Mise à jour' : 'Leak / Showcase'}</strong></div>
             <div class="ncm-recap-row"><span>Titre</span><strong>${_ccEsc(title)}</strong></div>
             <div class="ncm-recap-row"><span>Section</span><strong>${section}</strong></div>
             <div class="ncm-recap-row"><span>Média</span><strong>${mediaInfo}</strong></div>
