@@ -6394,9 +6394,21 @@
                             </div>
                             <div class="ncm-field">
                                 <label><span class="ncm-lbl-icon">📝</span> Description</label>
+                                <div class="ncm-format-bar">
+                                    <button class="ncm-format-btn" onclick="_ncmFormatText('bold', 'ncmUpdateDesc')" title="Gras"><b>B</b></button>
+                                    <button class="ncm-format-btn" onclick="_ncmFormatText('italic', 'ncmUpdateDesc')" title="Italique"><i>I</i></button>
+                                    <button class="ncm-format-btn" onclick="_ncmFormatText('underline', 'ncmUpdateDesc')" title="Souligné"><u>U</u></button>
+                                    <button class="ncm-format-btn" onclick="_ncmFormatText('strike', 'ncmUpdateDesc')" title="Barré"><s>S</s></button>
+                                    <span class="ncm-format-sep"></span>
+                                    <div class="ncm-hl-wrap">
+                                        <button class="ncm-format-btn is-hl" onclick="_ncmFormatText('highlight', 'ncmUpdateDesc')" title="Surligner (Ctrl+Shift+E)" id="ncmHlBtnUpdate">H</button>
+                                        <button class="ncm-hl-swatch" id="ncmHlSwatchUpdate" style="background:#ffc832" title="Choisir une couleur"></button>
+                                        <input type="color" id="ncmHlColorInputUpdate" value="#ffc832" style="display:none">
+                                    </div>
+                                </div>
                                 <textarea id="ncmUpdateDesc" rows="6" placeholder="Description de l'update…"
                                     oninput="document.getElementById('ncmUpdateDescPreview').textContent=this.value||''"
-                                    style="width:100%;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);border-radius:10px;padding:10px 14px;color:#fff;font-size:13px;font-family:inherit;outline:none;resize:vertical;box-sizing:border-box;"></textarea>
+                                    style="width:100%;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);border-radius:0 0 10px 10px;padding:10px 14px;color:#fff;font-size:13px;font-family:inherit;outline:none;resize:vertical;box-sizing:border-box;border-top:none;"></textarea>
                             </div>
                             <div class="ncm-field">
                                 <label><span class="ncm-lbl-icon">🔗</span> Cards liées (une par ligne, format: label|category|catColor|imgSrc|type|src|cardId|badge|section)</label>
