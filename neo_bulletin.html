@@ -6393,22 +6393,11 @@
                                     oninput="document.getElementById('ncmUpdateTitlePreview').textContent=this.value||'Blox Fruits Update 28'">
                             </div>
                             <div class="ncm-field">
-                                <label><span class="ncm-lbl-icon">📝</span> Description</label>
-                                <div class="ncm-format-bar">
-                                    <button class="ncm-format-btn" onclick="_ncmFormatText('bold', 'ncmUpdateDesc')" title="Gras"><b>B</b></button>
-                                    <button class="ncm-format-btn" onclick="_ncmFormatText('italic', 'ncmUpdateDesc')" title="Italique"><i>I</i></button>
-                                    <button class="ncm-format-btn" onclick="_ncmFormatText('underline', 'ncmUpdateDesc')" title="Souligné"><u>U</u></button>
-                                    <button class="ncm-format-btn" onclick="_ncmFormatText('strike', 'ncmUpdateDesc')" title="Barré"><s>S</s></button>
-                                    <span class="ncm-format-sep"></span>
-                                    <div class="ncm-hl-wrap">
-                                        <button class="ncm-format-btn is-hl" onclick="_ncmFormatText('highlight', 'ncmUpdateDesc')" title="Surligner (Ctrl+Shift+E)" id="ncmHlBtnUpdate">H</button>
-                                        <button class="ncm-hl-swatch" id="ncmHlSwatchUpdate" style="background:#ffc832" title="Choisir une couleur"></button>
-                                        <input type="color" id="ncmHlColorInputUpdate" value="#ffc832" style="display:none">
-                                    </div>
-                                </div>
-                                <textarea id="ncmUpdateDesc" rows="6" placeholder="Description de l'update…"
-                                    oninput="document.getElementById('ncmUpdateDescPreview').textContent=this.value||''"
-                                    style="width:100%;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);border-radius:0 0 10px 10px;padding:10px 14px;color:#fff;font-size:13px;font-family:inherit;outline:none;resize:vertical;box-sizing:border-box;border-top:none;"></textarea>
+                                <label><span class="ncm-lbl-icon">📝</span> Description courte (card extérieure)</label>
+                                <textarea id="ncmUpdateShortDesc" rows="3" placeholder="Résumé bref (150 caractères max)…"
+                                    oninput="document.getElementById('ncmUpdateShortDescPreview').textContent=this.value||''"
+                                    style="width:100%;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);border-radius:10px;padding:10px 14px;color:#fff;font-size:13px;font-family:inherit;outline:none;resize:vertical;box-sizing:border-box;"></textarea>
+                                <div class="ncm-field-info">💡 Cette description apparaît sur la card dans la grille</div>
                             </div>
                             <div class="ncm-field">
                                 <label><span class="ncm-lbl-icon">🔗</span> Cards liées (une par ligne, format: label|category|catColor|imgSrc|type|src|cardId|badge|section)</label>
@@ -10703,14 +10692,21 @@
         ta.selectionStart = newPos;
         ta.selectionEnd = newPos + selected.length;
         ta.focus();
-        _ncmActusSyncPreview();
+
+        // Sync preview selon le textarea
+        if (ta.id === 'ncmActusContent') {
+            _ncmActusSyncPreview();
+        } else if (ta.id === 'ncmUpdateDesc') {
+            const preview = document.getElementById('ncmUpdateDescPreview');
+            if (preview) preview.textContent = ta.value || '';
+        }
     }
 
     let _ncmHlColor = '#ffc832';
     let _ncmHlPending = false;
 
-    function _ncmFormatText(type) {
-        const ta = document.getElementById('ncmActusContent');
+    function _ncmFormatText(type, textareaId) {
+        const ta = document.getElementById(textareaId || 'ncmActusContent');
         if (!ta) return;
         const map = {
             bold: ['**', '**'],
@@ -10731,9 +10727,14 @@
 
     document.addEventListener('click', function(e) {
         const swatch = document.getElementById('ncmHlSwatch');
+        const swatchUpdate = document.getElementById('ncmHlSwatchUpdate');
         const input = document.getElementById('ncmHlColorInput');
+        const inputUpdate = document.getElementById('ncmHlColorInputUpdate');
         if (swatch && input && swatch.contains(e.target)) {
             input.click();
+        }
+        if (swatchUpdate && inputUpdate && swatchUpdate.contains(e.target)) {
+            inputUpdate.click();
         }
     });
 
@@ -10744,18 +10745,35 @@
             if (swatch) swatch.style.background = _ncmHlColor;
             if (_ncmHlPending) {
                 _ncmHlPending = false;
-                _ncmFormatText('highlight');
+                _ncmFormatText('highlight', 'ncmActusContent');
+            }
+        }
+        if (e.target.id === 'ncmHlColorInputUpdate') {
+            _ncmHlColor = e.target.value;
+            const swatch = document.getElementById('ncmHlSwatchUpdate');
+            if (swatch) swatch.style.background = _ncmHlColor;
+            if (_ncmHlPending) {
+                _ncmHlPending = false;
+                _ncmFormatText('highlight', 'ncmUpdateDesc');
             }
         }
     });
 
     document.addEventListener('keydown', function(e) {
         if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'e') {
-            const ta = document.getElementById('ncmActusContent');
-            if (ta && document.activeElement === ta) {
+            const taActus = document.getElementById('ncmActusContent');
+            const taUpdate = document.getElementById('ncmUpdateDesc');
+            let activeTa = null;
+            if (taActus && document.activeElement === taActus) {
+                activeTa = 'ncmActusContent';
+            } else if (taUpdate && document.activeElement === taUpdate) {
+                activeTa = 'ncmUpdateDesc';
+            }
+            if (activeTa) {
                 e.preventDefault();
                 _ncmHlPending = true;
-                document.getElementById('ncmHlColorInput')?.click();
+                const inputId = activeTa === 'ncmActusContent' ? 'ncmHlColorInput' : 'ncmHlColorInputUpdate';
+                document.getElementById(inputId)?.click();
             }
         }
     });
@@ -11667,8 +11685,44 @@
     const UPD_CC_MAX      = 5;
     let   _updModalCurrent = null;
 
-    // ── Init compteurs Firebase (appelé une fois Firebase prêt) ──
+    // ── Init compteurs Firebase et chargement des updates depuis Firebase ──
     function _initUpdates() {
+        // 1. Charger les updates depuis Firebase
+        if (typeof FB_DB !== 'undefined' && FB_DB) {
+            FB_DB.ref('updates').on('value', snap => {
+                const raw = snap.val();
+                const fbUpdates = raw
+                    ? (Array.isArray(raw) ? raw : Object.values(raw))
+                    : [];
+
+                // Fusionner avec UPDATES_DATA statique (pour garder l'exemple)
+                // mais prioriser les données Firebase
+                const staticIds = new Set(UPDATES_DATA.filter(u => u.id.startsWith('upd-')).map(u => u.id));
+                const merged = [...UPDATES_DATA.filter(u => !u.id.startsWith('upd-'))];
+
+                fbUpdates.forEach(fbUpd => {
+                    const existingIdx = merged.findIndex(u => u.id === fbUpd.id);
+                    if (existingIdx !== -1) {
+                        merged[existingIdx] = fbUpd;
+                    } else {
+                        merged.push(fbUpd);
+                    }
+                });
+
+                // Mettre à jour UPDATES_DATA
+                UPDATES_DATA.length = 0;
+                UPDATES_DATA.push(...merged);
+
+                // Re-render toutes les updates
+                const grid = document.getElementById('updatesGrid');
+                if (grid) {
+                    grid.innerHTML = '';
+                    UPDATES_DATA.forEach(upd => _renderUpdateCard(upd));
+                }
+            });
+        }
+
+        // 2. Initialiser les compteurs de commentaires
         UPDATES_DATA.forEach(upd => {
             if (typeof FB_DB === 'undefined' || !FB_DB) return;
             FB_DB.ref('update_comments/' + upd.id).on('value', snap => {
