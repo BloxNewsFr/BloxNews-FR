@@ -8057,6 +8057,137 @@
         return num.toString();
     }
 
+    // ═══════════════════════════════════════════════════════════════
+    //  UPDATE HUB — Navigation et chargement dynamique
+    // ═══════════════════════════════════════════════════════════════
+    
+    // Initialisation de la navigation Update Hub
+    function initUpdateHub() {
+        // Navigation entre les onglets
+        const navBtns = document.querySelectorAll('.update-hub-nav-btn');
+        const tabs = document.querySelectorAll('.update-hub-tab');
+        
+        navBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const targetTab = btn.dataset.tab;
+                
+                // Désactiver tous les boutons et onglets
+                navBtns.forEach(b => b.classList.remove('active'));
+                tabs.forEach(t => t.classList.remove('active'));
+                
+                // Activer le bouton et l'onglet cible
+                btn.classList.add('active');
+                document.getElementById(`tab-${targetTab}`).classList.add('active');
+            });
+        });
+        
+        // Sélecteur d'update
+        const updateChips = document.querySelectorAll('.update-chip');
+        updateChips.forEach(chip => {
+            chip.addEventListener('click', () => {
+                const version = chip.dataset.version;
+                loadUpdateHub(version);
+            });
+        });
+        
+        // Charger l'update par défaut
+        loadUpdateHub('0.3.3');
+    }
+    
+    // Charger les données d'une update dans le Hub
+    function loadUpdateHub(versionKey) {
+        const data = UPDATE_DATA[versionKey];
+        if (!data) return;
+        
+        // Mettre à jour les chips
+        document.querySelectorAll('.update-chip').forEach(chip => {
+            chip.classList.toggle('active', chip.dataset.version === versionKey);
+        });
+        
+        // Mettre à jour l'onglet Overview
+        document.getElementById('hubBanner').src = data.banner || './shared/background.png';
+        const statusEl = document.getElementById('hubStatus');
+        statusEl.textContent = data.status || 'OFFICIAL';
+        statusEl.className = 'update-hub-status update-hub-status--' + (data.status === 'LEAK' ? 'leak' : 'official');
+        
+        document.getElementById('hubVersion').textContent = data.version;
+        document.getElementById('hubDate').textContent = data.date;
+        document.getElementById('hubTitle').textContent = data.title;
+        document.getElementById('hubSummary').textContent = data.summary;
+        
+        // Mettre à jour les stats
+        if (data.stats) {
+            document.getElementById('hubViews').textContent = _formatNumber(data.stats.views || 0);
+            document.getElementById('hubLikes').textContent = _formatNumber(data.stats.likes || 0);
+            document.getElementById('hubComments').textContent = _formatNumber(data.stats.comments || 0);
+        }
+        
+        // Mettre à jour le bouton like
+        const likeBtn = document.getElementById('hubLikeBtn');
+        likeBtn.dataset.postId = `update-${versionKey}`;
+        updateLikeButtonState(likeBtn, `update-${versionKey}`);
+        
+        // Charger les cards liées
+        loadLinkedCards(data.linkedCards);
+        
+        // Charger les commentaires
+        loadHubComments(data.comments);
+    }
+    
+    // Charger les cards liées depuis GROUP_DATA
+    function loadLinkedCards(linkedCards) {
+        const grid = document.getElementById('hubLinkedCards');
+        if (!linkedCards || linkedCards.length === 0) {
+            grid.innerHTML = '<p style="color:rgba(255,255,255,0.4);text-align:center;padding:40px;">Aucun contenu lié</p>';
+            return;
+        }
+        
+        grid.innerHTML = linkedCards.map(card => {
+            const groupData = GROUP_DATA[card.id];
+            const imgSrc = groupData?.items?.[0]?.src || './shared/background.png';
+            const badge = groupData?.badge || card.label;
+            
+            return `
+                <div class="linked-card-item" onclick="openGroupDrawer('${card.id}')">
+                    <img src="${imgSrc}" alt="${card.label}" loading="lazy">
+                    <div class="linked-card-item-content">
+                        <div class="linked-card-item-title">${badge}</div>
+                        <div class="linked-card-item-type">${card.type}</div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+    
+    // Charger les commentaires dans le Hub
+    function loadHubComments(commentsPath) {
+        const body = document.getElementById('hubCommentsBody');
+        const countEl = document.getElementById('hubCommentCount');
+        
+        if (typeof FB_REF !== 'undefined' && FB_REF) {
+            const ref = FB_REF.child(commentsPath);
+            loadComments(ref, body, countEl, {});
+        } else {
+            body.innerHTML = '<div style="padding:20px;text-align:center;color:rgba(255,255,255,0.4)">Commentaires non disponibles</div>';
+            if (countEl) countEl.textContent = '0';
+        }
+    }
+    
+    // Mettre à jour l'état du bouton like
+    function updateLikeButtonState(btn, postId) {
+        const localLikes = _plLoadLocal();
+        const isLiked = localLikes[postId];
+        btn.classList.toggle('liked', isLiked);
+        btn.querySelector('.update-hub-like-text').textContent = isLiked ? 'Liké' : "J'aime";
+    }
+    
+    // Initialiser le Update Hub au chargement
+    document.addEventListener('DOMContentLoaded', () => {
+        if (document.querySelector('.update-hub-nav')) {
+            initUpdateHub();
+        }
+    });
+
     // Helper : afficher un bouton "Ouvrir la vidéo" quand le format n'est pas lisible inline
     function _showExtVideoBtn(src, videoEl) {
         const existing = document.getElementById('_modalExtVideoBtn');
