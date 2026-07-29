@@ -10416,31 +10416,16 @@
             const title   = document.getElementById('ncmUpdateTitle')?.value?.trim() || 'Sans titre';
             const shortDesc = document.getElementById('ncmUpdateShortDesc')?.value?.trim() || '';
             const fullDesc  = document.getElementById('ncmUpdateFullDesc')?.value?.trim() || '';
-            const linkedRaw = document.getElementById('ncmUpdateLinked')?.value?.trim() || '';
 
             if (!title) { editLog('err', 'Le titre est requis.'); return; }
             if (!version) { editLog('err', 'La version est requise.'); return; }
 
-            // Parser les cards liées
+            // Récupérer les cards liées depuis le sélecteur
             const linkedCards = [];
-            if (linkedRaw) {
-                linkedRaw.split('\n').forEach(line => {
-                    const parts = line.split('|');
-                    if (parts.length >= 2) {
-                        linkedCards.push({
-                            label: parts[0]?.trim() || '',
-                            category: parts[1]?.trim() || '',
-                            catColor: parts[2]?.trim() || '#ffda00',
-                            imgSrc: parts[3]?.trim() || '',
-                            type: parts[4]?.trim() || '',
-                            src: parts[5]?.trim() || '',
-                            cardId: parts[6]?.trim() || '',
-                            badge: parts[7]?.trim() || '',
-                            section: parts[8]?.trim() || ''
-                        });
-                    }
-                });
-            }
+            document.querySelectorAll('.ncm-linked-card-checkbox:checked').forEach(cb => {
+                const data = JSON.parse(cb.dataset.cardData);
+                linkedCards.push(data);
+            });
 
             const updateId = 'upd_' + Date.now();
             const newUpdate = {
