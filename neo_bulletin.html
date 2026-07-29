@@ -5170,7 +5170,6 @@
             border: 1.5px solid rgba(0,0,0,0.07);
             cursor: pointer; transition: transform .15s, box-shadow .15s;
             background: #f9f9fb;
-            text-decoration: none;
         }
         .update-modal__linked-card:hover {
             transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.1);
@@ -6657,6 +6656,33 @@
                 document.addEventListener('keydown', (e) => {
                     if (e.key === 'Escape' && modal.classList.contains('is-active')) closeModalFn();
                 });
+
+                // ── Fonction exposée pour ouvrir le modal depuis n'importe où ──
+                window._openCardModalDirect = function({ type, src, badge, title, section, cardId }) {
+                    if (!modal) return;
+                    if (modalBadge)   modalBadge.textContent   = badge   || 'LEAK';
+                    if (modalSection) modalSection.textContent = section || 'Blox Leaks';
+                    if (modalTitle)   modalTitle.textContent   = title   || '';
+                    if (video)    video.style.display    = 'none';
+                    if (modalImg) modalImg.style.display = 'none';
+                    if (type === 'video' && video) {
+                        video.src = src; video.style.display = 'block';
+                        video.currentTime = 0;
+                        video.onerror = () => { video.style.display='none'; video.onerror=null; _showExtVideoBtn(src,video); };
+                        video.play().catch(() => { if (video.readyState===0||video.error) { video.style.display='none'; _showExtVideoBtn(src,video); } });
+                    } else if (modalImg) {
+                        modalImg.src = src; modalImg.style.display = 'block';
+                    }
+                    const id = cardId || btoa(encodeURIComponent(src||title)).replace(/[^a-zA-Z0-9]/g,'').slice(0,32);
+                    _cardCommentsOpen(id);
+                    _modalEditKey = 'modal_edit__' + btoa(encodeURIComponent(src||title)).slice(0,48);
+                    _modalEditLoad(_modalEditKey);
+                    const edPanel = document.getElementById('modalEditorPanel');
+                    if (edPanel) edPanel.classList.remove('is-open');
+                    const edBtn = document.getElementById('modalEditToggle');
+                    if (edBtn) { edBtn.classList.remove('is-active'); edBtn.textContent = '✏️ Éditer'; }
+                    modal.classList.add('is-active');
+                };
             }
         });
     </script>
@@ -11358,13 +11384,17 @@
     ════════════════════════════════════════════════════════════════ */
 
     // ── Données des updates ──────────────────────────────────────
-    // Pour ajouter une update : copier un objet, l'ajouter au tableau,
-    // ET ajouter la <article class="update-card"> correspondante dans le HTML.
-    //
-    // linkedCards : vraies cards à afficher dans le modal
-    //   { label, category, catColor, emoji, imgSrc, href }
-    //   imgSrc : URL de l'image (laisser '' pour afficher l'emoji)
-    //   href   : lien vers la card (ex: 'bulletin-024.html#dark-rework')
+    // linkedCards : données de la vraie card à ouvrir dans le modal existant
+    //   type     : 'image' ou 'video'
+    //   src      : chemin vers le fichier (même valeur que data-src sur la card)
+    //   cardId   : data-card-id de la card (optionnel, pour les commentaires)
+    //   badge    : texte du badge (ex: 'LEAK', 'REWORK'…)
+    //   section  : nom de la section (ex: '🍎 Fruits & Reworks')
+    //   imgSrc   : miniature à afficher dans la grille du modal (peut être identique à src)
+    //   emoji    : affiché si imgSrc est vide
+    //   label    : titre de la card
+    //   category : catégorie (affiché sous la miniature)
+    //   catColor : couleur du badge catégorie
     const UPDATES_DATA = [
         {
             id: 'upd-001',
@@ -11373,10 +11403,26 @@
             title: 'Blox Fruits Update 28',
             desc: `La plus grande update de l'année avec le rework complet de Dark, l'arrivée de trois nouveaux fruits Celestial, Oni et Wraith, et une refonte totale de la map Third Sea.\n\nLe PvP a été entièrement rééquilibré avec de nouveaux moves et des ajustements sur les cooldowns. Plusieurs fruits du meta ont été retravaillés suite aux retours de la communauté.\n\nLa Third Sea propose désormais de nouvelles zones explorables, un boss world inédit et une série de quêtes scénarisées.`,
             linkedCards: [
-                { label: 'Dark Rework', category: 'Fruit', catColor: '#7b2fff', emoji: '🌑', imgSrc: '', href: '#' },
-                { label: 'Celestial Fruit', category: 'Fruit', catColor: '#ffda00', emoji: '⚡', imgSrc: '', href: '#' },
-                { label: 'Oni Fruit', category: 'Fruit', catColor: '#cc0000', emoji: '👹', imgSrc: '', href: '#' },
-                { label: 'Refonte Third Sea', category: 'Map', catColor: '#175ec2', emoji: '🗺️', imgSrc: '', href: '#' },
+                {
+                    label: 'Dark Rework', category: 'Fruit', catColor: '#7b2fff', emoji: '🌑',
+                    imgSrc: './shared/blox_leaks/dark_rework.jpeg',
+                    type: 'image', src: './shared/blox_leaks/dark_rework.jpeg',
+                    cardId: 'dark-rework', badge: 'REWORK', section: '🍎 Fruits & Reworks'
+                },
+                {
+                    label: 'Celestial Fruit', category: 'Fruit', catColor: '#ffda00', emoji: '⚡',
+                    imgSrc: '', type: 'image', src: '', cardId: '', badge: 'LEAK', section: '🍎 Fruits & Reworks'
+                },
+                {
+                    label: 'Oni Fruit', category: 'Fruit', catColor: '#cc0000', emoji: '👹',
+                    imgSrc: '', type: 'image', src: '', cardId: '', badge: 'LEAK', section: '🍎 Fruits & Reworks'
+                },
+                {
+                    label: 'Refonte Third Sea', category: 'Map', catColor: '#175ec2', emoji: '🗺️',
+                    imgSrc: './shared/blox_leaks/island_reworks1.png',
+                    type: 'image', src: './shared/blox_leaks/island_reworks1.png',
+                    cardId: '', badge: 'MAP', section: '🗺️ Map & World'
+                },
             ]
         }
     ];
@@ -11418,19 +11464,23 @@
         // Grille de vraies cards liées
         const grid = document.getElementById('updModalLinkedGrid');
         grid.innerHTML = upd.linkedCards.map(c => {
+            const hasMedia = !!c.src;
             const img = c.imgSrc
                 ? `<img src="${c.imgSrc}" class="update-modal__linked-img" alt="${c.label}" loading="lazy">`
                 : `<div class="update-modal__linked-img--placeholder">${c.emoji}</div>`;
-            const isHash = !c.href || c.href === '#';
-            return `<a class="update-modal__linked-card" href="${c.href}"
-                        ${isHash ? 'onclick="event.preventDefault()"' : 'target="_blank"'}
+            const clickHandler = hasMedia
+                ? `onclick="event.preventDefault();closeUpdateModal(null);setTimeout(()=>_openCardModalDirect({type:'${c.type}',src:'${c.src}',cardId:'${c.cardId||''}',badge:'${c.badge||'LEAK'}',title:'${c.label}',section:'${c.section||'Blox Leaks'}'}),300)"`
+                : `onclick="event.preventDefault()"`;
+            const cursor = hasMedia ? '' : 'style="cursor:default;opacity:0.6"';
+            return `<div class="update-modal__linked-card" ${clickHandler} ${cursor}
                         style="--cat-hex:${c.catColor||'#ffda00'}">
                         ${img}
                         <div class="update-modal__linked-info">
                             <div class="update-modal__linked-badge">${c.category}</div>
                             <div class="update-modal__linked-title">${c.label}</div>
+                            ${hasMedia ? `<div style="font-size:10px;color:#888;margin-top:2px">Cliquer pour ouvrir →</div>` : ''}
                         </div>
-                    </a>`;
+                    </div>`;
         }).join('');
 
         // Commentaires — init Firebase une seule fois par update
