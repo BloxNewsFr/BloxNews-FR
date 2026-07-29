@@ -8247,26 +8247,26 @@
         loadHubComments(data.comments);
     }
     
-    // Charger les cards liées depuis GROUP_DATA
+    // Charger les cards liées depuis GROUP_DATA (horizontal scroll)
     function loadLinkedCards(linkedCards) {
-        const grid = document.getElementById('hubLinkedCards');
+        const scroll = document.getElementById('hubLinkedCards');
         if (!linkedCards || linkedCards.length === 0) {
-            grid.innerHTML = '<p style="color:rgba(255,255,255,0.4);text-align:center;padding:40px;">Aucun contenu lié</p>';
+            scroll.innerHTML = '<div style="color:rgba(255,255,255,0.4);text-align:center;padding:40px;">Aucun contenu lié</div>';
             return;
         }
         
-        grid.innerHTML = linkedCards.map(card => {
+        scroll.innerHTML = linkedCards.map(card => {
             const groupData = GROUP_DATA[card.id];
             const imgSrc = groupData?.items?.[0]?.src || './shared/background.png';
             const badge = groupData?.badge || card.label;
             
             return `
-                <div class="linked-card-item" onclick="openGroupDrawer('${card.id}')">
-                    <img src="${imgSrc}" alt="${card.label}" loading="lazy">
-                    <div class="linked-card-item-content">
-                        <div class="linked-card-item-title">${badge}</div>
-                        <div class="linked-card-item-type">${card.type}</div>
+                <div class="hub-card" onclick="openGroupDrawer('${card.id}')">
+                    <div class="media">
+                        <img src="${imgSrc}" alt="${card.label}" loading="lazy">
                     </div>
+                    <h4>${badge}</h4>
+                    <div class="meta">${card.type}</div>
                 </div>
             `;
         }).join('');
