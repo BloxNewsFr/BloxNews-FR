@@ -533,6 +533,125 @@
         }
 
 
+        /* ═══════════════════════════════════════════════
+           SETTINGS PANEL
+        ═══════════════════════════════════════════════ */
+        #settingsToggle { cursor: pointer; transition: color .2s; }
+        #settingsToggle:hover { color: var(--color-primary, #ffda00); }
+
+        .settings-overlay {
+            position: fixed; inset: 0; z-index: 9999;
+            background: rgba(0,0,0,0.55); backdrop-filter: blur(4px);
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transition: opacity .25s;
+        }
+        .settings-overlay.is-open { opacity: 1; pointer-events: all; }
+
+        .settings-panel {
+            background: #fff; border-radius: 20px;
+            width: min(460px, calc(100vw - 32px)); max-height: 90vh; overflow-y: auto;
+            box-shadow: 0 24px 64px rgba(0,0,0,0.25);
+            transform: translateY(20px) scale(0.97);
+            transition: transform .25s cubic-bezier(.34,1.56,.64,1);
+        }
+        .settings-overlay.is-open .settings-panel { transform: translateY(0) scale(1); }
+        html[data-theme="dark"] .settings-panel { background: #171827; }
+
+        .settings-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 20px 24px 16px; border-bottom: 1px solid rgba(0,0,0,0.07);
+            position: sticky; top: 0; background: inherit; z-index: 1; border-radius: 20px 20px 0 0;
+        }
+        html[data-theme="dark"] .settings-header { border-bottom-color: rgba(255,255,255,0.07); }
+        .settings-title { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 17px; color: var(--color-text); }
+        .settings-close {
+            background: rgba(0,0,0,0.06); border: none; cursor: pointer;
+            width: 30px; height: 30px; border-radius: 50%; font-size: 14px; color: #666;
+            display: flex; align-items: center; justify-content: center; transition: background .15s;
+        }
+        .settings-close:hover { background: rgba(0,0,0,0.12); }
+        html[data-theme="dark"] .settings-close { background: rgba(255,255,255,0.08); color: #aaa; }
+
+        .settings-section { padding: 18px 24px; border-bottom: 1px solid rgba(0,0,0,0.06); }
+        html[data-theme="dark"] .settings-section { border-bottom-color: rgba(255,255,255,0.06); }
+        .settings-section:last-of-type { border-bottom: none; }
+        .settings-section-label {
+            font-size: 11px; font-weight: 700; letter-spacing: 1px;
+            text-transform: uppercase; color: #999; margin-bottom: 14px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        html[data-theme="dark"] .settings-section-label { color: #666; }
+
+        .settings-profile-guest, .settings-profile-user {
+            display: flex; align-items: center; gap: 14px;
+        }
+        .settings-profile-avatar {
+            width: 48px; height: 48px; border-radius: 50%; object-fit: cover; flex-shrink: 0;
+        }
+        .settings-profile-avatar--empty {
+            background: #e0e0e8; display: flex; align-items: center; justify-content: center;
+            font-size: 22px; color: #aaa;
+        }
+        html[data-theme="dark"] .settings-profile-avatar--empty { background: #2a2d45; }
+        .settings-profile-info { flex: 1; min-width: 0; }
+        .settings-profile-name { font-weight: 700; font-size: 15px; color: var(--color-text); }
+        .settings-profile-sub { font-size: 12px; color: #888; margin-top: 2px; }
+
+        .settings-row {
+            display: flex; align-items: center; justify-content: space-between;
+            gap: 16px; padding: 8px 0;
+        }
+        .settings-row + .settings-row { border-top: 1px solid rgba(0,0,0,0.04); }
+        html[data-theme="dark"] .settings-row + .settings-row { border-top-color: rgba(255,255,255,0.04); }
+        .settings-row-info { flex: 1; min-width: 0; }
+        .settings-row-label { font-size: 14px; font-weight: 600; color: var(--color-text); }
+        .settings-row-sub { font-size: 12px; color: #888; margin-top: 2px; }
+        html[data-theme="dark"] .settings-row-sub { color: #666; }
+
+        .settings-toggle {
+            width: 46px; height: 26px; border-radius: 13px;
+            background: #d0d0dc; border: none; cursor: pointer;
+            position: relative; flex-shrink: 0; transition: background .2s;
+        }
+        .settings-toggle[aria-checked="true"] { background: #175ec2; }
+        .settings-toggle-knob {
+            position: absolute; left: 3px; top: 3px;
+            width: 20px; height: 20px; border-radius: 50%; background: #fff;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.2); transition: left .2s;
+        }
+        .settings-toggle[aria-checked="true"] .settings-toggle-knob { left: 23px; }
+
+        .settings-select {
+            background: rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.1);
+            border-radius: 8px; padding: 5px 10px; font-size: 13px; font-weight: 600;
+            color: var(--color-text); cursor: pointer; outline: none;
+            font-family: 'Inter', sans-serif; flex-shrink: 0;
+        }
+        html[data-theme="dark"] .settings-select {
+            background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.1); color: #eef0fa;
+        }
+
+        .settings-btn {
+            padding: 7px 14px; border-radius: 10px; border: none;
+            font-size: 13px; font-weight: 600; cursor: pointer;
+            display: inline-flex; align-items: center; gap: 6px;
+            white-space: nowrap; transition: opacity .15s; flex-shrink: 0;
+        }
+        .settings-btn:hover { opacity: 0.85; }
+        .settings-btn--primary { background: #5865f2; color: #fff; }
+        .settings-btn--danger { background: rgba(220,38,38,0.1); color: #dc2626; }
+        html[data-theme="dark"] .settings-btn--danger { background: rgba(220,38,38,0.2); }
+
+        .settings-footer { padding: 14px 24px; text-align: center; font-size: 11px; color: #bbb; }
+
+        body.force-reduce-motion *,
+        body.force-reduce-motion *::before,
+        body.force-reduce-motion *::after {
+            animation-duration: 0.001ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.001ms !important;
+        }
+
         /* ════════════════════════════════════════════════════════════
            SYSTÈME DE PROFONDEUR — Hiérarchie spatiale (Z-layers)
            L0: fond page | L1: contenu | L2: cards | L3: badges/boutons
@@ -1823,6 +1942,7 @@
         <div class="site-header__icons">
             <span class="material-symbols-outlined" onclick="openSearch()">search</span>
             <span class="material-symbols-outlined" id="themeToggle" role="button" tabindex="0" aria-label="Changer de thème" title="Changer de thème">dark_mode</span>
+            <span class="material-symbols-outlined" id="settingsToggle" role="button" tabindex="0" aria-label="Paramètres" title="Paramètres" onclick="openSettings()">settings</span>
 
             <div class="discord-skeleton" id="discordSkeleton"></div>
 
@@ -1943,7 +2063,7 @@
             { num: "023", img: "./023/img/INDRAATTACK.png",        href: "./023/bulletin-023.html", date: "2026-07-23" },
             { num: "024", img: "./024/img/placeholder.svg",      href: "./024/bulletin-024.html", date: "2026-07-27" },
         ];
-        const NEW_DAYS = 7; // Badge "Nouveau" visible pendant 7 jours après publication
+        let NEW_DAYS = parseInt(localStorage.getItem('bloxnews_new_days') || '7', 10); // Badge "Nouveau" visible pendant N jours après publication
         function isRecentBulletin(b) {
             if (!b.date) return false;
             const diff = Date.now() - new Date(b.date).getTime();
@@ -1964,7 +2084,7 @@
             if (j < 30) return `il y a ${j}j`;
             return d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
         }
-        const PER_PAGE = 6;
+        let PER_PAGE = parseInt(localStorage.getItem('bloxnews_per_page') || '6', 10);
         let currentPage = 1;
         // ── État recherche filtre ──────────────────────────────────────
         let _searchActive = false;   // mode filtre actif
@@ -3021,6 +3141,223 @@
         loginBtn.style.display = '';
     })();
     </script>
+
+    <script>
+    /* ════════════════════════════════════════════════════════════════
+       PANNEAU PARAMÈTRES — index.html
+    ════════════════════════════════════════════════════════════════ */
+
+    const SETTINGS_MOTION_KEY   = 'bloxnews_reduce_motion';
+    const SETTINGS_PER_PAGE_KEY = 'bloxnews_per_page';
+    const SETTINGS_NEW_DAYS_KEY = 'bloxnews_new_days';
+
+    function _getDiscordUser() {
+        try { return JSON.parse(localStorage.getItem('bloxbulletin_discord_user') || 'null'); } catch { return null; }
+    }
+
+    // ── Ouvrir / Fermer ──────────────────────────────────────────
+    function openSettings() {
+        _settingsRefreshProfile();
+        _settingsRefreshToggles();
+        const ov = document.getElementById('settingsOverlay');
+        ov.setAttribute('aria-hidden', 'false');
+        ov.classList.add('is-open');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeSettings(e) {
+        if (e && e.target !== document.getElementById('settingsOverlay')) return;
+        const ov = document.getElementById('settingsOverlay');
+        ov.setAttribute('aria-hidden', 'true');
+        ov.classList.remove('is-open');
+        document.body.style.overflow = '';
+    }
+
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && document.getElementById('settingsOverlay')?.classList.contains('is-open')) {
+            closeSettings(null);
+        }
+    });
+
+    // ── Profil ───────────────────────────────────────────────────
+    function _settingsRefreshProfile() {
+        const user    = _getDiscordUser();
+        const guestEl = document.getElementById('settingsGuest');
+        const userEl  = document.getElementById('settingsUser');
+        if (user) {
+            document.getElementById('settingsAvatar').src       = _discordAvatarUrl(user);
+            document.getElementById('settingsName').textContent = user.global_name || user.username;
+            document.getElementById('settingsTag').textContent  = '@' + user.username;
+            guestEl.classList.add('is-hidden');
+            userEl.classList.remove('is-hidden');
+        } else {
+            guestEl.classList.remove('is-hidden');
+            userEl.classList.add('is-hidden');
+        }
+    }
+
+    // ── Toggles — état initial ───────────────────────────────────
+    function _settingsRefreshToggles() {
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        _settingsSetToggle('settingsThemeToggle', isDark);
+        _settingsSetToggle('settingsMotionToggle', localStorage.getItem(SETTINGS_MOTION_KEY) === '1');
+        const ppSel = document.getElementById('settingsPerPage');
+        if (ppSel) ppSel.value = String(PER_PAGE);
+        const ndSel = document.getElementById('settingsNewDays');
+        if (ndSel) ndSel.value = String(NEW_DAYS);
+    }
+
+    function _settingsSetToggle(id, on) {
+        const btn = document.getElementById(id);
+        if (btn) btn.setAttribute('aria-checked', on ? 'true' : 'false');
+    }
+
+    // ── Thème ────────────────────────────────────────────────────
+    function _settingsToggleTheme() {
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        if (isDark) {
+            document.documentElement.removeAttribute('data-theme');
+            try { localStorage.setItem('bloxsite_theme', 'light'); } catch(e) {}
+        } else {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            try { localStorage.setItem('bloxsite_theme', 'dark'); } catch(e) {}
+        }
+        _settingsSetToggle('settingsThemeToggle', !isDark);
+        const tt = document.getElementById('themeToggle');
+        if (tt) tt.textContent = isDark ? 'dark_mode' : 'light_mode';
+    }
+
+    // ── Réduction des animations ─────────────────────────────────
+    function _settingsToggleMotion() {
+        const next = !(localStorage.getItem(SETTINGS_MOTION_KEY) === '1');
+        localStorage.setItem(SETTINGS_MOTION_KEY, next ? '1' : '0');
+        document.body.classList.toggle('force-reduce-motion', next);
+        _settingsSetToggle('settingsMotionToggle', next);
+    }
+
+    // ── Bulletins par page ───────────────────────────────────────
+    function _settingsChangePerPage(val) {
+        const n = parseInt(val, 10);
+        if (!n) return;
+        localStorage.setItem(SETTINGS_PER_PAGE_KEY, String(n));
+        PER_PAGE = n;
+        currentPage = 1;
+        renderPage();
+    }
+
+    // ── Durée badge "Nouveau" ────────────────────────────────────
+    function _settingsChangeNewDays(val) {
+        const n = parseInt(val, 10);
+        if (!n) return;
+        localStorage.setItem(SETTINGS_NEW_DAYS_KEY, String(n));
+        NEW_DAYS = n;
+        renderPage();
+    }
+
+    // ── Appliquer les préférences sauvegardées au chargement ─────
+    (function _settingsApplyOnLoad() {
+        if (localStorage.getItem(SETTINGS_MOTION_KEY) === '1') {
+            document.body.classList.add('force-reduce-motion');
+        }
+    })();
+    </script>
+
+    <!-- ═══════════════════════════════════════════════
+         PANNEAU PARAMÈTRES
+    ═══════════════════════════════════════════════ -->
+    <div class="settings-overlay" id="settingsOverlay" onclick="closeSettings(event)" aria-hidden="true">
+        <div class="settings-panel" role="dialog" aria-modal="true" aria-label="Paramètres">
+
+            <div class="settings-header">
+                <span class="settings-title">⚙️ Paramètres</span>
+                <button class="settings-close" onclick="closeSettings(null)">✕</button>
+            </div>
+
+            <!-- ── PROFIL & COMPTE ── -->
+            <div class="settings-section">
+                <div class="settings-section-label">Profil &amp; Compte</div>
+
+                <div class="settings-profile-guest is-hidden" id="settingsGuest">
+                    <div class="settings-profile-avatar settings-profile-avatar--empty">?</div>
+                    <div class="settings-profile-info">
+                        <div class="settings-profile-name">Non connecté</div>
+                        <div class="settings-profile-sub">Connecte-toi avec Discord pour accéder à ton profil</div>
+                    </div>
+                    <button class="settings-btn settings-btn--primary" onclick="_discordLogin()">
+                        <svg width="14" height="11" viewBox="0 0 71 55" fill="none"><path d="M60.1045 4.8978C55.5792 2.8214 50.7265 1.2916 45.6527 0.41542C45.5603 0.39851 45.468 0.44077 45.4204 0.52529C44.7963 1.6353 44.105 3.0834 43.6209 4.2216C38.1637 3.4046 32.7345 3.4046 27.3892 4.2216C26.905 3.0581 26.1886 1.6353 25.5617 0.52529C25.5141 0.44359 25.4218 0.40133 25.3294 0.41542C20.2584 1.2888 15.4057 2.8186 10.8776 4.8978C10.8384 4.9147 10.8048 4.9429 10.7825 4.9795C1.57795 18.7309 -0.943561 32.1443 0.293408 45.3914C0.299005 45.4562 0.335386 45.5182 0.385761 45.5576C6.45866 50.0174 12.3413 52.7249 18.1147 54.5195C18.2071 54.5477 18.305 54.5139 18.3638 54.4378C19.7295 52.5728 20.9469 50.6063 21.9907 48.5383C22.0523 48.4172 21.9935 48.2735 21.8676 48.2256C19.9366 47.4931 18.0979 46.6 16.3292 45.5858C16.1893 45.5041 16.1781 45.304 16.3068 45.2082C16.679 44.9293 17.0513 44.6391 17.4067 44.3461C17.471 44.2926 17.5606 44.2813 17.6362 44.3151C29.2558 49.6202 41.8354 49.6202 53.3179 44.3151C53.3935 44.2785 53.4831 44.2898 53.5502 44.3433C53.9057 44.6363 54.2779 44.9293 54.6529 45.2082C54.7816 45.304 54.7732 45.5041 54.6333 45.5858C52.8646 46.6197 51.0259 47.4931 49.0921 48.2228C48.9662 48.2707 48.9102 48.4172 48.9718 48.5383C50.038 50.6034 51.2554 52.5699 52.5959 54.435C52.6519 54.5139 52.7526 54.5477 52.845 54.5195C58.6464 52.7249 64.529 50.0174 70.6019 45.5576C70.6551 45.5182 70.6887 45.459 70.6943 45.3942C72.1747 30.0791 68.2147 16.7757 60.1968 4.9823C60.1772 4.9429 60.1437 4.9147 60.1045 4.8978ZM23.7259 37.3253C20.2276 37.3253 17.3451 34.1136 17.3451 30.1693C17.3451 26.225 20.1717 23.0133 23.7259 23.0133C27.308 23.0133 30.1626 26.2532 30.1066 30.1693C30.1066 34.1136 27.28 37.3253 23.7259 37.3253ZM47.3178 37.3253C43.8196 37.3253 40.9371 34.1136 40.9371 30.1693C40.9371 26.225 43.7636 23.0133 47.3178 23.0133C50.9 23.0133 53.7545 26.2532 53.6986 30.1693C53.6986 34.1136 50.9 37.3253 47.3178 37.3253Z" fill="currentColor"/></svg>
+                        Connexion Discord
+                    </button>
+                </div>
+
+                <div class="settings-profile-user is-hidden" id="settingsUser">
+                    <img class="settings-profile-avatar" id="settingsAvatar" src="" alt="Avatar">
+                    <div class="settings-profile-info">
+                        <div class="settings-profile-name" id="settingsName">—</div>
+                        <div class="settings-profile-sub" id="settingsTag">—</div>
+                    </div>
+                    <button class="settings-btn settings-btn--danger" onclick="_discordLogout();_settingsRefreshProfile()">Déconnecter</button>
+                </div>
+            </div>
+
+            <!-- ── APPARENCE ── -->
+            <div class="settings-section">
+                <div class="settings-section-label">Apparence</div>
+
+                <div class="settings-row">
+                    <div class="settings-row-info">
+                        <div class="settings-row-label">Mode sombre</div>
+                        <div class="settings-row-sub">Basculer entre thème clair et sombre</div>
+                    </div>
+                    <button class="settings-toggle" id="settingsThemeToggle" role="switch" onclick="_settingsToggleTheme()">
+                        <span class="settings-toggle-knob"></span>
+                    </button>
+                </div>
+
+                <div class="settings-row">
+                    <div class="settings-row-info">
+                        <div class="settings-row-label">Réduire les animations</div>
+                        <div class="settings-row-sub">Désactive les effets visuels animés des cards</div>
+                    </div>
+                    <button class="settings-toggle" id="settingsMotionToggle" role="switch" onclick="_settingsToggleMotion()">
+                        <span class="settings-toggle-knob"></span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- ── AFFICHAGE ── -->
+            <div class="settings-section">
+                <div class="settings-section-label">Affichage</div>
+
+                <div class="settings-row">
+                    <div class="settings-row-info">
+                        <div class="settings-row-label">Bulletins par page</div>
+                        <div class="settings-row-sub">Nombre de cards affichées par page</div>
+                    </div>
+                    <select class="settings-select" id="settingsPerPage" onchange="_settingsChangePerPage(this.value)">
+                        <option value="3">3</option>
+                        <option value="6" selected>6</option>
+                        <option value="9">9</option>
+                        <option value="12">12</option>
+                    </select>
+                </div>
+
+                <div class="settings-row">
+                    <div class="settings-row-info">
+                        <div class="settings-row-label">Badge "Nouveau"</div>
+                        <div class="settings-row-sub">Durée d'affichage du badge sur les bulletins récents</div>
+                    </div>
+                    <select class="settings-select" id="settingsNewDays" onchange="_settingsChangeNewDays(this.value)">
+                        <option value="3">3 jours</option>
+                        <option value="7" selected>7 jours</option>
+                        <option value="14">14 jours</option>
+                        <option value="30">30 jours</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="settings-footer">BloxNews-FR • v2025</div>
+        </div>
+    </div>
 
 </body>
 </html>
