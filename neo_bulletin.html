@@ -9714,6 +9714,8 @@
         if (e.ctrlKey && e.shiftKey && e.key === 'E') {
             const inlineTa = document.getElementById('editInlineTextarea');
             const actusTa  = document.getElementById('ncmActusContent');
+            const updateShortTa = document.getElementById('ncmUpdateShortDesc');
+            const updateFullTa = document.getElementById('ncmUpdateFullDesc');
             // Dans l'inline editor → sélecteur de couleur
             if (inlineTa && document.activeElement === inlineTa) {
                 e.preventDefault();
@@ -9721,8 +9723,10 @@
                 document.getElementById('fmtHlColorInput')?.click();
                 return;
             }
-            // Dans l'actus editor → laisser le handler bas gérer
+            // Dans les textareas de /new → laisser le handler bas gérer
             if (actusTa && document.activeElement === actusTa) return;
+            if (updateShortTa && document.activeElement === updateShortTa) return;
+            if (updateFullTa && document.activeElement === updateFullTa) return;
             // Ailleurs → basculer le mode édition
             e.preventDefault(); toggleEditMode();
         }
