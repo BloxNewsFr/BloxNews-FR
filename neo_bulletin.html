@@ -10671,8 +10671,9 @@
             { id: 'cat-map',   label: 'Map',       filter: 'map',    icon: '🗺️' },
             { id: 'cat-gui',   label: 'GUI',       filter: 'gui',    icon: '🖥️' },
             { id: 'cat-msg',   label: 'Messages',  filter: 'msg',    icon: '🔐' },
+            { id: 'cat-updates', label: 'Updates',  filter: 'updates', icon: '🔄' },
         ];
-        const counts = { all: 0, actus: 0, fruit: 0, vfx: 0, gameplay: 0, map: 0, gui: 0, msg: 0, groupe: 0 };
+        const counts = { all: 0, actus: 0, fruit: 0, vfx: 0, gameplay: 0, map: 0, gui: 0, msg: 0, updates: 0, groupe: 0 };
         let html = '';
         let totalIdx = 0;
 
@@ -10778,7 +10779,7 @@
     }
 
     function _dcmUpdateCounts(counts) {
-        ['all','actus','fruit','vfx','gameplay','map','gui','msg','groupe'].forEach(k => {
+        ['all','actus','fruit','vfx','gameplay','map','gui','msg','updates','groupe'].forEach(k => {
             const el = document.getElementById('dcmCount-' + k);
             if (el) el.textContent = counts[k] || 0;
         });
