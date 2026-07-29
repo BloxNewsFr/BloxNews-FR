@@ -5346,6 +5346,7 @@
         <div class="site-header__icons">
             <span class="material-symbols-outlined" onclick="openSearch()">search</span>
             <span class="material-symbols-outlined" id="themeToggle" role="button" tabindex="0" aria-label="Changer de thème" title="Changer de thème">dark_mode</span>
+            <span class="material-symbols-outlined" id="editModeToggle" role="button" tabindex="0" aria-label="Mode édition" title="Mode édition" onclick="toggleEditMode()">edit</span>
             <span class="material-symbols-outlined" id="settingsToggle" role="button" tabindex="0" aria-label="Paramètres" title="Paramètres" onclick="openSettings()">settings</span>
 
             <!-- Auth Discord -->
@@ -9369,10 +9370,18 @@
     // ─── Éditeur de contenu ────────────────────────────────────────
     const EDIT_KEY      = 'blox_content_edits_v1';
     const FB_EDITS_REF  = typeof FB_DB !== 'undefined' ? FB_DB.ref('content_edits') : null;
-    const EDITABLE_SELS = ['h2','h3','.news-card__title','.news-card__eyebrow',
+    const EDITABLE_SELS = ['h1','h2','h3','h4','h5','h6','p','span','div','li','td','th',
+                           '.news-card__title','.news-card__eyebrow',
                            '.bulletin-content p','.category-title',
                            '.news-card__button:not(.open-modal-btn)',
-                           '.bulletin-meta','.highlight'];
+                           '.bulletin-meta','.highlight',
+                           '.leaks-banner','.group-card__title',
+                           '.update-card-title','.update-card-version',
+                           '.update-card-date','.update-card-short-desc'];
+    const EXCLUDED_SELS = ['.site-header', '.site-nav', '.settings-overlay', '.leaks-tab',
+                           '.site-header__icons', '.mobile-nav-dropdown',
+                           '.modal-overlay', '.comments-modal-overlay',
+                           '#newCardModal', '#deleteCardModal'];
     let _editMode  = false;
     let _editTarget = null;
 
@@ -9532,27 +9541,30 @@
     function tagEditables() {
         EDITABLE_SELS.forEach(sel => {
             document.querySelectorAll(sel).forEach(el => {
+                // Vérifier si l'élément ou un parent est dans la liste d'exclusion
+                let isExcluded = false;
+                for (const exclSel of EXCLUDED_SELS) {
+                    if (el.matches(exclSel) || el.closest(exclSel)) {
+                        isExcluded = true;
+                        break;
+                    }
+                }
+                if (isExcluded) return;
+
                 if (!el.dataset.editPath) el.dataset.editPath = getEditPath(el);
                 el.dataset.editable = '1';
             });
         });
     }
 
-    const ADMIN_DISCORD_USERS = ['fn_n0klip', 'neolixx'];
-
     function toggleEditMode() {
-        const discordUser = _getDiscordUser();
-        if (!discordUser || !ADMIN_DISCORD_USERS.includes(discordUser.username)) {
-            const panel = document.getElementById('editModePanel');
-            if (panel?.classList.contains('is-open')) {
-                panel.classList.remove('is-open');
-                _editMode = false;
-                document.body.classList.remove('edit-mode');
-            }
-            return;
-        }
         _editMode = !_editMode;
         document.body.classList.toggle('edit-mode', _editMode);
+        const btn = document.getElementById('editModeToggle');
+        if (btn) {
+            btn.textContent = _editMode ? 'save' : 'edit';
+            btn.style.color = _editMode ? '#ffda00' : '';
+        }
         const panel = document.getElementById('editModePanel');
         panel?.classList.toggle('is-open', _editMode);
         if (_editMode) {
