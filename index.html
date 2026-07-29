@@ -2591,7 +2591,7 @@
                     const special = specialCards[b.num] || {};
                     const globalIndex = _searchActive ? i : (start + i);
                     const isNew = isRecentBulletin(b);
-                    const statusLabel = special.status !== undefined ? (special.status || "") : (isNew ? "Nouveau" : "");
+                    const statusLabel = isNew && !(special.status === "BIENTÔT") ? "Nouveau" : (special.status || "");
                     
                     let deco = "";
                     if (b.num === "015") {
