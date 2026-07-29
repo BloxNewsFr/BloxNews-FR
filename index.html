@@ -324,7 +324,7 @@
         .news-card__image-wrapper::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 30%, rgba(0,0,0,0.15) 60%, rgba(0,0,0,0.5) 100%); pointer-events: none; }
         .news-card__badge { position: absolute; top: 14px; left: 14px; background: var(--color-primary); color: #000; font-weight: 900; font-size: 13px; padding: 5px 12px; border-radius: 100px; font-family: 'LuckiestGuy Regular', cursive; letter-spacing: 1px; z-index: 2; border: 2px solid rgba(255,255,255,0.6); }
         .news-card__new { position: absolute; top: 14px; right: 14px; background: linear-gradient(135deg, #ff4d4d, #ff0000); color: #fff; font-weight: 900; font-size: 11px; padding: 4px 10px; border-radius: 100px; font-family: 'Inter', sans-serif; letter-spacing: 1px; text-transform: uppercase; z-index: 2; animation: pulseBadge 2s ease-in-out infinite; }
-        @keyframes pulseBadge { 0%,  }
+        @keyframes pulseBadge { 0%,100% { transform: scale(1); } 50% { transform: scale(1.08); } }
         .news-card__content { padding: 22px 22px 20px; display: flex; flex-direction: column; flex-grow: 1; background: #fff; border-radius: 0 0 24px 24px; }
         .news-card__eyebrow { font-size: 11px; font-weight: 700; color: var(--color-accent); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px; }
         .news-card__date { font-size: 11px; font-weight: 500; color: var(--color-muted); margin-bottom: 6px; }
@@ -933,8 +933,8 @@
             animation: fadeInUp 0.4s ease both, soonBorderPulse 3s ease-in-out infinite;
         }
         @keyframes soonBorderPulse {
-            0%, 
-            
+            0%,100% { border-color: rgba(255,218,0,0.25); box-shadow: 0 0 20px rgba(255,218,0,0.05); }
+            50% { border-color: rgba(255,218,0,0.5); box-shadow: 0 0 30px rgba(255,218,0,0.12); }
         }
         .news-card.soon-card .news-card__image-wrapper {
             background: linear-gradient(180deg, #0a0a14, #05050a);
@@ -968,8 +968,9 @@
             animation: badgeGoldShimmer 2s ease-in-out infinite;
         }
         @keyframes badgeGoldShimmer {
-            0%, 
-            
+            0% { filter: brightness(1); }
+            50% { filter: brightness(1.35); }
+            100% { filter: brightness(1); }
         }
         .news-card.soon-card .news-card__content {
             background:
@@ -1015,8 +1016,8 @@
             animation: barShimmer 2s ease-in-out infinite;
         }
         @keyframes barShimmer {
-            0%, 
-            
+            0% { background-position: 200% center; }
+            100% { background-position: -200% center; }
         }
 
         /* 015 ── FEU VERT "HELLFIRE EMERALD" — redesign complet */
@@ -1295,10 +1296,10 @@
         }
         @keyframes water-flow {
             0%   { background-position: 0% 0%; }
-            
+            100% { background-position: 5% 5%; }
         }
         @keyframes water-sheen {
-            0%, 
+            0%   { transform: translate(0%, 0%) scale(1); opacity: 0; }
             25%  { transform: translate(22%, 12%) scale(1.25); opacity: 0.5; }
             50%  { transform: translate(-18%, 28%) scale(0.85); opacity: 0.08; }
             75%  { transform: translate(10%, -8%) scale(1.15); opacity: 0.35; }
@@ -1647,8 +1648,9 @@
             50%    {opacity:1}
         }
         @keyframes liquid-ice-flow{
-            0%,
-            
+            0% { background-position: 0% 0%, 100% 100%, 100% 100%, 100% 100%; }
+            50% { background-position: 50% 50%, 50% 50%, 50% 50%, 50% 50%; }
+            100% { background-position: 100% 100%, 0% 0%, 0% 0%, 0% 0%; }
         }
         @keyframes ice-crystal-fall{
             0%  {opacity:0;transform:translateY(0)    rotate(-10deg) scale(.7)}
@@ -1792,8 +1794,8 @@
             box-shadow: 0 0 30px rgba(255,215,0,0.6), 0 0 60px rgba(255,215,0,0.3) !important;
         }
         @keyframes searchPulse {
-            0%, 
-            
+            0%,100% { box-shadow: 0 0 20px rgba(255,215,0,0.4); }
+            50% { box-shadow: 0 0 40px rgba(255,215,0,0.8), 0 0 80px rgba(255,215,0,0.4); }
         }
 
         /* ── Barre de filtre actif ── */
@@ -1853,7 +1855,7 @@
         .news-card__button {
             border: 1px solid rgba(255,255,255,0.18) !important;
             border-top-color: rgba(255,255,255,0.35) !important;
-            box-shadow: 0 0 0 1px rgba(255,255,255,0.08) inset, 0 4px 16px rgba(var(--cat-rgb),0.45) !important;
+            box-shadow: 0 0 0 1px rgba(255,255,255,0.08) inset, 0 4px 16px rgba(var(--cat-rgb,255,215,0),0.45) !important;
         }
         .msg-card {
             border: 1px solid rgba(255,215,0,0.22) !important;
@@ -2222,7 +2224,7 @@
                 ctx.fillStyle = bg;
                 ctx.fillRect(0, 0, w, h);
 
-
+                for (const p of this.pts) this._drawPt(p, time);
             }
             _drawPt(p, time) {
                 const { ctx, w, h } = this;
@@ -2269,6 +2271,7 @@
                 this._initWaves();
                 this._initBubbles();
                 const card = fluidCanvas.closest('.news-card');
+                this._card = card;
                 this._onEnter = () => { this.hovering = true; };
                 this._onLeave = () => { this.hovering = false; };
                 if (card) {
@@ -2872,16 +2875,21 @@
         let searchMatches = [];
         let searchCurrent = -1;
         function openSearch() {
-            document.getElementById('searchOverlay').classList.add('is-active');
+            const ov = document.getElementById('searchOverlay');
+            if (!ov) return;
+            ov.classList.add('is-active');
             const inp = document.getElementById('searchInput');
-            inp.value = _searchQuery; // pré-remplir avec la requête actuelle
-            document.getElementById('searchStats').textContent = '';
+            if (!inp) return;
+            inp.value = _searchQuery;
+            const st = document.getElementById('searchStats');
+            if (st) st.textContent = '';
             searchMatches = []; searchCurrent = -1;
             if (_searchQuery) _previewSearch(_searchQuery);
             setTimeout(() => { inp.focus(); inp.select(); }, 200);
         }
         function closeSearch() {
-            document.getElementById('searchOverlay').classList.remove('is-active');
+            const ov = document.getElementById('searchOverlay');
+            if (ov) ov.classList.remove('is-active');
         }
         // Aperçu live dans l'overlay (sans filtrer la grille)
         function _previewSearch(q) {
@@ -2909,8 +2917,9 @@
             }
         }
         // L'input live déclenche l'aperçu
-        document.getElementById('searchInput').addEventListener('input', e => {
-            _previewSearch(e.target.value.trim().toLowerCase());
+        document.addEventListener('DOMContentLoaded', () => {
+            const inp = document.getElementById('searchInput');
+            if (inp) inp.addEventListener('input', e => _previewSearch(e.target.value.trim().toLowerCase()));
         });
         function executeSearch() {
             const q = document.getElementById('searchInput').value.trim().toLowerCase();
@@ -2939,12 +2948,15 @@
             renderPage();
         }
         // Clic sur un résultat dans l'overlay → filtre + ferme
-        document.getElementById('searchStats').addEventListener('click', e => {
-            const item = e.target.closest('.search-result-item');
-            if (!item || !item.dataset.num) return;
-            // Chercher uniquement ce bulletin
-            document.getElementById('searchInput').value = item.dataset.num;
-            executeSearch();
+        document.addEventListener('DOMContentLoaded', () => {
+            const stats = document.getElementById('searchStats');
+            if (!stats) return;
+            stats.addEventListener('click', e => {
+                const item = e.target.closest('.search-result-item');
+                if (!item || !item.dataset.num) return;
+                document.getElementById('searchInput').value = item.dataset.num;
+                executeSearch();
+            });
         });
         // Prev/next naviguent entre les pages filtrées
         function nextResult() {
@@ -3083,7 +3095,7 @@
 
     function _discordAvatarUrl(user) {
         if (user.avatar) return `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.webp?size=80`;
-        const idx = user.discriminator !== '0' ? parseInt(user.discriminator) % 5 : parseInt(user.id) >> 22 % 6;
+        const idx = user.discriminator !== '0' ? parseInt(user.discriminator) % 5 : (parseInt(user.id) >> 22) % 6;
         return `https://cdn.discordapp.com/embed/avatars/${idx}.png`;
     }
 

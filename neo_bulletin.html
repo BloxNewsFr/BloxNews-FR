@@ -2754,8 +2754,6 @@
             padding: 1px 8px; font-size: 10px; font-weight: 700;
             color: #5865F2;
         }
-            padding: 1px 6px; font-size: 10px; font-weight: 700; color: #5865F2;
-        }
         .comment-item__discord-tag svg { width: 10px; height: 10px; }
         .comment-item__username { font-weight: 700; font-size: 13px; color: #111; }
         .comment-item__time { font-size: 11px; color: #bbb; margin-left: auto; white-space: nowrap; }
@@ -8193,7 +8191,8 @@
         document.getElementById("discordBanner").style.display = "none";
         const box = document.getElementById("commentWriteBox");
         box.classList.remove("is-hidden");
-        document.getElementById("userAvatarBox").outerHTML = avatarHTML(user);
+        const avatarWrap = document.querySelector('.card-comment-avatar-wrap');
+        if (avatarWrap) avatarWrap.innerHTML = avatarHTML(user);
         renderList();
     }
 
@@ -8332,7 +8331,7 @@
 
     /* ─── Modal "Voir tous" ─── */
     function openAllComments()    { renderModal(); document.getElementById("commentsModal").classList.add("is-active"); document.body.style.overflow="hidden"; }
-    function closeAllComments(e)  { if(e&&e.currentTarget!==e.target) return; document.getElementById("commentsModal").classList.remove("is-active"); document.body.style.overflow=""; }
+    function closeAllComments(e)  { if(e&&e.currentTarget!==e.target) return; const m = document.getElementById("commentsModal"); if (m) m.classList.remove("is-active"); document.body.style.overflow=""; }
 
     /* ─── Auto-resize textarea ─── */
     // ── Filtre de mots — commentaires ──────────────────────────────
@@ -8386,19 +8385,25 @@
     let _neoSearchQuery  = '';
 
     function openSearch() {
-        document.getElementById('searchOverlay').classList.add('is-active');
+        const ov = document.getElementById('searchOverlay');
+        if (!ov) return;
+        ov.classList.add('is-active');
         const inp = document.getElementById('searchInput');
-        inp.value = _neoSearchQuery;
-        _previewNeoSearch(_neoSearchQuery);
-        setTimeout(() => { inp.focus(); if (_neoSearchQuery) inp.select(); }, 200);
+        if (inp) {
+            inp.value = _neoSearchQuery;
+            _previewNeoSearch(_neoSearchQuery);
+            setTimeout(() => { inp.focus(); if (_neoSearchQuery) inp.select(); }, 200);
+        }
     }
     function closeSearch() {
-        document.getElementById('searchOverlay').classList.remove('is-active');
+        const ov = document.getElementById('searchOverlay');
+        if (ov) ov.classList.remove('is-active');
     }
 
     // Aperçu live dans l'overlay
     function _previewNeoSearch(q) {
         const stats = document.getElementById('searchStats');
+        if (!stats) return;
         if (!q) { stats.innerHTML = ''; return; }
         const results = _buildNeoIndex().filter(c =>
             c.title.includes(q) || c.eyebrow.includes(q) || c.section.includes(q) || c.bodyText.includes(q)
@@ -8414,9 +8419,12 @@
         }
     }
 
-    document.getElementById('searchInput').addEventListener('input', e => {
-        _previewNeoSearch(e.target.value.trim().toLowerCase());
-    });
+    const _neoSearchInput = document.getElementById('searchInput');
+    if (_neoSearchInput) {
+        _neoSearchInput.addEventListener('input', e => {
+            _previewNeoSearch(e.target.value.trim().toLowerCase());
+        });
+    }
 
     // Indexer toutes les cards du DOM
     function _buildNeoIndex() {
@@ -10629,7 +10637,7 @@
             return `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.webp?size=80`;
         }
         // Avatar par défaut Discord (couleur selon discriminant)
-        const idx = user.discriminator !== '0' ? parseInt(user.discriminator) % 5 : parseInt(user.id) >> 22 % 6;
+        const idx = user.discriminator !== '0' ? parseInt(user.discriminator) % 5 : (parseInt(user.id) >> 22) % 6;
         return `https://cdn.discordapp.com/embed/avatars/${idx}.png`;
     }
 
@@ -10767,7 +10775,6 @@
 
                 // Si token valide, vérifier en arrière-plan
                 if (stored && stored.expiresAt > Date.now()) {
-                    _discordFetchUserInterval = _discordFetchUser(stored.token);
                     try {
                         const freshUser = await _discordFetchUser(stored.token);
                         localStorage.setItem(DISCORD_USER_KEY, JSON.stringify(freshUser));
@@ -10820,14 +10827,16 @@
         _settingsRefreshProfile();
         _settingsRefreshToggles();
         const ov = document.getElementById('settingsOverlay');
+        if (!ov) return;
         ov.setAttribute('aria-hidden', 'false');
         ov.classList.add('is-open');
         document.body.style.overflow = 'hidden';
     }
 
     function closeSettings(e) {
-        if (e && e.target !== document.getElementById('settingsOverlay')) return;
         const ov = document.getElementById('settingsOverlay');
+        if (!ov) return;
+        if (e && e.target !== ov) return;
         ov.setAttribute('aria-hidden', 'true');
         ov.classList.remove('is-open');
         document.body.style.overflow = '';
