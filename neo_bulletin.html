@@ -6410,6 +6410,31 @@
                     </div>
                 </div>
 
+                <div class="ncm-page ncm-page--fields" id="ncmPage4" style="display:none">
+                    <div class="ncm-fields-group">
+                        <div class="ncm-field-group-title">Description détaillée (intérieur modal)</div>
+                        <div class="ncm-field">
+                            <label><span class="ncm-lbl-icon">📄</span> Contenu détaillé avec formatage</label>
+                            <div class="ncm-format-bar">
+                                <button class="ncm-format-btn" onclick="_ncmFormatText('bold', 'ncmUpdateFullDesc')" title="Gras"><b>B</b></button>
+                                <button class="ncm-format-btn" onclick="_ncmFormatText('italic', 'ncmUpdateFullDesc')" title="Italique"><i>I</i></button>
+                                <button class="ncm-format-btn" onclick="_ncmFormatText('underline', 'ncmUpdateFullDesc')" title="Souligné"><u>U</u></button>
+                                <button class="ncm-format-btn" onclick="_ncmFormatText('strike', 'ncmUpdateFullDesc')" title="Barré"><s>S</s></button>
+                                <span class="ncm-format-sep"></span>
+                                <div class="ncm-hl-wrap">
+                                    <button class="ncm-format-btn is-hl" onclick="_ncmFormatText('highlight', 'ncmUpdateFullDesc')" title="Surligner (Ctrl+Shift+E)" id="ncmHlBtnFull">H</button>
+                                    <button class="ncm-hl-swatch" id="ncmHlSwatchFull" style="background:#ffc832" title="Choisir une couleur"></button>
+                                    <input type="color" id="ncmHlColorInputFull" value="#ffc832" style="display:none">
+                                </div>
+                            </div>
+                            <textarea id="ncmUpdateFullDesc" rows="10"
+                                placeholder="Description détaillée de l'update avec formatage markdown…"
+                                style="width:100%;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);border-radius:0 0 10px 10px;padding:10px 14px;color:#fff;font-size:13px;font-family:inherit;outline:none;resize:vertical;box-sizing:border-box;border-top:none;"></textarea>
+                            <div class="ncm-field-info">💡 Cette description apparaît dans le modal quand on clique sur la card. Supporte **gras**, *italique*, ==surlignage==, etc.</div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="ncm-page ncm-page--recap" id="ncmPage3">
                     <div class="ncm-recap">
                         <div class="ncm-recap-icon">🚀</div>
@@ -10565,7 +10590,9 @@
     //  /NEW — Navigation entre étapes
     // ══════════════════════════════════════════════════════════════
     function _ncmGoToStep(step) {
-        const total = 3;
+        const kind = document.querySelector('#newCardModal input[name="ncmKind"]:checked')?.value || 'standard';
+        const isUpdate = kind === 'update';
+        const total = isUpdate ? 4 : 3;
         if (step < 1 || step > total) return;
         const pages = document.querySelectorAll('#newCardModal .ncm-page');
         const steps = document.querySelectorAll('#newCardModal .ncm-step');
@@ -10596,11 +10623,13 @@
             nextBtn.style.display = 'none';
             createBtn.style.display = '';
         }
-        const labels = ['', 'Choisis un type de carte', 'Remplis le contenu de la carte', 'Vérifie et publie'];
+        const labels = isUpdate
+            ? ['', 'Choisis un type de carte', 'Informations de base', 'Description détaillée', 'Vérifie et publie']
+            : ['', 'Choisis un type de carte', 'Remplis le contenu de la carte', 'Vérifie et publie'];
         if (sub) sub.textContent = labels[step] || '';
         if (info) info.textContent = `Étape ${step} sur ${total}`;
-        // Mettre à jour le recap à l'arrivée sur l'étape 3
-        if (step === 3) _ncmUpdateRecap();
+        // Mettre à jour le recap à l'arrivée sur la dernière étape
+        if (step === total) _ncmUpdateRecap();
     }
 
     function _ncmNextStep() {
