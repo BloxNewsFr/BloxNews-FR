@@ -799,7 +799,7 @@
             </ul>
         </nav>
         <div class="site-header__icons">
-            <span class="material-symbols-outlined" onclick="openSearch()">search</span>
+            <span class="material-symbols-outlined" id="searchTrigger">search</span>
                         <!-- Auth Discord -->
             <div class="discord-skeleton" id="discordSkeleton"></div>
             <button class="discord-login-btn" id="discordLoginBtn" onclick="_discordLogin()" style="display:none">
@@ -991,96 +991,111 @@
         const DISCORD_USER_KEY     = 'bloxbulletin_discord_user';
         let searchMatches = []; let searchCurrent = -1;
 
-        function openSearch() {
-            document.getElementById('searchOverlay').classList.add('is-active');
-            const inp = document.getElementById('searchInput');
-            inp.value = '';
-            document.getElementById('searchStats').textContent = '';
-            searchMatches = []; searchCurrent = -1;
-            removeHighlights();
-            setTimeout(() => inp.focus(), 200);
-        }
-        function closeSearch(keepHl) {
-            document.getElementById('searchOverlay').classList.remove('is-active');
-            if (!keepHl) removeHighlights();
-            if (!keepHl) { searchMatches = []; searchCurrent = -1; }
-        }
+        window.search = {
+            open() {
+                const overlay = document.getElementById('searchOverlay');
+                if (!overlay) return;
+                overlay.classList.add('is-active');
+                const inp = document.getElementById('searchInput');
+                if (inp) { inp.value = ''; setTimeout(() => inp.focus(), 200); }
+                const st = document.getElementById('searchStats');
+                if (st) st.textContent = '';
+                searchMatches = []; searchCurrent = -1;
+                removeHighlights();
+            },
+            close(keepHl) {
+                const overlay = document.getElementById('searchOverlay');
+                if (overlay) overlay.classList.remove('is-active');
+                if (!keepHl) removeHighlights();
+                if (!keepHl) { searchMatches = []; searchCurrent = -1; }
+            },
+            exec() {
+                const inp = document.getElementById('searchInput');
+                if (!inp) return;
+                const q = inp.value.trim().toLowerCase();
+                removeHighlights();
+                searchMatches = []; searchCurrent = -1;
+                const prevBtn = document.getElementById('searchPrevBtn');
+                const nextBtn = document.getElementById('searchNextBtn');
+                if (prevBtn) prevBtn.disabled = true;
+                if (nextBtn) nextBtn.disabled = true;
+                const stats = document.getElementById('searchStats');
+                if (stats) stats.textContent = '';
+                if (!q) return;
+                const root = document.querySelector('.main-content') || document.body;
+                const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+                    acceptNode: n => {
+                        const p = n.parentNode;
+                        if (!p || p.nodeName === 'SCRIPT' || p.nodeName === 'STYLE') return NodeFilter.FILTER_REJECT;
+                        if (p.closest('.search-overlay, .material-symbols-outlined, .mobile-menu-btn')) return NodeFilter.FILTER_REJECT;
+                        return NodeFilter.FILTER_ACCEPT;
+                    }
+                });
+                const nodes = []; let n;
+                while (n = walker.nextNode()) nodes.push(n);
+                nodes.forEach(textNode => {
+                    const text = textNode.textContent;
+                    const lower = text.toLowerCase();
+                    let idx = lower.indexOf(q);
+                    if (idx === -1) return;
+                    const frag = document.createDocumentFragment();
+                    let last = 0;
+                    while (idx !== -1) {
+                        if (idx > last) frag.appendChild(document.createTextNode(text.slice(last, idx)));
+                        const mark = document.createElement('mark');
+                        mark.className = 'search-hl';
+                        mark.textContent = text.slice(idx, idx + q.length);
+                        frag.appendChild(mark);
+                        searchMatches.push(mark);
+                        last = idx + q.length;
+                        idx = lower.indexOf(q, last);
+                    }
+                    if (last < text.length) frag.appendChild(document.createTextNode(text.slice(last)));
+                    textNode.parentNode.replaceChild(frag, textNode);
+                });
+                const c = searchMatches.length;
+                if (c > 0) {
+                    searchCurrent = 0;
+                    searchMatches[0].classList.add('active');
+                    searchMatches[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    if (stats) stats.textContent = c + ' r\u00e9sultat' + (c > 1 ? 's' : '');
+                    if (prevBtn) prevBtn.disabled = false;
+                    if (nextBtn) nextBtn.disabled = false;
+                    window.search.close(true);
+                } else {
+                    if (stats) stats.textContent = 'Aucun r\u00e9sultat';
+                }
+            },
+            next() {
+                if (searchMatches.length === 0) return;
+                searchMatches[searchCurrent]?.classList.remove('active');
+                searchCurrent = (searchCurrent + 1) % searchMatches.length;
+                searchMatches[searchCurrent].classList.add('active');
+                searchMatches[searchCurrent].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                const st = document.getElementById('searchStats');
+                if (st) st.textContent = (searchCurrent+1) + '/' + searchMatches.length;
+            },
+            prev() {
+                if (searchMatches.length === 0) return;
+                searchMatches[searchCurrent]?.classList.remove('active');
+                searchCurrent = (searchCurrent - 1 + searchMatches.length) % searchMatches.length;
+                searchMatches[searchCurrent].classList.add('active');
+                searchMatches[searchCurrent].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                const st = document.getElementById('searchStats');
+                if (st) st.textContent = (searchCurrent+1) + '/' + searchMatches.length;
+            }
+        };
         function removeHighlights() {
             document.querySelectorAll('mark.search-hl').forEach(m => {
                 const p = m.parentNode;
-                p.replaceChild(document.createTextNode(m.textContent), m);
-                p.normalize();
+                if (p) { p.replaceChild(document.createTextNode(m.textContent), m); p.normalize(); }
             });
         }
-        function executeSearch() {
-            const q = document.getElementById('searchInput').value.trim().toLowerCase();
-            removeHighlights();
-            searchMatches = []; searchCurrent = -1;
-            document.getElementById('searchPrevBtn').disabled = true;
-            document.getElementById('searchNextBtn').disabled = true;
-            const stats = document.getElementById('searchStats');
-            stats.textContent = '';
-            if (!q) return;
-            const root = document.querySelector('.main-content') || document.body;
-            const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
-                acceptNode: n => {
-                    const p = n.parentNode;
-                    if (!p || p.nodeName === 'SCRIPT' || p.nodeName === 'STYLE') return NodeFilter.FILTER_REJECT;
-                    if (p.closest('.search-overlay, .material-symbols-outlined, .mobile-menu-btn')) return NodeFilter.FILTER_REJECT;
-                    return NodeFilter.FILTER_ACCEPT;
-                }
-            });
-            const nodes = []; let n;
-            while (n = walker.nextNode()) nodes.push(n);
-            nodes.forEach(textNode => {
-                const text = textNode.textContent;
-                const lower = text.toLowerCase();
-                let idx = lower.indexOf(q);
-                if (idx === -1) return;
-                const frag = document.createDocumentFragment();
-                let last = 0;
-                while (idx !== -1) {
-                    if (idx > last) frag.appendChild(document.createTextNode(text.slice(last, idx)));
-                    const mark = document.createElement('mark');
-                    mark.className = 'search-hl';
-                    mark.textContent = text.slice(idx, idx + q.length);
-                    frag.appendChild(mark);
-                    searchMatches.push(mark);
-                    last = idx + q.length;
-                    idx = lower.indexOf(q, last);
-                }
-                if (last < text.length) frag.appendChild(document.createTextNode(text.slice(last)));
-                textNode.parentNode.replaceChild(frag, textNode);
-            });
-            const c = searchMatches.length;
-            if (c > 0) {
-                searchCurrent = 0;
-                searchMatches[0].classList.add('active');
-                searchMatches[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
-                stats.textContent = c + ' r\u00e9sultat' + (c > 1 ? 's' : '');
-                document.getElementById('searchPrevBtn').disabled = false;
-                document.getElementById('searchNextBtn').disabled = false;
-                closeSearch(true);
-            } else {
-                stats.textContent = 'Aucun r\u00e9sultat';
-            }
-        }
-        function nextMatch() {
-            if (searchMatches.length === 0) return;
-            searchMatches[searchCurrent]?.classList.remove('active');
-            searchCurrent = (searchCurrent + 1) % searchMatches.length;
-            searchMatches[searchCurrent].classList.add('active');
-            searchMatches[searchCurrent].scrollIntoView({ behavior: 'smooth', block: 'center' });
-            document.getElementById('searchStats').textContent = (searchCurrent+1) + '/' + searchMatches.length;
-        }
-        function prevMatch() {
-            if (searchMatches.length === 0) return;
-            searchMatches[searchCurrent]?.classList.remove('active');
-            searchCurrent = (searchCurrent - 1 + searchMatches.length) % searchMatches.length;
-            searchMatches[searchCurrent].classList.add('active');
-            searchMatches[searchCurrent].scrollIntoView({ behavior: 'smooth', block: 'center' });
-            document.getElementById('searchStats').textContent = (searchCurrent+1) + '/' + searchMatches.length;
-        }
+        function openSearch() { window.search.open(); }
+        function closeSearch(keepHl) { window.search.close(keepHl); }
+        function executeSearch() { window.search.exec(); }
+        function nextMatch() { window.search.next(); }
+        function prevMatch() { window.search.prev(); }
         function _discordLogin() {
             const params = new URLSearchParams({
                 client_id: DISCORD_CLIENT_ID, redirect_uri: DISCORD_REDIRECT_URI,
@@ -1112,6 +1127,9 @@
         menuBtn.setAttribute('aria-expanded', 'false');
         document.body.style.overflow = '';
     }
+
+    const searchTrigger = document.getElementById('searchTrigger');
+    if (searchTrigger) searchTrigger.addEventListener('click', openSearch);
 
     if (menuBtn && mobileNav) {
         menuBtn.addEventListener('click', () => {
