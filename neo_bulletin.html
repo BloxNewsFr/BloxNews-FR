@@ -6409,7 +6409,7 @@
                     </div>
                 </div>
 
-                <div class="ncm-page ncm-page--fields" id="ncmPage4" style="display:none">
+                <div class="ncm-page ncm-page--fields" id="ncmPage4">
                     <div class="ncm-fields-group">
                         <div class="ncm-field-group-title">Description détaillée (intérieur modal)</div>
                         <div class="ncm-field">
@@ -10305,6 +10305,9 @@
         const k = kind.charAt(0).toUpperCase() + kind.slice(1);
         document.getElementById('ncmKind' + k)?.classList.add('active');
 
+        // Mettre à jour les indicateurs d'étape pour les updates
+        _ncmGoToStep(1);
+
         // Sync les champs "badge" et "titre" vers l'input de droite (pour submit)
         if (isMessage) {
             // Pour message, le titre vient de ncmMsgTitle
@@ -10634,7 +10637,13 @@
             else if (step === 2) targetPageId = 'ncmPage2';
             else if (step === 3) targetPageId = 'ncmPage3';
         }
-        if (targetPageId) document.getElementById(targetPageId)?.classList.add('active');
+        if (targetPageId) {
+            const targetPage = document.getElementById(targetPageId);
+            if (targetPage) {
+                targetPage.classList.add('active');
+                targetPage.style.display = 'flex';
+            }
+        }
         steps.forEach((s, i) => {
             const idx = i + 1;
             s.classList.remove('active', 'done');
