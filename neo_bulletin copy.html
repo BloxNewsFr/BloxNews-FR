@@ -6689,9 +6689,8 @@
                 <!-- Update Hub Navigation -->
                 <div class="update-hub-nav">
                     <button class="update-hub-nav-btn active" data-tab="overview">📊 Overview</button>
-                    <button class="update-hub-nav-btn" data-tab="features">✨ Nouveautés</button>
-                    <button class="update-hub-nav-btn" data-tab="content">🎬 Contenu</button>
-                    <button class="update-hub-nav-btn" data-tab="community">💬 Communauté</button>
+                    <button class="update-hub-nav-btn" data-tab="patch-notes">📝 Patch Notes</button>
+                    <button class="update-hub-nav-btn" data-tab="linked-cards">🔗 Cards Liées</button>
                 </div>
                 
                 <!-- Update Selector -->
@@ -6704,126 +6703,108 @@
                     
                     <!-- Overview Tab -->
                     <div class="update-hub-tab active" id="tab-overview">
-                        <!-- Hero -->
-                        <div class="update-hero">
-                            <div class="update-hero-badge" id="hubStatusBadge">🔄 Nouvelle mise à jour</div>
-                            <h1 class="update-hero-title">UPDATE <span class="update-hero-highlight" id="hubVersionHero">0.3.3</span></h1>
-                            <p class="update-hero-desc" id="hubHeroDesc">
-                                Cette mise à jour introduit le système de création de cartes, le mode sombre amélioré,
-                                et la section gameplay avec tous les leaks de mécaniques.
-                            </p>
-                            <div class="update-hero-actions">
-                                <button class="update-btn-primary" onclick="document.querySelector('.update-hub-nav-btn[data-tab=features]').click()">✨ Voir les nouveautés</button>
-                                <button class="update-btn-secondary" onclick="document.querySelector('.update-hub-nav-btn[data-tab=content]').click()">🎬 Voir le contenu</button>
+                        <div class="update-hub-banner">
+                            <img id="hubBanner" src="./shared/background.png" alt="Update Banner">
+                            <span id="hubStatus" class="update-hub-status update-hub-status--official">OFFICIAL</span>
+                        </div>
+                        
+                        <div class="update-hub-header">
+                            <div class="update-hub-version" id="hubVersion">v0.3.3</div>
+                            <div class="update-hub-date" id="hubDate">28 juil. 2026</div>
+                        </div>
+                        
+                        <h2 class="update-hub-title" id="hubTitle">Nouveau système de cartes & gameplay</h2>
+                        <p class="update-hub-summary" id="hubSummary">
+                            Cette mise à jour introduit le système de création de cartes, le mode sombre amélioré,
+                            et la section gameplay avec tous les leaks de mécaniques.
+                        </p>
+                        
+                        <div class="update-hub-stats">
+                            <div class="update-hub-stat">
+                                <span class="update-hub-stat-icon">👁️</span>
+                                <span class="update-hub-stat-value" id="hubViews">1.2K</span>
+                                <span class="update-hub-stat-label">Vues</span>
+                            </div>
+                            <div class="update-hub-stat">
+                                <span class="update-hub-stat-icon">❤️</span>
+                                <span class="update-hub-stat-value" id="hubLikes">89</span>
+                                <span class="update-hub-stat-label">Likes</span>
+                            </div>
+                            <div class="update-hub-stat">
+                                <span class="update-hub-stat-icon">💬</span>
+                                <span class="update-hub-stat-value" id="hubComments">23</span>
+                                <span class="update-hub-stat-label">Commentaires</span>
                             </div>
                         </div>
                         
-                        <!-- Overview Grid -->
-                        <div class="update-overview-grid">
-                            <div class="update-overview-text">
-                                <h3 class="update-section-title">Aperçu</h3>
-                                <p class="update-overview-p" id="hubOverviewText">
-                                    Cette mise à jour introduit un <strong>système de création de cartes</strong> entièrement repensé, une interface plus immersive et une <strong>section gameplay</strong> centralisée. Les joueurs peuvent désormais explorer les mécaniques, les fruits et les VFX dans un hub unifié.
-                                </p>
-                                <p class="update-overview-p">
-                                    L'objectif est de rendre chaque interaction plus fluide et visuellement captivante, avec des animations douces et une hiérarchie claire.
-                                </p>
+                        <!-- Like Button -->
+                        <button class="update-hub-like-btn" id="hubLikeBtn" data-post-id="update-0.3.3">
+                            <span class="update-hub-like-icon">❤️</span>
+                            <span class="update-hub-like-text">J'aime</span>
+                        </button>
+                    </div>
+                    
+                    <!-- Patch Notes Tab -->
+                    <div class="update-hub-tab" id="tab-patch-notes">
+                        <div class="patch-notes-header">
+                            <h3>📝 Notes de Patch</h3>
+                            <p class="patch-notes-subtitle">Détails complets de la mise à jour</p>
+                        </div>
+                        
+                        <div class="patch-notes-content" id="hubPatchNotes">
+                            <div class="patch-note-section">
+                                <h4 class="patch-note-category">🎮 Gameplay</h4>
+                                <ul class="patch-note-list">
+                                    <li>Nouveau système de création de cartes</li>
+                                    <li>Mode sombre amélioré avec effets glow</li>
+                                    <li>Section gameplay avec tous les leaks de mécaniques</li>
+                                </ul>
                             </div>
-                            <div class="update-overview-stats">
-                                <div class="update-stat-card">
-                                    <div class="update-stat-number" id="hubViewsCard">1.2K</div>
-                                    <div class="update-stat-label">Vues</div>
-                                </div>
-                                <div class="update-stat-card">
-                                    <div class="update-stat-number" id="hubLikesCard">89</div>
-                                    <div class="update-stat-label">Likes</div>
-                                </div>
-                                <div class="update-stat-card">
-                                    <div class="update-stat-number" id="hubCommentsCard">23</div>
-                                    <div class="update-stat-label">Commentaires</div>
-                                </div>
-                                <div class="update-stat-card">
-                                    <div class="update-stat-number">4</div>
-                                    <div class="update-stat-label">Nouveautés</div>
-                                </div>
+                            
+                            <div class="patch-note-section">
+                                <h4 class="patch-note-category">🃏 Cartes</h4>
+                                <ul class="patch-note-list">
+                                    <li>Design premium gaming pour toutes les cards</li>
+                                    <li>Animations fluides et effets de survol</li>
+                                    <li>Responsive mobile optimisé</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="patch-note-section">
+                                <h4 class="patch-note-category">🌙 Sombre</h4>
+                                <ul class="patch-note-list">
+                                    <li>Thème sombre Blox Fruits amélioré</li>
+                                    <li>Rouge/noir avec accents jaunes</li>
+                                    <li>Contraste optimisé pour la lisibilité</li>
+                                </ul>
                             </div>
                         </div>
                     </div>
                     
-                    <!-- Features Tab -->
-                    <div class="update-hub-tab" id="tab-features">
-                        <h3 class="update-section-title">Nouveautés</h3>
-                        <div class="update-features-grid">
-                            <div class="update-feature-card">
-                                <span class="update-feature-icon">🃏</span>
-                                <h4 class="update-feature-title">Système de cartes</h4>
-                                <p class="update-feature-desc">Créez, modifiez et organisez vos cartes avec une interface WYSIWYG fluide.</p>
-                                <span class="update-feature-tag">Nouveau</span>
-                            </div>
-                            <div class="update-feature-card">
-                                <span class="update-feature-icon">🌙</span>
-                                <h4 class="update-feature-title">Mode sombre amélioré</h4>
-                                <p class="update-feature-desc">Thème sombre avec des accents dorés et un contraste optimisé pour la lisibilité.</p>
-                                <span class="update-feature-tag">Amélioré</span>
-                            </div>
-                            <div class="update-feature-card">
-                                <span class="update-feature-icon">🎮</span>
-                                <h4 class="update-feature-title">Hub Gameplay</h4>
-                                <p class="update-feature-desc">Tous les leaks de mécaniques, fruits et VFX dans un espace dédié.</p>
-                                <span class="update-feature-tag">Inédit</span>
-                            </div>
-                            <div class="update-feature-card">
-                                <span class="update-feature-icon">✨</span>
-                                <h4 class="update-feature-title">Animations premium</h4>
-                                <p class="update-feature-desc">Transitions et micro-interactions pour une expérience de jeu fluide.</p>
-                                <span class="update-feature-tag">Amélioré</span>
-                            </div>
+                    <!-- Linked Cards Tab -->
+                    <div class="update-hub-tab" id="tab-linked-cards">
+                        <div class="linked-cards-header">
+                            <h3>🔗 Contenus Inclus</h3>
+                            <p class="linked-cards-subtitle">Cards et leaks liés à cette mise à jour</p>
                         </div>
-                    </div>
-                    
-                    <!-- Content Tab -->
-                    <div class="update-hub-tab" id="tab-content">
-                        <h3 class="update-section-title">Contenu en vedette</h3>
-                        <div class="update-hub-scroll" id="hubLinkedCards">
+                        
+                        <div class="linked-cards-grid" id="hubLinkedCards">
                             <!-- Dynamically populated from GROUP_DATA -->
                         </div>
                     </div>
                     
-                    <!-- Community Tab -->
-                    <div class="update-hub-tab" id="tab-community">
-                        <h3 class="update-section-title">Communauté</h3>
-                        <div class="update-community-box">
-                            <div class="update-comment-preview">
-                                <div class="update-avatar"></div>
-                                <div class="update-comment-body">
-                                    <div class="update-comment-name">fn_n0klip</div>
-                                    <div class="update-comment-text">Incroyable cette update ! Le hub gameplay est une vraie révolution.</div>
-                                    <div class="update-comment-time">Il y a 2 heures</div>
-                                </div>
-                            </div>
-                            <div class="update-comment-preview">
-                                <div class="update-avatar"></div>
-                                <div class="update-comment-body">
-                                    <div class="update-comment-name">neolixx</div>
-                                    <div class="update-comment-text">Les nouvelles animations sont tellement fluides, bravo à l'équipe !</div>
-                                    <div class="update-comment-time">Il y a 5 heures</div>
-                                </div>
-                            </div>
-                            <div class="update-comment-preview">
-                                <div class="update-avatar"></div>
-                                <div class="update-comment-body">
-                                    <div class="update-comment-name">bryanbg</div>
-                                    <div class="update-comment-text">Hâte de voir les prochains leaks de fruits, le Magnet a l'air dingue.</div>
-                                    <div class="update-comment-time">Il y a 1 jour</div>
-                                </div>
-                            </div>
-                            <div class="update-comment-input">
-                                <input type="text" placeholder="Ajouter un commentaire…" class="update-input">
-                                <button class="update-btn-primary" style="padding: 12px 20px;">Poster</button>
-                            </div>
+                </div>
+                
+                <!-- Comments Section -->
+                <div class="update-hub-comments">
+                    <div class="card-comments-section">
+                        <div class="card-comments-toggle" onclick="document.querySelector('.update-hub-comments .card-comments-body').classList.toggle('is-open')">
+                            <span class="card-comments-toggle__icon">💬</span>
+                            <span class="card-comments-toggle__label">Commentaires</span>
+                            <span class="card-comments-toggle__count" id="hubCommentCount">23</span>
                         </div>
+                        <div class="card-comments-body" id="hubCommentsBody"></div>
                     </div>
-                    
                 </div>
             </section>
         </div><!-- /neoTabsAndSections -->
