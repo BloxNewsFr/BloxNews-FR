@@ -1169,111 +1169,96 @@
         }
 
         /* ══════════════════════════════════════════════
-           UPDATE HUB — Système immersif
+           UPDATE HUB — Premium Modern Gaming UI
         ══════════════════════════════════════════════ */
         
         /* Navigation */
         .update-hub-nav {
             display: flex;
             justify-content: center;
-            gap: 12px;
-            margin-bottom: 24px;
+            gap: 8px;
+            margin-bottom: 32px;
             flex-wrap: wrap;
         }
         
         .update-hub-nav-btn {
-            padding: 12px 24px;
-            border-radius: 100px;
-            font-weight: 700;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
             font-size: 13px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            border: 2px solid rgba(255,218,0,0.2);
-            background: rgba(255,218,0,0.05);
-            color: rgba(255,255,255,0.6);
+            transition: all 0.2s ease;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.03);
+            color: rgba(255,255,255,0.5);
             font-family: 'Inter', sans-serif;
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
+            letter-spacing: 0.5px;
         }
         
         .update-hub-nav-btn:hover {
-            background: rgba(255,218,0,0.15);
-            border-color: rgba(255,218,0,0.4);
-            color: #ffda00;
-            transform: translateY(-2px);
+            background: rgba(255,255,255,0.08);
+            border-color: rgba(255,255,255,0.2);
+            color: rgba(255,255,255,0.8);
         }
         
         .update-hub-nav-btn.active {
-            background: linear-gradient(135deg, #ffda00, #ff9900);
+            background: #ffda00;
             border-color: #ffda00;
             color: #000;
-            box-shadow: 0 4px 20px rgba(255,218,0,0.4);
         }
         
         /* Update Selector */
         .update-selector {
             display: flex;
-            gap: 12px;
-            margin-bottom: 32px;
+            gap: 8px;
+            margin-bottom: 40px;
             overflow-x: auto;
-            padding-bottom: 8px;
-            scrollbar-width: thin;
-            scrollbar-color: rgba(255,218,0,0.3) transparent;
+            padding-bottom: 4px;
+            scrollbar-width: none;
         }
         
         .update-selector::-webkit-scrollbar {
-            height: 6px;
-        }
-        
-        .update-selector::-webkit-scrollbar-track {
-            background: rgba(255,255,255,0.05);
-            border-radius: 3px;
-        }
-        
-        .update-selector::-webkit-scrollbar-thumb {
-            background: rgba(255,218,0,0.3);
-            border-radius: 3px;
+            display: none;
         }
         
         .update-chip {
             flex-shrink: 0;
-            padding: 10px 20px;
-            border-radius: 100px;
-            background: rgba(255,255,255,0.05);
-            border: 2px solid rgba(255,255,255,0.1);
-            color: rgba(255,255,255,0.6);
-            font-weight: 600;
-            font-size: 14px;
+            padding: 8px 16px;
+            border-radius: 6px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: rgba(255,255,255,0.5);
+            font-weight: 500;
+            font-size: 13px;
             cursor: pointer;
             transition: all 0.2s ease;
             font-family: 'Inter', sans-serif;
         }
         
         .update-chip:hover {
-            background: rgba(255,218,0,0.1);
-            border-color: rgba(255,218,0,0.3);
-            color: #ffda00;
+            background: rgba(255,255,255,0.08);
+            border-color: rgba(255,255,255,0.15);
+            color: rgba(255,255,255,0.8);
         }
         
         .update-chip.active {
-            background: linear-gradient(135deg, rgba(255,218,0,0.2), rgba(255,153,0,0.1));
+            background: #ffda00;
             border-color: #ffda00;
-            color: #ffda00;
-            box-shadow: 0 0 20px rgba(255,218,0,0.2);
+            color: #000;
         }
         
         /* Hub Content */
         .update-hub-content {
             background: rgba(255,255,255,0.02);
-            border-radius: 20px;
-            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.06);
             overflow: hidden;
         }
         
         .update-hub-tab {
             display: none;
-            padding: 32px;
-            animation: fadeIn 0.4s ease;
+            padding: 40px;
+            animation: fadeIn 0.3s ease;
         }
         
         .update-hub-tab.active {
@@ -1285,11 +1270,10 @@
             position: relative;
             width: 100%;
             aspect-ratio: 21/9;
-            border-radius: 16px;
+            border-radius: 8px;
             overflow: hidden;
-            margin-bottom: 24px;
-            background: linear-gradient(135deg, #1a1a3e, #0d0d18);
-            border: 2px solid rgba(255,218,0,0.2);
+            margin-bottom: 32px;
+            background: #0a0a14;
         }
         
         .update-hub-banner img {
@@ -1302,32 +1286,30 @@
             content: '';
             position: absolute;
             inset: 0;
-            background: linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.8) 100%);
+            background: linear-gradient(180deg, transparent 40%, rgba(10,10,20,0.9) 100%);
         }
         
         .update-hub-status {
             position: absolute;
             top: 16px;
             left: 16px;
-            padding: 8px 20px;
-            border-radius: 100px;
-            font-family: 'LuckiestGuy Regular', cursive;
-            font-size: 13px;
-            font-weight: 900;
-            letter-spacing: 1px;
+            padding: 6px 14px;
+            border-radius: 4px;
+            font-family: 'Inter', sans-serif;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
             text-transform: uppercase;
-            border: 2px solid rgba(255,255,255,0.6);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
             z-index: 2;
         }
         
         .update-hub-status--official {
-            background: linear-gradient(135deg, #ffda00, #ff9900);
+            background: #ffda00;
             color: #000;
         }
         
         .update-hub-status--leak {
-            background: linear-gradient(135deg, #ff3366, #cc0044);
+            background: rgba(255,51,102,0.9);
             color: #fff;
         }
         
@@ -1335,108 +1317,106 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
         }
         
         .update-hub-version {
-            font-family: 'LuckiestGuy Regular', cursive;
-            font-size: 42px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
             color: #ffda00;
-            text-shadow: 0 0 30px rgba(255,218,0,0.4);
-            line-height: 1;
+            letter-spacing: 1px;
+            text-transform: uppercase;
         }
         
         .update-hub-date {
-            font-size: 14px;
-            color: rgba(255,255,255,0.4);
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            font-size: 13px;
+            color: rgba(255,255,255,0.3);
+            font-weight: 500;
         }
         
         .update-hub-title {
             font-family: 'LuckiestGuy Regular', cursive;
-            font-size: 32px;
+            font-size: 36px;
             color: #fff;
             margin-bottom: 16px;
-            letter-spacing: 1px;
-            line-height: 1.2;
+            line-height: 1.1;
+            letter-spacing: -0.5px;
         }
         
         .update-hub-summary {
-            font-size: 16px;
-            color: rgba(255,255,255,0.6);
-            line-height: 1.7;
+            font-size: 15px;
+            color: rgba(255,255,255,0.5);
+            line-height: 1.6;
             margin-bottom: 32px;
-            max-width: 800px;
+            max-width: 720px;
         }
         
         .update-hub-stats {
             display: flex;
-            gap: 24px;
-            margin-bottom: 24px;
-            padding: 20px 24px;
-            background: rgba(255,218,0,0.08);
-            border-radius: 16px;
-            border: 1px solid rgba(255,218,0,0.15);
+            gap: 32px;
+            margin-bottom: 32px;
+            padding: 24px;
+            background: rgba(255,255,255,0.02);
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.04);
         }
         
         .update-hub-stat {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
         }
         
         .update-hub-stat-icon {
-            font-size: 24px;
+            font-size: 18px;
+            opacity: 0.6;
         }
         
         .update-hub-stat-value {
-            font-size: 24px;
-            font-weight: 800;
-            color: #ffda00;
+            font-size: 20px;
+            font-weight: 700;
+            color: #fff;
             font-family: 'Inter', sans-serif;
         }
         
         .update-hub-stat-label {
-            font-size: 12px;
-            color: rgba(255,255,255,0.4);
+            font-size: 11px;
+            color: rgba(255,255,255,0.3);
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
             font-weight: 600;
         }
         
         .update-hub-like-btn {
             display: inline-flex;
             align-items: center;
-            gap: 10px;
-            padding: 14px 32px;
-            border-radius: 100px;
-            background: linear-gradient(135deg, rgba(255,218,0,0.15), rgba(255,180,0,0.08));
-            border: 2px solid rgba(255,218,0,0.3);
+            gap: 8px;
+            padding: 12px 24px;
+            border-radius: 6px;
+            background: rgba(255,218,0,0.1);
+            border: 1px solid rgba(255,218,0,0.2);
             color: #ffda00;
-            font-weight: 700;
-            font-size: 15px;
+            font-weight: 600;
+            font-size: 14px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             font-family: 'Inter', sans-serif;
         }
         
         .update-hub-like-btn:hover {
-            background: linear-gradient(135deg, rgba(255,218,0,0.25), rgba(255,180,0,0.15));
-            border-color: rgba(255,218,0,0.5);
-            transform: scale(1.05);
-            box-shadow: 0 4px 20px rgba(255,218,0,0.3);
+            background: rgba(255,218,0,0.15);
+            border-color: rgba(255,218,0,0.3);
         }
         
         .update-hub-like-btn.liked {
-            background: linear-gradient(135deg, #ff3366, #cc0044);
-            border-color: #ff3366;
-            color: #fff;
+            background: #ffda00;
+            border-color: #ffda00;
+            color: #000;
         }
         
         .update-hub-like-icon {
-            font-size: 20px;
+            font-size: 16px;
         }
         
         /* Patch Notes Tab */
@@ -1445,35 +1425,39 @@
         }
         
         .patch-notes-header h3 {
-            font-family: 'LuckiestGuy Regular', cursive;
-            font-size: 28px;
-            color: #ffda00;
+            font-family: 'Inter', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: #fff;
             margin-bottom: 8px;
         }
         
         .patch-notes-subtitle {
-            font-size: 14px;
-            color: rgba(255,255,255,0.4);
+            font-size: 13px;
+            color: rgba(255,255,255,0.3);
         }
         
         .patch-notes-content {
             display: flex;
             flex-direction: column;
-            gap: 24px;
+            gap: 16px;
         }
         
         .patch-note-section {
-            background: rgba(255,255,255,0.03);
-            border-radius: 16px;
+            background: rgba(255,255,255,0.02);
+            border-radius: 8px;
             padding: 24px;
-            border: 1px solid rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.04);
         }
         
         .patch-note-category {
-            font-family: 'LuckiestGuy Regular', cursive;
-            font-size: 20px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
             color: #ffda00;
             margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         
         .patch-note-list {
@@ -1482,13 +1466,13 @@
         }
         
         .patch-note-list li {
-            padding: 12px 0;
-            padding-left: 28px;
+            padding: 10px 0;
+            padding-left: 24px;
             position: relative;
-            color: rgba(255,255,255,0.7);
-            font-size: 15px;
-            line-height: 1.6;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
+            color: rgba(255,255,255,0.6);
+            font-size: 14px;
+            line-height: 1.5;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
         }
         
         .patch-note-list li:last-child {
@@ -1496,11 +1480,14 @@
         }
         
         .patch-note-list li::before {
-            content: '✓';
+            content: '';
             position: absolute;
             left: 0;
-            color: #ffda00;
-            font-weight: bold;
+            top: 14px;
+            width: 6px;
+            height: 6px;
+            background: #ffda00;
+            border-radius: 50%;
         }
         
         /* Linked Cards Tab */
@@ -1509,36 +1496,37 @@
         }
         
         .linked-cards-header h3 {
-            font-family: 'LuckiestGuy Regular', cursive;
-            font-size: 28px;
-            color: #ffda00;
+            font-family: 'Inter', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: #fff;
             margin-bottom: 8px;
         }
         
         .linked-cards-subtitle {
-            font-size: 14px;
-            color: rgba(255,255,255,0.4);
+            font-size: 13px;
+            color: rgba(255,255,255,0.3);
         }
         
         .linked-cards-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 16px;
         }
         
         .linked-card-item {
-            background: rgba(255,255,255,0.03);
-            border-radius: 16px;
+            background: rgba(255,255,255,0.02);
+            border-radius: 8px;
             overflow: hidden;
-            border: 2px solid rgba(255,218,0,0.2);
+            border: 1px solid rgba(255,255,255,0.06);
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
         }
         
         .linked-card-item:hover {
-            border-color: rgba(255,218,0,0.5);
-            transform: translateY(-4px);
-            box-shadow: 0 8px 24px rgba(255,218,0,0.2);
+            border-color: rgba(255,218,0,0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
         }
         
         .linked-card-item img {
@@ -1552,26 +1540,30 @@
         }
         
         .linked-card-item-title {
-            font-family: 'LuckiestGuy Regular', cursive;
-            font-size: 16px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
             color: #fff;
             margin-bottom: 4px;
         }
         
         .linked-card-item-type {
-            font-size: 12px;
-            color: rgba(255,255,255,0.4);
+            font-size: 11px;
+            color: rgba(255,255,255,0.3);
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            font-weight: 600;
         }
         
         /* Comments Section */
         .update-hub-comments {
-            margin-top: 32px;
+            margin-top: 40px;
+            padding-top: 40px;
+            border-top: 1px solid rgba(255,255,255,0.06);
         }
         
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+            from { opacity: 0; transform: translateY(8px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
@@ -5386,33 +5378,33 @@
             .update-modal__stat-icon { font-size: 14px; }
 
             /* ── Update Hub Mobile ── */
-            .update-hub-nav { gap: 8px; margin-bottom: 16px; }
-            .update-hub-nav-btn { padding: 10px 16px; font-size: 11px; }
-            .update-selector { gap: 8px; margin-bottom: 20px; }
-            .update-chip { padding: 8px 16px; font-size: 13px; }
-            .update-hub-tab { padding: 20px 16px; }
-            .update-hub-banner { aspect-ratio: 16/9; border-radius: 12px; margin-bottom: 16px; }
-            .update-hub-status { font-size: 10px; padding: 6px 12px; top: 10px; left: 10px; }
+            .update-hub-nav { gap: 6px; margin-bottom: 24px; }
+            .update-hub-nav-btn { padding: 8px 16px; font-size: 12px; }
+            .update-selector { gap: 6px; margin-bottom: 32px; }
+            .update-chip { padding: 6px 14px; font-size: 12px; }
+            .update-hub-tab { padding: 24px 16px; }
+            .update-hub-banner { aspect-ratio: 16/9; border-radius: 6px; margin-bottom: 24px; }
+            .update-hub-status { font-size: 10px; padding: 5px 12px; top: 12px; left: 12px; }
             .update-hub-header { flex-direction: column; align-items: flex-start; gap: 8px; }
-            .update-hub-version { font-size: 32px; }
+            .update-hub-version { font-size: 12px; }
             .update-hub-date { font-size: 12px; }
-            .update-hub-title { font-size: 22px; }
-            .update-hub-summary { font-size: 14px; margin-bottom: 20px; }
-            .update-hub-stats { gap: 16px; padding: 16px; flex-wrap: wrap; }
+            .update-hub-title { font-size: 28px; }
+            .update-hub-summary { font-size: 14px; margin-bottom: 24px; }
+            .update-hub-stats { gap: 20px; padding: 16px; flex-wrap: wrap; }
             .update-hub-stat { gap: 8px; }
-            .update-hub-stat-icon { font-size: 18px; }
+            .update-hub-stat-icon { font-size: 16px; }
             .update-hub-stat-value { font-size: 18px; }
             .update-hub-stat-label { font-size: 10px; }
-            .update-hub-like-btn { padding: 12px 24px; font-size: 14px; }
-            .patch-notes-header h3 { font-size: 22px; }
+            .update-hub-like-btn { padding: 10px 20px; font-size: 13px; }
+            .patch-notes-header h3 { font-size: 20px; }
             .patch-notes-subtitle { font-size: 12px; }
             .patch-note-section { padding: 16px; }
-            .patch-note-category { font-size: 16px; }
-            .patch-note-list li { font-size: 13px; padding: 10px 0; padding-left: 24px; }
-            .linked-cards-header h3 { font-size: 22px; }
+            .patch-note-category { font-size: 13px; }
+            .patch-note-list li { font-size: 13px; padding: 8px 0; padding-left: 20px; }
+            .linked-cards-header h3 { font-size: 20px; }
             .linked-cards-subtitle { font-size: 12px; }
             .linked-cards-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-            .linked-card-item-title { font-size: 14px; }
+            .linked-card-item-title { font-size: 13px; }
             .linked-card-item-type { font-size: 10px; }
 
             /* ── MODAL LIGHTBOX — bottom sheet corrigé ── */
