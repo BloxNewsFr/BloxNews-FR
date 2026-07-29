@@ -11770,6 +11770,30 @@
         });
     }
 
+    // ── Rendu Markdown simple ─────────────────────────────────────
+    function _renderMarkdown(text) {
+        if (!text) return '';
+        let html = text
+            // Échapper le HTML
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            // Surlignage ==[#hex]texte== ou ==texte==
+            .replace(/==\[#([0-9a-fA-F]{6})\](.*?)==/g, '<mark style="background:#$1">$2</mark>')
+            .replace(/==(.*?)==/g, '<mark>$1</mark>')
+            // Gras **texte**
+            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+            // Italique *texte*
+            .replace(/\*(.*?)\*/g, '<em>$1</em>')
+            // Souligné __texte__
+            .replace(/__(.*?)__/g, '<u>$1</u>')
+            // Barré ~~texte~~
+            .replace(/~~(.*?)~~/g, '<s>$1</s>')
+            // Sauts de ligne
+            .replace(/\n/g, '<br>');
+        return html;
+    }
+
     // ── Ouvrir le modal ──────────────────────────────────────────
     function openUpdateModal(updId) {
         const upd = UPDATES_DATA.find(u => u.id === updId);
@@ -11779,7 +11803,11 @@
         document.getElementById('updModalVersion').textContent = upd.version;
         document.getElementById('updModalDate').textContent    = upd.date;
         document.getElementById('updModalTitle').textContent   = upd.title;
-        document.getElementById('updModalDesc').textContent    = upd.desc;
+
+        // Utiliser fullDesc avec rendu markdown, fallback sur desc pour compatibilité
+        const descContent = upd.fullDesc || upd.desc || '';
+        const renderedDesc = _renderMarkdown(descContent);
+        document.getElementById('updModalDesc').innerHTML = renderedDesc;
 
         // Grille de vraies cards liées
         const grid = document.getElementById('updModalLinkedGrid');
