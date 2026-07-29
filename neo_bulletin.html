@@ -10771,7 +10771,8 @@
 
     // ── Profil ───────────────────────────────────────────────────
     function _settingsRefreshProfile() {
-        const user = _getDiscordUser();
+        let user = null;
+        try { user = JSON.parse(localStorage.getItem('bloxbulletin_discord_user') || 'null'); } catch(e) {}
         const guestEl = document.getElementById('settingsGuest');
         const userEl  = document.getElementById('settingsUser');
         const adminEl = document.getElementById('settingsAdminSection');
@@ -10927,7 +10928,7 @@
                         <div class="settings-row-label">Mode suppression</div>
                         <div class="settings-row-sub">Affiche le gestionnaire de suppression des cards</div>
                     </div>
-                    <button class="settings-btn settings-btn--secondary" onclick="closeSettings(null);setTimeout(()=>{ if(!_editMode) toggleEditMode(); },250)">
+                    <button class="settings-btn settings-btn--secondary" onclick="closeSettings(null);setTimeout(()=>_cmdDelete(),250)">
                         Ouvrir
                     </button>
                 </div>
