@@ -81,19 +81,15 @@
 
         /* ── 3D LAYERED DEPTH SYSTEM ── */
         [data-depth] {
-            will-change: translate, filter, opacity;
+            will-change: translate;
             transition: filter 0.8s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.8s ease;
         }
         [data-depth="3"] { filter: brightness(1.08); }
         [data-depth="2"] { filter: brightness(1.04); }
         [data-depth="1"] { filter: brightness(1.01); }
         [data-depth="0"] { filter: brightness(0.97); opacity: 0.94; }
-        [data-depth="-1"] { filter: blur(1.5px) brightness(0.92); opacity: 0.75; }
-        [data-depth="-2"] { filter: blur(0.8px) brightness(0.96); opacity: 0.95; }
-        body.scrolling [data-depth] { transition: filter 0s, opacity 0s; }
-        body.scrolling [data-depth="-2"] { filter: blur(2px) brightness(0.9); opacity: 0.8; }
-        body.scrolling [data-depth="-1"] { filter: blur(3px) brightness(0.85); opacity: 0.65; }
-        body.scrolling [data-depth="0"]  { filter: blur(1px) brightness(0.94); opacity: 0.88; }
+        [data-depth="-1"] { filter: brightness(0.92); opacity: 0.85; }
+        [data-depth="-2"] { filter: brightness(0.96); opacity: 0.95; }
         
         body { 
             font-family: 'Inter', sans-serif; 
@@ -3028,12 +3024,7 @@
                     rafId = null;
                 });
             }, { passive: true });
-            let scrollDepthTimer;
-            window.addEventListener('scroll', () => {
-                document.body.classList.add('scrolling');
-                clearTimeout(scrollDepthTimer);
-                scrollDepthTimer = setTimeout(() => document.body.classList.remove('scrolling'), 300);
-            }, { passive: true });
+
         }
 
         document.addEventListener('DOMContentLoaded', () => { setTimeout(initDepth, 50); });
