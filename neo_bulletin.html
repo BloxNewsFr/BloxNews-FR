@@ -10609,7 +10609,10 @@
 
         // Pour les updates, réorganiser l'ordre des pages
         // Étape 1 → ncmPage1, Étape 2 → ncmPage2, Étape 3 → ncmPage4, Étape 4 → ncmPage3
-        pages.forEach(p => p.classList.remove('active'));
+        pages.forEach(p => {
+            p.classList.remove('active');
+            p.style.display = 'none';
+        });
         let targetPageId = '';
         if (isUpdate) {
             if (step === 1) targetPageId = 'ncmPage1';
