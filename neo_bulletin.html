@@ -10629,10 +10629,22 @@
         const createBtn = document.getElementById('ncmBtnCreate');
         const info = document.getElementById('ncmFooterInfo');
         const sub = document.getElementById('ncmHeaderSub');
-        pages.forEach((p, i) => {
-            p.classList.remove('active');
-            if (i + 1 === step) p.classList.add('active');
-        });
+
+        // Pour les updates, réorganiser l'ordre des pages
+        // Étape 1 → ncmPage1, Étape 2 → ncmPage2, Étape 3 → ncmPage4, Étape 4 → ncmPage3
+        pages.forEach(p => p.classList.remove('active'));
+        let targetPageId = '';
+        if (isUpdate) {
+            if (step === 1) targetPageId = 'ncmPage1';
+            else if (step === 2) targetPageId = 'ncmPage2';
+            else if (step === 3) targetPageId = 'ncmPage4';
+            else if (step === 4) targetPageId = 'ncmPage3';
+        } else {
+            if (step === 1) targetPageId = 'ncmPage1';
+            else if (step === 2) targetPageId = 'ncmPage2';
+            else if (step === 3) targetPageId = 'ncmPage3';
+        }
+        if (targetPageId) document.getElementById(targetPageId)?.classList.add('active');
         steps.forEach((s, i) => {
             const idx = i + 1;
             s.classList.remove('active', 'done');
