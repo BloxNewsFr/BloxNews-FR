@@ -4809,6 +4809,171 @@
             .msg-card__cipher { padding: 12px 14px; }
         }
 
+        /* ═══════════════════════════════════════════════
+           SETTINGS PANEL
+        ═══════════════════════════════════════════════ */
+        #settingsToggle { cursor: pointer; transition: color .2s; }
+        #settingsToggle:hover { color: var(--color-primary, #ffda00); }
+
+        /* Overlay */
+        .settings-overlay {
+            position: fixed; inset: 0; z-index: 9999;
+            background: rgba(0,0,0,0.55);
+            backdrop-filter: blur(4px);
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none;
+            transition: opacity .25s;
+        }
+        .settings-overlay.is-open {
+            opacity: 1; pointer-events: all;
+        }
+
+        /* Panel */
+        .settings-panel {
+            background: #fff;
+            border-radius: 20px;
+            width: min(460px, calc(100vw - 32px));
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 24px 64px rgba(0,0,0,0.25);
+            transform: translateY(20px) scale(0.97);
+            transition: transform .25s cubic-bezier(.34,1.56,.64,1);
+            padding: 0;
+        }
+        .settings-overlay.is-open .settings-panel {
+            transform: translateY(0) scale(1);
+        }
+        html[data-theme="dark"] .settings-panel { background: #171827; }
+
+        /* Header */
+        .settings-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 20px 24px 16px;
+            border-bottom: 1px solid rgba(0,0,0,0.07);
+            position: sticky; top: 0;
+            background: inherit; z-index: 1;
+            border-radius: 20px 20px 0 0;
+        }
+        html[data-theme="dark"] .settings-header { border-bottom-color: rgba(255,255,255,0.07); }
+        .settings-title { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 17px; color: var(--color-text); }
+        .settings-close {
+            background: rgba(0,0,0,0.06); border: none; cursor: pointer;
+            width: 30px; height: 30px; border-radius: 50%;
+            font-size: 14px; color: #666;
+            display: flex; align-items: center; justify-content: center;
+            transition: background .15s;
+        }
+        .settings-close:hover { background: rgba(0,0,0,0.12); }
+        html[data-theme="dark"] .settings-close { background: rgba(255,255,255,0.08); color: #aaa; }
+        html[data-theme="dark"] .settings-close:hover { background: rgba(255,255,255,0.14); }
+
+        /* Section */
+        .settings-section {
+            padding: 18px 24px;
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+        }
+        html[data-theme="dark"] .settings-section { border-bottom-color: rgba(255,255,255,0.06); }
+        .settings-section:last-of-type { border-bottom: none; }
+        .settings-section-label {
+            font-size: 11px; font-weight: 700; letter-spacing: 1px;
+            text-transform: uppercase; color: #999; margin-bottom: 14px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        html[data-theme="dark"] .settings-section-label { color: #666; }
+        .settings-admin-badge {
+            background: linear-gradient(135deg, #ffda00, #ff9900);
+            color: #000; font-size: 9px; font-weight: 800;
+            padding: 2px 7px; border-radius: 20px; letter-spacing: 0.5px;
+        }
+
+        /* Profile rows */
+        .settings-profile-guest,
+        .settings-profile-user {
+            display: flex; align-items: center; gap: 14px;
+        }
+        .settings-profile-avatar {
+            width: 48px; height: 48px; border-radius: 50%;
+            object-fit: cover; flex-shrink: 0;
+        }
+        .settings-profile-avatar--empty {
+            background: #e0e0e8;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 22px; color: #aaa;
+        }
+        html[data-theme="dark"] .settings-profile-avatar--empty { background: #2a2d45; }
+        .settings-profile-info { flex: 1; min-width: 0; }
+        .settings-profile-name { font-weight: 700; font-size: 15px; color: var(--color-text); }
+        .settings-profile-sub { font-size: 12px; color: #888; margin-top: 2px; }
+        html[data-theme="dark"] .settings-profile-sub { color: #666; }
+
+        /* Row (toggle + label) */
+        .settings-row {
+            display: flex; align-items: center; justify-content: space-between;
+            gap: 16px; padding: 8px 0;
+        }
+        .settings-row + .settings-row { border-top: 1px solid rgba(0,0,0,0.04); }
+        html[data-theme="dark"] .settings-row + .settings-row { border-top-color: rgba(255,255,255,0.04); }
+        .settings-row-info { flex: 1; min-width: 0; }
+        .settings-row-label { font-size: 14px; font-weight: 600; color: var(--color-text); }
+        .settings-row-sub { font-size: 12px; color: #888; margin-top: 2px; }
+        html[data-theme="dark"] .settings-row-sub { color: #666; }
+
+        /* Toggle switch */
+        .settings-toggle {
+            width: 46px; height: 26px; border-radius: 13px;
+            background: #d0d0dc; border: none; cursor: pointer;
+            position: relative; flex-shrink: 0;
+            transition: background .2s;
+        }
+        .settings-toggle[aria-checked="true"] { background: #175ec2; }
+        .settings-toggle-knob {
+            position: absolute; left: 3px; top: 3px;
+            width: 20px; height: 20px; border-radius: 50%;
+            background: #fff;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+            transition: left .2s;
+        }
+        .settings-toggle[aria-checked="true"] .settings-toggle-knob { left: 23px; }
+
+        /* Buttons */
+        .settings-btn {
+            padding: 7px 14px; border-radius: 10px; border: none;
+            font-size: 13px; font-weight: 600; cursor: pointer;
+            display: inline-flex; align-items: center; gap: 6px;
+            white-space: nowrap; transition: opacity .15s;
+            flex-shrink: 0;
+        }
+        .settings-btn:hover { opacity: 0.85; }
+        .settings-btn--primary { background: #5865f2; color: #fff; }
+        .settings-btn--secondary { background: rgba(23,94,194,0.1); color: #175ec2; }
+        html[data-theme="dark"] .settings-btn--secondary { background: rgba(23,94,194,0.2); color: #7fa8e8; }
+        .settings-btn--danger { background: rgba(220,38,38,0.1); color: #dc2626; }
+        html[data-theme="dark"] .settings-btn--danger { background: rgba(220,38,38,0.2); }
+
+        /* Footer */
+        .settings-footer {
+            padding: 14px 24px; text-align: center;
+            font-size: 11px; color: #bbb;
+        }
+
+        /* Hidden IDs mode */
+        body.show-firebase-ids [data-cc-id]::after,
+        body.show-firebase-ids [data-static-id]::after {
+            content: attr(data-cc-id) attr(data-static-id);
+            display: block; font-size: 10px; font-family: monospace;
+            color: #888; padding: 2px 6px; background: rgba(0,0,0,0.05);
+            border-radius: 4px; margin-top: 4px; word-break: break-all;
+        }
+
+        /* Reduced motion override */
+        body.force-reduce-motion *,
+        body.force-reduce-motion *::before,
+        body.force-reduce-motion *::after {
+            animation-duration: 0.001ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.001ms !important;
+        }
+
         /* ── Petits mobiles (<480px) ── */
         @media (max-width: 480px) {
             .site-header { padding: 8px 12px; height: 52px; }
@@ -4953,6 +5118,7 @@
         <div class="site-header__icons">
             <span class="material-symbols-outlined" onclick="openSearch()">search</span>
             <span class="material-symbols-outlined" id="themeToggle" role="button" tabindex="0" aria-label="Changer de thème" title="Changer de thème">dark_mode</span>
+            <span class="material-symbols-outlined" id="settingsToggle" role="button" tabindex="0" aria-label="Paramètres" title="Paramètres" onclick="openSettings()">settings</span>
 
             <!-- Auth Discord -->
             <div class="discord-skeleton" id="discordSkeleton"></div>
@@ -5016,7 +5182,7 @@
             <button class="leaks-tab active" data-target="cat-actus" style="--cat-hex: #cc0000; --cat-rgb: 204, 0, 0;">Actus</button>
             <button class="leaks-tab" data-target="cat-fruit" style="--cat-hex: #ff0055; --cat-rgb: 255, 0, 85;">Fruits</button>
             <button class="leaks-tab" data-target="cat-vfx" style="--cat-hex: #a200ff; --cat-rgb: 162, 0, 255;">VFX</button>
-            <button class="leaks-tab" data-target="cat-map" style="--cat-hex: #16e04c; --cat-rgb: 0, 210, 56;">Map</button>
+            <button class="leaks-tab" data-target="cat-map" style="--cat-hex: #00d238; --cat-rgb: 0, 210, 56;">Map</button>
             <button class="leaks-tab" data-target="cat-gui" style="--cat-hex: #0088ff; --cat-rgb: 0, 136, 255;">GUI</button>
             <button class="leaks-tab" data-target="cat-messages" style="--cat-hex: #ff8800; --cat-rgb: 255, 136, 0;">Messages</button>
         </div>
@@ -5043,7 +5209,7 @@
             <button class="leaks-tab active" data-target="cat-actus" style="--cat-hex: #cc0000; --cat-rgb: 204, 0, 0;">ACTUS</button>
             <button class="leaks-tab" data-target="cat-fruit" style="--cat-hex: #ff0055; --cat-rgb: 255, 0, 85;">FRUITS</button>
             <button class="leaks-tab" data-target="cat-vfx" style="--cat-hex: #a200ff; --cat-rgb: 162, 0, 255;">VFX</button>
-            <button class="leaks-tab" data-target="cat-map" style="--cat-hex: #16e04c; --cat-rgb: 0, 210, 56;">MAP</button>
+            <button class="leaks-tab" data-target="cat-map" style="--cat-hex: #00d238; --cat-rgb: 0, 210, 56;">MAP</button>
             <button class="leaks-tab" data-target="cat-gui" style="--cat-hex: #0088ff; --cat-rgb: 0, 136, 255;">GUI</button>
             <button class="leaks-tab" data-target="cat-messages" style="--cat-hex: #ff8800; --cat-rgb: 255, 136, 0;">MESSAGES</button>
         </div>
@@ -5250,7 +5416,7 @@
 
 
         <!--🗺️ MAP & BUILD-->
-        <section id="cat-map" class="category-section" style="--cat-hex: #16e04c; --cat-rgb: 0, 210, 56;">
+        <section id="cat-map" class="category-section" style="--cat-hex: #00d238; --cat-rgb: 0, 210, 56;">
             <div class="category-title">🗺️ MAP & BUILD</div>
             <div class="news-grid">
 
@@ -10076,14 +10242,13 @@
                 </div>
                 <div class="dcm-confirm-zone" id="dcm-confirm-${uid}" data-section="${sec.filter}">
                     <div class="dcm-confirm-label">🔒 Mot de passe requis pour supprimer <strong style="color:#fff">"${_ccEsc(title)}"</strong></div>
-                    <form action="javascript:void(0)" onsubmit="_cmdDeleteConfirm('${uid}','${ccId||''}','${staticId}')" autocomplete="on">
-                        <input class="dcm-confirm-pwd" type="password" placeholder="Entrer le mot de passe…"
-                            id="dcm-pwd-${uid}" name="bloxnews-delete-pwd" autocomplete="current-password">
-                        <div class="dcm-confirm-actions">
-                            <button type="button" class="dcm-confirm-cancel" onclick="_dcmCloseConfirm('${uid}')">Annuler</button>
-                            <button type="submit" class="dcm-confirm-ok">🗑️ Supprimer</button>
-                        </div>
-                    </form>
+                    <input class="dcm-confirm-pwd" type="password" placeholder="Entrer le mot de passe…"
+                        id="dcm-pwd-${uid}"
+                        onkeydown="if(event.key==='Enter')_cmdDeleteConfirm('${uid}','${ccId||''}','${staticId}')">
+                    <div class="dcm-confirm-actions">
+                        <button class="dcm-confirm-cancel" onclick="_dcmCloseConfirm('${uid}')">Annuler</button>
+                        <button class="dcm-confirm-ok" onclick="_cmdDeleteConfirm('${uid}','${ccId||''}','${staticId}')">🗑️ Supprimer</button>
+                    </div>
                 </div>`;
 
                 counts[sec.filter] = (counts[sec.filter] || 0) + 1;
@@ -10117,14 +10282,12 @@
                 </div>
                 <div class="dcm-confirm-zone" id="dcm-confirm-${uid}" data-section="groupe">
                     <div class="dcm-confirm-label">🔒 Mot de passe requis pour supprimer <strong style="color:#fff">"${_ccEsc(item.label||'')}"</strong></div>
-                    <form action="javascript:void(0)" onsubmit="_cmdDeleteConfirm('${uid}','${item._ccId}','')" autocomplete="on">
-                        <input class="dcm-confirm-pwd" type="password" placeholder="Entrer le mot de passe…"
-                            id="dcm-pwd-${uid}" name="bloxnews-delete-pwd" autocomplete="current-password">
-                        <div class="dcm-confirm-actions">
-                            <button type="button" class="dcm-confirm-cancel" onclick="_dcmCloseConfirm('${uid}')">Annuler</button>
-                            <button type="submit" class="dcm-confirm-ok">🗑️ Supprimer</button>
-                        </div>
-                    </form>
+                    <input class="dcm-confirm-pwd" type="password" placeholder="Entrer le mot de passe…"
+                        id="dcm-pwd-${uid}" onkeydown="if(event.key==='Enter')_cmdDeleteConfirm('${uid}','${item._ccId}','')">
+                    <div class="dcm-confirm-actions">
+                        <button class="dcm-confirm-cancel" onclick="_dcmCloseConfirm('${uid}')">Annuler</button>
+                        <button class="dcm-confirm-ok" onclick="_cmdDeleteConfirm('${uid}','${item._ccId}','')">🗑️ Supprimer</button>
+                    </div>
                 </div>`;
                 counts.groupe++;
                 counts.all++;
@@ -10190,7 +10353,7 @@
     }
     function _cmdDeleteConfirm(uid, ccId, staticId) {
         const pwd = document.getElementById('dcm-pwd-' + uid)?.value || '';
-        if (pwd !== 'N30l!x€') {
+        if (pwd !== 'n0klip le best') {
             editLog('err', 'Mot de passe incorrect.');
             const inp = document.getElementById('dcm-pwd-' + uid);
             if (inp) { inp.style.borderColor='rgba(255,50,50,0.7)'; setTimeout(()=>inp.style.borderColor='',1400); }
@@ -10567,8 +10730,227 @@
         console.log('Navbar init: no user found, showing login button');
         loginBtn.style.display = '';
     })();
+    </script>
+
+    <script>
+    /* ════════════════════════════════════════════════════════════════
+       PANNEAU PARAMÈTRES
+    ════════════════════════════════════════════════════════════════ */
+
+    // IDs Discord des admins autorisés à voir la section Avancé
+    const SETTINGS_ADMIN_IDS = [
+        '1503444854410317984', // fn_n0klip
+        '775096691240992798',  // neolixx
+        '965365062334308412',  // bryanbg
+    ];
+
+    const SETTINGS_MOTION_KEY = 'bloxnews_reduce_motion';
+    const SETTINGS_IDS_KEY    = 'bloxnews_show_ids';
+
+    // ── Ouvrir / Fermer ──────────────────────────────────────────
+    function openSettings() {
+        _settingsRefreshProfile();
+        _settingsRefreshToggles();
+        const ov = document.getElementById('settingsOverlay');
+        ov.setAttribute('aria-hidden', 'false');
+        ov.classList.add('is-open');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeSettings(e) {
+        if (e && e.target !== document.getElementById('settingsOverlay')) return;
+        const ov = document.getElementById('settingsOverlay');
+        ov.setAttribute('aria-hidden', 'true');
+        ov.classList.remove('is-open');
+        document.body.style.overflow = '';
+    }
+
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') closeSettings(null);
+    });
+
+    // ── Profil ───────────────────────────────────────────────────
+    function _settingsRefreshProfile() {
+        const user = _getDiscordUser();
+        const guestEl = document.getElementById('settingsGuest');
+        const userEl  = document.getElementById('settingsUser');
+        const adminEl = document.getElementById('settingsAdminSection');
+
+        if (user) {
+            document.getElementById('settingsAvatar').src = _discordAvatarUrl(user);
+            document.getElementById('settingsName').textContent = user.global_name || user.username;
+            document.getElementById('settingsTag').textContent = '@' + user.username;
+            guestEl.classList.add('is-hidden');
+            userEl.classList.remove('is-hidden');
+            // Section Avancé visible seulement si admin
+            if (SETTINGS_ADMIN_IDS.includes(user.id)) {
+                adminEl.classList.remove('is-hidden');
+            } else {
+                adminEl.classList.add('is-hidden');
+            }
+        } else {
+            guestEl.classList.remove('is-hidden');
+            userEl.classList.add('is-hidden');
+            adminEl.classList.add('is-hidden');
+        }
+    }
+
+    // ── Toggles — état initial ───────────────────────────────────
+    function _settingsRefreshToggles() {
+        // Thème
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        _settingsSetToggle('settingsThemeToggle', isDark);
+
+        // Motion
+        const reduceMotion = localStorage.getItem(SETTINGS_MOTION_KEY) === '1';
+        _settingsSetToggle('settingsMotionToggle', reduceMotion);
+
+        // IDs Firebase
+        const showIds = localStorage.getItem(SETTINGS_IDS_KEY) === '1';
+        _settingsSetToggle('settingsIdsToggle', showIds);
+    }
+
+    function _settingsSetToggle(id, on) {
+        const btn = document.getElementById(id);
+        if (!btn) return;
+        btn.setAttribute('aria-checked', on ? 'true' : 'false');
+    }
+
+    // ── Thème ────────────────────────────────────────────────────
+    function _settingsToggleTheme() {
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        const next = isDark ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next === 'dark' ? 'dark' : '');
+        if (next === 'light') document.documentElement.removeAttribute('data-theme');
+        try { localStorage.setItem('bloxsite_theme', next === 'dark' ? 'dark' : 'light'); } catch(e) {}
+        _settingsSetToggle('settingsThemeToggle', next === 'dark');
+        // Sync le themeToggle existant dans la navbar
+        const tt = document.getElementById('themeToggle');
+        if (tt) tt.textContent = next === 'dark' ? 'light_mode' : 'dark_mode';
+    }
+
+    // ── Réduction des animations ─────────────────────────────────
+    function _settingsToggleMotion() {
+        const current = localStorage.getItem(SETTINGS_MOTION_KEY) === '1';
+        const next = !current;
+        localStorage.setItem(SETTINGS_MOTION_KEY, next ? '1' : '0');
+        document.body.classList.toggle('force-reduce-motion', next);
+        _settingsSetToggle('settingsMotionToggle', next);
+    }
+
+    // ── Afficher IDs Firebase ────────────────────────────────────
+    function _settingsToggleIds() {
+        const current = localStorage.getItem(SETTINGS_IDS_KEY) === '1';
+        const next = !current;
+        localStorage.setItem(SETTINGS_IDS_KEY, next ? '1' : '0');
+        document.body.classList.toggle('show-firebase-ids', next);
+        _settingsSetToggle('settingsIdsToggle', next);
+    }
+
+    // ── Appliquer les préférences sauvegardées au chargement ─────
+    (function _settingsApplyOnLoad() {
+        if (localStorage.getItem(SETTINGS_MOTION_KEY) === '1') {
+            document.body.classList.add('force-reduce-motion');
+        }
+        if (localStorage.getItem(SETTINGS_IDS_KEY) === '1') {
+            document.body.classList.add('show-firebase-ids');
+        }
+    })();
     </script>    <!-- Palette de couleurs surlignage — directement dans body pour éviter tout overflow -->
     <input type="color" id="fmtHlColorInput" value="#ffd000" style="display:none">
+
+    <!-- ═══════════════════════════════════════════════
+         PANNEAU PARAMÈTRES
+    ═══════════════════════════════════════════════ -->
+    <div class="settings-overlay" id="settingsOverlay" onclick="closeSettings(event)" aria-hidden="true">
+        <div class="settings-panel" role="dialog" aria-modal="true" aria-label="Paramètres">
+
+            <div class="settings-header">
+                <span class="settings-title">⚙️ Paramètres</span>
+                <button class="settings-close" onclick="closeSettings(null)">✕</button>
+            </div>
+
+            <!-- ── PROFIL & COMPTE ── -->
+            <div class="settings-section">
+                <div class="settings-section-label">Profil &amp; Compte</div>
+
+                <!-- État non connecté -->
+                <div class="settings-profile-guest" id="settingsGuest">
+                    <div class="settings-profile-avatar settings-profile-avatar--empty">?</div>
+                    <div class="settings-profile-info">
+                        <div class="settings-profile-name">Non connecté</div>
+                        <div class="settings-profile-sub">Connecte-toi avec Discord pour accéder à ton profil</div>
+                    </div>
+                    <button class="settings-btn settings-btn--primary" onclick="_discordLogin()">
+                        <svg width="14" height="11" viewBox="0 0 71 55" fill="none"><path d="M60.1045 4.8978C55.5792 2.8214 50.7265 1.2916 45.6527 0.41542C45.5603 0.39851 45.468 0.44077 45.4204 0.52529C44.7963 1.6353 44.105 3.0834 43.6209 4.2216C38.1637 3.4046 32.7345 3.4046 27.3892 4.2216C26.905 3.0581 26.1886 1.6353 25.5617 0.52529C25.5141 0.44359 25.4218 0.40133 25.3294 0.41542C20.2584 1.2888 15.4057 2.8186 10.8776 4.8978C10.8384 4.9147 10.8048 4.9429 10.7825 4.9795C1.57795 18.7309 -0.943561 32.1443 0.293408 45.3914C0.299005 45.4562 0.335386 45.5182 0.385761 45.5576C6.45866 50.0174 12.3413 52.7249 18.1147 54.5195C18.2071 54.5477 18.305 54.5139 18.3638 54.4378C19.7295 52.5728 20.9469 50.6063 21.9907 48.5383C22.0523 48.4172 21.9935 48.2735 21.8676 48.2256C19.9366 47.4931 18.0979 46.6 16.3292 45.5858C16.1893 45.5041 16.1781 45.304 16.3068 45.2082C16.679 44.9293 17.0513 44.6391 17.4067 44.3461C17.471 44.2926 17.5606 44.2813 17.6362 44.3151C29.2558 49.6202 41.8354 49.6202 53.3179 44.3151C53.3935 44.2785 53.4831 44.2898 53.5502 44.3433C53.9057 44.6363 54.2779 44.9293 54.6529 45.2082C54.7816 45.304 54.7732 45.5041 54.6333 45.5858C52.8646 46.6197 51.0259 47.4931 49.0921 48.2228C48.9662 48.2707 48.9102 48.4172 48.9718 48.5383C50.038 50.6034 51.2554 52.5699 52.5959 54.435C52.6519 54.5139 52.7526 54.5477 52.845 54.5195C58.6464 52.7249 64.529 50.0174 70.6019 45.5576C70.6551 45.5182 70.6887 45.459 70.6943 45.3942C72.1747 30.0791 68.2147 16.7757 60.1968 4.9823C60.1772 4.9429 60.1437 4.9147 60.1045 4.8978ZM23.7259 37.3253C20.2276 37.3253 17.3451 34.1136 17.3451 30.1693C17.3451 26.225 20.1717 23.0133 23.7259 23.0133C27.308 23.0133 30.1626 26.2532 30.1066 30.1693C30.1066 34.1136 27.28 37.3253 23.7259 37.3253ZM47.3178 37.3253C43.8196 37.3253 40.9371 34.1136 40.9371 30.1693C40.9371 26.225 43.7636 23.0133 47.3178 23.0133C50.9 23.0133 53.7545 26.2532 53.6986 30.1693C53.6986 34.1136 50.9 37.3253 47.3178 37.3253Z" fill="currentColor"/></svg>
+                        Connexion Discord
+                    </button>
+                </div>
+
+                <!-- État connecté -->
+                <div class="settings-profile-user is-hidden" id="settingsUser">
+                    <img class="settings-profile-avatar" id="settingsAvatar" src="" alt="Avatar">
+                    <div class="settings-profile-info">
+                        <div class="settings-profile-name" id="settingsName">—</div>
+                        <div class="settings-profile-sub" id="settingsTag">—</div>
+                    </div>
+                    <button class="settings-btn settings-btn--danger" onclick="_discordLogout();_settingsRefreshProfile()">Déconnecter</button>
+                </div>
+            </div>
+
+            <!-- ── APPARENCE ── -->
+            <div class="settings-section">
+                <div class="settings-section-label">Apparence</div>
+
+                <div class="settings-row">
+                    <div class="settings-row-info">
+                        <div class="settings-row-label">Mode sombre</div>
+                        <div class="settings-row-sub">Basculer entre thème clair et sombre</div>
+                    </div>
+                    <button class="settings-toggle" id="settingsThemeToggle" role="switch" onclick="_settingsToggleTheme()">
+                        <span class="settings-toggle-knob"></span>
+                    </button>
+                </div>
+
+                <div class="settings-row">
+                    <div class="settings-row-info">
+                        <div class="settings-row-label">Réduire les animations</div>
+                        <div class="settings-row-sub">Désactive les effets visuels animés</div>
+                    </div>
+                    <button class="settings-toggle" id="settingsMotionToggle" role="switch" onclick="_settingsToggleMotion()">
+                        <span class="settings-toggle-knob"></span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- ── AVANCÉ (admin uniquement) ── -->
+            <div class="settings-section is-hidden" id="settingsAdminSection">
+                <div class="settings-section-label">Avancé <span class="settings-admin-badge">Admin</span></div>
+
+                <div class="settings-row">
+                    <div class="settings-row-info">
+                        <div class="settings-row-label">Mode suppression</div>
+                        <div class="settings-row-sub">Affiche le gestionnaire de suppression des cards</div>
+                    </div>
+                    <button class="settings-btn settings-btn--secondary" onclick="closeSettings(null);setTimeout(()=>document.getElementById('editModeBtn')?.click(),200)">
+                        Ouvrir
+                    </button>
+                </div>
+
+                <div class="settings-row">
+                    <div class="settings-row-info">
+                        <div class="settings-row-label">Afficher les IDs Firebase</div>
+                        <div class="settings-row-sub">Ajoute l'ID technique sous chaque card</div>
+                    </div>
+                    <button class="settings-toggle" id="settingsIdsToggle" role="switch" onclick="_settingsToggleIds()">
+                        <span class="settings-toggle-knob"></span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="settings-footer">BloxNews-FR • v2025</div>
+        </div>
+    </div>
 
 </body>
 </html>
