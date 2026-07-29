@@ -6527,7 +6527,9 @@
                 </div>
                 <div class="group-card__bar"></div>
             </article>`;
-            grid.prepend(wrapper.firstChild);
+            const groupEl = wrapper.firstChild;
+            grid.prepend(groupEl);
+            groupEl.querySelectorAll('video.group-card__image').forEach(_replaceVideoWithThumb);
         });
         // Supprimer les anciennes cards individuelles qui sont maintenant dans un groupe
         groupedIds.forEach(id => {
@@ -6626,6 +6628,7 @@
                 }
             }
         });
+        document.querySelectorAll('video.group-card__image').forEach(_replaceVideoWithThumb);
     }
 
     function _getVideoThumb(src) {
@@ -6653,6 +6656,7 @@
         document.getElementById('groupDrawer').style.setProperty('--drawer-cat-hex', data.hex);
         document.getElementById('groupDrawer').style.setProperty('--drawer-cat-rgb', data.rgb);
 
+        const drawerVideoReplace = () => grid.querySelectorAll('video.group-drawer__item-img').forEach(_replaceVideoWithThumb);
         grid.innerHTML = data.items.map((item, i) => {
             const isExternal = item.src && (item.src.startsWith('http://') || item.src.startsWith('https://'));
             const videoSrc   = isExternal ? item.src : (item.src + '#t=0.5');
@@ -6660,9 +6664,7 @@
             const thumb = item.type === 'video'
                 ? (videoThumb
                     ? `<img src="${videoThumb}" class="group-drawer__item-img" alt="${item.label}" loading="lazy" style="aspect-ratio:16/10;object-fit:cover">`
-                    : isExternal
-                        ? `<div class="group-drawer__item-img group-drawer__item-vid-ext" style="display:flex;align-items:center;justify-content:center;background:#0d0d18;aspect-ratio:16/10"><span style="font-size:32px">▶️</span></div>`
-                        : `<video src="${videoSrc}" preload="metadata" muted playsinline class="group-drawer__item-img"></video>`)
+                    : `<video src="${isExternal ? item.src : videoSrc}" preload="metadata" muted playsinline class="group-drawer__item-img"${isExternal ? ' crossorigin="anonymous"' : ''}></video>`)
                 : `<img src="${item.src}" class="group-drawer__item-img" alt="${item.label}" loading="lazy">`;
             const likeId = _drawerLikeId(groupId, i);
             const local  = _plLoadLocal();
@@ -6681,6 +6683,7 @@
                 </div>
             </div>`;
         }).join('');
+        drawerVideoReplace();
 
         // Rebind les boutons like dans le drawer
         grid.querySelectorAll('.post-like-btn').forEach(btn => {
@@ -9356,6 +9359,26 @@
     // ── Miniature vidéo forcée en JS ─────────────────────────────────
     // (fonctionne aussi bien pour un lien classique que pour un data:URL,
     //  contrairement à l'astuce d'URL "#t=0.001" qui ne marche pas sur les data:)
+    function _captureVideoPoster(video) {
+        if (!video || video.dataset.posterSet) return;
+        try {
+            if (video.readyState >= 2 && video.videoWidth > 0) {
+                const c = document.createElement('canvas');
+                const maxW = 640;
+                const scale = Math.min(1, maxW / video.videoWidth);
+                c.width = Math.round(video.videoWidth * scale);
+                c.height = Math.round(video.videoHeight * scale);
+                c.getContext('2d').drawImage(video, 0, 0, c.width, c.height);
+                const dataUrl = c.toDataURL('image/jpeg', 0.7);
+                if (dataUrl && dataUrl.length > 500) {
+                    video.poster = dataUrl;
+                    video.dataset.posterSet = '1';
+                    return dataUrl;
+                }
+            }
+        } catch(e) {}
+        return null;
+    }
     function _ensureVideoThumbnail(video) {
         if (!video || video.dataset.thumbFixed) return;
         video.dataset.thumbFixed = '1';
@@ -9366,11 +9389,55 @@
                 }
             } catch(e) {}
         };
-        if (video.readyState >= 1) seek();
-        else video.addEventListener('loadedmetadata', seek, { once: true });
+        const tryPoster = () => {
+            setTimeout(() => _captureVideoPoster(video), 150);
+        };
+        if (video.readyState >= 1) {
+            seek();
+            tryPoster();
+        } else {
+            video.addEventListener('loadedmetadata', () => {
+                seek();
+                tryPoster();
+            }, { once: true });
+        }
     }
     function _ensureAllVideoThumbnails(root) {
         (root || document).querySelectorAll('video.news-card__image').forEach(_ensureVideoThumbnail);
+        (root || document).querySelectorAll('video.group-card__image').forEach(_replaceVideoWithThumb);
+        (root || document).querySelectorAll('video.group-drawer__item-img').forEach(_replaceVideoWithThumb);
+    }
+    function _replaceVideoWithThumb(video) {
+        if (!video || video.dataset.thumbReplaced) return;
+        video.dataset.thumbReplaced = '1';
+        const doReplace = () => {
+            const dataUrl = _captureVideoPoster(video);
+            if (dataUrl) {
+                const img = document.createElement('img');
+                img.src = dataUrl;
+                img.className = video.className;
+                img.alt = 'thumbnail';
+                img.loading = 'lazy';
+                img.style.cssText = video.style.cssText;
+                if (video.parentNode) video.parentNode.replaceChild(img, video);
+            }
+        };
+        const seek = () => {
+            try {
+                if (video.duration && isFinite(video.duration)) {
+                    video.currentTime = Math.min(0.2, video.duration / 2);
+                }
+            } catch(e) {}
+        };
+        if (video.readyState >= 1) {
+            seek();
+            setTimeout(doReplace, 200);
+        } else {
+            video.addEventListener('loadedmetadata', () => {
+                seek();
+                setTimeout(doReplace, 200);
+            }, { once: true });
+        }
     }
 
     // ── Rendu d'une card custom (depuis Firebase) ───────────────────
