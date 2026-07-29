@@ -10582,8 +10582,6 @@
         const total = isUpdate ? 4 : 3;
         if (step < 1 || step > total) return;
 
-        console.log('_ncmGoToStep called:', { step, kind, isUpdate, total });
-
         // Afficher/masquer le 4ème indicateur d'étape selon le type
         const step4 = document.getElementById('ncmStep4');
         const line3 = document.getElementById('ncmStepLine3');
@@ -10626,16 +10624,11 @@
             else if (step === 2) targetPageId = 'ncmPage2';
             else if (step === 3) targetPageId = 'ncmPage3';
         }
-        console.log('Target page ID:', targetPageId);
         if (targetPageId) {
             const targetPage = document.getElementById(targetPageId);
-            console.log('Target page element:', targetPage);
             if (targetPage) {
                 targetPage.classList.add('active');
                 targetPage.style.display = 'flex';
-                console.log('Set target page display to flex');
-            } else {
-                console.error('Target page not found:', targetPageId);
             }
         }
         steps.forEach((s, i) => {
@@ -10688,40 +10681,44 @@
                 return;
             }
 
-            selector.innerHTML = cards.map(card => {
-                const cardData = {
-                    label: card.title || card.label || 'Sans titre',
-                    category: card.category || card.section || 'Leak',
-                    catColor: card.catColor || '#ffda00',
-                    imgSrc: card.imgSrc || card.src || '',
-                    type: card.type || 'image',
-                    src: card.src || '',
-                    cardId: card.id || '',
-                    badge: card.badge || card.kind || 'LEAK',
-                    section: card.section || 'Blox Leaks'
-                };
-                const hasMedia = !!cardData.src;
-                const img = cardData.imgSrc
-                    ? `<img src="${cardData.imgSrc}" style="width:40px;height:40px;border-radius:6px;object-fit:cover;margin-right:10px;">`
-                    : `<div style="width:40px;height:40px;border-radius:6px;background:${cardData.catColor}20;display:flex;align-items:center;justify-content:center;margin-right:10px;font-size:16px;">📄</div>`;
+            selector.innerHTML = `
+                <div class="ncm-linked-cards-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;">
+                    ${cards.map(card => {
+                        const cardData = {
+                            label: card.title || card.label || 'Sans titre',
+                            category: card.category || card.section || 'Leak',
+                            catColor: card.catColor || '#ffda00',
+                            imgSrc: card.imgSrc || card.src || '',
+                            type: card.type || 'image',
+                            src: card.src || '',
+                            cardId: card.id || '',
+                            badge: card.badge || card.kind || 'LEAK',
+                            section: card.section || 'Blox Leaks'
+                        };
+                        const img = cardData.imgSrc
+                            ? `<img src="${cardData.imgSrc}" style="width:100%;height:80px;object-fit:cover;border-radius:6px 6px 0 0;">`
+                            : `<div style="width:100%;height:80px;background:${cardData.catColor}20;display:flex;align-items:center;justify-content:center;border-radius:6px 6px 0 0;font-size:24px;">📄</div>`;
 
-                return `
-                    <label class="ncm-linked-card-item" style="display:flex;align-items:center;padding:8px;border-radius:8px;cursor:pointer;transition:background 0.2s;margin-bottom:6px;">
-                        <input type="checkbox" class="ncm-linked-card-checkbox" data-card-data='${JSON.stringify(cardData).replace(/'/g, "&#39;")}' style="margin-right:10px;">
-                        ${img}
-                        <div style="flex:1;">
-                            <div style="font-weight:600;font-size:13px;color:#fff;">${cardData.label}</div>
-                            <div style="font-size:11px;color:rgba(255,255,255,0.5);">${cardData.category} • ${cardData.badge}</div>
-                        </div>
-                    </label>
-                `;
-            }).join('');
+                        return `
+                            <label class="ncm-linked-card-item" style="display:block;cursor:pointer;position:relative;border-radius:8px;overflow:hidden;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);transition:all 0.2s;">
+                                <input type="checkbox" class="ncm-linked-card-checkbox" data-card-data='${JSON.stringify(cardData).replace(/'/g, "&#39;")}' style="position:absolute;top:6px;right:6px;width:18px;height:18px;cursor:pointer;z-index:2;">
+                                ${img}
+                                <div style="padding:8px;">
+                                    <div style="font-weight:600;font-size:12px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4px;">${cardData.label}</div>
+                                    <div style="font-size:10px;color:rgba(255,255,255,0.5);">${cardData.badge}</div>
+                                </div>
+                            </label>
+                        `;
+                    }).join('')}
+                </div>
+            `;
 
-            // Ajouter les styles pour le hover
+            // Ajouter les styles pour le hover et la sélection
             const style = document.createElement('style');
             style.textContent = `
-                .ncm-linked-card-item:hover { background: rgba(255,255,255,0.08); }
-                .ncm-linked-card-item input:checked + div { color: #ffda00; }
+                .ncm-linked-card-item:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,218,0,0.3); transform: translateY(-2px); }
+                .ncm-linked-card-item input:checked { accent-color: #ffda00; }
+                .ncm-linked-card-item:has(input:checked) { border-color: #ffda00; background: rgba(255,218,0,0.08); }
             `;
             selector.appendChild(style);
         });
