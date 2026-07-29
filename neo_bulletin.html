@@ -7099,6 +7099,56 @@
         document.body.style.overflow = 'hidden';
     }
 
+    // ══════════════════════════════════════════════════════════════
+    //  UPDATES — Data + Modal
+    // ══════════════════════════════════════════════════════════════
+    const UPDATE_DATA = {
+        '0.3.3': {
+            version: 'v0.3.3',
+            date: '28 juil. 2026',
+            title: 'Nouveau système de cartes & gameplay',
+            summary: `Cette mise à jour introduit le système de création de cartes, le mode sombre amélioré, et la section gameplay avec tous les leaks de mécaniques.`,
+            linked: ['🎮 Gameplay', '🃏 Cartes', '🌙 Sombre'],
+            comments: '/updates/0.3.3'
+        }
+    };
+
+    function openUpdateModal(versionKey) {
+        const data = UPDATE_DATA[versionKey];
+        if (!data) return;
+
+        closeModal('videoModal');
+        document.getElementById('updateModalLoader').style.display = 'none';
+        document.getElementById('updateModalInner').style.display = '';
+
+        document.getElementById('updModalVersion').textContent = data.version;
+        document.getElementById('updModalDate').textContent = data.date;
+        document.getElementById('updModalTitle').textContent = data.title;
+        document.getElementById('updModalSummary').innerHTML = data.summary.replace(/\n/g, '<br>');
+
+        const linkedContainer = document.getElementById('updModalLinked');
+        linkedContainer.innerHTML = data.linked.map(t => `<span class="update-card__linked-badge">${t}</span>`).join('');
+
+        // Comments
+        const body = document.getElementById('updModalCommentsBody');
+        const countEl = document.getElementById('updModalCommentCount');
+        if (typeof FB_REF !== 'undefined' && FB_REF) {
+            const path = data.comments;
+            const ref = FB_REF.child(path);
+            loadComments(ref, body, countEl, {});
+        } else {
+            body.innerHTML = '<div style="padding:14px;font-size:13px;color:rgba(255,255,255,0.4)">Commentaires non disponibles</div>';
+            if (countEl) countEl.textContent = '0';
+        }
+
+        const modal = document.getElementById('updateModal');
+        if (modal) {
+            modal.classList.add('is-open');
+            document.body.style.overflow = 'hidden';
+            setTimeout(() => modal.querySelector('.modal-content')?.classList.add('is-open'), 10);
+        }
+    }
+
     // Helper : afficher un bouton "Ouvrir la vidéo" quand le format n'est pas lisible inline
     function _showExtVideoBtn(src, videoEl) {
         const existing = document.getElementById('_modalExtVideoBtn');
