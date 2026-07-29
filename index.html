@@ -230,10 +230,11 @@
 }
 .site-nav a:hover { background: var(--color-primary); color: #000; transform: scale(1.05); }
 .site-nav a:active { transform: scale(0.95); }
-.site-nav a.-active {
-    background: var(--color-primary); color: #000;
-    box-shadow: 0 2px 12px rgba(255,218,0,0.35);
-}
+        .site-nav a.-active {
+            background: var(--color-primary); color: #000;
+            box-shadow: 0 2px 12px rgba(255,218,0,0.35);
+        }
+        .is-hidden { display: none !important; }
         .site-header__icons { display: flex; gap: 12px; cursor: pointer; align-items: center; position: absolute; right: 55px; }
         .site-header__icons span { padding: 8px; border-radius: 10px; transition: background 0.2s; }
         .site-header__icons span:hover { background: rgba(0,0,0,0.06); }
@@ -3132,9 +3133,11 @@
         try {
             const stored     = JSON.parse(localStorage.getItem(DISCORD_TOKEN_KEY) || 'null');
             const cachedUser = JSON.parse(localStorage.getItem(DISCORD_USER_KEY)  || 'null');
-            if (stored && stored.expiresAt > Date.now() && cachedUser) {
+            if (cachedUser) {
                 _discordShowUser(cachedUser);
-                _discordFetchUser(stored.token).then(u => { localStorage.setItem(DISCORD_USER_KEY, JSON.stringify(u)); _discordShowUser(u); }).catch(() => _discordLogout());
+                if (stored && stored.expiresAt > Date.now()) {
+                    _discordFetchUser(stored.token).then(u => { localStorage.setItem(DISCORD_USER_KEY, JSON.stringify(u)); _discordShowUser(u); }).catch(() => {});
+                }
                 return;
             }
         } catch(e) {}
