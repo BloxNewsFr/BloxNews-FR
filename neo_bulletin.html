@@ -10582,6 +10582,8 @@
         const total = isUpdate ? 4 : 3;
         if (step < 1 || step > total) return;
 
+        console.log('_ncmGoToStep called:', { step, kind, isUpdate, total });
+
         // Afficher/masquer le 4ème indicateur d'étape selon le type
         const step4 = document.getElementById('ncmStep4');
         const line3 = document.getElementById('ncmStepLine3');
@@ -10624,11 +10626,16 @@
             else if (step === 2) targetPageId = 'ncmPage2';
             else if (step === 3) targetPageId = 'ncmPage3';
         }
+        console.log('Target page ID:', targetPageId);
         if (targetPageId) {
             const targetPage = document.getElementById(targetPageId);
+            console.log('Target page element:', targetPage);
             if (targetPage) {
                 targetPage.classList.add('active');
                 targetPage.style.display = 'flex';
+                console.log('Set target page display to flex');
+            } else {
+                console.error('Target page not found:', targetPageId);
             }
         }
         steps.forEach((s, i) => {
