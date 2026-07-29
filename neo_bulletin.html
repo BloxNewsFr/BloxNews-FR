@@ -10659,6 +10659,69 @@
         if (info) info.textContent = `Étape ${step} sur ${total}`;
         // Mettre à jour le recap à l'arrivée sur la dernière étape
         if (step === total) _ncmUpdateRecap();
+
+        // Charger le sélecteur de cards liées à l'arrivée sur l'étape 3 pour les updates
+        if (isUpdate && step === 3) _ncmLoadLinkedCardsSelector();
+    }
+
+    // ── Charger le sélecteur de cards liées ───────────────────────────
+    function _ncmLoadLinkedCardsSelector() {
+        const selector = document.getElementById('ncmLinkedCardsSelector');
+        if (!selector) return;
+
+        if (typeof FB_CC_REF === 'undefined' || !FB_CC_REF) {
+            selector.innerHTML = '<div class="ncm-field-info" style="text-align:center;padding:20px;">Firebase non disponible</div>';
+            return;
+        }
+
+        FB_CC_REF.once('value', snap => {
+            const raw = snap.val();
+            const cards = raw
+                ? (Array.isArray(raw) ? raw : Object.values(raw))
+                : [];
+
+            if (cards.length === 0) {
+                selector.innerHTML = '<div class="ncm-field-info" style="text-align:center;padding:20px;">Aucune card disponible</div>';
+                return;
+            }
+
+            selector.innerHTML = cards.map(card => {
+                const cardData = {
+                    label: card.title || card.label || 'Sans titre',
+                    category: card.category || card.section || 'Leak',
+                    catColor: card.catColor || '#ffda00',
+                    imgSrc: card.imgSrc || card.src || '',
+                    type: card.type || 'image',
+                    src: card.src || '',
+                    cardId: card.id || '',
+                    badge: card.badge || card.kind || 'LEAK',
+                    section: card.section || 'Blox Leaks'
+                };
+                const hasMedia = !!cardData.src;
+                const img = cardData.imgSrc
+                    ? `<img src="${cardData.imgSrc}" style="width:40px;height:40px;border-radius:6px;object-fit:cover;margin-right:10px;">`
+                    : `<div style="width:40px;height:40px;border-radius:6px;background:${cardData.catColor}20;display:flex;align-items:center;justify-content:center;margin-right:10px;font-size:16px;">📄</div>`;
+
+                return `
+                    <label class="ncm-linked-card-item" style="display:flex;align-items:center;padding:8px;border-radius:8px;cursor:pointer;transition:background 0.2s;margin-bottom:6px;">
+                        <input type="checkbox" class="ncm-linked-card-checkbox" data-card-data='${JSON.stringify(cardData).replace(/'/g, "&#39;")}' style="margin-right:10px;">
+                        ${img}
+                        <div style="flex:1;">
+                            <div style="font-weight:600;font-size:13px;color:#fff;">${cardData.label}</div>
+                            <div style="font-size:11px;color:rgba(255,255,255,0.5);">${cardData.category} • ${cardData.badge}</div>
+                        </div>
+                    </label>
+                `;
+            }).join('');
+
+            // Ajouter les styles pour le hover
+            const style = document.createElement('style');
+            style.textContent = `
+                .ncm-linked-card-item:hover { background: rgba(255,255,255,0.08); }
+                .ncm-linked-card-item input:checked + div { color: #ffda00; }
+            `;
+            selector.appendChild(style);
+        });
     }
 
     function _ncmNextStep() {
