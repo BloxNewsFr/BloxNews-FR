@@ -79,17 +79,7 @@
             }
         }
 
-        /* ── 3D LAYERED DEPTH SYSTEM ── */
-        [data-depth] {
-            will-change: translate;
-            transition: filter 0.8s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.8s ease;
-        }
-        [data-depth="3"] { filter: brightness(1.08); }
-        [data-depth="2"] { filter: brightness(1.04); }
-        [data-depth="1"] { filter: brightness(1.01); }
-        [data-depth="0"] { filter: brightness(0.97); opacity: 0.94; }
-        [data-depth="-1"] { filter: brightness(0.92); opacity: 0.85; }
-        [data-depth="-2"] { filter: brightness(0.96); opacity: 0.95; }
+        /* ── DEPTH SYSTEM (disabled) ── */
         
         body { 
             font-family: 'Inter', sans-serif; 
@@ -2032,10 +2022,6 @@
     </main>
 
     <script>
-        // ── 3D DEPTH ENGINE (déclaré tôt : renderPage() appelle assignDepth() dès le premier rendu) ──
-        let _depthEls = [];
-        const _depthFactors = { '3': 0.6, '2': 0.35, '1': 0.18, '0': 0.08, '-1': 0.03, '-2': 0.01 };
-
         const bulletins = [
             { num: "001", img: "./001/img/img_fruit.png",          href: "./001/bulletin-001.html", date: "2025-03-20" },
             { num: "002", img: "./002/img/1th_img.png",            href: "./002/bulletin-002.html", date: "2025-03-27" },
@@ -2987,47 +2973,7 @@
         }
 
 
-        // ── 3D DEPTH ENGINE ──
-        function assignDepth() {
-            const map = {
-                '-2': '.site-background',
-                '-1': '',
-                '0': '.pagination-info, .pagination-controls button, .pagination-bottom button, .news-card__content, .news-card__image-wrapper, .news-card__bar, .news-card__eyebrow',
-                '1': '.news-card, .site-header, .news-grid, .pagination-bar, .pagination-bottom, .tab-section',
-                '2': '.blue-banner, .leaks-banner, .page-title, .news-card__badge, .news-card__new, .news-card__button, .mobile-pagination-pill, .news-card__title, .tab-titles button',
-                '3': '.hero-title, .main-headline, .section-hero h1'
-            };
-            for (const [depth, sel] of Object.entries(map)) {
-                if (!sel) continue;
-                document.querySelectorAll(sel).forEach(el => el.dataset.depth = depth);
-            }
-            _depthEls = [...document.querySelectorAll('[data-depth]')];
-        }
 
-        function updateDepthParallax(mx, my) {
-            const dx = (mx / window.innerWidth - 0.5) * 2;
-            const dy = (my / window.innerHeight - 0.5) * 2;
-            for (const el of _depthEls) {
-                const f = _depthFactors[el.dataset.depth] || 0;
-                if (f) el.style.translate = `${dx * f * 18}px ${dy * f * 18}px`;
-            }
-        }
-
-        function initDepth() {
-            assignDepth();
-            let rafId = null;
-            let lastMX = 0, lastMY = 0;
-            document.addEventListener('mousemove', e => {
-                lastMX = e.clientX; lastMY = e.clientY;
-                if (!rafId) rafId = requestAnimationFrame(() => {
-                    updateDepthParallax(lastMX, lastMY);
-                    rafId = null;
-                });
-            }, { passive: true });
-
-        }
-
-        document.addEventListener('DOMContentLoaded', () => { setTimeout(initDepth, 50); });
 
         // ── LIQUID ICE — highlight dynamique au survol ──
         function initLiquidIce() {
