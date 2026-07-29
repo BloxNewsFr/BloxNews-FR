@@ -5408,8 +5408,9 @@
 
         <div class="mobile-nav-label">Catégories</div>
         <div class="mnav-chips">
+            <button class="leaks-tab active" data-target="cat-all" style="--cat-hex: #ffffff; --cat-rgb: 255, 255, 255;">Tout</button>
             <button class="leaks-tab" data-target="cat-updates" style="--cat-hex: #ffda00; --cat-rgb: 255, 218, 0;">🆙 Updates</button>
-            <button class="leaks-tab active" data-target="cat-actus" style="--cat-hex: #cc0000; --cat-rgb: 204, 0, 0;">Actus</button>
+            <button class="leaks-tab" data-target="cat-actus" style="--cat-hex: #cc0000; --cat-rgb: 204, 0, 0;">Actus</button>
             <button class="leaks-tab" data-target="cat-fruit" style="--cat-hex: #ff0055; --cat-rgb: 255, 0, 85;">Fruits</button>
             <button class="leaks-tab" data-target="cat-vfx" style="--cat-hex: #a200ff; --cat-rgb: 162, 0, 255;">VFX</button>
             <button class="leaks-tab" data-target="cat-gameplay" style="--cat-hex: #ff6600; --cat-rgb: 255, 102, 0;">Gameplay</button>
@@ -5437,8 +5438,9 @@
         <!-- ── Tabs + sections (masqués en mode recherche) ── -->
         <div id="neoTabsAndSections">
         <div class="desktop-tabs" id="desktopTabs">
+            <button class="leaks-tab active" data-target="cat-all" style="--cat-hex: #ffffff; --cat-rgb: 255, 255, 255;">TOUT</button>
             <button class="leaks-tab" data-target="cat-updates" style="--cat-hex: #ffda00; --cat-rgb: 255, 218, 0;">🆙 UPDATES</button>
-            <button class="leaks-tab active" data-target="cat-actus" style="--cat-hex: #cc0000; --cat-rgb: 204, 0, 0;">ACTUS</button>
+            <button class="leaks-tab" data-target="cat-actus" style="--cat-hex: #cc0000; --cat-rgb: 204, 0, 0;">ACTUS</button>
             <button class="leaks-tab" data-target="cat-fruit" style="--cat-hex: #ff0055; --cat-rgb: 255, 0, 85;">FRUITS</button>
             <button class="leaks-tab" data-target="cat-vfx" style="--cat-hex: #a200ff; --cat-rgb: 162, 0, 255;">VFX</button>
             <button class="leaks-tab" data-target="cat-gameplay" style="--cat-hex: #ff6600; --cat-rgb: 255, 102, 0;">GAMEPLAY</button>
@@ -5446,6 +5448,16 @@
             <button class="leaks-tab" data-target="cat-gui" style="--cat-hex: #0088ff; --cat-rgb: 0, 136, 255;">GUI</button>
             <button class="leaks-tab" data-target="cat-messages" style="--cat-hex: #ff8800; --cat-rgb: 255, 136, 0;">MESSAGES</button>
         </div>
+
+                <!-- ═══════════════════════════════════════════════
+                     SECTION TOUT (ALL)
+                ═══════════════════════════════════════════════ -->
+                <section id="cat-all" class="category-section active-section">
+                    <div class="category-title">📋 TOUT LES LEAKS</div>
+                    <div class="news-grid" id="allGrid">
+                        <!-- Les cards seront ajoutées dynamiquement via JavaScript -->
+                    </div>
+                </section>
 
                 <!-- ═══════════════════════════════════════════════
                      SECTION UPDATES
@@ -5483,7 +5495,7 @@
                     </div>
                 </section>
 
-                <section id="cat-actus" class="category-section active-section">
+                <section id="cat-actus" class="category-section">
             <div class="secret-bulletin">
                 <div class="bulletin-topbar">
                     <span class="bulletin-topbar__label">Blox Leaks Network</span>
@@ -6658,6 +6670,11 @@
                         }
                     });
 
+                    // Si on clique sur "tout", remplir la grille avec toutes les cards
+                    if (targetId === 'cat-all') {
+                        populateAllSection();
+                    }
+
                     // Referme le menu mobile si on vient de cliquer sur un choix
                     _closeMobileNav();
 
@@ -6665,6 +6682,44 @@
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 });
             });
+
+            // ── 2.1. REMPLIR LA SECTION "TOUT" ──
+            function populateAllSection() {
+                const allGrid = document.getElementById('allGrid');
+                if (!allGrid) return;
+
+                // Vider la grille
+                allGrid.innerHTML = '';
+
+                // Sections à exclure (updates et actus ont leur propre structure)
+                const excludedSections = ['cat-all', 'cat-updates', 'cat-actus'];
+
+                // Parcourir toutes les sections et collecter les cards
+                sections.forEach(section => {
+                    if (excludedSections.includes(section.id)) return;
+
+                    // Trouver toutes les cards dans cette section
+                    const cards = section.querySelectorAll('.news-card, .update-card');
+                    cards.forEach(card => {
+                        // Cloner la card pour l'ajouter à la section "tout"
+                        const clone = card.cloneNode(true);
+                        allGrid.appendChild(clone);
+                    });
+                });
+
+                // Ajouter aussi les updates cards
+                const updatesSection = document.getElementById('cat-updates');
+                if (updatesSection) {
+                    const updateCards = updatesSection.querySelectorAll('.update-card');
+                    updateCards.forEach(card => {
+                        const clone = card.cloneNode(true);
+                        allGrid.appendChild(clone);
+                    });
+                }
+            }
+
+            // Initialiser la section "tout" au chargement
+            populateAllSection();
 
             // ── 3. BOUTONS « VOIR L'IMAGE / VIDÉO » → bulle modale ──
             const SECTION_LABELS = {
@@ -9370,8 +9425,7 @@
     // ─── Éditeur de contenu ────────────────────────────────────────
     const EDIT_KEY      = 'blox_content_edits_v1';
     const FB_EDITS_REF  = typeof FB_DB !== 'undefined' ? FB_DB.ref('content_edits') : null;
-    const EDITABLE_SELS = ['h1','h2','h3','h4','h5','h6','p','span','div','li','td','th',
-                           '.news-card__title','.news-card__eyebrow',
+    const EDITABLE_SELS = ['h2','h3','.news-card__title','.news-card__eyebrow',
                            '.bulletin-content p','.category-title',
                            '.news-card__button:not(.open-modal-btn)',
                            '.bulletin-meta','.highlight',
@@ -9381,7 +9435,8 @@
     const EXCLUDED_SELS = ['.site-header', '.site-nav', '.settings-overlay', '.leaks-tab',
                            '.site-header__icons', '.mobile-nav-dropdown',
                            '.modal-overlay', '.comments-modal-overlay',
-                           '#newCardModal', '#deleteCardModal'];
+                           '#newCardModal', '#deleteCardModal',
+                           '.edit-panel', '#editInlinePopup'];
     let _editMode  = false;
     let _editTarget = null;
 
