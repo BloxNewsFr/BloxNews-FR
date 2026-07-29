@@ -1065,6 +1065,110 @@
         }
 
         /* ══════════════════════════════════════════════
+           UPDATE MODAL — Styles premium
+        ══════════════════════════════════════════════ */
+        .update-modal__banner {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16/9;
+            overflow: hidden;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            background: #0d0d18;
+        }
+        .update-modal__banner img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .update-modal__status {
+            position: absolute;
+            top: 14px;
+            left: 14px;
+            padding: 6px 14px;
+            border-radius: 100px;
+            font-family: 'LuckiestGuy Regular', cursive;
+            font-size: 12px;
+            font-weight: 900;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            border: 2px solid rgba(255,255,255,0.6);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+        }
+        .update-modal__status--official {
+            background: linear-gradient(135deg, #ffda00, #ff9900);
+            color: #000;
+        }
+        .update-modal__status--leak {
+            background: linear-gradient(135deg, #ff3366, #cc0044);
+            color: #fff;
+        }
+        .update-modal__linked-label {
+            font-size: 11px;
+            font-weight: 800;
+            color: rgba(255,255,255,0.4);
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            margin-bottom: 10px;
+            font-family: 'Inter', sans-serif;
+        }
+        .update-modal__linked-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: 10px;
+        }
+        .update-modal__linked-item {
+            aspect-ratio: 1;
+            border-radius: 12px;
+            overflow: hidden;
+            background: rgba(255,255,255,0.05);
+            border: 2px solid rgba(255,218,0,0.2);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+        .update-modal__linked-item:hover {
+            border-color: rgba(255,218,0,0.5);
+            transform: scale(1.05);
+        }
+        .update-modal__linked-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .update-modal__linked-item::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.3);
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .update-modal__linked-item:hover::after {
+            opacity: 1;
+        }
+        .update-modal__stats {
+            display: flex;
+            gap: 20px;
+            padding: 12px 16px;
+            background: rgba(255,218,0,0.08);
+            border-radius: 12px;
+            border: 1px solid rgba(255,218,0,0.15);
+        }
+        .update-modal__stat {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.6);
+            font-family: 'Inter', sans-serif;
+        }
+        .update-modal__stat-icon {
+            font-size: 16px;
+        }
+
+        /* ══════════════════════════════════════════════
            CARTE MESSAGE — style enquête / dossier
         ══════════════════════════════════════════════ */
         .msg-card {
@@ -4849,6 +4953,31 @@
             .group-card__open-btn { padding: 8px 16px; font-size: 11px; }
             .group-card__badge { font-size: 11px; padding: 3px 10px; top: 10px; left: 10px; }
 
+            /* ── Update Card Mobile ── */
+            .update-card { border-radius: 16px; }
+            .update-card__banner { aspect-ratio: 16/10; }
+            .update-card__status { font-size: 10px; padding: 4px 10px; top: 10px; left: 10px; }
+            .update-card__body { padding: 16px 16px 14px; }
+            .update-card__version { font-size: 22px; }
+            .update-card__date { font-size: 11px; }
+            .update-card__title { font-size: 16px; }
+            .update-card__summary { font-size: 13px; -webkit-line-clamp: 2; }
+            .update-card__linked-grid { grid-template-columns: repeat(4, 1fr); gap: 6px; }
+            .update-card__linked-thumb { border-radius: 8px; }
+            .update-card__stats { gap: 12px; }
+            .update-card__stat { font-size: 11px; }
+            .update-card__stat-icon { font-size: 12px; }
+            .update-card__btn { font-size: 11px; padding: 6px 14px; }
+
+            /* ── Update Modal Mobile ── */
+            .update-modal__banner { border-radius: 12px; margin-bottom: 16px; }
+            .update-modal__status { font-size: 10px; padding: 4px 10px; top: 10px; left: 10px; }
+            .update-modal__linked-grid { grid-template-columns: repeat(4, 1fr); gap: 8px; }
+            .update-modal__linked-item { border-radius: 10px; }
+            .update-modal__stats { gap: 14px; padding: 10px 12px; }
+            .update-modal__stat { font-size: 12px; }
+            .update-modal__stat-icon { font-size: 14px; }
+
             /* ── MODAL LIGHTBOX — bottom sheet corrigé ── */
             .modal-overlay {
                 padding: 0 !important;
@@ -6129,8 +6258,11 @@
                 <div class="category-title">🔄 MISES À JOUR</div>
                 <div class="news-grid">
 
-                    <article class="update-card" data-version="0.3.3" data-date="2026-07-28">
-                        <div class="update-card__accent"></div>
+                    <article class="update-card" data-version="0.3.3" data-date="2026-07-28" onclick="openUpdateModal('0.3.3')">
+                        <div class="update-card__banner">
+                            <img src="./shared/background.png" alt="Update Banner" loading="lazy">
+                            <span class="update-card__status update-card__status--official">OFFICIAL</span>
+                        </div>
                         <div class="update-card__body">
                             <div class="update-card__header">
                                 <span class="update-card__version">v0.3.3</span>
@@ -6141,13 +6273,33 @@
                                 Cette mise à jour introduit le système de création de cartes, le mode sombre amélioré,
                                 et la section gameplay avec tous les leaks de mécaniques.
                             </p>
-                            <div class="update-card__linked">
-                                <span class="update-card__linked-badge">🎮 Gameplay</span>
-                                <span class="update-card__linked-badge">🃏 Cartes</span>
-                                <span class="update-card__linked-badge">🌙 Sombre</span>
+                            <div class="update-card__linked-section">
+                                <div class="update-card__linked-label">Contenus inclus (2)</div>
+                                <div class="update-card__linked-grid">
+                                    <div class="update-card__linked-thumb" onclick="event.stopPropagation();openGroupDrawer('gameplay')">
+                                        <img src="./shared/blox_leaks/magnet_ability 2.jpeg" alt="Gameplay" loading="lazy">
+                                    </div>
+                                    <div class="update-card__linked-thumb" onclick="event.stopPropagation();openGroupDrawer('magnet')">
+                                        <img src="./shared/blox_leaks/magnet.png" alt="Magnet" loading="lazy">
+                                    </div>
+                                </div>
                             </div>
                             <div class="update-card__footer">
-                                <button class="update-card__btn" onclick="openUpdateModal('0.3.3')">Voir les détails →</button>
+                                <div class="update-card__stats">
+                                    <span class="update-card__stat">
+                                        <span class="update-card__stat-icon">👁️</span>
+                                        <span>1.2K</span>
+                                    </span>
+                                    <span class="update-card__stat">
+                                        <span class="update-card__stat-icon">❤️</span>
+                                        <span>89</span>
+                                    </span>
+                                    <span class="update-card__stat">
+                                        <span class="update-card__stat-icon">💬</span>
+                                        <span>23</span>
+                                    </span>
+                                </div>
+                                <button class="update-card__btn">Voir les détails →</button>
                             </div>
                         </div>
                     </article>
@@ -6157,19 +6309,42 @@
         </div><!-- /neoTabsAndSections -->
 
         <div id="updateModal" class="modal-overlay">
-            <div class="modal-content">
+            <div class="modal-content" style="max-width: 700px;">
                 <div class="modal-drag-handle" aria-hidden="true"></div>
                 <div class="modal-close-btn" onclick="this.closest('.modal-overlay').classList.remove('is-open');this.closest('.modal-overlay').querySelector('.modal-content').classList.remove('is-open');document.body.style.overflow=''">✕</div>
                 <div id="updateModalBody" class="modal-body">
                     <div id="updateModalLoader" class="modal-loader" style="display:flex;align-items:center;justify-content:center;padding:48px 0">Chargement...</div>
                     <div id="updateModalInner" style="display:none">
-                        <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
-                            <span id="updModalVersion" style="font-family:'LuckiestGuy Regular',cursive;font-size:28px;color:var(--color-update,#f0c000)"></span>
-                            <span id="updModalDate" style="font-size:13px;color:rgba(255,255,255,0.4)"></span>
+                        <!-- Banner -->
+                        <div id="updModalBanner" class="update-modal__banner" style="display:none;">
+                            <img id="updModalBannerImg" src="" alt="Update Banner">
+                            <span id="updModalStatus" class="update-modal__status"></span>
                         </div>
-                        <h2 id="updModalTitle" style="font-family:'LuckiestGuy Regular',cursive;font-size:22px;color:var(--color-text);margin:0 0 14px"></h2>
-                        <div id="updModalSummary" style="font-size:15px;line-height:1.7;color:rgba(255,255,255,0.75);margin-bottom:20px"></div>
-                        <div id="updModalLinked" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px"></div>
+                        
+                        <!-- Header -->
+                        <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;margin-top:20px;">
+                            <span id="updModalVersion" style="font-family:'LuckiestGuy Regular',cursive;font-size:32px;color:var(--color-update,#f0c000);text-shadow:0 0 20px rgba(255,218,0,0.4);"></span>
+                            <span id="updModalDate" style="font-size:13px;color:rgba(255,255,255,0.4);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;"></span>
+                        </div>
+                        
+                        <!-- Title & Summary -->
+                        <h2 id="updModalTitle" style="font-family:'LuckiestGuy Regular',cursive;font-size:24px;color:var(--color-text);margin:0 0 14px;letter-spacing:0.5px;"></h2>
+                        <div id="updModalSummary" style="font-size:15px;line-height:1.7;color:rgba(255,255,255,0.75);margin-bottom:24px;"></div>
+                        
+                        <!-- Linked Cards Section -->
+                        <div id="updModalLinkedSection" style="margin-bottom:24px;">
+                            <div class="update-modal__linked-label">Contenus inclus</div>
+                            <div id="updModalLinkedGrid" class="update-modal__linked-grid"></div>
+                        </div>
+                        
+                        <!-- Stats -->
+                        <div id="updModalStats" class="update-modal__stats" style="margin-bottom:20px;">
+                            <span class="update-modal__stat"><span class="update-modal__stat-icon">👁️</span><span id="updModalViews">0</span></span>
+                            <span class="update-modal__stat"><span class="update-modal__stat-icon">❤️</span><span id="updModalLikes">0</span></span>
+                            <span class="update-modal__stat"><span class="update-modal__stat-icon">💬</span><span id="updModalCommentsCount">0</span></span>
+                        </div>
+                        
+                        <!-- Comments -->
                         <div id="updModalComments" class="card-comments-section" style="margin-top:8px;border:1px solid rgba(255,180,0,0.12)">
                             <div class="card-comments-toggle" onclick="document.querySelector('#updModalComments .card-comments-body').classList.toggle('is-open')">
                                 <span class="card-comments-toggle__icon">💬</span>
@@ -7330,13 +7505,50 @@
         document.getElementById('updateModalLoader').style.display = 'none';
         document.getElementById('updateModalInner').style.display = '';
 
+        // Banner & Status
+        const bannerEl = document.getElementById('updModalBanner');
+        const bannerImg = document.getElementById('updModalBannerImg');
+        const statusEl = document.getElementById('updModalStatus');
+        
+        if (data.banner) {
+            bannerEl.style.display = 'block';
+            bannerImg.src = data.banner;
+            statusEl.textContent = data.status || 'OFFICIAL';
+            statusEl.className = 'update-modal__status update-modal__status--' + (data.status === 'LEAK' ? 'leak' : 'official');
+        } else {
+            bannerEl.style.display = 'none';
+        }
+
+        // Header
         document.getElementById('updModalVersion').textContent = data.version;
         document.getElementById('updModalDate').textContent = data.date;
         document.getElementById('updModalTitle').textContent = data.title;
         document.getElementById('updModalSummary').innerHTML = data.summary.replace(/\n/g, '<br>');
 
-        const linkedContainer = document.getElementById('updModalLinked');
-        linkedContainer.innerHTML = data.linked.map(t => `<span class="update-card__linked-badge">${t}</span>`).join('');
+        // Linked Cards
+        const linkedSection = document.getElementById('updModalLinkedSection');
+        const linkedGrid = document.getElementById('updModalLinkedGrid');
+        
+        if (data.linkedCards && data.linkedCards.length > 0) {
+            linkedSection.style.display = 'block';
+            linkedGrid.innerHTML = data.linkedCards.map(card => {
+                // Get image from GROUP_DATA if available
+                const groupData = GROUP_DATA[card.id];
+                const imgSrc = groupData?.items?.[0]?.src || './shared/background.png';
+                return `<div class="update-modal__linked-item" onclick="openGroupDrawer('${card.id}')">
+                    <img src="${imgSrc}" alt="${card.label}" loading="lazy">
+                </div>`;
+            }).join('');
+        } else {
+            linkedSection.style.display = 'none';
+        }
+
+        // Stats
+        if (data.stats) {
+            document.getElementById('updModalViews').textContent = _formatNumber(data.stats.views || 0);
+            document.getElementById('updModalLikes').textContent = _formatNumber(data.stats.likes || 0);
+            document.getElementById('updModalCommentsCount').textContent = _formatNumber(data.stats.comments || 0);
+        }
 
         // Comments
         const body = document.getElementById('updModalCommentsBody');
@@ -7356,6 +7568,14 @@
             document.body.style.overflow = 'hidden';
             setTimeout(() => modal.querySelector('.modal-content')?.classList.add('is-open'), 10);
         }
+    }
+
+    // Helper: format numbers (1247 -> 1.2K)
+    function _formatNumber(num) {
+        if (num >= 1000) {
+            return (num / 1000).toFixed(1) + 'K';
+        }
+        return num.toString();
     }
 
     // Helper : afficher un bouton "Ouvrir la vidéo" quand le format n'est pas lisible inline
