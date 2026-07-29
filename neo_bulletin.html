@@ -9425,18 +9425,23 @@
     // ─── Éditeur de contenu ────────────────────────────────────────
     const EDIT_KEY      = 'blox_content_edits_v1';
     const FB_EDITS_REF  = typeof FB_DB !== 'undefined' ? FB_DB.ref('content_edits') : null;
-    const EDITABLE_SELS = ['h2','h3','.news-card__title','.news-card__eyebrow',
+    const EDITABLE_SELS = ['h1','h2','h3','h4','h5','h6','p','span','div','li','td','th',
+                           '.news-card__title','.news-card__eyebrow',
                            '.bulletin-content p','.category-title',
                            '.news-card__button:not(.open-modal-btn)',
                            '.bulletin-meta','.highlight',
-                           '.leaks-banner','.group-card__title',
+                           '.group-card__title',
                            '.update-card-title','.update-card-version',
-                           '.update-card-date','.update-card-short-desc'];
+                           '.update-card-date','.update-card-short-desc',
+                           '.update-card__desc'];
     const EXCLUDED_SELS = ['.site-header', '.site-nav', '.settings-overlay', '.leaks-tab',
                            '.site-header__icons', '.mobile-nav-dropdown',
                            '.modal-overlay', '.comments-modal-overlay',
                            '#newCardModal', '#deleteCardModal',
-                           '.edit-panel', '#editInlinePopup'];
+                           '.edit-panel', '#editInlinePopup',
+                           '.leaks-banner',
+                           '.card-comments-section','.card-comment-','.card-comments-toggle',
+                           '.update-card__linked','.update-card__chip'];
     let _editMode  = false;
     let _editTarget = null;
 
