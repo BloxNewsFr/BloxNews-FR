@@ -10962,16 +10962,21 @@
         if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'e') {
             const taActus = document.getElementById('ncmActusContent');
             const taFull = document.getElementById('ncmUpdateFullDesc');
+            const taShort = document.getElementById('ncmUpdateShortDesc');
             let activeTa = null;
             if (taActus && document.activeElement === taActus) {
                 activeTa = 'ncmActusContent';
             } else if (taFull && document.activeElement === taFull) {
                 activeTa = 'ncmUpdateFullDesc';
+            } else if (taShort && document.activeElement === taShort) {
+                activeTa = 'ncmUpdateShortDesc';
             }
             if (activeTa) {
                 e.preventDefault();
+                e.stopPropagation();
                 _ncmHlPending = true;
-                const inputId = activeTa === 'ncmActusContent' ? 'ncmHlColorInput' : 'ncmHlColorInputFull';
+                const inputId = activeTa === 'ncmActusContent' ? 'ncmHlColorInput' : 
+                               activeTa === 'ncmUpdateFullDesc' ? 'ncmHlColorInputFull' : 'ncmHlColorInput';
                 document.getElementById(inputId)?.click();
             }
         }
