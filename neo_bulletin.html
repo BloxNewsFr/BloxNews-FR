@@ -811,6 +811,83 @@
         @keyframes pulseBadge { 0%,100% { transform: scale(1); } 50% { transform: scale(1.08); } }
 
         /* ══════════════════════════════════════════════
+           UPDATE CARDS — Notes de mise à jour
+        ══════════════════════════════════════════════ */
+        .update-card {
+            border-radius: 20px; overflow: hidden; position: relative;
+            background: linear-gradient(135deg, rgba(255,218,0,0.06), rgba(255,180,0,0.02));
+            border: 1px solid rgba(255,218,0,0.15);
+            border-left: 4px solid #ffda00;
+            padding: 24px 26px 20px;
+            cursor: pointer;
+            transition: background 0.25s, border-color 0.25s, transform 0.2s;
+        }
+        html[data-theme="dark"] .update-card {
+            background: linear-gradient(135deg, rgba(255,218,0,0.04), rgba(255,180,0,0.01));
+            border-color: rgba(255,218,0,0.1);
+        }
+        .update-card:hover {
+            border-color: rgba(255,218,0,0.35);
+            transform: translateY(-2px);
+        }
+        html[data-theme="dark"] .update-card:hover {
+            border-color: rgba(255,218,0,0.25);
+        }
+        .update-card__header {
+            display: flex; align-items: baseline; gap: 14px; margin-bottom: 10px;
+        }
+        .update-card__version {
+            font-family: 'LuckiestGuy Regular', cursive;
+            font-size: 22px; color: #ffda00; letter-spacing: 0.5px;
+            text-shadow: 0 0 12px rgba(255,218,0,0.25);
+        }
+        html[data-theme="dark"] .update-card__version { text-shadow: 0 0 16px rgba(255,218,0,0.2); }
+        .update-card__date {
+            font-size: 12px; color: rgba(0,0,0,0.35); font-weight: 500;
+            font-family: 'Inter', sans-serif;
+        }
+        html[data-theme="dark"] .update-card__date { color: rgba(255,255,255,0.3); }
+        .update-card__title {
+            font-size: 17px; font-weight: 700; color: #1a1a2e; margin: 0 0 8px;
+            font-family: 'Inter', sans-serif; line-height: 1.3;
+        }
+        html[data-theme="dark"] .update-card__title { color: #eef0fa; }
+        .update-card__summary {
+            font-size: 14px; color: rgba(0,0,0,0.55); line-height: 1.5; margin-bottom: 14px;
+            font-family: 'Inter', sans-serif;
+        }
+        html[data-theme="dark"] .update-card__summary { color: rgba(255,255,255,0.45); }
+        .update-card__linked {
+            display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 14px;
+        }
+        .update-card__linked-label {
+            font-size: 11px; font-weight: 600; color: rgba(0,0,0,0.3); text-transform: uppercase;
+            letter-spacing: 0.5px; font-family: 'Inter', sans-serif;
+        }
+        html[data-theme="dark"] .update-card__linked-label { color: rgba(255,255,255,0.25); }
+        .update-card__linked-badge {
+            display: inline-block; background: rgba(255,218,0,0.15); color: #b8860b;
+            font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 100px;
+            font-family: 'Inter', sans-serif; letter-spacing: 0.3px;
+            border: 1px solid rgba(255,218,0,0.2);
+            transition: background 0.2s;
+        }
+        html[data-theme="dark"] .update-card__linked-badge {
+            background: rgba(255,218,0,0.08); color: #ffda00;
+        }
+        .update-card__linked-badge:hover { background: rgba(255,218,0,0.25); }
+        .update-card__btn {
+            background: transparent; border: 1px solid rgba(255,218,0,0.3);
+            color: #b8860b; font-size: 12px; font-weight: 700; padding: 8px 18px;
+            border-radius: 100px; cursor: pointer; font-family: 'Inter', sans-serif;
+            transition: background 0.2s, border-color 0.2s; letter-spacing: 0.3px;
+        }
+        html[data-theme="dark"] .update-card__btn { color: #ffda00; }
+        .update-card__btn:hover {
+            background: rgba(255,218,0,0.12); border-color: rgba(255,218,0,0.5);
+        }
+
+        /* ══════════════════════════════════════════════
            CARTE MESSAGE — style enquête / dossier
         ══════════════════════════════════════════════ */
         .msg-card {
@@ -4973,6 +5050,236 @@
             transition-duration: 0.001ms !important;
         }
 
+        /* ═══════════════════════════════════════════════
+           UPDATE CARDS & MODAL
+        ═══════════════════════════════════════════════ */
+
+        /* ── Grille updates ── */
+        .updates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 0 0 32px;
+        }
+
+        /* ── Update Card ── */
+        .update-card {
+            background: #fff;
+            border-radius: 16px;
+            overflow: hidden;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            transition: transform .2s, box-shadow .2s;
+            position: relative;
+            border: 1.5px solid rgba(0,0,0,0.06);
+        }
+        .update-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 36px rgba(0,0,0,0.14);
+        }
+        html[data-theme="dark"] .update-card {
+            background: #1a1d2e;
+            border-color: rgba(255,255,255,0.07);
+        }
+
+        /* Bande de couleur en haut */
+        .update-card__stripe {
+            height: 5px;
+            background: linear-gradient(90deg, #ffda00, #ff9900);
+        }
+
+        .update-card__body { padding: 18px 20px 14px; }
+
+        /* Version pill + date */
+        .update-card__meta {
+            display: flex; align-items: center; gap: 10px; margin-bottom: 12px;
+        }
+        .update-card__version {
+            background: linear-gradient(135deg, #ffda00, #ff9900);
+            color: #000; font-weight: 800; font-size: 11px;
+            padding: 3px 10px; border-radius: 20px;
+            letter-spacing: 0.5px; font-family: 'Inter', sans-serif;
+        }
+        .update-card__date {
+            font-size: 12px; color: #999; font-family: 'Inter', sans-serif;
+        }
+        html[data-theme="dark"] .update-card__date { color: #555; }
+
+        .update-card__title {
+            font-family: 'LuckiestGuy Regular', sans-serif;
+            font-size: 22px; color: #111; margin: 0 0 8px; line-height: 1.1;
+            letter-spacing: 0.5px;
+        }
+        html[data-theme="dark"] .update-card__title { color: #eef0fa; }
+
+        .update-card__desc {
+            font-size: 13px; color: #555; line-height: 1.55;
+            margin-bottom: 14px; font-family: 'Inter', sans-serif;
+            display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        html[data-theme="dark"] .update-card__desc { color: #888; }
+
+        /* Chips de cards liées */
+        .update-card__linked {
+            display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px;
+        }
+        .update-card__chip {
+            font-size: 11px; font-weight: 700; font-family: 'Inter', sans-serif;
+            padding: 3px 9px; border-radius: 20px;
+            background: rgba(255,218,0,0.12); color: #b38600;
+            border: 1px solid rgba(255,218,0,0.25);
+        }
+        html[data-theme="dark"] .update-card__chip {
+            background: rgba(255,218,0,0.08); color: #cc9e00;
+            border-color: rgba(255,218,0,0.15);
+        }
+
+        /* Footer : commentaires + bouton */
+        .update-card__footer {
+            display: flex; align-items: center; justify-content: space-between;
+            border-top: 1px solid rgba(0,0,0,0.06); padding-top: 12px;
+        }
+        html[data-theme="dark"] .update-card__footer { border-top-color: rgba(255,255,255,0.06); }
+        .update-card__comments-pill {
+            display: flex; align-items: center; gap: 5px;
+            font-size: 12px; color: #999; font-family: 'Inter', sans-serif;
+        }
+        .update-card__open-btn {
+            font-size: 12px; font-weight: 700; color: #175ec2;
+            font-family: 'Inter', sans-serif; cursor: pointer;
+        }
+        html[data-theme="dark"] .update-card__open-btn { color: #7fa8e8; }
+
+        /* ── Modal update ── */
+        .update-modal-overlay {
+            position: fixed; inset: 0; z-index: 8000;
+            background: rgba(0,0,0,0.65); backdrop-filter: blur(6px);
+            display: flex; align-items: flex-end;
+            opacity: 0; pointer-events: none;
+            transition: opacity .25s;
+        }
+        .update-modal-overlay.is-open { opacity: 1; pointer-events: all; }
+
+        @media (min-width: 640px) {
+            .update-modal-overlay { align-items: center; justify-content: center; }
+        }
+
+        .update-modal {
+            background: #fff; width: 100%; max-width: 680px;
+            max-height: 92vh; overflow-y: auto;
+            border-radius: 24px 24px 0 0;
+            transform: translateY(40px);
+            transition: transform .3s cubic-bezier(.34,1.2,.64,1);
+            box-shadow: 0 -8px 40px rgba(0,0,0,0.2);
+        }
+        @media (min-width: 640px) {
+            .update-modal { border-radius: 24px; transform: scale(0.96) translateY(16px); }
+            .update-modal-overlay.is-open .update-modal { transform: scale(1) translateY(0); }
+        }
+        .update-modal-overlay.is-open .update-modal { transform: translateY(0); }
+        html[data-theme="dark"] .update-modal { background: #171827; }
+
+        /* Stripe + handle */
+        .update-modal__stripe { height: 5px; background: linear-gradient(90deg, #ffda00, #ff9900); }
+        .update-modal__handle {
+            width: 36px; height: 4px; border-radius: 2px;
+            background: rgba(0,0,0,0.12); margin: 10px auto 0;
+        }
+        html[data-theme="dark"] .update-modal__handle { background: rgba(255,255,255,0.12); }
+        @media (min-width: 640px) { .update-modal__handle { display: none; } }
+
+        /* Header */
+        .update-modal__header {
+            padding: 16px 24px 12px;
+            display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+        }
+        html[data-theme="dark"] .update-modal__header { border-bottom-color: rgba(255,255,255,0.06); }
+        .update-modal__header-left { flex: 1; min-width: 0; }
+        .update-modal__meta { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+        .update-modal__version {
+            background: linear-gradient(135deg, #ffda00, #ff9900);
+            color: #000; font-weight: 800; font-size: 12px;
+            padding: 4px 12px; border-radius: 20px; font-family: 'Inter', sans-serif;
+        }
+        .update-modal__date { font-size: 12px; color: #999; font-family: 'Inter', sans-serif; }
+        html[data-theme="dark"] .update-modal__date { color: #555; }
+        .update-modal__title {
+            font-family: 'LuckiestGuy Regular', sans-serif;
+            font-size: 28px; color: #111; margin: 0; line-height: 1.1;
+        }
+        html[data-theme="dark"] .update-modal__title { color: #eef0fa; }
+        .update-modal__close {
+            background: rgba(0,0,0,0.06); border: none; cursor: pointer;
+            width: 32px; height: 32px; border-radius: 50%;
+            font-size: 15px; color: #666; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            transition: background .15s; margin-top: 2px;
+        }
+        .update-modal__close:hover { background: rgba(0,0,0,0.12); }
+        html[data-theme="dark"] .update-modal__close { background: rgba(255,255,255,0.08); color: #aaa; }
+
+        /* Body */
+        .update-modal__body { padding: 20px 24px; }
+
+        .update-modal__section-title {
+            font-size: 11px; font-weight: 700; letter-spacing: 1px;
+            text-transform: uppercase; color: #999; margin: 0 0 12px;
+        }
+        html[data-theme="dark"] .update-modal__section-title { color: #555; }
+
+        .update-modal__desc {
+            font-size: 14px; color: #444; line-height: 1.7;
+            font-family: 'Inter', sans-serif; margin-bottom: 24px;
+            white-space: pre-line;
+        }
+        html[data-theme="dark"] .update-modal__desc { color: #aaa; }
+
+        /* Cards liées dans le modal */
+        .update-modal__linked-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 10px; margin-bottom: 24px;
+        }
+        .update-modal__linked-card {
+            border-radius: 12px; overflow: hidden;
+            border: 1.5px solid rgba(0,0,0,0.07);
+            cursor: pointer; transition: transform .15s, box-shadow .15s;
+            background: #f9f9fb;
+            text-decoration: none;
+        }
+        .update-modal__linked-card:hover {
+            transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+        }
+        html[data-theme="dark"] .update-modal__linked-card {
+            background: #1e2133; border-color: rgba(255,255,255,0.07);
+        }
+        .update-modal__linked-img {
+            width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block;
+        }
+        .update-modal__linked-img--placeholder {
+            width: 100%; aspect-ratio: 16/9;
+            background: linear-gradient(135deg, #2a2d45, #1a1d2e);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 28px;
+        }
+        .update-modal__linked-info { padding: 8px 10px 10px; }
+        .update-modal__linked-badge {
+            font-size: 9px; font-weight: 800; letter-spacing: 0.5px;
+            text-transform: uppercase; color: var(--cat-hex, #ffda00);
+            margin-bottom: 3px; font-family: 'Inter', sans-serif;
+        }
+        .update-modal__linked-title {
+            font-size: 12px; font-weight: 700; color: #222;
+            font-family: 'Inter', sans-serif; line-height: 1.3;
+        }
+        html[data-theme="dark"] .update-modal__linked-title { color: #dde0f5; }
+
+        /* Section commentaires dans le modal update */
+        .update-modal__comments { border-top: 1px solid rgba(0,0,0,0.06); padding-top: 20px; }
+        html[data-theme="dark"] .update-modal__comments { border-top-color: rgba(255,255,255,0.06); }
+
         /* ── Petits mobiles (<480px) ── */
         @media (max-width: 480px) {
             .site-header { padding: 8px 12px; height: 52px; }
@@ -5178,6 +5485,7 @@
 
         <div class="mobile-nav-label">Catégories</div>
         <div class="mnav-chips">
+            <button class="leaks-tab" data-target="cat-updates" style="--cat-hex: #ffda00; --cat-rgb: 255, 218, 0;">🆙 Updates</button>
             <button class="leaks-tab active" data-target="cat-actus" style="--cat-hex: #cc0000; --cat-rgb: 204, 0, 0;">Actus</button>
             <button class="leaks-tab" data-target="cat-fruit" style="--cat-hex: #ff0055; --cat-rgb: 255, 0, 85;">Fruits</button>
             <button class="leaks-tab" data-target="cat-vfx" style="--cat-hex: #a200ff; --cat-rgb: 162, 0, 255;">VFX</button>
@@ -5206,6 +5514,7 @@
         <!-- ── Tabs + sections (masqués en mode recherche) ── -->
         <div id="neoTabsAndSections">
         <div class="desktop-tabs" id="desktopTabs">
+            <button class="leaks-tab" data-target="cat-updates" style="--cat-hex: #ffda00; --cat-rgb: 255, 218, 0;">🆙 UPDATES</button>
             <button class="leaks-tab active" data-target="cat-actus" style="--cat-hex: #cc0000; --cat-rgb: 204, 0, 0;">ACTUS</button>
             <button class="leaks-tab" data-target="cat-fruit" style="--cat-hex: #ff0055; --cat-rgb: 255, 0, 85;">FRUITS</button>
             <button class="leaks-tab" data-target="cat-vfx" style="--cat-hex: #a200ff; --cat-rgb: 162, 0, 255;">VFX</button>
