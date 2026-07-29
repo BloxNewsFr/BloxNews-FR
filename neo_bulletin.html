@@ -11313,5 +11313,324 @@
         </div>
     </div>
 
+    <!-- ═══════════════════════════════════════════════
+         MODAL UPDATE
+    ═══════════════════════════════════════════════ -->
+    <div class="update-modal-overlay" id="updateModalOverlay" onclick="closeUpdateModal(event)" aria-hidden="true">
+        <div class="update-modal" id="updateModal" role="dialog" aria-modal="true">
+            <div class="update-modal__stripe"></div>
+            <div class="update-modal__handle"></div>
+
+            <div class="update-modal__header">
+                <div class="update-modal__header-left">
+                    <div class="update-modal__meta">
+                        <span class="update-modal__version" id="updModalVersion">—</span>
+                        <span class="update-modal__date" id="updModalDate">—</span>
+                    </div>
+                    <h2 class="update-modal__title" id="updModalTitle">—</h2>
+                </div>
+                <button class="update-modal__close" onclick="closeUpdateModal(null)">✕</button>
+            </div>
+
+            <div class="update-modal__body">
+                <!-- Résumé -->
+                <div class="update-modal__section-title">📋 Résumé</div>
+                <div class="update-modal__desc" id="updModalDesc">—</div>
+
+                <!-- Cards liées -->
+                <div class="update-modal__section-title">🔗 Cards liées</div>
+                <div class="update-modal__linked-grid" id="updModalLinkedGrid"></div>
+
+                <!-- Commentaires -->
+                <div class="update-modal__comments">
+                    <div class="update-modal__section-title">💬 Commentaires</div>
+                    <div id="updModalComments"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    /* ════════════════════════════════════════════════════════════════
+       SYSTÈME UPDATES
+       - Données des updates (éditable)
+       - Compteurs commentaires en temps réel (Firebase)
+       - Modal : résumé + cards liées + commentaires Firebase
+    ════════════════════════════════════════════════════════════════ */
+
+    // ── Données des updates ──────────────────────────────────────
+    // Pour ajouter une update : copier un objet et l'ajouter au tableau.
+    // linkedCards : liste des cards liées { emoji, label, category, href }
+    // href : chemin relatif vers la card (ex: "bulletin-024.html#dark-rework")
+    const UPDATES_DATA = [
+        {
+            id: 'upd-001',
+            version: 'Update 28',
+            date: 'Juillet 2026',
+            title: 'Blox Fruits Update 28',
+            desc: `La plus grande update de l'année avec le rework complet de Dark, l'arrivée de trois nouveaux fruits Celestial, Oni et Wraith, et une refonte totale de la map Third Sea.\n\nLe PvP a été entièrement rééquilibré avec de nouveaux moves et des ajustements sur les cooldowns. Les stats de plusieurs fruits du meta ont été retravaillées suite aux retours de la communauté.\n\nLa Third Sea propose désormais de nouvelles zones explorables, un boss world inédit et une série de quêtes scénarisées.`,
+            linkedCards: [
+                { emoji: '🌑', label: 'Dark Rework', category: 'Fruit', href: '#' },
+                { emoji: '⚡', label: 'Celestial Fruit', category: 'Fruit', href: '#' },
+                { emoji: '👹', label: 'Oni Fruit', category: 'Fruit', href: '#' },
+                { emoji: '🗺️', label: 'Refonte Third Sea', category: 'Map', href: '#' },
+            ]
+        }
+        // { id: 'upd-002', version: 'Update 27', date: 'Avril 2026', title: '...', desc: '...', linkedCards: [] }
+    ];
+
+    // ── State commentaires updates ───────────────────────────────
+    const _updCommentsDB   = {};
+    const _updShown        = {};
+    const _updSortMode     = {};
+    const UPD_CC_MAX       = 5;
+    let   _updModalCurrent = null;  // ID de l'update ouverte dans le modal
+
+    // ── Init : compteurs + lien Firebase ────────────────────────
+    function _initUpdates() {
+        UPDATES_DATA.forEach(upd => {
+            // Compteur commentaires en temps réel sur la card
+            if (typeof FB_DB !== 'undefined' && FB_DB) {
+                FB_DB.ref('update_comments/' + upd.id).on('value', snap => {
+                    const val = snap.val();
+                    const count = val ? (Array.isArray(val) ? val.length : Object.keys(val).length) : 0;
+                    document.querySelectorAll(`.upd-comment-count[data-upd-id="${upd.id}"]`)
+                        .forEach(el => el.textContent = count || '0');
+                });
+            }
+        });
+    }
+
+    // ── Ouvrir le modal update ───────────────────────────────────
+    function openUpdateModal(updId) {
+        const upd = UPDATES_DATA.find(u => u.id === updId);
+        if (!upd) return;
+        _updModalCurrent = updId;
+
+        // Header
+        document.getElementById('updModalVersion').textContent = upd.version;
+        document.getElementById('updModalDate').textContent    = upd.date;
+        document.getElementById('updModalTitle').textContent   = upd.title;
+        document.getElementById('updModalDesc').textContent    = upd.desc;
+
+        // Cards liées
+        const grid = document.getElementById('updModalLinkedGrid');
+        grid.innerHTML = upd.linkedCards.map(c => `
+            <a class="update-modal__linked-card" href="${c.href}" target="_blank" onclick="if(event.target.closest('a').href.endsWith('#'))event.preventDefault()">
+                <div class="update-modal__linked-img--placeholder">${c.emoji}</div>
+                <div class="update-modal__linked-info">
+                    <div class="update-modal__linked-badge">${c.category}</div>
+                    <div class="update-modal__linked-title">${c.label}</div>
+                </div>
+            </a>`).join('');
+
+        // Commentaires
+        _initUpdComments(updId);
+
+        // Ouvrir
+        const ov = document.getElementById('updateModalOverlay');
+        ov.setAttribute('aria-hidden', 'false');
+        ov.classList.add('is-open');
+        document.body.style.overflow = 'hidden';
+    }
+
+    // ── Fermer le modal update ───────────────────────────────────
+    function closeUpdateModal(e) {
+        if (e && e.target !== document.getElementById('updateModalOverlay')) return;
+        document.getElementById('updateModalOverlay').classList.remove('is-open');
+        document.getElementById('updateModalOverlay').setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+        _updModalCurrent = null;
+    }
+
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && document.getElementById('updateModalOverlay')?.classList.contains('is-open')) {
+            closeUpdateModal(null);
+        }
+    });
+
+    // ── Init commentaires pour une update ───────────────────────
+    function _initUpdComments(updId) {
+        if (!_updCommentsDB[updId]) {
+            _updCommentsDB[updId] = [];
+            _updShown[updId]     = UPD_CC_MAX;
+            _updSortMode[updId]  = 'new';
+        }
+        _updRenderCommentUI(updId);
+
+        if (typeof FB_DB !== 'undefined' && FB_DB) {
+            FB_DB.ref('update_comments/' + updId).on('value', snap => {
+                let val = snap.val();
+                if (!val) { _updCommentsDB[updId] = []; }
+                else {
+                    if (!Array.isArray(val)) val = Object.keys(val).sort((a,b)=>Number(a)-Number(b)).map(k=>val[k]);
+                    const likes = {};
+                    (_updCommentsDB[updId] || []).forEach(c => { likes[c.id] = c.likedByMe; });
+                    _updCommentsDB[updId] = val.map(c => ({ ...c, likedByMe: !!likes[c.id] }));
+                }
+                _updRenderComments(updId);
+                // Màj compteur card
+                const count = (_updCommentsDB[updId] || []).length;
+                document.querySelectorAll(`.upd-comment-count[data-upd-id="${updId}"]`)
+                    .forEach(el => el.textContent = count);
+            });
+        }
+    }
+
+    // ── Rendre le bloc commentaires complet dans le modal ────────
+    function _updRenderCommentUI(updId) {
+        const container = document.getElementById('updModalComments');
+        if (!container) return;
+        const user = window.currentUser;
+        container.innerHTML = `
+            ${!user ? `<div class="card-comments-login-banner" style="display:flex;align-items:center;gap:10px;padding:10px 0;font-size:13px;color:#888">
+                <span>Connecte-toi avec Discord pour commenter</span>
+                <button class="settings-btn settings-btn--primary" onclick="_discordLogin()" style="font-size:12px;padding:5px 12px">Connexion Discord</button>
+            </div>` : `
+            <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:14px">
+                ${avatarHTML(user, 34)}
+                <div style="flex:1;min-width:0">
+                    <textarea id="updCCInput-${updId}" class="card-comment-input" placeholder="Écris un commentaire sur cette update…"
+                        rows="1" oninput="autoResize(this)" maxlength="240" style="width:100%;box-sizing:border-box"></textarea>
+                    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:6px">
+                        <button class="card-comment-submit" onclick="_updPostComment('${updId}')">Poster</button>
+                    </div>
+                </div>
+            </div>`}
+            <div style="display:flex;gap:8px;margin-bottom:10px">
+                <button class="card-comment-sort-btn ${(_updSortMode[updId]||'new')==='top'?'active':''}" onclick="_updSetSort('${updId}','top')">⭐ Top</button>
+                <button class="card-comment-sort-btn ${(_updSortMode[updId]||'new')==='new'?'active':''}" onclick="_updSetSort('${updId}','new')">🕐 Récents</button>
+            </div>
+            <div id="updCCList-${updId}"></div>
+            <button id="updCCSeeAll-${updId}" class="card-comment-see-all" style="display:none"
+                onclick="_updShowMore('${updId}')">Voir tous les commentaires →</button>
+        `;
+        _updRenderComments(updId);
+    }
+
+    // ── Render liste commentaires ────────────────────────────────
+    function _updRenderComments(updId) {
+        const list   = document.getElementById('updCCList-' + updId);
+        const seeAll = document.getElementById('updCCSeeAll-' + updId);
+        if (!list) return;
+        const db     = _updCommentsDB[updId] || [];
+        const sort   = _updSortMode[updId] || 'new';
+        const sorted = [...db].sort((a,b) => sort === 'top'
+            ? (b.likes||0)-(a.likes||0)
+            : new Date(b.time)-new Date(a.time));
+        const shown  = sorted.slice(0, _updShown[updId] || UPD_CC_MAX);
+        if (shown.length === 0) {
+            list.innerHTML = `<div class="card-comments-empty">💬 Sois le premier à commenter cette update !</div>`;
+        } else {
+            list.innerHTML = shown.map(c => _updRenderItem(c, updId)).join('');
+        }
+        if (seeAll) seeAll.style.display = sorted.length > (_updShown[updId] || UPD_CC_MAX) ? 'block' : 'none';
+    }
+
+    function _updRenderItem(c, updId) {
+        const _isMod  = window.currentUser && MODERATORS.includes(window.currentUser.username);
+        const _canDel = window.currentUser && (_isMod || c.username === window.currentUser.username);
+        const liked   = c.likedByMe ? 'active' : '';
+        return `<div class="card-comment-item" id="upd-c-${c.id}">
+            <img src="${c.avatar||''}" class="card-comment-avatar" style="width:32px;height:32px;border-radius:50%;object-fit:cover;flex-shrink:0" onerror="this.src=''">
+            <div class="card-comment-body">
+                <div class="card-comment-meta">
+                    <span class="card-comment-user">${c.username}</span>
+                    <span class="card-comment-time">${_fmtTime(c.time)}</span>
+                </div>
+                <div class="card-comment-text">${_safeHtml(c.text)}</div>
+                <div class="card-comment-actions">
+                    <button class="card-comment-like ${liked}" onclick="_updLikeComment('${c.id}','${updId}',this)">
+                        👍 <span>${c.likes||0}</span>
+                    </button>
+                    ${_canDel ? `<button class="card-comment-delete" onclick="_updDeleteComment('${c.id}','${updId}')">🗑️</button>` : ''}
+                </div>
+            </div>
+        </div>`;
+    }
+
+    // ── Post commentaire ─────────────────────────────────────────
+    window._updPostComment = function(updId) {
+        if (!window.currentUser) return;
+        const inp = document.getElementById('updCCInput-' + updId);
+        const txt = (inp?.value || '').trim(); if (!txt) return;
+        const check = typeof _filterComment === 'function' ? _filterComment(txt) : { blocked: false };
+        if (check.blocked) { _showCommentWarning?.('Contenu inapproprié.'); return; }
+        const c = { id: uid(), username: window.currentUser.username, avatar: window.currentUser.avatar||'',
+            text: txt, time: isoNow(), likes: 0, likedByMe: false };
+        (_updCommentsDB[updId] = _updCommentsDB[updId] || []).unshift(c);
+        _updFirebaseSave(updId);
+        inp.value = ''; inp.style.height = '';
+        _updRenderComments(updId);
+    };
+
+    // ── Like commentaire ─────────────────────────────────────────
+    const _updLikeLock = new Set();
+    function _updLikeComment(cid, updId, btn) {
+        if (_updLikeLock.has(cid) || !window.currentUser) return;
+        _updLikeLock.add(cid);
+        const db = _updCommentsDB[updId] || [];
+        const c  = db.find(x => x.id === cid); if (!c) { _updLikeLock.delete(cid); return; }
+        c.likedByMe = !c.likedByMe;
+        c.likes     = Math.max(0, (c.likes||0) + (c.likedByMe ? 1 : -1));
+        _updFirebaseSave(updId);
+        _updRenderComments(updId);
+        setTimeout(() => _updLikeLock.delete(cid), 600);
+    }
+
+    // ── Delete commentaire ───────────────────────────────────────
+    function _updDeleteComment(cid, updId) {
+        if (!window.currentUser) return;
+        _updCommentsDB[updId] = (_updCommentsDB[updId]||[]).filter(c => c.id !== cid);
+        _updFirebaseSave(updId);
+        _updRenderComments(updId);
+    }
+
+    // ── Sort ─────────────────────────────────────────────────────
+    function _updSetSort(updId, mode) {
+        _updSortMode[updId] = mode;
+        _updRenderCommentUI(updId);
+    }
+
+    function _updShowMore(updId) {
+        _updShown[updId] = (_updShown[updId] || UPD_CC_MAX) + UPD_CC_MAX;
+        _updRenderComments(updId);
+    }
+
+    // ── Firebase save ────────────────────────────────────────────
+    function _updFirebaseSave(updId) {
+        const db = _updCommentsDB[updId]; if (!db) return;
+        if (typeof FB_DB === 'undefined' || !FB_DB) return;
+        FB_DB.ref('update_comments/' + updId)
+            .set(db.map(x => { const n = {...x}; delete n.likedByMe; return n; }))
+            .catch(e => console.error('[updates] save error:', e));
+    }
+
+    // ── Helpers ──────────────────────────────────────────────────
+    function _safeHtml(str) {
+        return (str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+    }
+    function _fmtTime(iso) {
+        try {
+            const d = new Date(iso), now = new Date();
+            const diff = now - d;
+            if (diff < 60000)  return 'À l\'instant';
+            if (diff < 3600000) return Math.floor(diff/60000) + ' min';
+            if (diff < 86400000) return Math.floor(diff/3600000) + 'h';
+            return d.toLocaleDateString('fr-FR', {day:'numeric',month:'short'});
+        } catch { return ''; }
+    }
+
+    // ── Lancer l'init quand Firebase est prêt ───────────────────
+    document.addEventListener('DOMContentLoaded', () => {
+        // Firebase peut prendre un instant à s'init — on attend
+        const tryInit = (tries = 0) => {
+            if (typeof FB_DB !== 'undefined' && FB_DB) { _initUpdates(); }
+            else if (tries < 20) { setTimeout(() => tryInit(tries + 1), 300); }
+        };
+        tryInit();
+    });
+    </script>
+
 </body>
 </html>
