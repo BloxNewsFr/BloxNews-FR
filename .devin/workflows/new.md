@@ -89,15 +89,35 @@ description: Create a new leak/update card with Firebase integration
 
 6. **Configurer Firebase pour les commentaires**
    - Les commentaires sont automatiquement activés via le chemin `comments` dans les données
-   - Le système utilise Firebase Realtime Database
-   - Les likes sont gérés globalement via `FB_DB.ref('post_likes')`
+   - Le système utilise Firebase Realtime Database avec la référence `FB_REF`
+   - Pour une update : le chemin est `/updates/X.X.X`
+   - Pour une news-card : le chemin est basé sur le `data-cc-id`
+   - Le système de commentaires inclut :
+     - Filtrage de mots inappropriés (liste `_BAD_WORDS`)
+     - Support des réactions (emojis)
+     - Tri des commentaires (récents, populaires)
+     - Pagination des commentaires
 
-7. **Configurer le système de vues**
+7. **Configurer le système de likes**
+   - Les likes sont gérés globalement via `FB_DB.ref('post_likes')`
+   - La clé est générée via `_plSlug()` : `category-title` en minuscules avec tirets
+   - Le système utilise :
+     - `localStorage` pour l'état "liké" par utilisateur (persistance locale)
+     - Firebase pour le compteur global (synchronisé entre tous les utilisateurs)
+     - La clé de stockage local : `blox_post_likes_v1`
+   - Le bouton like doit avoir la classe `post-like-btn` et l'attribut `data-post-id`
+   - Exemple : `<button class="post-like-btn" data-post-id="fruit-magnet">❤️ <span class="post-like-count">0</span></button>`
+
+8. **Configurer le système de vues**
    - Les vues sont comptées automatiquement quand la card est ouverte
    - Ajouter un compteur de vues dans les stats de la card
    - Le compteur est incrémenté via Firebase quand le modal est ouvert
+   - Pour implémenter le comptage des vues :
+     - Ajouter une référence Firebase pour les vues : `FB_DB.ref('post_views')`
+     - Incrémenter le compteur quand `openUpdateModal()` ou le modal de card est appelé
+     - Stocker les vues dans `stats.views` dans UPDATE_DATA ou dans Firebase
 
-8. **Tester la création**
+9. **Tester la création**
    - Ouvrir la page dans le navigateur
    - Vérifier que la card s'affiche correctement
    - Tester l'ouverture du modal
