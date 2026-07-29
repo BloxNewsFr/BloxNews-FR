@@ -4621,6 +4621,8 @@
             .msg-card__header { padding: 24px 22px 0; gap: 16px; }
             .msg-card__body { padding: 16px 22px; }
             .msg-card__footer { padding: 0 22px 20px; }
+            .update-card { padding: 20px 22px 18px; }
+            .update-card__version { font-size: 20px; }
         }
 
         /* ═══════════════════════════════════════════════════════════════
@@ -4883,6 +4885,15 @@
             .msg-card__footer { padding: 0 18px 18px; }
             .msg-card__title { font-size: 17px; }
             .msg-card__cipher { padding: 12px 14px; }
+
+            /* ── update-card mobile ── */
+            .update-card { padding: 18px 18px 16px; }
+            .update-card__version { font-size: 18px; }
+            .update-card__title { font-size: 15px; }
+            .update-card__summary { font-size: 13px; }
+            .update-card__linked { gap: 6px; }
+            .update-card__linked-badge { font-size: 10px; padding: 2px 8px; }
+            .update-card__btn { font-size: 11px; padding: 6px 14px; }
         }
 
         /* ═══════════════════════════════════════════════
@@ -5936,7 +5947,63 @@
             </div>
         </section>
 
+            <section id="cat-updates" class="category-section" style="--cat-hex: #f0c000; --cat-rgb: 240, 192, 0;">
+                <div class="category-title">🔄 MISES À JOUR</div>
+                <div class="news-grid">
+
+                    <article class="update-card" data-version="0.3.3" data-date="2026-07-28">
+                        <div class="update-card__accent"></div>
+                        <div class="update-card__body">
+                            <div class="update-card__header">
+                                <span class="update-card__version">v0.3.3</span>
+                                <span class="update-card__date">28 juil. 2026</span>
+                            </div>
+                            <h2 class="update-card__title">Nouveau système de cartes & gameplay</h2>
+                            <p class="update-card__summary">
+                                Cette mise à jour introduit le système de création de cartes, le mode sombre amélioré,
+                                et la section gameplay avec tous les leaks de mécaniques.
+                            </p>
+                            <div class="update-card__linked">
+                                <span class="update-card__linked-badge">🎮 Gameplay</span>
+                                <span class="update-card__linked-badge">🃏 Cartes</span>
+                                <span class="update-card__linked-badge">🌙 Sombre</span>
+                            </div>
+                            <div class="update-card__footer">
+                                <button class="update-card__btn" onclick="openUpdateModal('0.3.3')">Voir les détails →</button>
+                            </div>
+                        </div>
+                    </article>
+
+                </div>
+            </section>
         </div><!-- /neoTabsAndSections -->
+
+        <div id="updateModal" class="modal-overlay">
+            <div class="modal-content">
+                <div class="modal-drag-handle" aria-hidden="true"></div>
+                <div class="modal-close-btn" onclick="closeModal('updateModal')">✕</div>
+                <div id="updateModalBody" class="modal-body">
+                    <div id="updateModalLoader" class="modal-loader" style="display:flex;align-items:center;justify-content:center;padding:48px 0">Chargement...</div>
+                    <div id="updateModalInner" style="display:none">
+                        <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
+                            <span id="updModalVersion" style="font-family:'LuckiestGuy Regular',cursive;font-size:28px;color:var(--color-update,#f0c000)"></span>
+                            <span id="updModalDate" style="font-size:13px;color:rgba(255,255,255,0.4)"></span>
+                        </div>
+                        <h2 id="updModalTitle" style="font-family:'LuckiestGuy Regular',cursive;font-size:22px;color:var(--color-text);margin:0 0 14px"></h2>
+                        <div id="updModalSummary" style="font-size:15px;line-height:1.7;color:rgba(255,255,255,0.75);margin-bottom:20px"></div>
+                        <div id="updModalLinked" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px"></div>
+                        <div id="updModalComments" class="card-comments-section" style="margin-top:8px;border:1px solid rgba(255,180,0,0.12)">
+                            <div class="card-comments-toggle" onclick="document.querySelector('#updModalComments .card-comments-body').classList.toggle('is-open')">
+                                <span class="card-comments-toggle__icon">💬</span>
+                                <span class="card-comments-toggle__label">Commentaires</span>
+                                <span class="card-comments-toggle__count" id="updModalCommentCount">0</span>
+                            </div>
+                            <div class="card-comments-body" id="updModalCommentsBody"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <div id="videoModal" class="modal-overlay">
             <div class="modal-content">
@@ -6441,6 +6508,7 @@
                     <button class="dcm-filter-btn" data-filter="map" onclick="_dcmSetFilter('map')">Map <span class="dcm-filter-count" id="dcmCount-map"></span></button>
                     <button class="dcm-filter-btn" data-filter="gui" onclick="_dcmSetFilter('gui')">GUI <span class="dcm-filter-count" id="dcmCount-gui"></span></button>
                     <button class="dcm-filter-btn" data-filter="msg" onclick="_dcmSetFilter('msg')">MSG <span class="dcm-filter-count" id="dcmCount-msg"></span></button>
+                    <button class="dcm-filter-btn" data-filter="updates" onclick="_dcmSetFilter('updates')">Updates <span class="dcm-filter-count" id="dcmCount-updates"></span></button>
                     <button class="dcm-filter-btn" data-filter="groupe" onclick="_dcmSetFilter('groupe')">Groupes <span class="dcm-filter-count" id="dcmCount-groupe"></span></button>
                 </div>
             </div>
@@ -6612,7 +6680,8 @@
                 'cat-map':      '🗺️ Map & Build',
                 'cat-gui':      '💻 GUI & Systèmes',
                 'cat-messages': '✉️ Messages & Lore',
-                'cat-actus':    '📰 Actus'
+                'cat-actus':    '📰 Actus',
+                'cat-updates':  '🔄 Mises à jour'
             };
             const modal    = document.getElementById('videoModal');
             const openBtns = document.querySelectorAll('.open-modal-btn');
@@ -9987,7 +10056,8 @@
             'cat-fruit':'🍎 Fruits & Reworks','cat-vfx':'✨ VFX',
             'cat-gameplay':'🎮 Gameplay & Mécaniques',
             'cat-map':'🗺️ Map & Build','cat-gui':'💻 GUI & Systèmes',
-            'cat-messages':'✉️ Messages & Lore','cat-actus':'📰 Actus'
+            'cat-messages':'✉️ Messages & Lore','cat-actus':'📰 Actus',
+            'cat-updates':'🔄 Mises à jour'
         };
         const modal = document.getElementById('videoModal');
         const video = document.getElementById('fruitVideo');
