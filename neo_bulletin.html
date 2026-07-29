@@ -5385,6 +5385,36 @@
             .update-modal__stat { font-size: 12px; }
             .update-modal__stat-icon { font-size: 14px; }
 
+            /* ── Update Hub Mobile ── */
+            .update-hub-nav { gap: 8px; margin-bottom: 16px; }
+            .update-hub-nav-btn { padding: 10px 16px; font-size: 11px; }
+            .update-selector { gap: 8px; margin-bottom: 20px; }
+            .update-chip { padding: 8px 16px; font-size: 13px; }
+            .update-hub-tab { padding: 20px 16px; }
+            .update-hub-banner { aspect-ratio: 16/9; border-radius: 12px; margin-bottom: 16px; }
+            .update-hub-status { font-size: 10px; padding: 6px 12px; top: 10px; left: 10px; }
+            .update-hub-header { flex-direction: column; align-items: flex-start; gap: 8px; }
+            .update-hub-version { font-size: 32px; }
+            .update-hub-date { font-size: 12px; }
+            .update-hub-title { font-size: 22px; }
+            .update-hub-summary { font-size: 14px; margin-bottom: 20px; }
+            .update-hub-stats { gap: 16px; padding: 16px; flex-wrap: wrap; }
+            .update-hub-stat { gap: 8px; }
+            .update-hub-stat-icon { font-size: 18px; }
+            .update-hub-stat-value { font-size: 18px; }
+            .update-hub-stat-label { font-size: 10px; }
+            .update-hub-like-btn { padding: 12px 24px; font-size: 14px; }
+            .patch-notes-header h3 { font-size: 22px; }
+            .patch-notes-subtitle { font-size: 12px; }
+            .patch-note-section { padding: 16px; }
+            .patch-note-category { font-size: 16px; }
+            .patch-note-list li { font-size: 13px; padding: 10px 0; padding-left: 24px; }
+            .linked-cards-header h3 { font-size: 22px; }
+            .linked-cards-subtitle { font-size: 12px; }
+            .linked-cards-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+            .linked-card-item-title { font-size: 14px; }
+            .linked-card-item-type { font-size: 10px; }
+
             /* ── MODAL LIGHTBOX — bottom sheet corrigé ── */
             .modal-overlay {
                 padding: 0 !important;
@@ -8180,6 +8210,38 @@
         btn.classList.toggle('liked', isLiked);
         btn.querySelector('.update-hub-like-text').textContent = isLiked ? 'Liké' : "J'aime";
     }
+    
+    // Gestionnaire de clic pour le bouton like du Hub
+    document.addEventListener('DOMContentLoaded', () => {
+        const hubLikeBtn = document.getElementById('hubLikeBtn');
+        if (hubLikeBtn) {
+            hubLikeBtn.addEventListener('click', () => {
+                const postId = hubLikeBtn.dataset.postId;
+                if (!postId) return;
+                
+                const localLikes = _plLoadLocal();
+                const isLiked = localLikes[postId];
+                
+                // Toggle l'état local
+                localLikes[postId] = !isLiked;
+                _plSaveLocal(localLikes);
+                
+                // Mettre à jour l'UI
+                updateLikeButtonState(hubLikeBtn, postId);
+                
+                // Mettre à jour Firebase
+                if (FB_LIKES_REF) {
+                    const currentCount = _plGlobalCounts[postId] || 0;
+                    const newCount = isLiked ? currentCount - 1 : currentCount + 1;
+                    FB_LIKES_REF.child(postId).set(newCount);
+                    
+                    // Mettre à jour le compteur local
+                    _plGlobalCounts[postId] = newCount;
+                    document.getElementById('hubLikes').textContent = _formatNumber(newCount);
+                }
+            });
+        }
+    });
     
     // Initialiser le Update Hub au chargement
     document.addEventListener('DOMContentLoaded', () => {
