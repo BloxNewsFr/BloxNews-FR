@@ -10752,7 +10752,27 @@
                 return;
             }
 
+            // Créer les filtres de section
+            const sections = ['tout', 'fruits', 'vfx', 'gameplay', 'map', 'gui', 'actus', 'messages'];
+            const sectionLabels = {
+                'tout': 'Tout',
+                'fruits': 'Fruits',
+                'vfx': 'VFX',
+                'gameplay': 'Gameplay',
+                'map': 'Map',
+                'gui': 'GUI',
+                'actus': 'Actus',
+                'messages': 'Messages'
+            };
+
             selector.innerHTML = `
+                <div class="ncm-linked-cards-filters" style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
+                    ${sections.map(sec => `
+                        <button class="ncm-filter-btn ${sec === 'tout' ? 'active' : ''}" data-section="${sec}" style="padding:6px 12px;border-radius:6px;border:1px solid rgba(255,255,255,0.1);background:${sec === 'tout' ? 'rgba(255,218,0,0.2)' : 'rgba(255,255,255,0.05)'};color:#fff;font-size:12px;cursor:pointer;transition:all 0.2s;">
+                            ${sectionLabels[sec]}
+                        </button>
+                    `).join('')}
+                </div>
                 <div class="ncm-linked-cards-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;">
                     ${cards.map(card => {
                         const cardData = {
@@ -10771,7 +10791,7 @@
                             : `<div style="width:100%;height:80px;background:${cardData.catColor}20;display:flex;align-items:center;justify-content:center;border-radius:6px 6px 0 0;font-size:24px;">📄</div>`;
 
                         return `
-                            <label class="ncm-linked-card-item" style="display:block;cursor:pointer;position:relative;border-radius:8px;overflow:hidden;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);transition:all 0.2s;">
+                            <label class="ncm-linked-card-item" data-section="${cardData.section.toLowerCase()}" style="display:block;cursor:pointer;position:relative;border-radius:8px;overflow:hidden;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);transition:all 0.2s;">
                                 <input type="checkbox" class="ncm-linked-card-checkbox" data-card-data='${JSON.stringify(cardData).replace(/'/g, "&#39;")}' style="position:absolute;top:6px;right:6px;width:18px;height:18px;cursor:pointer;z-index:2;">
                                 ${img}
                                 <div style="padding:8px;">
@@ -10790,8 +10810,38 @@
                 .ncm-linked-card-item:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,218,0,0.3); transform: translateY(-2px); }
                 .ncm-linked-card-item input:checked { accent-color: #ffda00; }
                 .ncm-linked-card-item:has(input:checked) { border-color: #ffda00; background: rgba(255,218,0,0.08); }
+                .ncm-filter-btn:hover { background: rgba(255,255,255,0.1); }
+                .ncm-filter-btn.active { background: rgba(255,218,0,0.2); border-color: rgba(255,218,0,0.5); }
             `;
             selector.appendChild(style);
+
+            // Ajouter la logique de filtrage
+            const filterBtns = selector.querySelectorAll('.ncm-filter-btn');
+            const cardItems = selector.querySelectorAll('.ncm-linked-card-item');
+
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const section = btn.dataset.section;
+                    
+                    // Mettre à jour les boutons
+                    filterBtns.forEach(b => {
+                        b.classList.remove('active');
+                        b.style.background = 'rgba(255,255,255,0.05)';
+                    });
+                    btn.classList.add('active');
+                    btn.style.background = 'rgba(255,218,0,0.2)';
+
+                    // Filtrer les cards
+                    cardItems.forEach(item => {
+                        if (section === 'tout') {
+                            item.style.display = 'block';
+                        } else {
+                            const itemSection = item.dataset.section.toLowerCase();
+                            item.style.display = itemSection.includes(section) ? 'block' : 'none';
+                        }
+                    });
+                });
+            });
         });
     }
 
