@@ -6466,6 +6466,7 @@
                     <button class="dcm-filter-btn" data-filter="gui" onclick="_dcmSetFilter('gui')">GUI <span class="dcm-filter-count" id="dcmCount-gui"></span></button>
                     <button class="dcm-filter-btn" data-filter="msg" onclick="_dcmSetFilter('msg')">MSG <span class="dcm-filter-count" id="dcmCount-msg"></span></button>
                     <button class="dcm-filter-btn" data-filter="groupe" onclick="_dcmSetFilter('groupe')">Groupes <span class="dcm-filter-count" id="dcmCount-groupe"></span></button>
+                    <button class="dcm-filter-btn" data-filter="updates" onclick="_dcmSetFilter('updates')">Updates <span class="dcm-filter-count" id="dcmCount-updates"></span></button>
                 </div>
             </div>
 
@@ -9820,6 +9821,45 @@
         }
     }
 
+    // ── Rendu d'une update card ─────────────────────────────────────
+    function _renderUpdateCard(update) {
+        const grid = document.getElementById('updatesGrid');
+        if (!grid) return;
+        if (document.querySelector(`.update-card[onclick="openUpdateModal('${update.id}')"]`)) return;
+
+        const e = _ccEsc;
+        const linkedChips = update.linkedCards && update.linkedCards.length > 0
+            ? update.linkedCards.map(c => `<span class="update-card__chip">${e(c.label)}</span>`).join('')
+            : '';
+
+        const html = `<article class="update-card" onclick="openUpdateModal('${update.id}')">
+            <div class="update-card__stripe"></div>
+            <div class="update-card__body">
+                <div class="update-card__meta">
+                    <span class="update-card__version">${e(update.version)}</span>
+                    <span class="update-card__date">${e(update.date)}</span>
+                </div>
+                <h2 class="update-card__title">${e(update.title)}</h2>
+                <p class="update-card__desc">${e(update.desc)}</p>
+                <div class="update-card__linked">
+                    ${linkedChips}
+                </div>
+                <div class="update-card__footer">
+                    <span class="update-card__comments-pill">
+                        <span>💬</span>
+                        <span class="upd-comment-count" data-upd-id="${update.id}">—</span>
+                    </span>
+                    <span class="update-card__open-btn">Lire le résumé →</span>
+                </div>
+            </div>
+        </article>`;
+
+        grid.insertAdjacentHTML('beforeend', html);
+
+        // Initialiser Firebase pour les commentaires
+        _updEnsureFirebase(update.id);
+    }
+
     // ── Rendu d'une card custom (depuis Firebase) ───────────────────
     function _renderOneCard(card) {
         const section = document.getElementById(card.sectionId);
@@ -10732,15 +10772,17 @@
             { id: 'cat-map',   label: 'Map',       filter: 'map',    icon: '🗺️' },
             { id: 'cat-gui',   label: 'GUI',       filter: 'gui',    icon: '🖥️' },
             { id: 'cat-msg',   label: 'Messages',  filter: 'msg',    icon: '🔐' },
+            { id: 'cat-updates', label: 'Updates', filter: 'updates', icon: '🆙' },
         ];
-        const counts = { all: 0, actus: 0, fruit: 0, vfx: 0, gameplay: 0, map: 0, gui: 0, msg: 0, groupe: 0 };
+        const counts = { all: 0, actus: 0, fruit: 0, vfx: 0, gameplay: 0, map: 0, gui: 0, msg: 0, groupe: 0, updates: 0 };
         let html = '';
         let totalIdx = 0;
 
         sections.forEach(sec => {
             const secEl = document.getElementById(sec.id);
             if (!secEl) return;
-            const cards = [...secEl.querySelectorAll('.news-card, .group-card, .secret-bulletin, .msg-card')];
+            const isUpdatesSection = sec.filter === 'updates';
+            const cards = [...secEl.querySelectorAll('.news-card, .group-card, .secret-bulletin, .msg-card' + (isUpdatesSection ? ', .update-card' : ''))];
             if (cards.length === 0) return;
 
             html += `<div class="dcm-section-sep" data-sep-filter="${sec.filter}">${sec.icon} ${sec.label} <span style="color:rgba(255,255,255,0.35);font-weight:400">(${cards.length})</span></div>`;
@@ -10749,19 +10791,22 @@
                 const isGroup  = card.classList.contains('group-card');
                 const isActus  = card.classList.contains('secret-bulletin');
                 const isMsg    = card.classList.contains('msg-card');
-                const title    = card.querySelector('.news-card__title,.group-card__title,.msg-card__title,h2')?.textContent?.trim() || 'Sans titre';
-                const badge    = card.querySelector('.news-card__badge,.group-card__badge')?.textContent?.trim() || (isActus?'ACTUS':isMsg?'MSG':'');
+                const isUpdate = card.classList.contains('update-card');
+                const title    = card.querySelector('.news-card__title,.group-card__title,.msg-card__title,.update-card__title,h2')?.textContent?.trim() || 'Sans titre';
+                const badge    = card.querySelector('.news-card__badge,.group-card__badge')?.textContent?.trim() || (isActus?'ACTUS':isMsg?'MSG':isUpdate?'UPDATE':'');
                 const ccId     = card.dataset.ccId || null;
+                const updateId = isUpdate ? (card.getAttribute('onclick')?.match(/openUpdateModal\('([^']+)'\)/)?.[1] || null) : null;
                 const staticId = card.dataset.staticId || ('static_' + (totalIdx++));
-                const uid      = ccId || staticId;
+                const uid      = updateId || ccId || staticId;
                 const imgEl    = card.querySelector('.news-card__image,.group-card__image');
                 const imgSrc   = imgEl?.tagName === 'IMG' ? imgEl.src : '';
                 const isVideo  = imgEl?.tagName === 'VIDEO';
                 const thumb    = isActus ? `<span style="font-size:22px">📰</span>`
                     : isMsg    ? `<span style="font-size:22px">🔐</span>`
+                    : isUpdate  ? `<span style="font-size:22px">🆙</span>`
                     : imgSrc   ? `<img src="${_ccEsc(imgSrc)}" alt="">`
                     : `<span style="font-size:20px">${isGroup?'📦':isVideo?'🎬':'🖼️'}</span>`;
-                const typeLabel = isActus?' · actus':isMsg?' · message':isGroup?' · groupe':ccId?' · firebase':' · statique';
+                const typeLabel = isActus?' · actus':isMsg?' · message':isUpdate?' · update':isGroup?' · groupe':ccId?' · firebase':' · statique';
 
                 html += `<div class="dcm-item" id="dcm-item-${uid}"
                     data-section="${sec.filter}" data-title="${_ccEsc(title.toLowerCase())}"
@@ -10769,7 +10814,7 @@
                     <div class="dcm-item-thumb">${thumb}</div>
                     <div class="dcm-item-info">
                         <div class="dcm-item-top">
-                            <span class="dcm-item-badge">${_ccEsc(badge)||sec.label}</span>
+                            <span class="dcm-item-badge">${_ccEsc(badge||sec.label)}</span>
                             <span class="dcm-item-type">${typeLabel}</span>
                         </div>
                         <div class="dcm-item-title">${_ccEsc(title)}</div>
@@ -10780,10 +10825,10 @@
                     <div class="dcm-confirm-label">🔒 Mot de passe requis pour supprimer <strong style="color:#fff">"${_ccEsc(title)}"</strong></div>
                     <input class="dcm-confirm-pwd" type="password" placeholder="Entrer le mot de passe…"
                         id="dcm-pwd-${uid}"
-                        onkeydown="if(event.key==='Enter')_cmdDeleteConfirm('${uid}','${ccId||''}','${staticId}')">
+                        onkeydown="if(event.key==='Enter')_cmdDeleteConfirm('${uid}','${ccId||''}','${staticId}','${updateId||''}')">
                     <div class="dcm-confirm-actions">
                         <button class="dcm-confirm-cancel" onclick="_dcmCloseConfirm('${uid}')">Annuler</button>
-                        <button class="dcm-confirm-ok" onclick="_cmdDeleteConfirm('${uid}','${ccId||''}','${staticId}')">🗑️ Supprimer</button>
+                        <button class="dcm-confirm-ok" onclick="_cmdDeleteConfirm('${uid}','${ccId||''}','${staticId}','${updateId||''}')">🗑️ Supprimer</button>
                     </div>
                 </div>`;
 
@@ -10839,7 +10884,7 @@
     }
 
     function _dcmUpdateCounts(counts) {
-        ['all','actus','fruit','vfx','gameplay','map','gui','msg','groupe'].forEach(k => {
+        ['all','actus','fruit','vfx','gameplay','map','gui','msg','groupe','updates'].forEach(k => {
             const el = document.getElementById('dcmCount-' + k);
             if (el) el.textContent = counts[k] || 0;
         });
@@ -10887,7 +10932,7 @@
         const zone = document.getElementById('dcm-confirm-' + uid);
         if (zone) { zone.classList.remove('is-open'); const p = document.getElementById('dcm-pwd-' + uid); if(p) p.value=''; }
     }
-    function _cmdDeleteConfirm(uid, ccId, staticId) {
+    function _cmdDeleteConfirm(uid, ccId, staticId, updateId) {
         const pwd = document.getElementById('dcm-pwd-' + uid)?.value || '';
         if (pwd !== 'N30l!x€') {
             editLog('err', 'Mot de passe incorrect.');
@@ -10895,6 +10940,35 @@
             if (inp) { inp.style.borderColor='rgba(255,50,50,0.7)'; setTimeout(()=>inp.style.borderColor='',1400); }
             return;
         }
+
+        // ── GESTION SPÉCIFIQUE POUR LES UPDATES ──
+        if (updateId) {
+            // Supprimer de UPDATES_DATA
+            const idx = UPDATES_DATA.findIndex(u => u.id === updateId);
+            if (idx !== -1) {
+                UPDATES_DATA.splice(idx, 1);
+            }
+
+            // Supprimer de Firebase
+            if (typeof FB_DB !== 'undefined' && FB_DB) {
+                FB_DB.ref('updates/' + updateId).remove().catch(err => {
+                    console.error('[Firebase update delete]', err);
+                });
+                FB_DB.ref('update_comments/' + updateId).remove().catch(err => {
+                    console.error('[Firebase update comments delete]', err);
+                });
+            }
+
+            // Supprimer l'élément DOM
+            const cardEl = document.querySelector(`.update-card[onclick="openUpdateModal('${updateId}')"]`);
+            if (cardEl) cardEl.remove();
+
+            editLog('ok', 'Update supprimée.');
+            _cmdDelete();
+            return;
+        }
+
+        // ── GESTION STANDARD (actus, message, leak) ──
         if (ccId) {
             if (FB_CC_REF) {
                 FB_CC_REF.once('value', snap => {
