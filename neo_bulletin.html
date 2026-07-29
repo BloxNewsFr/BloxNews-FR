@@ -10782,12 +10782,7 @@
             document.getElementById('settingsTag').textContent = '@' + user.username;
             guestEl.classList.add('is-hidden');
             userEl.classList.remove('is-hidden');
-            // Section Avancé visible seulement si admin
-            if (SETTINGS_ADMIN_IDS.includes(user.id)) {
-                adminEl.classList.remove('is-hidden');
-            } else {
-                adminEl.classList.add('is-hidden');
-            }
+            adminEl.classList.toggle('is-hidden', !SETTINGS_ADMIN_IDS.includes(user.id));
         } else {
             guestEl.classList.remove('is-hidden');
             userEl.classList.add('is-hidden');
@@ -10875,7 +10870,7 @@
                 <div class="settings-section-label">Profil &amp; Compte</div>
 
                 <!-- État non connecté -->
-                <div class="settings-profile-guest" id="settingsGuest">
+                <div class="settings-profile-guest is-hidden" id="settingsGuest">
                     <div class="settings-profile-avatar settings-profile-avatar--empty">?</div>
                     <div class="settings-profile-info">
                         <div class="settings-profile-name">Non connecté</div>
@@ -10932,7 +10927,7 @@
                         <div class="settings-row-label">Mode suppression</div>
                         <div class="settings-row-sub">Affiche le gestionnaire de suppression des cards</div>
                     </div>
-                    <button class="settings-btn settings-btn--secondary" onclick="closeSettings(null);setTimeout(()=>document.getElementById('editModeBtn')?.click(),200)">
+                    <button class="settings-btn settings-btn--secondary" onclick="closeSettings(null);setTimeout(()=>{ if(!_editMode) toggleEditMode(); },250)">
                         Ouvrir
                     </button>
                 </div>
