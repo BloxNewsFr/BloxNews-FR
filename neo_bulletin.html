@@ -9858,6 +9858,9 @@
             ? update.linkedCards.map(c => `<span class="update-card__chip">${e(c.label)}</span>`).join('')
             : '';
 
+        // Utiliser shortDesc pour la card extérieure, avec fallback sur desc pour compatibilité
+        const displayDesc = update.shortDesc || update.desc || '';
+
         const html = `<article class="update-card" onclick="openUpdateModal('${update.id}')">
             <div class="update-card__stripe"></div>
             <div class="update-card__body">
@@ -9866,7 +9869,7 @@
                     <span class="update-card__date">${e(update.date)}</span>
                 </div>
                 <h2 class="update-card__title">${e(update.title)}</h2>
-                <p class="update-card__desc">${e(update.desc)}</p>
+                <p class="update-card__desc">${e(displayDesc)}</p>
                 <div class="update-card__linked">
                     ${linkedChips}
                 </div>
@@ -10401,7 +10404,8 @@
             const version = document.getElementById('ncmUpdateVersion')?.value?.trim() || 'Update';
             const date    = document.getElementById('ncmUpdateDate')?.value?.trim() || new Date().toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
             const title   = document.getElementById('ncmUpdateTitle')?.value?.trim() || 'Sans titre';
-            const desc    = document.getElementById('ncmUpdateDesc')?.value?.trim() || '';
+            const shortDesc = document.getElementById('ncmUpdateShortDesc')?.value?.trim() || '';
+            const fullDesc  = document.getElementById('ncmUpdateFullDesc')?.value?.trim() || '';
             const linkedRaw = document.getElementById('ncmUpdateLinked')?.value?.trim() || '';
 
             if (!title) { editLog('err', 'Le titre est requis.'); return; }
@@ -10434,7 +10438,8 @@
                 version: version,
                 date: date,
                 title: title,
-                desc: desc,
+                shortDesc: shortDesc,
+                fullDesc: fullDesc,
                 linkedCards: linkedCards,
                 createdAt: Date.now()
             };
@@ -10725,8 +10730,8 @@
         // Sync preview selon le textarea
         if (ta.id === 'ncmActusContent') {
             _ncmActusSyncPreview();
-        } else if (ta.id === 'ncmUpdateDesc') {
-            const preview = document.getElementById('ncmUpdateDescPreview');
+        } else if (ta.id === 'ncmUpdateShortDesc') {
+            const preview = document.getElementById('ncmUpdateShortDescPreview');
             if (preview) preview.textContent = ta.value || '';
         }
     }
@@ -10756,14 +10761,14 @@
 
     document.addEventListener('click', function(e) {
         const swatch = document.getElementById('ncmHlSwatch');
-        const swatchUpdate = document.getElementById('ncmHlSwatchUpdate');
+        const swatchFull = document.getElementById('ncmHlSwatchFull');
         const input = document.getElementById('ncmHlColorInput');
-        const inputUpdate = document.getElementById('ncmHlColorInputUpdate');
+        const inputFull = document.getElementById('ncmHlColorInputFull');
         if (swatch && input && swatch.contains(e.target)) {
             input.click();
         }
-        if (swatchUpdate && inputUpdate && swatchUpdate.contains(e.target)) {
-            inputUpdate.click();
+        if (swatchFull && inputFull && swatchFull.contains(e.target)) {
+            inputFull.click();
         }
     });
 
@@ -10777,13 +10782,13 @@
                 _ncmFormatText('highlight', 'ncmActusContent');
             }
         }
-        if (e.target.id === 'ncmHlColorInputUpdate') {
+        if (e.target.id === 'ncmHlColorInputFull') {
             _ncmHlColor = e.target.value;
-            const swatch = document.getElementById('ncmHlSwatchUpdate');
+            const swatch = document.getElementById('ncmHlSwatchFull');
             if (swatch) swatch.style.background = _ncmHlColor;
             if (_ncmHlPending) {
                 _ncmHlPending = false;
-                _ncmFormatText('highlight', 'ncmUpdateDesc');
+                _ncmFormatText('highlight', 'ncmUpdateFullDesc');
             }
         }
     });
@@ -10791,17 +10796,17 @@
     document.addEventListener('keydown', function(e) {
         if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'e') {
             const taActus = document.getElementById('ncmActusContent');
-            const taUpdate = document.getElementById('ncmUpdateDesc');
+            const taFull = document.getElementById('ncmUpdateFullDesc');
             let activeTa = null;
             if (taActus && document.activeElement === taActus) {
                 activeTa = 'ncmActusContent';
-            } else if (taUpdate && document.activeElement === taUpdate) {
-                activeTa = 'ncmUpdateDesc';
+            } else if (taFull && document.activeElement === taFull) {
+                activeTa = 'ncmUpdateFullDesc';
             }
             if (activeTa) {
                 e.preventDefault();
                 _ncmHlPending = true;
-                const inputId = activeTa === 'ncmActusContent' ? 'ncmHlColorInput' : 'ncmHlColorInputUpdate';
+                const inputId = activeTa === 'ncmActusContent' ? 'ncmHlColorInput' : 'ncmHlColorInputFull';
                 document.getElementById(inputId)?.click();
             }
         }
