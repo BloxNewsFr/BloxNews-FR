@@ -5981,7 +5981,7 @@
         <div id="updateModal" class="modal-overlay">
             <div class="modal-content">
                 <div class="modal-drag-handle" aria-hidden="true"></div>
-                <div class="modal-close-btn" onclick="closeModal('updateModal')">✕</div>
+                <div class="modal-close-btn" onclick="this.closest('.modal-overlay').classList.remove('is-open');this.closest('.modal-overlay').querySelector('.modal-content').classList.remove('is-open');document.body.style.overflow=''">✕</div>
                 <div id="updateModalBody" class="modal-body">
                     <div id="updateModalLoader" class="modal-loader" style="display:flex;align-items:center;justify-content:center;padding:48px 0">Chargement...</div>
                     <div id="updateModalInner" style="display:none">
@@ -6768,6 +6768,31 @@
                     if (e.key === 'Escape' && modal.classList.contains('is-active')) closeModalFn();
                 });
             }
+
+            // ── Update modal overlay/escape close ──
+            const updModal = document.getElementById('updateModal');
+            if (updModal) {
+                updModal.addEventListener('click', (e) => {
+                    if (e.target === updModal) {
+                        updModal.classList.remove('is-open');
+                        updModal.querySelector('.modal-content')?.classList.remove('is-open');
+                        document.body.style.overflow = '';
+                    }
+                });
+            }
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    const openModals = ['updateModal','videoModal','deleteCardModal','deleteModal'];
+                    openModals.forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el && el.classList.contains('is-open')) {
+                            el.classList.remove('is-open');
+                            el.querySelector('.modal-content')?.classList.remove('is-open');
+                            document.body.style.overflow = '';
+                        }
+                    });
+                }
+            });
         });
     </script>
 
@@ -7117,7 +7142,6 @@
         const data = UPDATE_DATA[versionKey];
         if (!data) return;
 
-        closeModal('videoModal');
         document.getElementById('updateModalLoader').style.display = 'none';
         document.getElementById('updateModalInner').style.display = '';
 
