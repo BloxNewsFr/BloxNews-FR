@@ -5450,34 +5450,19 @@
             .update-modal__stat-icon { font-size: 14px; }
 
             /* ── Update Hub Mobile ── */
-            .update-hub-nav { gap: 6px; margin-bottom: 24px; }
-            .update-hub-nav-btn { padding: 8px 16px; font-size: 12px; }
-            .update-selector { gap: 6px; margin-bottom: 32px; }
-            .update-chip { padding: 6px 14px; font-size: 12px; }
-            .update-hub-tab { padding: 24px 16px; }
-            .update-hub-banner { aspect-ratio: 16/9; border-radius: 6px; margin-bottom: 24px; }
-            .update-hub-status { font-size: 10px; padding: 5px 12px; top: 12px; left: 12px; }
-            .update-hub-header { flex-direction: column; align-items: flex-start; gap: 8px; }
-            .update-hub-version { font-size: 12px; }
-            .update-hub-date { font-size: 12px; }
-            .update-hub-title { font-size: 28px; }
-            .update-hub-summary { font-size: 14px; margin-bottom: 24px; }
-            .update-hub-stats { gap: 20px; padding: 16px; flex-wrap: wrap; }
-            .update-hub-stat { gap: 8px; }
-            .update-hub-stat-icon { font-size: 16px; }
-            .update-hub-stat-value { font-size: 18px; }
-            .update-hub-stat-label { font-size: 10px; }
-            .update-hub-like-btn { padding: 10px 20px; font-size: 13px; }
-            .patch-notes-header h3 { font-size: 20px; }
-            .patch-notes-subtitle { font-size: 12px; }
-            .patch-note-section { padding: 16px; }
-            .patch-note-category { font-size: 13px; }
-            .patch-note-list li { font-size: 13px; padding: 8px 0; padding-left: 20px; }
-            .linked-cards-header h3 { font-size: 20px; }
-            .linked-cards-subtitle { font-size: 12px; }
-            .linked-cards-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-            .linked-card-item-title { font-size: 13px; }
-            .linked-card-item-type { font-size: 10px; }
+            .update-hub-nav { gap: 16px; margin-bottom: 24px; }
+            .update-hub-nav-btn { font-size: 13px; }
+            .update-selector { gap: 8px; margin-bottom: 32px; }
+            .update-chip { padding: 8px 16px; font-size: 12px; }
+            .update-hero { padding: 48px 0 40px; }
+            .update-hero-title { font-size: 32px; }
+            .update-hero-desc { font-size: 15px; }
+            .update-overview-grid { grid-template-columns: 1fr; gap: 32px; }
+            .update-features-grid { grid-template-columns: 1fr; }
+            .hub-card { flex: 0 0 220px; }
+            .update-community-box { padding: 20px; }
+            .update-comment-input { flex-direction: column; }
+            .update-input { margin-bottom: 12px; }
 
             /* ── MODAL LIGHTBOX — bottom sheet corrigé ── */
             .modal-overlay {
@@ -8190,7 +8175,8 @@
                 
                 // Activer le bouton et l'onglet cible
                 btn.classList.add('active');
-                document.getElementById(`tab-${targetTab}`).classList.add('active');
+                const tabElement = document.getElementById(`tab-${targetTab}`);
+                if (tabElement) tabElement.classList.add('active');
             });
         });
         
