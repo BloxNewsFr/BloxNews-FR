@@ -799,7 +799,7 @@
             </ul>
         </nav>
         <div class="site-header__icons">
-            <span class="material-symbols-outlined" id="searchTrigger">search</span>
+            <span class="material-symbols-outlined" onclick="openSearch()">search</span>
                         <!-- Auth Discord -->
             <div class="discord-skeleton" id="discordSkeleton"></div>
             <button class="discord-login-btn" id="discordLoginBtn" onclick="_discordLogin()" style="display:none">
@@ -984,6 +984,20 @@
     </div>
 
     <script>
+        function openSearch() {
+            var el = document.getElementById('searchOverlay');
+            if (el) el.classList.add('is-active');
+            var inp = document.getElementById('searchInput');
+            if (inp) { inp.value = ''; setTimeout(function() { inp.focus(); }, 200); }
+            var st = document.getElementById('searchStats');
+            if (st) st.textContent = '';
+        }
+        function closeSearch(keepHl) {
+            var el = document.getElementById('searchOverlay');
+            if (el) el.classList.remove('is-active');
+        }
+    </script>
+    <script>
         const DISCORD_CLIENT_ID   = '1517793695573999646';
         const DISCORD_REDIRECT_URI = window.location.href.split('#')[0].split('?')[0];
         const DISCORD_SCOPE        = 'identify';
@@ -1127,9 +1141,6 @@
         menuBtn.setAttribute('aria-expanded', 'false');
         document.body.style.overflow = '';
     }
-
-    const searchTrigger = document.getElementById('searchTrigger');
-    if (searchTrigger) searchTrigger.addEventListener('click', openSearch);
 
     if (menuBtn && mobileNav) {
         menuBtn.addEventListener('click', () => {
