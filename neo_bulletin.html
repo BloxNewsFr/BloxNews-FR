@@ -5181,6 +5181,7 @@
             <button class="leaks-tab active" data-target="cat-actus" style="--cat-hex: #cc0000; --cat-rgb: 204, 0, 0;">Actus</button>
             <button class="leaks-tab" data-target="cat-fruit" style="--cat-hex: #ff0055; --cat-rgb: 255, 0, 85;">Fruits</button>
             <button class="leaks-tab" data-target="cat-vfx" style="--cat-hex: #a200ff; --cat-rgb: 162, 0, 255;">VFX</button>
+            <button class="leaks-tab" data-target="cat-gameplay" style="--cat-hex: #ff6600; --cat-rgb: 255, 102, 0;">Gameplay</button>
             <button class="leaks-tab" data-target="cat-map" style="--cat-hex: #00d238; --cat-rgb: 0, 210, 56;">Map</button>
             <button class="leaks-tab" data-target="cat-gui" style="--cat-hex: #0088ff; --cat-rgb: 0, 136, 255;">GUI</button>
             <button class="leaks-tab" data-target="cat-messages" style="--cat-hex: #ff8800; --cat-rgb: 255, 136, 0;">Messages</button>
@@ -5208,6 +5209,7 @@
             <button class="leaks-tab active" data-target="cat-actus" style="--cat-hex: #cc0000; --cat-rgb: 204, 0, 0;">ACTUS</button>
             <button class="leaks-tab" data-target="cat-fruit" style="--cat-hex: #ff0055; --cat-rgb: 255, 0, 85;">FRUITS</button>
             <button class="leaks-tab" data-target="cat-vfx" style="--cat-hex: #a200ff; --cat-rgb: 162, 0, 255;">VFX</button>
+            <button class="leaks-tab" data-target="cat-gameplay" style="--cat-hex: #ff6600; --cat-rgb: 255, 102, 0;">GAMEPLAY</button>
             <button class="leaks-tab" data-target="cat-map" style="--cat-hex: #00d238; --cat-rgb: 0, 210, 56;">MAP</button>
             <button class="leaks-tab" data-target="cat-gui" style="--cat-hex: #0088ff; --cat-rgb: 0, 136, 255;">GUI</button>
             <button class="leaks-tab" data-target="cat-messages" style="--cat-hex: #ff8800; --cat-rgb: 255, 136, 0;">MESSAGES</button>
@@ -5394,6 +5396,13 @@
                     </div>
                 <div class="news-card__bar"></div>
                 </article>
+            </div>
+        </section>
+
+        <!--🎮 GAMEPLAY & MÉCANIQUES-->
+        <section id="cat-gameplay" class="category-section" style="--cat-hex: #ff6600; --cat-rgb: 255, 102, 0;">
+            <div class="category-title">🎮 GAMEPLAY & MÉCANIQUES</div>
+            <div class="news-grid">
 
                 <article class="group-card" style="--cat-hex:#ff6600;--cat-rgb:255,102,0"
                     onclick="openGroupDrawer('gameplay')" data-date="2026-07-27">
@@ -5410,6 +5419,7 @@
                     </div>
                     <div class="group-card__bar"></div>
                 </article>
+
             </div>
         </section>
 
@@ -6118,6 +6128,7 @@
                     <button class="dcm-filter-btn" data-filter="actus" onclick="_dcmSetFilter('actus')">Actus <span class="dcm-filter-count" id="dcmCount-actus"></span></button>
                     <button class="dcm-filter-btn" data-filter="fruit" onclick="_dcmSetFilter('fruit')">Fruits <span class="dcm-filter-count" id="dcmCount-fruit"></span></button>
                     <button class="dcm-filter-btn" data-filter="vfx" onclick="_dcmSetFilter('vfx')">VFX <span class="dcm-filter-count" id="dcmCount-vfx"></span></button>
+                    <button class="dcm-filter-btn" data-filter="gameplay" onclick="_dcmSetFilter('gameplay')">Gameplay <span class="dcm-filter-count" id="dcmCount-gameplay"></span></button>
                     <button class="dcm-filter-btn" data-filter="map" onclick="_dcmSetFilter('map')">Map <span class="dcm-filter-count" id="dcmCount-map"></span></button>
                     <button class="dcm-filter-btn" data-filter="gui" onclick="_dcmSetFilter('gui')">GUI <span class="dcm-filter-count" id="dcmCount-gui"></span></button>
                     <button class="dcm-filter-btn" data-filter="msg" onclick="_dcmSetFilter('msg')">MSG <span class="dcm-filter-count" id="dcmCount-msg"></span></button>
@@ -6288,6 +6299,7 @@
             const SECTION_LABELS = {
                 'cat-fruit':    '🍎 Fruits & Reworks',
                 'cat-vfx':      '✨ VFX',
+                'cat-gameplay': '🎮 Gameplay & Mécaniques',
                 'cat-map':      '🗺️ Map & Build',
                 'cat-gui':      '💻 GUI & Systèmes',
                 'cat-messages': '✉️ Messages & Lore',
@@ -9664,6 +9676,7 @@
         const section = btn.closest('[id^="cat-"]');
         const SECTION_LABELS = {
             'cat-fruit':'🍎 Fruits & Reworks','cat-vfx':'✨ VFX',
+            'cat-gameplay':'🎮 Gameplay & Mécaniques',
             'cat-map':'🗺️ Map & Build','cat-gui':'💻 GUI & Systèmes',
             'cat-messages':'✉️ Messages & Lore','cat-actus':'📰 Actus'
         };
@@ -10269,11 +10282,12 @@
             { id: 'cat-actus',  label: 'Actus',   filter: 'actus',  icon: '📰' },
             { id: 'cat-fruit',  label: 'Fruits & Reworks', filter: 'fruit', icon: '🍎' },
             { id: 'cat-vfx',   label: 'VFX',      filter: 'vfx',    icon: '✨' },
+            { id: 'cat-gameplay', label: 'Gameplay', filter: 'gameplay', icon: '🎮' },
             { id: 'cat-map',   label: 'Map',       filter: 'map',    icon: '🗺️' },
             { id: 'cat-gui',   label: 'GUI',       filter: 'gui',    icon: '🖥️' },
             { id: 'cat-msg',   label: 'Messages',  filter: 'msg',    icon: '🔐' },
         ];
-        const counts = { all: 0, actus: 0, fruit: 0, vfx: 0, map: 0, gui: 0, msg: 0, groupe: 0 };
+        const counts = { all: 0, actus: 0, fruit: 0, vfx: 0, gameplay: 0, map: 0, gui: 0, msg: 0, groupe: 0 };
         let html = '';
         let totalIdx = 0;
 
@@ -10379,7 +10393,7 @@
     }
 
     function _dcmUpdateCounts(counts) {
-        ['all','actus','fruit','vfx','map','gui','msg','groupe'].forEach(k => {
+        ['all','actus','fruit','vfx','gameplay','map','gui','msg','groupe'].forEach(k => {
             const el = document.getElementById('dcmCount-' + k);
             if (el) el.textContent = counts[k] || 0;
         });
