@@ -1169,6 +1169,413 @@
         }
 
         /* ══════════════════════════════════════════════
+           UPDATE HUB — Système immersif
+        ══════════════════════════════════════════════ */
+        
+        /* Navigation */
+        .update-hub-nav {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+        
+        .update-hub-nav-btn {
+            padding: 12px 24px;
+            border-radius: 100px;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid rgba(255,218,0,0.2);
+            background: rgba(255,218,0,0.05);
+            color: rgba(255,255,255,0.6);
+            font-family: 'Inter', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+        
+        .update-hub-nav-btn:hover {
+            background: rgba(255,218,0,0.15);
+            border-color: rgba(255,218,0,0.4);
+            color: #ffda00;
+            transform: translateY(-2px);
+        }
+        
+        .update-hub-nav-btn.active {
+            background: linear-gradient(135deg, #ffda00, #ff9900);
+            border-color: #ffda00;
+            color: #000;
+            box-shadow: 0 4px 20px rgba(255,218,0,0.4);
+        }
+        
+        /* Update Selector */
+        .update-selector {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 32px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255,218,0,0.3) transparent;
+        }
+        
+        .update-selector::-webkit-scrollbar {
+            height: 6px;
+        }
+        
+        .update-selector::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.05);
+            border-radius: 3px;
+        }
+        
+        .update-selector::-webkit-scrollbar-thumb {
+            background: rgba(255,218,0,0.3);
+            border-radius: 3px;
+        }
+        
+        .update-chip {
+            flex-shrink: 0;
+            padding: 10px 20px;
+            border-radius: 100px;
+            background: rgba(255,255,255,0.05);
+            border: 2px solid rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.6);
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .update-chip:hover {
+            background: rgba(255,218,0,0.1);
+            border-color: rgba(255,218,0,0.3);
+            color: #ffda00;
+        }
+        
+        .update-chip.active {
+            background: linear-gradient(135deg, rgba(255,218,0,0.2), rgba(255,153,0,0.1));
+            border-color: #ffda00;
+            color: #ffda00;
+            box-shadow: 0 0 20px rgba(255,218,0,0.2);
+        }
+        
+        /* Hub Content */
+        .update-hub-content {
+            background: rgba(255,255,255,0.02);
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.08);
+            overflow: hidden;
+        }
+        
+        .update-hub-tab {
+            display: none;
+            padding: 32px;
+            animation: fadeIn 0.4s ease;
+        }
+        
+        .update-hub-tab.active {
+            display: block;
+        }
+        
+        /* Overview Tab */
+        .update-hub-banner {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 21/9;
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, #1a1a3e, #0d0d18);
+            border: 2px solid rgba(255,218,0,0.2);
+        }
+        
+        .update-hub-banner img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .update-hub-banner::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.8) 100%);
+        }
+        
+        .update-hub-status {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            padding: 8px 20px;
+            border-radius: 100px;
+            font-family: 'LuckiestGuy Regular', cursive;
+            font-size: 13px;
+            font-weight: 900;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            border: 2px solid rgba(255,255,255,0.6);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            z-index: 2;
+        }
+        
+        .update-hub-status--official {
+            background: linear-gradient(135deg, #ffda00, #ff9900);
+            color: #000;
+        }
+        
+        .update-hub-status--leak {
+            background: linear-gradient(135deg, #ff3366, #cc0044);
+            color: #fff;
+        }
+        
+        .update-hub-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        
+        .update-hub-version {
+            font-family: 'LuckiestGuy Regular', cursive;
+            font-size: 42px;
+            color: #ffda00;
+            text-shadow: 0 0 30px rgba(255,218,0,0.4);
+            line-height: 1;
+        }
+        
+        .update-hub-date {
+            font-size: 14px;
+            color: rgba(255,255,255,0.4);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .update-hub-title {
+            font-family: 'LuckiestGuy Regular', cursive;
+            font-size: 32px;
+            color: #fff;
+            margin-bottom: 16px;
+            letter-spacing: 1px;
+            line-height: 1.2;
+        }
+        
+        .update-hub-summary {
+            font-size: 16px;
+            color: rgba(255,255,255,0.6);
+            line-height: 1.7;
+            margin-bottom: 32px;
+            max-width: 800px;
+        }
+        
+        .update-hub-stats {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 24px;
+            padding: 20px 24px;
+            background: rgba(255,218,0,0.08);
+            border-radius: 16px;
+            border: 1px solid rgba(255,218,0,0.15);
+        }
+        
+        .update-hub-stat {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .update-hub-stat-icon {
+            font-size: 24px;
+        }
+        
+        .update-hub-stat-value {
+            font-size: 24px;
+            font-weight: 800;
+            color: #ffda00;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .update-hub-stat-label {
+            font-size: 12px;
+            color: rgba(255,255,255,0.4);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+        
+        .update-hub-like-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 32px;
+            border-radius: 100px;
+            background: linear-gradient(135deg, rgba(255,218,0,0.15), rgba(255,180,0,0.08));
+            border: 2px solid rgba(255,218,0,0.3);
+            color: #ffda00;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .update-hub-like-btn:hover {
+            background: linear-gradient(135deg, rgba(255,218,0,0.25), rgba(255,180,0,0.15));
+            border-color: rgba(255,218,0,0.5);
+            transform: scale(1.05);
+            box-shadow: 0 4px 20px rgba(255,218,0,0.3);
+        }
+        
+        .update-hub-like-btn.liked {
+            background: linear-gradient(135deg, #ff3366, #cc0044);
+            border-color: #ff3366;
+            color: #fff;
+        }
+        
+        .update-hub-like-icon {
+            font-size: 20px;
+        }
+        
+        /* Patch Notes Tab */
+        .patch-notes-header {
+            margin-bottom: 32px;
+        }
+        
+        .patch-notes-header h3 {
+            font-family: 'LuckiestGuy Regular', cursive;
+            font-size: 28px;
+            color: #ffda00;
+            margin-bottom: 8px;
+        }
+        
+        .patch-notes-subtitle {
+            font-size: 14px;
+            color: rgba(255,255,255,0.4);
+        }
+        
+        .patch-notes-content {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+        
+        .patch-note-section {
+            background: rgba(255,255,255,0.03);
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        
+        .patch-note-category {
+            font-family: 'LuckiestGuy Regular', cursive;
+            font-size: 20px;
+            color: #ffda00;
+            margin-bottom: 16px;
+        }
+        
+        .patch-note-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .patch-note-list li {
+            padding: 12px 0;
+            padding-left: 28px;
+            position: relative;
+            color: rgba(255,255,255,0.7);
+            font-size: 15px;
+            line-height: 1.6;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .patch-note-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .patch-note-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #ffda00;
+            font-weight: bold;
+        }
+        
+        /* Linked Cards Tab */
+        .linked-cards-header {
+            margin-bottom: 32px;
+        }
+        
+        .linked-cards-header h3 {
+            font-family: 'LuckiestGuy Regular', cursive;
+            font-size: 28px;
+            color: #ffda00;
+            margin-bottom: 8px;
+        }
+        
+        .linked-cards-subtitle {
+            font-size: 14px;
+            color: rgba(255,255,255,0.4);
+        }
+        
+        .linked-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .linked-card-item {
+            background: rgba(255,255,255,0.03);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 2px solid rgba(255,218,0,0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .linked-card-item:hover {
+            border-color: rgba(255,218,0,0.5);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(255,218,0,0.2);
+        }
+        
+        .linked-card-item img {
+            width: 100%;
+            aspect-ratio: 16/10;
+            object-fit: cover;
+        }
+        
+        .linked-card-item-content {
+            padding: 16px;
+        }
+        
+        .linked-card-item-title {
+            font-family: 'LuckiestGuy Regular', cursive;
+            font-size: 16px;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+        
+        .linked-card-item-type {
+            font-size: 12px;
+            color: rgba(255,255,255,0.4);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        /* Comments Section */
+        .update-hub-comments {
+            margin-top: 32px;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ══════════════════════════════════════════════
            CARTE MESSAGE — style enquête / dossier
         ══════════════════════════════════════════════ */
         .msg-card {
