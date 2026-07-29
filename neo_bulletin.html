@@ -5202,62 +5202,6 @@
         .update-modal__comments { border-top: 1px solid rgba(0,0,0,0.06); padding-top: 20px; }
         html[data-theme="dark"] .update-modal__comments { border-top-color: rgba(255,255,255,0.06); }
 
-        /* ── Gestionnaire updates dans settings ── */
-        .settings-upd-manager { margin-top: 16px; border-top: 1px solid rgba(0,0,0,0.06); padding-top: 14px; }
-        html[data-theme="dark"] .settings-upd-manager { border-top-color: rgba(255,255,255,0.06); }
-        .settings-upd-manager__title { font-size: 12px; font-weight: 700; color: #888; margin-bottom: 10px; font-family:'Inter',sans-serif; }
-        html[data-theme="dark"] .settings-upd-manager__title { color: #555; }
-
-        .settings-upd-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
-        .settings-upd-item {
-            display: flex; align-items: center; gap: 10px;
-            background: rgba(0,0,0,0.03); border-radius: 10px; padding: 8px 12px;
-            font-family: 'Inter', sans-serif;
-        }
-        html[data-theme="dark"] .settings-upd-item { background: rgba(255,255,255,0.04); }
-        .settings-upd-item__version { font-size: 10px; font-weight: 800; background: linear-gradient(135deg,#ffda00,#ff9900); color:#000; padding:2px 8px; border-radius:20px; white-space:nowrap; }
-        .settings-upd-item__title { flex:1; font-size:13px; font-weight:600; color:var(--color-text); min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-        .settings-upd-item__del {
-            background: rgba(220,38,38,0.1); border: none; border-radius: 8px;
-            color: #dc2626; font-size: 13px; cursor: pointer; padding: 4px 8px;
-            flex-shrink: 0; transition: background .15s;
-        }
-        .settings-upd-item__del:hover { background: rgba(220,38,38,0.2); }
-
-        .settings-upd-form-wrap { margin-top: 4px; }
-        .settings-upd-form-wrap summary {
-            list-style: none; cursor: pointer; font-size: 13px; font-weight: 700;
-            color: #175ec2; font-family: 'Inter', sans-serif; padding: 6px 0;
-            user-select: none;
-        }
-        html[data-theme="dark"] .settings-upd-form-wrap summary { color: #7fa8e8; }
-        .settings-upd-form-wrap summary::-webkit-details-marker { display: none; }
-
-        .settings-upd-form { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
-        .settings-upd-input {
-            width: 100%; box-sizing: border-box; padding: 8px 12px; border-radius: 10px;
-            border: 1.5px solid rgba(0,0,0,0.1); background: rgba(0,0,0,0.03);
-            font-size: 13px; font-family: 'Inter', sans-serif; color: var(--color-text);
-            outline: none; transition: border-color .15s;
-        }
-        .settings-upd-input:focus { border-color: #175ec2; }
-        html[data-theme="dark"] .settings-upd-input { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); }
-        .settings-upd-textarea { resize: vertical; min-height: 80px; }
-
-        .settings-upd-linked-label { font-size: 11px; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px; }
-        .settings-upd-linked-row { display: flex; gap: 6px; align-items: flex-start; margin-bottom: 6px; }
-        .settings-upd-linked-row input { flex:1; min-width:0; }
-        .settings-upd-linked-del { background:rgba(220,38,38,0.1); border:none; border-radius:8px; color:#dc2626; font-size:14px; cursor:pointer; padding:6px 9px; flex-shrink:0; }
-        .settings-upd-linked-add { background: none; border: 1.5px dashed rgba(0,0,0,0.15); border-radius: 10px; color: #888; font-size: 12px; font-weight: 600; cursor: pointer; padding: 6px 12px; width: 100%; font-family: 'Inter', sans-serif; transition: border-color .15s; }
-        html[data-theme="dark"] .settings-upd-linked-add { border-color: rgba(255,255,255,0.1); }
-        .settings-upd-linked-add:hover { border-color: #175ec2; color: #175ec2; }
-
-        .settings-upd-form-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 4px; }
-        .settings-upd-form-cancel { background: rgba(0,0,0,0.05); border: none; border-radius: 10px; padding: 7px 14px; font-size: 13px; font-weight: 600; cursor: pointer; color: #666; font-family: 'Inter', sans-serif; }
-        html[data-theme="dark"] .settings-upd-form-cancel { background: rgba(255,255,255,0.07); color: #aaa; }
-        .settings-upd-form-submit { background: linear-gradient(135deg,#ffda00,#ff9900); border: none; border-radius: 10px; padding: 7px 16px; font-size: 13px; font-weight: 800; cursor: pointer; color: #000; font-family: 'Inter', sans-serif; }
-        .settings-upd-form-error { font-size: 12px; color: #dc2626; padding: 4px 0; }
-
         /* ── Petits mobiles (<480px) ── */
         @media (max-width: 480px) {
             .site-header { padding: 8px 12px; height: 52px; }
@@ -5508,10 +5452,33 @@
                 <section id="cat-updates" class="category-section">
                     <div class="category-title">🆙 UPDATES BLOX FRUITS</div>
                     <div class="updates-grid" id="updatesGrid">
-                        <div class="updates-empty" id="updatesEmpty" style="display:none">
-                            <div style="font-size:40px;margin-bottom:12px">📋</div>
-                            <div style="font-size:14px;color:#888;font-family:'Inter',sans-serif">Aucune update publiée pour le moment.</div>
-                        </div>
+
+                        <!-- UPDATE CARD #1 — exemple -->
+                        <article class="update-card" onclick="openUpdateModal('upd-001')">
+                            <div class="update-card__stripe"></div>
+                            <div class="update-card__body">
+                                <div class="update-card__meta">
+                                    <span class="update-card__version">Update 28</span>
+                                    <span class="update-card__date">Juillet 2026</span>
+                                </div>
+                                <h2 class="update-card__title">Blox Fruits Update 28</h2>
+                                <p class="update-card__desc">La plus grande update de l'année avec le rework complet de Dark, l'arrivée de trois nouveaux fruits et une refonte totale de la map Third Sea.</p>
+                                <div class="update-card__linked">
+                                    <span class="update-card__chip">Dark Rework</span>
+                                    <span class="update-card__chip">Celestial Fruit</span>
+                                    <span class="update-card__chip">Oni Fruit</span>
+                                    <span class="update-card__chip">Map Third Sea</span>
+                                </div>
+                                <div class="update-card__footer">
+                                    <span class="update-card__comments-pill">
+                                        <span>💬</span>
+                                        <span class="upd-comment-count" data-upd-id="upd-001">—</span>
+                                    </span>
+                                    <span class="update-card__open-btn">Lire le résumé →</span>
+                                </div>
+                            </div>
+                        </article>
+
                     </div>
                 </section>
 
@@ -9597,7 +9564,6 @@
     const CC_KEY = 'blox_custom_cards_v1';
     const FB_CC_REF      = typeof FB_DB !== 'undefined' ? FB_DB.ref('custom_cards')      : null;
     const FB_DELETED_REF = typeof FB_DB !== 'undefined' ? FB_DB.ref('deleted_static_ids') : null;
-    const FB_UPDATES_REF = typeof FB_DB !== 'undefined' ? FB_DB.ref('blox_updates')       : null;
 
     // ── IDs statiques ──────────────────────────────────────────────
     // On assigne un data-static-id à chaque card statique au chargement
@@ -11367,35 +11333,6 @@
                         <span class="settings-toggle-knob"></span>
                     </button>
                 </div>
-
-                <!-- ── Gestionnaire Updates ── -->
-                <div class="settings-upd-manager">
-                    <div class="settings-upd-manager__title">🆙 Gérer les Updates</div>
-
-                    <!-- Liste des updates existantes -->
-                    <div id="settingsUpdList" class="settings-upd-list"></div>
-
-                    <!-- Formulaire de création -->
-                    <details class="settings-upd-form-wrap" id="settingsUpdFormWrap">
-                        <summary class="settings-upd-add-btn">＋ Nouvelle update</summary>
-                        <div class="settings-upd-form" id="settingsUpdForm">
-                            <input class="settings-upd-input" id="updFormVersion" placeholder="Version (ex : Update 28)" maxlength="40">
-                            <input class="settings-upd-input" id="updFormDate" placeholder="Date (ex : Juillet 2026)" maxlength="40">
-                            <input class="settings-upd-input" id="updFormTitle" placeholder="Titre de l'update" maxlength="80">
-                            <textarea class="settings-upd-input settings-upd-textarea" id="updFormDesc" placeholder="Résumé (multiligne possible…)" rows="4" maxlength="1200"></textarea>
-
-                            <div class="settings-upd-linked-label">Cards liées <span style="font-weight:400;color:#888">(optionnel)</span></div>
-                            <div id="updFormLinkedList"></div>
-                            <button class="settings-upd-linked-add" onclick="_updFormAddLinked()">＋ Ajouter une card liée</button>
-
-                            <div class="settings-upd-form-actions">
-                                <button class="settings-upd-form-cancel" onclick="document.getElementById('settingsUpdFormWrap').removeAttribute('open');_updFormReset()">Annuler</button>
-                                <button class="settings-upd-form-submit" onclick="_updFormSubmit()">Publier l'update</button>
-                            </div>
-                            <div class="settings-upd-form-error" id="updFormError" style="display:none"></div>
-                        </div>
-                    </details>
-                </div>
             </div>
 
             <div class="settings-footer">BloxNews-FR • v2026</div>
@@ -11446,8 +11383,49 @@
        pin, emoji picker, relativeTime, avatarHTML…)
     ════════════════════════════════════════════════════════════════ */
 
-    // ── Store des updates (chargé depuis Firebase) ───────────────
-    let UPDATES_DATA = [];  // rempli dynamiquement par Firebase
+    // ── Données des updates ──────────────────────────────────────
+    // linkedCards : données de la vraie card à ouvrir dans le modal existant
+    //   type     : 'image' ou 'video'
+    //   src      : chemin vers le fichier (même valeur que data-src sur la card)
+    //   cardId   : data-card-id de la card (optionnel, pour les commentaires)
+    //   badge    : texte du badge (ex: 'LEAK', 'REWORK'…)
+    //   section  : nom de la section (ex: '🍎 Fruits & Reworks')
+    //   imgSrc   : miniature à afficher dans la grille du modal (peut être identique à src)
+    //   emoji    : affiché si imgSrc est vide
+    //   label    : titre de la card
+    //   category : catégorie (affiché sous la miniature)
+    //   catColor : couleur du badge catégorie
+    const UPDATES_DATA = [
+        {
+            id: 'upd-001',
+            version: 'Update 28',
+            date: 'Juillet 2026',
+            title: 'Blox Fruits Update 28',
+            desc: `La plus grande update de l'année avec le rework complet de Dark, l'arrivée de trois nouveaux fruits Celestial, Oni et Wraith, et une refonte totale de la map Third Sea.\n\nLe PvP a été entièrement rééquilibré avec de nouveaux moves et des ajustements sur les cooldowns. Plusieurs fruits du meta ont été retravaillés suite aux retours de la communauté.\n\nLa Third Sea propose désormais de nouvelles zones explorables, un boss world inédit et une série de quêtes scénarisées.`,
+            linkedCards: [
+                {
+                    label: 'Dark Rework', category: 'Fruit', catColor: '#7b2fff', emoji: '🌑',
+                    imgSrc: './shared/blox_leaks/dark_rework.jpeg',
+                    type: 'image', src: './shared/blox_leaks/dark_rework.jpeg',
+                    cardId: 'dark-rework', badge: 'REWORK', section: '🍎 Fruits & Reworks'
+                },
+                {
+                    label: 'Celestial Fruit', category: 'Fruit', catColor: '#ffda00', emoji: '⚡',
+                    imgSrc: '', type: 'image', src: '', cardId: '', badge: 'LEAK', section: '🍎 Fruits & Reworks'
+                },
+                {
+                    label: 'Oni Fruit', category: 'Fruit', catColor: '#cc0000', emoji: '👹',
+                    imgSrc: '', type: 'image', src: '', cardId: '', badge: 'LEAK', section: '🍎 Fruits & Reworks'
+                },
+                {
+                    label: 'Refonte Third Sea', category: 'Map', catColor: '#175ec2', emoji: '🗺️',
+                    imgSrc: './shared/blox_leaks/island_reworks1.png',
+                    type: 'image', src: './shared/blox_leaks/island_reworks1.png',
+                    cardId: '', badge: 'MAP', section: '🗺️ Map & World'
+                },
+            ]
+        }
+    ];
 
     // ── State commentaires ───────────────────────────────────────
     const _updCommentsDB  = {};
