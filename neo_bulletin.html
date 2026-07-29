@@ -6404,12 +6404,6 @@
                                     style="width:100%;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);border-radius:10px;padding:10px 14px;color:#fff;font-size:13px;font-family:inherit;outline:none;resize:vertical;box-sizing:border-box;"></textarea>
                                 <div class="ncm-field-info">💡 Cette description apparaît sur la card dans la grille</div>
                             </div>
-                            <div class="ncm-field">
-                                <label><span class="ncm-lbl-icon">🔗</span> Cards liées (une par ligne, format: label|category|catColor|imgSrc|type|src|cardId|badge|section)</label>
-                                <textarea id="ncmUpdateLinked" rows="4" placeholder="Dark Rework|Fruit|#7b2fff|./shared/blox_leaks/dark_rework.jpeg|image|./shared/blox_leaks/dark_rework.jpeg|dark-rework|REWORK|🍎 Fruits & Reworks"
-                                    style="width:100%;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);border-radius:10px;padding:10px 14px;color:#fff;font-size:12px;font-family:monospace;outline:none;resize:vertical;box-sizing:border-box;"></textarea>
-                                <div class="ncm-field-info">💡 Laissez vide pour ne pas lier de cards</div>
-                            </div>
                         </div>
 
                     </div>
@@ -6432,10 +6426,21 @@
                                     <input type="color" id="ncmHlColorInputFull" value="#ffc832" style="display:none">
                                 </div>
                             </div>
-                            <textarea id="ncmUpdateFullDesc" rows="10"
+                            <textarea id="ncmUpdateFullDesc" rows="8"
                                 placeholder="Description détaillée de l'update avec formatage markdown…"
                                 style="width:100%;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);border-radius:0 0 10px 10px;padding:10px 14px;color:#fff;font-size:13px;font-family:inherit;outline:none;resize:vertical;box-sizing:border-box;border-top:none;"></textarea>
                             <div class="ncm-field-info">💡 Cette description apparaît dans le modal quand on clique sur la card. Supporte **gras**, *italique*, ==surlignage==, etc.</div>
+                        </div>
+                    </div>
+
+                    <div class="ncm-fields-group">
+                        <div class="ncm-field-group-title">Cards liées</div>
+                        <div class="ncm-field">
+                            <label><span class="ncm-lbl-icon">🔗</span> Sélectionne les cards à lier</label>
+                            <div id="ncmLinkedCardsSelector" style="max-height:250px;overflow-y:auto;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.04);border-radius:10px;padding:12px;">
+                                <div class="ncm-field-info" style="text-align:center;padding:20px;">Chargement des cards...</div>
+                            </div>
+                            <div class="ncm-field-info">💡 Les cards sélectionnées apparaîtront dans la modal de l'update</div>
                         </div>
                     </div>
                 </div>
