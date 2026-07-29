@@ -5411,6 +5411,153 @@
             border-top-color: rgba(255,255,255,0.16);
         }
 
+        /* ================================
+   UPDATE HUB CARD - BLOXNEWS V2
+================================ */
+
+.update-hub-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 28px;
+    background:
+        linear-gradient(145deg, rgba(255,218,0,0.12), rgba(20,20,35,0.95));
+    border: 1px solid rgba(255,218,0,0.25);
+    box-shadow:
+        0 20px 50px rgba(0,0,0,.35),
+        inset 0 1px 0 rgba(255,255,255,.08);
+    padding: 24px;
+    transition: .35s ease;
+}
+
+.update-hub-card:hover {
+    transform: translateY(-8px);
+    box-shadow:
+        0 30px 70px rgba(255,218,0,.18),
+        0 20px 50px rgba(0,0,0,.5);
+}
+
+
+.update-hub-header {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:18px;
+}
+
+
+.update-version {
+    background:#ffda00;
+    color:#111;
+    padding:6px 14px;
+    border-radius:50px;
+    font-family:'Luckiest Guy Regular';
+    font-size:14px;
+}
+
+
+.update-status {
+    background:#ff2020;
+    color:white;
+    padding:6px 14px;
+    border-radius:50px;
+    font-weight:900;
+    font-size:11px;
+}
+
+
+.update-hub-title {
+    font-family:'Luckiest Guy Regular';
+    font-size:26px;
+    color:white;
+    line-height:1.1;
+    margin-bottom:8px;
+}
+
+
+.update-date {
+    color:rgba(255,255,255,.45);
+    font-size:13px;
+}
+
+
+.update-summary {
+    margin-top:18px;
+    color:#cfd2e8;
+    line-height:1.6;
+}
+
+
+.update-features {
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin:18px 0;
+}
+
+
+.update-feature {
+    background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.1);
+    padding:8px 12px;
+    border-radius:50px;
+    color:#fff;
+    font-size:12px;
+}
+
+
+.update-linked {
+    margin-top:20px;
+}
+
+
+.update-linked h4 {
+    color:#ffda00;
+    font-family:'Luckiest Guy Regular';
+    margin-bottom:12px;
+}
+
+
+.linked-card {
+    display:flex;
+    align-items:center;
+    gap:10px;
+    background:rgba(255,255,255,.05);
+    padding:10px 14px;
+    border-radius:14px;
+    margin-bottom:8px;
+    color:white;
+    transition:.2s;
+}
+
+
+.linked-card:hover {
+    background:rgba(255,218,0,.12);
+}
+
+
+.update-footer {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-top:22px;
+}
+
+
+.update-stats {
+    color:#aaa;
+    font-size:13px;
+}
+
+
+.update-button {
+    background:#ffda00;
+    color:#111;
+    padding:12px 20px;
+    border-radius:50px;
+    font-weight:900;
+    text-decoration:none;
+}
+
 </style>
 </head>
 <body>
@@ -5525,7 +5672,7 @@
         <!-- ── Tabs + sections (masqués en mode recherche) ── -->
         <div id="neoTabsAndSections">
         <div class="desktop-tabs" id="desktopTabs">
-           <!-- <button class="leaks-tab" data-target="cat-updates" style="--cat-hex: #ffda00; --cat-rgb: 255, 218, 0;">🆙 UPDATES</button> -->
+            <button class="leaks-tab" data-target="cat-updates" style="--cat-hex: #ffda00; --cat-rgb: 255, 218, 0;">🆙 UPDATES</button>
             <button class="leaks-tab active" data-target="cat-actus" style="--cat-hex: #cc0000; --cat-rgb: 204, 0, 0;">ACTUS</button>
             <button class="leaks-tab" data-target="cat-fruit" style="--cat-hex: #ff0055; --cat-rgb: 255, 0, 85;">FRUITS</button>
             <button class="leaks-tab" data-target="cat-vfx" style="--cat-hex: #a200ff; --cat-rgb: 162, 0, 255;">VFX</button>
@@ -5974,6 +6121,99 @@
                         </div>
                     </article>
 
+                    <div class="update-hub-card">
+
+    <div class="update-hub-header">
+        <span class="update-version">
+            UPDATE 27.0
+        </span>
+
+        <span class="update-status">
+            OFFICIAL
+        </span>
+    </div>
+
+
+    <h2 class="update-hub-title">
+        BLOX FRUITS SUMMER UPDATE
+    </h2>
+
+    <div class="update-date">
+        28 juillet 2026
+    </div>
+
+
+    <p class="update-summary">
+        Une grosse mise à jour avec de nouveaux contenus,
+        des changements gameplay et plusieurs nouveautés
+        découvertes par la communauté.
+    </p>
+
+
+    <div class="update-features">
+
+        <span class="update-feature">
+            🍎 Nouveau Fruit
+        </span>
+
+        <span class="update-feature">
+            🗺 Nouvelle Map
+        </span>
+
+        <span class="update-feature">
+            ⚔ Gameplay
+        </span>
+
+        <span class="update-feature">
+            🎨 VFX
+        </span>
+
+    </div>
+
+
+    <div class="update-linked">
+
+        <h4>
+            CONTENU LIÉ
+        </h4>
+
+
+        <div class="linked-card">
+            🍎 Dragon Rework
+            <span>→</span>
+        </div>
+
+
+        <div class="linked-card">
+            🗺 Nouvelle île
+            <span>→</span>
+        </div>
+
+
+        <div class="linked-card">
+            ⚔ Nouveau système combat
+            <span>→</span>
+        </div>
+
+
+    </div>
+
+
+    <div class="update-footer">
+
+        <div class="update-stats">
+            ❤️ 1.2k &nbsp; 💬 245 commentaires
+        </div>
+
+
+        <a class="update-button">
+            Explorer →
+        </a>
+
+    </div>
+
+
+</div>
                 </div>
             </section>
         </div><!-- /neoTabsAndSections -->
@@ -9207,6 +9447,12 @@
             wrap.appendChild(btn);
             bulletin.appendChild(wrap);
         });
+
+        linkedCards: [
+ "dragon-rework",
+ "new-island",
+ "combat-system"
+]
 
         // ── Toutes les news-cards ──
         document.querySelectorAll('.news-card').forEach((card, idx) => {
