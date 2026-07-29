@@ -6002,10 +6002,10 @@
                                     </label>
                                 </div>
                             </div>
-                            <div class="ncm-field" id="ncmVideoField" style="display:none">
-                                <label><span class="ncm-lbl-icon">🔗</span> URL de la vidéo</label>
-                                <input id="ncmSrc" type="text" placeholder="https://cdn.example.com/video.mp4">
-                                <div class="ncm-field-hint">Lien direct vers un fichier .mp4 ou .mov hébergé</div>
+                            <div class="ncm-field" id="ncmUrlField">
+                                <label><span class="ncm-lbl-icon">🔗</span> URL du média</label>
+                                <input id="ncmSrc" type="text" placeholder="https://...">
+                                <div class="ncm-field-hint" id="ncmUrlHint">Lien direct vers le fichier (image ou vidéo hébergée)</div>
                             </div>
                             <div class="ncm-field-group-title" style="margin-top:18px">Texte de la carte</div>
                             <div class="ncm-field">
@@ -9810,10 +9810,16 @@
     }
     function _ncmTypeChange() {
         const isVideo = document.querySelector('#newCardModal input[name="ncmType"]:checked')?.value === 'video';
-        const vf = document.getElementById('ncmVideoField');
-        if (vf) vf.style.display = isVideo ? '' : 'none';
         document.getElementById('ncmPillImage')?.classList.toggle('active', !isVideo);
         document.getElementById('ncmPillVideo')?.classList.toggle('active', isVideo);
+        const urlHint = document.getElementById('ncmUrlHint');
+        if (urlHint) urlHint.textContent = isVideo
+            ? 'Lien direct vers un fichier .mp4 ou .mov hébergé'
+            : 'Lien direct vers l\'image (ou glisse-dépose ci-dessous)';
+        const urlInputEl = document.getElementById('ncmSrc');
+        if (urlInputEl) urlInputEl.placeholder = isVideo
+            ? 'https://cdn.example.com/video.mp4'
+            : 'https://cdn.example.com/image.png';
         const hint = document.getElementById('ncmDropHint');
         if (hint) {
             const icon = hint.querySelector('.ncm-card-empty-icon');
