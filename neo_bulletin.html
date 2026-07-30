@@ -9566,6 +9566,17 @@
     }
 
     function toggleEditMode() {
+        const user = _getDiscordUser();
+        if (!user || !ADMIN_DISCORD_USERS.includes(user.username)) {
+            if (_editMode) {
+                _editMode = false;
+                document.body.classList.remove('edit-mode');
+                document.getElementById('editModePanel')?.classList.remove('is-open');
+                closeEditInline();
+            }
+            editLog('err', '⛔ Accès refusé — administrateurs uniquement.');
+            return;
+        }
         _editMode = !_editMode;
         document.body.classList.toggle('edit-mode', _editMode);
         const btn = document.getElementById('editModeToggle');
@@ -11470,7 +11481,6 @@
 
         _updateEditModeVisibility();
     }
-    }
 
     // ── Déconnexion ──────────────────────────────────────────────
     function _discordLogout() {
@@ -11479,6 +11489,7 @@
         window.discordCurrentUser = null;
         document.getElementById('discordUserPill').classList.remove('is-visible', 'dropdown-open');
         document.getElementById('discordLoginBtn').style.display = '';
+        _updateEditModeVisibility();
     }
 
     // ── Initialisation au chargement ─────────────────────────────
@@ -11509,6 +11520,7 @@
                 document.getElementById('discordDropdownTag').textContent = '@' + user.username;
 
                 pill.onclick = (e) => { e.stopPropagation(); pill.classList.toggle('dropdown-open'); };
+                _updateEditModeVisibility();
             } catch(e) { console.warn('Navbar Discord update failed:', e); }
         }
 
@@ -11591,6 +11603,7 @@
         // 4. Vraiment pas connecté
         console.log('Navbar init: no user found, showing login button');
         loginBtn.style.display = '';
+        _updateEditModeVisibility();
     })();
     </script>
 
