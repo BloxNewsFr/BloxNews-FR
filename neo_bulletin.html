@@ -9372,61 +9372,37 @@
     const EDIT_KEY      = 'blox_content_edits_v1';
     const FB_EDITS_REF  = typeof FB_DB !== 'undefined' ? FB_DB.ref('content_edits') : null;
     const EDITABLE_SELS = [
-        // Titres des news-cards leaks
-        '.news-card__title',
-        '.news-card__eyebrow',
-        '.news-card__badge',
+        '.news-card__title', '.news-card__eyebrow', '.news-card__badge',
         '.news-card__button:not(.open-modal-btn)',
-        // Contenu bulletins actus
-        '.bulletin-content p',
-        '.bulletin-content h1', '.bulletin-content h2', '.bulletin-content h3',
-        '.bulletin-content li',
-        '.bulletin-content .highlight',
-        '.bulletin-content .bulletin-meta',
-        // Cards messages
+        '.bulletin-content p', '.bulletin-content h1', '.bulletin-content h2',
+        '.bulletin-content h3', '.bulletin-content li',
+        '.bulletin-content .highlight', '.bulletin-content .bulletin-meta',
         '.msg-card__title', '.msg-card__stamp', '.msg-card__cipher',
-        // Cards groupes
-        '.group-card__title',
-        // Titres de sections
-        '.category-title',
-        // Update cards (sur la card dans la grille)
+        '.group-card__title', '.category-title',
         '.update-card__title', '.update-card__version',
-        '.update-card__date',  '.update-card__desc',
-        // Contenu éditable dans le modal update
+        '.update-card__date', '.update-card__desc',
         '#updModalTitle', '#updModalVersion', '#updModalDate', '#updModalDesc',
     ];
-
     const EXCLUDED_SELS = [
-        // Navigation & structure globale
         '.site-header', '.site-nav', '.mobile-nav-dropdown',
         '.leaks-tab', '.site-header__icons', '.leaks-banner',
         '.desktop-tabs', '.mnav-chips',
-        // Modaux système
         '.settings-overlay', '#newCardModal', '#deleteCardModal',
         '#groupDrawerOverlay', '.modal-overlay', '.comments-modal-overlay',
-        // Panneaux édition
         '[class*="edit-panel"]', '#editInlinePopup', '#editModePanel', '#editModeToast',
-        // Boutons & interactions
         '.open-modal-btn', '.post-like-btn', '.social-share', '.actus-like-wrap',
         '.card-comments-toggle', '.discord-login-btn', '.discord-dropdown',
         'button', 'input', 'textarea', 'select',
-        // Toute la zone commentaires
         '.card-comments-section', '[class*="card-comment-"]',
         '.comment-item', '.comment-reply', '.actus-cc-write',
         '[class*="upd-cc"]', '#updModalComments',
         '.decrypt-panel', '[class*="decrypt-"]',
-        // Dans le modal update : cards liées + commentaires (pas le contenu texte)
         '.update-modal__linked-grid', '.update-modal__linked-card',
         '.update-modal__comments', '.update-modal__section-title',
-        '.update-modal__header .update-modal__close',
-        // Footer & chips des update-cards
         '.update-card__linked', '.update-card__chip',
         '.update-card__footer', '.update-card__comments-pill',
         '.update-card__open-btn', '.update-card__del-btn',
-        // Toasts & badges dynamiques
-        '#newCardToast', '.new-badge',
-        // Lightbox principale
-        '#modalOverlay',
+        '#newCardToast', '.new-badge', '#modalOverlay',
     ];
     let _editMode  = false;
     let _editTarget = null;
@@ -9459,20 +9435,23 @@
     let _fmtHlPending = false;
     let _savedSel = null;
 
-    // Capture la sélection au mousedown (avant que le clic fasse perdre le focus)
+    // Appelé par onmousedown sur chaque bouton fmt — capture la sélection
+    // AVANT que le clic ne fasse perdre le focus à la textarea
     function _saveFmtSel(e) {
-        e.preventDefault();
+        e.preventDefault(); // empêche aussi la perte de focus
         const ta = document.getElementById('editInlineTextarea');
-        if (!ta) return;
-        _savedSel = { start: ta.selectionStart, end: ta.selectionEnd };
+        if (ta) _savedSel = { start: ta.selectionStart, end: ta.selectionEnd };
     }
 
     function toggleHlPicker(e) {
         e.preventDefault(); e.stopPropagation();
         const input = document.getElementById('fmtHlColorInput');
-        const ta    = document.getElementById('editInlineTextarea');
-        if (!input || !ta) return;
-        _savedSel = { start: ta.selectionStart, end: ta.selectionEnd };
+        if (!input) return;
+        // Ne pas écraser _savedSel si déjà capturé par _saveFmtSel (onmousedown)
+        if (!_savedSel) {
+            const ta = document.getElementById('editInlineTextarea');
+            if (ta) _savedSel = { start: ta.selectionStart, end: ta.selectionEnd };
+        }
         _fmtHlPending = true;
         input.click();
     }
@@ -9483,6 +9462,7 @@
         if (dot) dot.style.background = hex;
         const ta = document.getElementById('editInlineTextarea');
         if (!ta) return;
+        // Utiliser la sélection sauvegardée (le focus était perdu pendant le color picker)
         const s = _savedSel ? _savedSel.start : ta.selectionStart;
         const e = _savedSel ? _savedSel.end   : ta.selectionEnd;
         _savedSel = null;
@@ -9503,6 +9483,7 @@
     function fmtWrap(marker) {
         const ta = document.getElementById('editInlineTextarea');
         if (!ta) return;
+        // Utiliser _savedSel capturé par onmousedown si disponible
         const s = _savedSel ? _savedSel.start : ta.selectionStart;
         const e = _savedSel ? _savedSel.end   : ta.selectionEnd;
         _savedSel = null;
@@ -9701,14 +9682,13 @@
         const edits = loadEdits();
         edits[path] = newText;
 
-        // ── Si l'élément édité est dans le modal update → sauvegarder dans Firebase blox_updates ──
+        // Si l'élément édité est dans le modal update → sauvegarder dans Firebase blox_updates
         const updModalFields = { updModalTitle:'title', updModalVersion:'version', updModalDate:'date', updModalDesc:'desc' };
-        if (_editEl.id && updModalFields[_editEl.id] && _updModalCurrent && typeof FB_UPDATES_REF !== 'undefined' && FB_UPDATES_REF) {
+        if (_editEl.id && updModalFields[_editEl.id] && typeof _updModalCurrent !== 'undefined' && _updModalCurrent && typeof FB_UPDATES_REF !== 'undefined' && FB_UPDATES_REF) {
             const field = updModalFields[_editEl.id];
             FB_UPDATES_REF.child(_updModalCurrent).child(field).set(newText)
-                .then(() => editLog('ok', `Update Firebase blox_updates/${_updModalCurrent}/${field}`))
-                .catch(e => editLog('err', 'Erreur Firebase update : ' + (e?.message||e)));
-            // Mettre à jour aussi UPDATES_DATA local pour cohérence
+                .then(() => editLog('ok', `Sauvegardé dans blox_updates/${_updModalCurrent}/${field}`))
+                .catch(err => editLog('err', 'Erreur Firebase : ' + (err?.message||err)));
             const upd = UPDATES_DATA.find(u => u.id === _updModalCurrent);
             if (upd) upd[field] = newText;
         }
@@ -12102,11 +12082,6 @@
 
         // Render UI (après que l'overlay est visible)
         _updRenderCommentUI(updId);
-
-        // Re-tagger les éléments éditables (les IDs du modal existent maintenant dans le DOM)
-        if (typeof _editMode !== 'undefined' && _editMode && typeof tagEditables === 'function') {
-            setTimeout(tagEditables, 50);
-        }
     }
 
     // ── Fermer le modal ──────────────────────────────────────────
