@@ -12082,6 +12082,11 @@
 
         // Render UI (après que l'overlay est visible)
         _updRenderCommentUI(updId);
+
+        // Re-tagger les éléments éditables (les IDs du modal existent maintenant dans le DOM)
+        if (typeof _editMode !== 'undefined' && _editMode && typeof tagEditables === 'function') {
+            setTimeout(tagEditables, 50);
+        }
     }
 
     // ── Fermer le modal ──────────────────────────────────────────
