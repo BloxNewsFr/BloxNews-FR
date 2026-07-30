@@ -6071,19 +6071,19 @@
     <div id="editInlinePopup">
         <div class="edit-inline__label">Modifier le texte</div>
         <div class="edit-fmt-bar">
-            <button class="fmt-btn" onclick="fmtWrap('**')" title="Gras"><b>B</b></button>
-            <button class="fmt-btn" onclick="fmtWrap('*')" title="Italique"><i>I</i></button>
-            <button class="fmt-btn" onclick="fmtWrap('__')" title="Souligné"><u>U</u></button>
-            <button class="fmt-btn" onclick="fmtWrap('~~')" title="Barré"><s>S</s></button>
+            <button class="fmt-btn" onmousedown="_saveFmtSel(event)" onclick="fmtWrap('**')" title="Gras"><b>B</b></button>
+            <button class="fmt-btn" onmousedown="_saveFmtSel(event)" onclick="fmtWrap('*')" title="Italique"><i>I</i></button>
+            <button class="fmt-btn" onmousedown="_saveFmtSel(event)" onclick="fmtWrap('__')" title="Souligné"><u>U</u></button>
+            <button class="fmt-btn" onmousedown="_saveFmtSel(event)" onclick="fmtWrap('~~')" title="Barré"><s>S</s></button>
             <div class="fmt-hl-wrap">
-                <button class="fmt-btn fmt-hl-btn" id="fmtHlBtn" onclick="toggleHlPicker(event)" title="Surligné">
+                <button class="fmt-btn fmt-hl-btn" id="fmtHlBtn" onmousedown="_saveFmtSel(event)" onclick="toggleHlPicker(event)" title="Surligné">
                     <span class="fmt-hl-dot" id="fmtHlDot" style="background:#ffd000"></span>
                 </button>
             </div>
             <div class="fmt-sep"></div>
             <span class="fmt-hint">**gras** *ital* __souligné__ ~~barré~~ ==surligné==</span>
         </div>
-        <textarea id="editInlineTextarea" rows="3"></textarea>
+        <textarea id="editInlineTextarea" rows="5" style="resize:vertical;min-height:90px"></textarea>
         <div class="edit-inline__actions">
             <button class="edit-inline__btn edit-inline__btn--cancel" onclick="closeEditInline()">Annuler</button>
             <button class="edit-inline__btn edit-inline__btn--save" onclick="saveEditInline()">Sauvegarder</button>
@@ -9371,61 +9371,24 @@
     // ─── Éditeur de contenu ────────────────────────────────────────
     const EDIT_KEY      = 'blox_content_edits_v1';
     const FB_EDITS_REF  = typeof FB_DB !== 'undefined' ? FB_DB.ref('content_edits') : null;
-    const EDITABLE_SELS = [
-        // Titres des cards leaks
-        '.news-card__title',
-        '.news-card__eyebrow',
-        '.news-card__button:not(.open-modal-btn)',
-        '.news-card__badge',
-        // Contenu des bulletins actus
-        '.bulletin-content p',
-        '.bulletin-content h1',
-        '.bulletin-content h2',
-        '.bulletin-content h3',
-        '.bulletin-content li',
-        '.bulletin-content .highlight',
-        '.bulletin-content .bulletin-meta',
-        // Cards messages
-        '.msg-card__title',
-        '.msg-card__stamp',
-        '.msg-card__cipher',
-        // Cards groupes
-        '.group-card__title',
-        // Titres de sections (catégories)
-        '.category-title',
-    ];
-
-    const EXCLUDED_SELS = [
-        // Navigation & structure
-        '.site-header', '.site-nav', '.mobile-nav-dropdown',
-        '.leaks-tab', '.site-header__icons', '.leaks-banner',
-        '.desktop-tabs', '.mnav-chips',
-        // Modaux système
-        '.settings-overlay', '#newCardModal', '#deleteCardModal',
-        '#updateModalOverlay', '#groupDrawerOverlay',
-        '.modal-overlay', '.comments-modal-overlay',
-        // Panneaux édition
-        '[class*="edit-panel"]', '#editInlinePopup', '#editModePanel', '#editModeToast',
-        // Boutons & interactions
-        '.open-modal-btn', '.post-like-btn', '.social-share', '.actus-like-wrap',
-        '.card-comments-toggle', '.discord-login-btn', '.discord-dropdown',
-        // Toute la zone commentaires
-        '.card-comments-section', '[class*="card-comment-"]',
-        '.comment-item', '.comment-reply', '.actus-cc-write',
-        '[class*="upd-cc"]', '#updModalComments',
-        '.decrypt-panel', '[class*="decrypt-"]',
-        // Section updates (cards + modal)
-        '#cat-updates', '#updateModalOverlay',
-        '.update-card', '.update-modal',
-        // Cards liées dans update modal
-        '#updModalLinkedGrid', '.update-modal__linked-card',
-        // Toast / badges dynamiques
-        '#newCardToast', '.new-badge',
-        // Formulaires
-        'input', 'textarea', 'select', 'button',
-        // Lightbox principale
-        '#modalOverlay',
-    ];
+    const EDITABLE_SELS = ['h1','h2','h3','h4','h5','h6','p','span','div','li','td','th',
+                           '.news-card__title','.news-card__eyebrow',
+                           '.bulletin-content p','.category-title',
+                           '.news-card__button:not(.open-modal-btn)',
+                           '.bulletin-meta','.highlight',
+                           '.group-card__title',
+                           '.update-card-title','.update-card-version',
+                           '.update-card-date','.update-card-short-desc',
+                           '.update-card__desc'];
+    const EXCLUDED_SELS = ['.site-header', '.site-nav', '.settings-overlay', '.leaks-tab',
+                           '.site-header__icons', '.mobile-nav-dropdown',
+                           '.modal-overlay', '.comments-modal-overlay',
+                           '#newCardModal', '#deleteCardModal',
+                           '[class*="edit-panel"]', '#editInlinePopup',
+                           '.leaks-banner',
+                           '.card-comments-section','[class*="card-comment-"]','.card-comments-toggle',
+                           '.update-card__linked','.update-card__chip',
+                           '.social-share', '.post-like-btn', '.actus-like-wrap'];
     let _editMode  = false;
     let _editTarget = null;
 
@@ -9452,14 +9415,27 @@
         return h;
     }
 
+    // ── Sauvegarder la sélection au mousedown (avant perte focus) ───
+    function _saveFmtSel(e) {
+        e.preventDefault(); // empêche aussi la perte de focus sur la textarea
+        const ta = document.getElementById('editInlineTextarea');
+        if (!ta) return;
+        _savedSel = { start: ta.selectionStart, end: ta.selectionEnd };
+    }
+
     // ── Highlight color — sélecteur natif ────────────────────────────
     let _hlColor = '#ffd000';
     let _fmtHlPending = false;
+    let _savedSel = null; // sélection sauvegardée avant que le focus parte sur le color picker
 
     function toggleHlPicker(e) {
+        e.preventDefault();
         e.stopPropagation();
         const input = document.getElementById('fmtHlColorInput');
-        if (!input) return;
+        const ta    = document.getElementById('editInlineTextarea');
+        if (!input || !ta) return;
+        // Sauvegarder la sélection AVANT que le clic fasse perdre le focus
+        _savedSel = { start: ta.selectionStart, end: ta.selectionEnd };
         _fmtHlPending = true;
         input.click();
     }
@@ -9470,7 +9446,12 @@
         if (dot) dot.style.background = hex;
         const ta = document.getElementById('editInlineTextarea');
         if (!ta) return;
-        const s = ta.selectionStart, e = ta.selectionEnd;
+        // Restaurer la sélection sauvegardée (perdue quand le color picker a pris le focus)
+        const s = _savedSel ? _savedSel.start : ta.selectionStart;
+        const e = _savedSel ? _savedSel.end   : ta.selectionEnd;
+        _savedSel = null;
+        ta.focus();
+        ta.setSelectionRange(s, e);
         const before = ta.value.slice(0, s);
         const after  = ta.value.slice(e);
         const sel    = ta.value.slice(s, e);
@@ -9478,12 +9459,11 @@
         const openMark  = isDefault ? '==' : `==[#${hex.replace('#','')}]`;
         if (sel) {
             ta.value = before + openMark + sel + '==' + after;
-            ta.selectionStart = s; ta.selectionEnd = e + openMark.length + 2;
+            ta.setSelectionRange(s, e + openMark.length + 2);
         } else {
             const ph = '…';
             ta.value = before + openMark + ph + '==' + after;
-            ta.selectionStart = s + openMark.length;
-            ta.selectionEnd   = s + openMark.length + ph.length;
+            ta.setSelectionRange(s + openMark.length, s + openMark.length + ph.length);
         }
         ta.focus();
     }
@@ -9492,21 +9472,21 @@
     function fmtWrap(marker) {
         const ta = document.getElementById('editInlineTextarea');
         if (!ta) return;
-        const s = ta.selectionStart, e = ta.selectionEnd;
-        const sel = ta.value.slice(s, e);
+        // Utiliser la sélection sauvegardée si dispo (clic bouton = perte focus)
+        const s = (_savedSel && !_fmtHlPending) ? _savedSel.start : ta.selectionStart;
+        const e = (_savedSel && !_fmtHlPending) ? _savedSel.end   : ta.selectionEnd;
+        _savedSel = null;
+        const sel    = ta.value.slice(s, e);
         const before = ta.value.slice(0, s);
         const after  = ta.value.slice(e);
         if (sel) {
             ta.value = before + marker + sel + marker + after;
-            ta.selectionStart = s;
-            ta.selectionEnd   = e + marker.length * 2;
+            ta.focus(); ta.setSelectionRange(s, e + marker.length * 2);
         } else {
             const ph = '…';
             ta.value = before + marker + ph + marker + after;
-            ta.selectionStart = s + marker.length;
-            ta.selectionEnd   = s + marker.length + ph.length;
+            ta.focus(); ta.setSelectionRange(s + marker.length, s + marker.length + ph.length);
         }
-        ta.focus();
     }
 
     function loadEdits() {
@@ -9684,14 +9664,16 @@
     }
     function saveEditInline() {
         if (!_editEl) return;
-        const newText = document.getElementById('editInlineTextarea')?.value?.trim();
-        if (newText === undefined) return;
+        const rawValue = document.getElementById('editInlineTextarea')?.value;
+        if (rawValue === undefined) return;
+        // Trim uniquement les espaces/newlines en début et fin de chaque ligne,
+        // mais préserver les lignes vides (sauts de paragraphe)
+        const newText = rawValue.replace(/^[ \t]+|[ \t]+$/gm, '').replace(/^\n+|\n+$/g, '');
         const oldText = _editEl.textContent.trim();
-        // Rendre le markdown directement dans l'élément
         _editEl.innerHTML = renderMarkdown(newText);
         const path  = _editEl.dataset.editPath || getEditPath(_editEl);
         const edits = loadEdits();
-        edits[path] = newText; // stocker le texte brut avec marqueurs
+        edits[path] = newText;
         saveEdits(edits).then(savedToFirebase => {
             if (savedToFirebase) editLog('ok', `Sauvegardé Firebase : "${oldText.slice(0,22)}…"`);
             else if (!FB_EDITS_REF) editLog('info', `Sauvegardé localement : "${oldText.slice(0,22)}…"`);
