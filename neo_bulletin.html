@@ -9389,9 +9389,11 @@
         '.group-card__title',
         // Titres de sections
         '.category-title',
-        // Update cards (seulement sur la card, pas dans le modal)
+        // Update cards (sur la card dans la grille)
         '.update-card__title', '.update-card__version',
         '.update-card__date',  '.update-card__desc',
+        // Contenu éditable dans le modal update
+        '#updModalTitle', '#updModalVersion', '#updModalDate', '#updModalDesc',
     ];
 
     const EXCLUDED_SELS = [
@@ -9401,11 +9403,10 @@
         '.desktop-tabs', '.mnav-chips',
         // Modaux système
         '.settings-overlay', '#newCardModal', '#deleteCardModal',
-        '#updateModalOverlay', '#groupDrawerOverlay',
-        '.modal-overlay', '.comments-modal-overlay',
+        '#groupDrawerOverlay', '.modal-overlay', '.comments-modal-overlay',
         // Panneaux édition
         '[class*="edit-panel"]', '#editInlinePopup', '#editModePanel', '#editModeToast',
-        // Boutons & interactions (tout ce qui est cliquable/fonctionnel)
+        // Boutons & interactions
         '.open-modal-btn', '.post-like-btn', '.social-share', '.actus-like-wrap',
         '.card-comments-toggle', '.discord-login-btn', '.discord-dropdown',
         'button', 'input', 'textarea', 'select',
@@ -9414,13 +9415,11 @@
         '.comment-item', '.comment-reply', '.actus-cc-write',
         '[class*="upd-cc"]', '#updModalComments',
         '.decrypt-panel', '[class*="decrypt-"]',
-        // Modal update (résumé, cards liées, commentaires)
-        '#updateModalOverlay',
-        '.update-modal__desc', '.update-modal__linked-grid',
-        '.update-modal__linked-card', '.update-modal__comments',
-        '.update-modal__title', '.update-modal__version', '.update-modal__date',
-        '.update-modal__section-title', '.update-modal__header',
-        // Footer & chips des update-cards (non éditables)
+        // Dans le modal update : cards liées + commentaires (pas le contenu texte)
+        '.update-modal__linked-grid', '.update-modal__linked-card',
+        '.update-modal__comments', '.update-modal__section-title',
+        '.update-modal__header .update-modal__close',
+        // Footer & chips des update-cards
         '.update-card__linked', '.update-card__chip',
         '.update-card__footer', '.update-card__comments-pill',
         '.update-card__open-btn', '.update-card__del-btn',
@@ -9701,6 +9700,19 @@
         const path  = _editEl.dataset.editPath || getEditPath(_editEl);
         const edits = loadEdits();
         edits[path] = newText;
+
+        // ── Si l'élément édité est dans le modal update → sauvegarder dans Firebase blox_updates ──
+        const updModalFields = { updModalTitle:'title', updModalVersion:'version', updModalDate:'date', updModalDesc:'desc' };
+        if (_editEl.id && updModalFields[_editEl.id] && _updModalCurrent && typeof FB_UPDATES_REF !== 'undefined' && FB_UPDATES_REF) {
+            const field = updModalFields[_editEl.id];
+            FB_UPDATES_REF.child(_updModalCurrent).child(field).set(newText)
+                .then(() => editLog('ok', `Update Firebase blox_updates/${_updModalCurrent}/${field}`))
+                .catch(e => editLog('err', 'Erreur Firebase update : ' + (e?.message||e)));
+            // Mettre à jour aussi UPDATES_DATA local pour cohérence
+            const upd = UPDATES_DATA.find(u => u.id === _updModalCurrent);
+            if (upd) upd[field] = newText;
+        }
+
         saveEdits(edits).then(savedToFirebase => {
             if (savedToFirebase) editLog('ok', `Sauvegardé Firebase : "${oldText.slice(0,22)}…"`);
             else if (!FB_EDITS_REF) editLog('info', `Sauvegardé localement : "${oldText.slice(0,22)}…"`);
@@ -12090,6 +12102,11 @@
 
         // Render UI (après que l'overlay est visible)
         _updRenderCommentUI(updId);
+
+        // Re-tagger les éléments éditables (les IDs du modal existent maintenant dans le DOM)
+        if (typeof _editMode !== 'undefined' && _editMode && typeof tagEditables === 'function') {
+            setTimeout(tagEditables, 50);
+        }
     }
 
     // ── Fermer le modal ──────────────────────────────────────────
