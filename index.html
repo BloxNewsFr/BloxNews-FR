@@ -2075,7 +2075,13 @@
         let _searchActive = false;   // mode filtre actif
         let _searchQuery  = '';      // requête en cours
         let _filteredList = null;    // null = pas de filtre, array = filtrés
-        function _activeList()   { return _filteredList ?? bulletins; }
+        // ── Ordre d'affichage ──────────────────────────────────────────
+        let _sortNewest = localStorage.getItem('bloxnews_sort_newest') === '1';
+        function _activeList() {
+            let list = _filteredList ?? bulletins;
+            if (_sortNewest) list = [...list].reverse();
+            return list;
+        }
         function _totalPages()   { return Math.max(1, Math.ceil(_activeList().length / PER_PAGE)); }
         
         // BADGES DES BULLETINS :
@@ -3152,6 +3158,7 @@
         const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
         _settingsSetToggle('settingsThemeToggle', isDark);
         _settingsSetToggle('settingsMotionToggle', localStorage.getItem(SETTINGS_MOTION_KEY) === '1');
+        _settingsSetToggle('settingsSortToggle', _sortNewest);
         const ppSel = document.getElementById('settingsPerPage');
         if (ppSel) ppSel.value = String(PER_PAGE);
         const ndSel = document.getElementById('settingsNewDays');
@@ -3184,6 +3191,15 @@
         localStorage.setItem(SETTINGS_MOTION_KEY, next ? '1' : '0');
         document.body.classList.toggle('force-reduce-motion', next);
         _settingsSetToggle('settingsMotionToggle', next);
+    }
+
+    // ── Ordre d'affichage ────────────────────────────────────────
+    function _settingsToggleSort() {
+        _sortNewest = !_sortNewest;
+        localStorage.setItem('bloxnews_sort_newest', _sortNewest ? '1' : '0');
+        _settingsSetToggle('settingsSortToggle', _sortNewest);
+        currentPage = 1;
+        renderPage();
     }
 
     // ── Bulletins par page ───────────────────────────────────────
@@ -3303,6 +3319,16 @@
                         <option value="14">14 jours</option>
                         <option value="30">30 jours</option>
                     </select>
+                </div>
+
+                <div class="settings-row">
+                    <div class="settings-row-info">
+                        <div class="settings-row-label">Plus récents en premier</div>
+                        <div class="settings-row-sub">Afficher les bulletins les plus récents en haut</div>
+                    </div>
+                    <button class="settings-toggle" id="settingsSortToggle" role="switch" onclick="_settingsToggleSort()">
+                        <span class="settings-toggle-knob"></span>
+                    </button>
                 </div>
             </div>
 
