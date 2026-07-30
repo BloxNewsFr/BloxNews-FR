@@ -11383,6 +11383,16 @@
     const DISCORD_TOKEN_KEY    = 'bloxbulletin_discord_token';
     const DISCORD_USER_KEY     = 'bloxbulletin_discord_user';
     const DISCORD_PENDING_KEY  = 'bloxbulletin_oauth_pending_page';
+    const ADMIN_DISCORD_USERS = ['fn_n0klip', 'neolixx'];
+
+    function _updateEditModeVisibility() {
+        const user = _getDiscordUser();
+        const isAdmin = user && ADMIN_DISCORD_USERS.includes(user.username);
+        const btn = document.getElementById('editModeToggle');
+        if (btn) btn.style.display = isAdmin ? '' : 'none';
+        // Si le mode édition est actif et l'utilisateur n'est plus admin → désactiver
+        if (!isAdmin && _editMode) toggleEditMode();
+    }
 
     // ── Lancer le flux OAuth ─────────────────────────────────────
     function _discordLogin() {
@@ -11453,11 +11463,13 @@
         if (typeof discordLogin === 'function') {
             discordLogin(window.currentUser);
         } else {
-            // discordLogin pas encore disponible (ordre de chargement) → réessayer
             window.addEventListener('load', () => {
                 if (typeof discordLogin === 'function') discordLogin(window.currentUser);
             });
         }
+
+        _updateEditModeVisibility();
+    }
     }
 
     // ── Déconnexion ──────────────────────────────────────────────
