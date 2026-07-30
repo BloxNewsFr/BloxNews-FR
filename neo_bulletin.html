@@ -9387,7 +9387,8 @@
                            '[class*="edit-panel"]', '#editInlinePopup',
                            '.leaks-banner',
                            '.card-comments-section','[class*="card-comment-"]','.card-comments-toggle',
-                           '.update-card__linked','.update-card__chip'];
+                           '.update-card__linked','.update-card__chip',
+                           '.social-share', '.post-like-btn', '.actus-like-wrap'];
     let _editMode  = false;
     let _editTarget = null;
 
@@ -9410,6 +9411,7 @@
         h = h.replace(/__(.+?)__/g, '<u>$1</u>');
         h = h.replace(/~~(.+?)~~/g, '<s>$1</s>');
         h = h.replace(/\*(.+?)\*/g, '<em>$1</em>');
+        h = h.replace(/\n/g, '<br>');
         return h;
     }
 
@@ -9611,7 +9613,13 @@
         // Lire le texte brut (avec marqueurs) depuis le stockage, pas l'innerHTML rendu
         const path = el.dataset.editPath || getEditPath(el);
         const edits = loadEdits();
-        textarea.value = (path in edits) ? edits[path] : el.textContent.trim();
+        if (path in edits) {
+            textarea.value = edits[path];
+        } else {
+            // Reconstruire les sauts de ligne depuis les <br> de l'innerHTML
+            const html = el.innerHTML;
+            textarea.value = html.replace(/<br\s*\/?>/gi, '\n').replace(/<[^>]+>/g, '').trim();
+        }
         popup.classList.add('is-open');
         popup.style.display = 'block';
         const pw = 330; const ph = 200;
@@ -11943,13 +11951,14 @@
     function _renderMarkdown(text) {
         if (!text) return '';
         let html = text
-            // Échapper le HTML
             .replace(/&/g, '&amp;')
             .replace(/</g, '&lt;')
             .replace(/>/g, '&gt;')
             // Surlignage ==[#hex]texte== ou ==texte==
-            .replace(/==\[#([0-9a-fA-F]{6})\](.*?)==/g, '<mark style="background:#$1">$2</mark>')
-            .replace(/==(.*?)==/g, '<mark>$1</mark>')
+            .replace(/==\[#([0-9a-fA-F]{3,6})\](.+?)==/g, (m, c, t) =>
+                `<mark style="color:#${c};background:${_hexToRgba('#'+c,0.12)};padding:2px 8px;border-radius:6px;font-weight:bold">${t}</mark>`)
+            .replace(/==(.+?)==/g,
+                '<mark style="color:#cc0000;background:rgba(255,26,26,0.1);padding:2px 8px;border-radius:6px;font-weight:bold">$1</mark>')
             // Gras **texte**
             .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
             // Italique *texte*
