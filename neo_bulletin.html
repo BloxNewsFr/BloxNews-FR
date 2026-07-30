@@ -9371,24 +9371,61 @@
     // ─── Éditeur de contenu ────────────────────────────────────────
     const EDIT_KEY      = 'blox_content_edits_v1';
     const FB_EDITS_REF  = typeof FB_DB !== 'undefined' ? FB_DB.ref('content_edits') : null;
-    const EDITABLE_SELS = ['h1','h2','h3','h4','h5','h6','p','span','div','li','td','th',
-                           '.news-card__title','.news-card__eyebrow',
-                           '.bulletin-content p','.category-title',
-                           '.news-card__button:not(.open-modal-btn)',
-                           '.bulletin-meta','.highlight',
-                           '.group-card__title',
-                           '.update-card-title','.update-card-version',
-                           '.update-card-date','.update-card-short-desc',
-                           '.update-card__desc'];
-    const EXCLUDED_SELS = ['.site-header', '.site-nav', '.settings-overlay', '.leaks-tab',
-                           '.site-header__icons', '.mobile-nav-dropdown',
-                           '.modal-overlay', '.comments-modal-overlay',
-                           '#newCardModal', '#deleteCardModal',
-                           '[class*="edit-panel"]', '#editInlinePopup',
-                           '.leaks-banner',
-                           '.card-comments-section','[class*="card-comment-"]','.card-comments-toggle',
-                           '.update-card__linked','.update-card__chip',
-                           '.social-share', '.post-like-btn', '.actus-like-wrap'];
+    const EDITABLE_SELS = [
+        // Titres des cards leaks
+        '.news-card__title',
+        '.news-card__eyebrow',
+        '.news-card__button:not(.open-modal-btn)',
+        '.news-card__badge',
+        // Contenu des bulletins actus
+        '.bulletin-content p',
+        '.bulletin-content h1',
+        '.bulletin-content h2',
+        '.bulletin-content h3',
+        '.bulletin-content li',
+        '.bulletin-content .highlight',
+        '.bulletin-content .bulletin-meta',
+        // Cards messages
+        '.msg-card__title',
+        '.msg-card__stamp',
+        '.msg-card__cipher',
+        // Cards groupes
+        '.group-card__title',
+        // Titres de sections (catégories)
+        '.category-title',
+    ];
+
+    const EXCLUDED_SELS = [
+        // Navigation & structure
+        '.site-header', '.site-nav', '.mobile-nav-dropdown',
+        '.leaks-tab', '.site-header__icons', '.leaks-banner',
+        '.desktop-tabs', '.mnav-chips',
+        // Modaux système
+        '.settings-overlay', '#newCardModal', '#deleteCardModal',
+        '#updateModalOverlay', '#groupDrawerOverlay',
+        '.modal-overlay', '.comments-modal-overlay',
+        // Panneaux édition
+        '[class*="edit-panel"]', '#editInlinePopup', '#editModePanel', '#editModeToast',
+        // Boutons & interactions
+        '.open-modal-btn', '.post-like-btn', '.social-share', '.actus-like-wrap',
+        '.card-comments-toggle', '.discord-login-btn', '.discord-dropdown',
+        // Toute la zone commentaires
+        '.card-comments-section', '[class*="card-comment-"]',
+        '.comment-item', '.comment-reply', '.actus-cc-write',
+        '[class*="upd-cc"]', '#updModalComments',
+        '.decrypt-panel', '[class*="decrypt-"]',
+        // Section updates (cards + modal)
+        '#cat-updates', '#updateModalOverlay',
+        '.update-card', '.update-modal',
+        // Cards liées dans update modal
+        '#updModalLinkedGrid', '.update-modal__linked-card',
+        // Toast / badges dynamiques
+        '#newCardToast', '.new-badge',
+        // Formulaires
+        'input', 'textarea', 'select', 'button',
+        // Lightbox principale
+        '#modalOverlay',
+    ];
     let _editMode  = false;
     let _editTarget = null;
 
