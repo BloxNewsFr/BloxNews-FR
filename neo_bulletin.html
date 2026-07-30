@@ -9371,24 +9371,64 @@
     // ─── Éditeur de contenu ────────────────────────────────────────
     const EDIT_KEY      = 'blox_content_edits_v1';
     const FB_EDITS_REF  = typeof FB_DB !== 'undefined' ? FB_DB.ref('content_edits') : null;
-    const EDITABLE_SELS = ['h1','h2','h3','h4','h5','h6','p','span','div','li','td','th',
-                           '.news-card__title','.news-card__eyebrow',
-                           '.bulletin-content p','.category-title',
-                           '.news-card__button:not(.open-modal-btn)',
-                           '.bulletin-meta','.highlight',
-                           '.group-card__title',
-                           '.update-card-title','.update-card-version',
-                           '.update-card-date','.update-card-short-desc',
-                           '.update-card__desc'];
-    const EXCLUDED_SELS = ['.site-header', '.site-nav', '.settings-overlay', '.leaks-tab',
-                           '.site-header__icons', '.mobile-nav-dropdown',
-                           '.modal-overlay', '.comments-modal-overlay',
-                           '#newCardModal', '#deleteCardModal',
-                           '[class*="edit-panel"]', '#editInlinePopup',
-                           '.leaks-banner',
-                           '.card-comments-section','[class*="card-comment-"]','.card-comments-toggle',
-                           '.update-card__linked','.update-card__chip',
-                           '.social-share', '.post-like-btn', '.actus-like-wrap'];
+    const EDITABLE_SELS = [
+        // Titres des news-cards leaks
+        '.news-card__title',
+        '.news-card__eyebrow',
+        '.news-card__badge',
+        '.news-card__button:not(.open-modal-btn)',
+        // Contenu bulletins actus
+        '.bulletin-content p',
+        '.bulletin-content h1', '.bulletin-content h2', '.bulletin-content h3',
+        '.bulletin-content li',
+        '.bulletin-content .highlight',
+        '.bulletin-content .bulletin-meta',
+        // Cards messages
+        '.msg-card__title', '.msg-card__stamp', '.msg-card__cipher',
+        // Cards groupes
+        '.group-card__title',
+        // Titres de sections
+        '.category-title',
+        // Update cards (seulement sur la card, pas dans le modal)
+        '.update-card__title', '.update-card__version',
+        '.update-card__date',  '.update-card__desc',
+    ];
+
+    const EXCLUDED_SELS = [
+        // Navigation & structure globale
+        '.site-header', '.site-nav', '.mobile-nav-dropdown',
+        '.leaks-tab', '.site-header__icons', '.leaks-banner',
+        '.desktop-tabs', '.mnav-chips',
+        // Modaux système
+        '.settings-overlay', '#newCardModal', '#deleteCardModal',
+        '#updateModalOverlay', '#groupDrawerOverlay',
+        '.modal-overlay', '.comments-modal-overlay',
+        // Panneaux édition
+        '[class*="edit-panel"]', '#editInlinePopup', '#editModePanel', '#editModeToast',
+        // Boutons & interactions (tout ce qui est cliquable/fonctionnel)
+        '.open-modal-btn', '.post-like-btn', '.social-share', '.actus-like-wrap',
+        '.card-comments-toggle', '.discord-login-btn', '.discord-dropdown',
+        'button', 'input', 'textarea', 'select',
+        // Toute la zone commentaires
+        '.card-comments-section', '[class*="card-comment-"]',
+        '.comment-item', '.comment-reply', '.actus-cc-write',
+        '[class*="upd-cc"]', '#updModalComments',
+        '.decrypt-panel', '[class*="decrypt-"]',
+        // Modal update (résumé, cards liées, commentaires)
+        '#updateModalOverlay',
+        '.update-modal__desc', '.update-modal__linked-grid',
+        '.update-modal__linked-card', '.update-modal__comments',
+        '.update-modal__title', '.update-modal__version', '.update-modal__date',
+        '.update-modal__section-title', '.update-modal__header',
+        // Footer & chips des update-cards (non éditables)
+        '.update-card__linked', '.update-card__chip',
+        '.update-card__footer', '.update-card__comments-pill',
+        '.update-card__open-btn', '.update-card__del-btn',
+        // Toasts & badges dynamiques
+        '#newCardToast', '.new-badge',
+        // Lightbox principale
+        '#modalOverlay',
+    ];
     let _editMode  = false;
     let _editTarget = null;
 
@@ -9415,26 +9455,24 @@
         return h;
     }
 
-    // ── Sauvegarder la sélection au mousedown (avant perte focus) ───
+    // ── Highlight color — sélecteur natif ────────────────────────────
+    let _hlColor = '#ffd000';
+    let _fmtHlPending = false;
+    let _savedSel = null;
+
+    // Capture la sélection au mousedown (avant que le clic fasse perdre le focus)
     function _saveFmtSel(e) {
-        e.preventDefault(); // empêche aussi la perte de focus sur la textarea
+        e.preventDefault();
         const ta = document.getElementById('editInlineTextarea');
         if (!ta) return;
         _savedSel = { start: ta.selectionStart, end: ta.selectionEnd };
     }
 
-    // ── Highlight color — sélecteur natif ────────────────────────────
-    let _hlColor = '#ffd000';
-    let _fmtHlPending = false;
-    let _savedSel = null; // sélection sauvegardée avant que le focus parte sur le color picker
-
     function toggleHlPicker(e) {
-        e.preventDefault();
-        e.stopPropagation();
+        e.preventDefault(); e.stopPropagation();
         const input = document.getElementById('fmtHlColorInput');
         const ta    = document.getElementById('editInlineTextarea');
         if (!input || !ta) return;
-        // Sauvegarder la sélection AVANT que le clic fasse perdre le focus
         _savedSel = { start: ta.selectionStart, end: ta.selectionEnd };
         _fmtHlPending = true;
         input.click();
@@ -9446,39 +9484,30 @@
         if (dot) dot.style.background = hex;
         const ta = document.getElementById('editInlineTextarea');
         if (!ta) return;
-        // Restaurer la sélection sauvegardée (perdue quand le color picker a pris le focus)
         const s = _savedSel ? _savedSel.start : ta.selectionStart;
         const e = _savedSel ? _savedSel.end   : ta.selectionEnd;
         _savedSel = null;
-        ta.focus();
-        ta.setSelectionRange(s, e);
-        const before = ta.value.slice(0, s);
-        const after  = ta.value.slice(e);
-        const sel    = ta.value.slice(s, e);
+        const before = ta.value.slice(0, s), after = ta.value.slice(e), sel = ta.value.slice(s, e);
         const isDefault = (hex === '#ffd000');
         const openMark  = isDefault ? '==' : `==[#${hex.replace('#','')}]`;
         if (sel) {
             ta.value = before + openMark + sel + '==' + after;
-            ta.setSelectionRange(s, e + openMark.length + 2);
+            ta.focus(); ta.setSelectionRange(s, e + openMark.length + 2);
         } else {
             const ph = '…';
             ta.value = before + openMark + ph + '==' + after;
-            ta.setSelectionRange(s + openMark.length, s + openMark.length + ph.length);
+            ta.focus(); ta.setSelectionRange(s + openMark.length, s + openMark.length + ph.length);
         }
-        ta.focus();
     }
 
     // ── Insérer un marqueur autour de la sélection ───────────────────
     function fmtWrap(marker) {
         const ta = document.getElementById('editInlineTextarea');
         if (!ta) return;
-        // Utiliser la sélection sauvegardée si dispo (clic bouton = perte focus)
-        const s = (_savedSel && !_fmtHlPending) ? _savedSel.start : ta.selectionStart;
-        const e = (_savedSel && !_fmtHlPending) ? _savedSel.end   : ta.selectionEnd;
+        const s = _savedSel ? _savedSel.start : ta.selectionStart;
+        const e = _savedSel ? _savedSel.end   : ta.selectionEnd;
         _savedSel = null;
-        const sel    = ta.value.slice(s, e);
-        const before = ta.value.slice(0, s);
-        const after  = ta.value.slice(e);
+        const sel = ta.value.slice(s, e), before = ta.value.slice(0, s), after = ta.value.slice(e);
         if (sel) {
             ta.value = before + marker + sel + marker + after;
             ta.focus(); ta.setSelectionRange(s, e + marker.length * 2);
@@ -9666,8 +9695,6 @@
         if (!_editEl) return;
         const rawValue = document.getElementById('editInlineTextarea')?.value;
         if (rawValue === undefined) return;
-        // Trim uniquement les espaces/newlines en début et fin de chaque ligne,
-        // mais préserver les lignes vides (sauts de paragraphe)
         const newText = rawValue.replace(/^[ \t]+|[ \t]+$/gm, '').replace(/^\n+|\n+$/g, '');
         const oldText = _editEl.textContent.trim();
         _editEl.innerHTML = renderMarkdown(newText);
