@@ -2076,7 +2076,7 @@
         let _searchQuery  = '';      // requête en cours
         let _filteredList = null;    // null = pas de filtre, array = filtrés
         // ── Ordre d'affichage ──────────────────────────────────────────
-        let _sortNewest = localStorage.getItem('bloxnews_sort_newest') === '1';
+        let _sortNewest = localStorage.getItem('bloxnews_sort_newest') !== '0';
         function _activeList() {
             let list = _filteredList ?? bulletins;
             if (_sortNewest) list = [...list].reverse();
