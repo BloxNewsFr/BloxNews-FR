@@ -369,76 +369,68 @@
             border-top-color: rgba(255,255,255,0.16);
         }
 
-        /* ── Contenu bulletin ── */
-        #bulletin-content { max-width: 820px; margin: 0 auto; padding: 0 16px 60px; }
+        /* ── Contenu bulletin — style identique aux bulletins 001/002 ── */
+        #bulletin-content { }
 
-        .bulletin-header { text-align: center; margin-bottom: 24px; }
-        .bulletin-eyebrow {
-            display: inline-block; background: #175ec2; color: #fff;
-            font-family: 'LuckiestGuy Regular', sans-serif; letter-spacing: 2px;
-            font-size: 15px; padding: 8px 28px; border-radius: 6px; margin-bottom: 20px;
-        }
-        .bulletin-cover { width: 100%; border-radius: 12px; display: block; margin-bottom: 12px; }
-        .bulletin-date { font-size: 14px; color: #888; font-family: 'Inter', sans-serif; }
-
-        .bulletin-paper {
-            background: #fff; border: 1px solid #ddd; border-radius: 4px;
-            padding: 32px 40px; font-family: Georgia, serif;
-        }
-        html[data-theme="dark"] .bulletin-paper { background: #1a1d2e; border-color: rgba(255,255,255,0.08); }
-
-        .bulletin-masthead { text-align: center; padding-bottom: 20px; }
-        .bulletin-title { font-size: clamp(32px, 6vw, 52px); font-weight: 900; margin: 0 0 8px; color: #111; }
-        html[data-theme="dark"] .bulletin-title { color: #eef0fa; }
-        .bulletin-tagline { font-style: italic; color: #555; margin: 0 0 6px; font-size: 16px; }
-        html[data-theme="dark"] .bulletin-tagline { color: #888; }
-        .bulletin-issue { font-weight: 700; font-size: 14px; color: #333; margin: 0; }
-        html[data-theme="dark"] .bulletin-issue { color: #aaa; }
-
-        .bulletin-divider { border: none; border-top: 2px solid #222; margin: 28px 0; }
-        html[data-theme="dark"] .bulletin-divider { border-top-color: rgba(255,255,255,0.15); }
-
-        .bulletin-article { padding: 24px 20px; border-radius: 4px; margin-bottom: 8px; overflow: hidden; }
-        .bulletin-article--pink { background: #fff0f0; border-left: 4px solid #cc0000; }
-        html[data-theme="dark"] .bulletin-article--pink { background: rgba(204,0,0,0.08); }
-        .bulletin-article--gray { background: #f4f4f6; }
-        html[data-theme="dark"] .bulletin-article--gray { background: rgba(255,255,255,0.03); }
-
-        .bulletin-article__title { font-size: clamp(20px, 4vw, 28px); font-weight: 900; margin: 0 0 4px; color: #111; }
-        html[data-theme="dark"] .bulletin-article__title { color: #eef0fa; }
-        .bulletin-article__byline { font-style: italic; color: #cc0000; margin: 0 0 16px; font-size: 14px; }
-        .bulletin-article__salutation { font-size: 22px; font-style: italic; margin: 0 0 14px; color: #333; }
-        html[data-theme="dark"] .bulletin-article__salutation { color: #bbb; }
-        .bulletin-article p { margin: 0 0 14px; line-height: 1.75; color: #222; font-size: 15px; }
-        html[data-theme="dark"] .bulletin-article p { color: #ccc; }
-        .bulletin-article strong { color: #111; }
-        html[data-theme="dark"] .bulletin-article strong { color: #fff; }
-        .bulletin-article a { color: #175ec2; }
-
-        .bulletin-article__img--full { width: 100%; border-radius: 8px; margin: 12px 0 18px; display: block; }
-
-        .bulletin-article__float-right { float: right; width: 46%; margin: 0 0 16px 20px; }
-        .bulletin-article__float-left  { float: left;  width: 46%; margin: 0 20px 16px 0; }
-        .bulletin-article__float-right img,
-        .bulletin-article__float-left img { width: 100%; border-radius: 8px; display: block; }
-        @media (max-width: 560px) {
-            .bulletin-article__float-right,
-            .bulletin-article__float-left { float: none; width: 100%; margin: 0 0 16px; }
+        .bulletin-container, main.main-content > #bulletin-content {
+            max-width: 1100px; margin: 40px auto; padding: 0 24px;
         }
 
-        .bulletin-article__triple-img {
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 16px 0;
+        @keyframes shimmerBanner { 0%{background-position:0% center} 100%{background-position:200% center} }
+        .blue-banner {
+            display: block; text-align: center;
+            background: linear-gradient(135deg, #175ec2, #2980d4, #175ec2); background-size: 200% auto;
+            color: #fff; padding: 16px 60px; font-size: 36px;
+            text-transform: uppercase; letter-spacing: 3px;
+            border-radius: 100px; font-family: 'LuckiestGuy Regular', cursive;
+            box-shadow: 0 8px 32px rgba(23,94,194,0.45), 0 2px 8px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.2);
+            animation: shimmerBanner 3s linear infinite; margin-bottom: 20px;
         }
-        .bulletin-article__triple-img img { width: 100%; border-radius: 6px; display: block; }
-        @media (max-width: 480px) { .bulletin-article__triple-img { grid-template-columns: 1fr; } }
+        .hero-image-wrapper { width: 100%; margin-bottom: 15px; }
+        .hero-image { width: 100%; height: auto; display: block; border-radius: 20px; box-shadow: 0 8px 30px rgba(0,0,0,0.1); }
+        .journal-header { text-align: center; margin-top: 30px; }
+        .journal-title { font-family: 'LuckiestGuy Regular', cursive; font-size: 38px; font-weight: bold; color: #111; margin: 0 0 10px 0; letter-spacing: -1px; }
+        .journal-subtitle { font-family: 'Inter', sans-serif; font-style: italic; font-size: 18px; color: #555; margin: 0 0 25px 0; }
+        .journal-meta { font-weight: bold; font-size: 14px; color: #111; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .dashed-line { border-top: 1px dashed #ccc; margin: 20px 0 35px 0; }
 
-        .bulletin-article__ps { font-style: italic; font-size: 13px; color: #555; }
-        html[data-theme="dark"] .bulletin-article__ps { color: #888; }
-        .bulletin-article__closing { text-align: center; font-style: italic; color: #555; font-size: 14px; }
-        html[data-theme="dark"] .bulletin-article__closing { color: #777; }
+        .wanted-box { background-color: #fff; border: 1px solid #f0f0f0; border-left: 4px solid #c53929; padding: 24px; margin-bottom: 40px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
+        .wanted-title { color: #c53929; font-size: 22px; font-weight: 900; margin: 0 0 5px 0; font-family: 'LuckiestGuy Regular', cursive; letter-spacing: 0.5px; }
+        .wanted-subtitle { font-style: italic; font-size: 13px; color: #555; margin-bottom: 20px; display: block; }
+        .wanted-img { width: 100%; height: auto; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+        .wanted-text p { margin: 0 0 15px 0; font-size: 14.5px; }
 
-        @media (max-width: 560px) {
-            .bulletin-paper { padding: 20px 16px; }
+        .summary { background: rgba(88,101,242,0.09); border-left: 4px solid #5865f2; padding: 12px 16px; margin-top: 15px; font-size: 13.5px; font-style: italic; color: #2c3e50; border-radius: 0 6px 6px 0; }
+        .summary b { color: #5865f2; text-transform: uppercase; font-size: 11px; font-style: normal; display: block; margin-bottom: 4px; letter-spacing: 0.5px; }
+
+        .content-columns { display: flex; gap: 30px; margin-bottom: 40px; }
+        .left-col { flex: 1.9; }
+        .right-col { flex: 1.1; background-color: #fff; padding: 24px; border-radius: 16px; height: fit-content; box-shadow: 0 4px 20px rgba(0,0,0,0.06); border: 1px solid #e8e8f0; }
+        #bulletin-content h2 { border-bottom: 2px solid #111; padding-bottom: 5px; font-size: 22px; font-weight: 900; margin: 0 0 20px 0; color: #111; }
+        .section-subtext { font-style: italic; font-size: 13.5px; color: #555; margin-bottom: 20px; display: block; margin-top: -15px; }
+        .side-img { width: 100%; height: auto; border-radius: 12px; margin: 15px 0; box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+
+        .dragon-section { border-top: 2px solid #111; padding-top: 25px; margin-bottom: 40px; }
+        .dragon-inner { display: flex; gap: 20px; align-items: flex-start; margin-top: 15px; }
+        .dragon-text { flex: 1; }
+        .dragon-text p { font-size: 14.5px; margin-bottom: 12px; }
+        .dragon-img { width: 260px; flex-shrink: 0; height: auto; border: 3px solid #000; border-radius: 8px; }
+
+        .social-share { display: flex; justify-content: center; gap: 12px; margin: 30px 0; width: 100%; }
+        .social-share a { display: inline-flex; align-items: center; gap: 6px; padding: 10px 18px; border-radius: 100px; font-size: 13px; font-weight: 900; text-decoration: none; text-transform: uppercase; transition: all 0.25s ease; border: none; }
+        .social-share a:hover { transform: translateY(-3px); }
+        .social-share a.td { background: #5865F2; color: #fff; box-shadow: 0 4px 15px rgba(88,101,242,0.4); }
+        .social-share a.tt { background: linear-gradient(135deg, #1d56f2, #f21de4); color: #fff; box-shadow: 0 4px 15px rgba(29,86,242,0.4); }
+        .social-share a.ty { background: #ec1717e0; color: #fff; box-shadow: 0 4px 15px rgba(236,23,23,0.4); }
+        .social-share a img { width: 18px; height: 18px; vertical-align: middle; }
+        .back-button-container { text-align: center; margin: 40px 0 50px 0; }
+        .back-button { background: linear-gradient(135deg,#ffda00,#ffc200); color: #000; text-decoration: none; font-weight: 900; padding: 11px 24px; border-radius: 100px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; transition: transform 0.1s; box-shadow: 0 4px 15px rgba(255,218,0,0.4); border: 2px solid rgba(0,0,0,0.08); display: inline-block; }
+        .back-button:hover { transform: scale(1.05); box-shadow: 0 6px 20px rgba(255,218,0,0.5); }
+
+        @media (max-width: 768px) {
+            .content-columns { flex-direction: column; }
+            .dragon-inner { flex-direction: column; }
+            .blue-banner { font-size: 24px; padding: 12px 30px; }
         }
 
 </style>
@@ -531,94 +523,104 @@
         ════════════════════════════════════════════════════════════════ -->
         <div id="bulletin-content">
 
-            <!-- EN-TÊTE -->
-            <div class="bulletin-header">
-                <div class="bulletin-eyebrow">The Blox Bulletin #024</div>
-                <img src="../024/img/ItsHere.png" alt="Bulletin #024 cover" class="bulletin-cover" onerror="this.style.display='none'">
-                <div class="bulletin-date">31 juillet 2026</div>
+            <div class="blue-banner">The Blox Bulletin #024</div>
+
+            <div class="hero-image-wrapper">
+                <img src="../024/img/ItsHere.png" class="hero-image" alt="The Blox Bulletin 024">
             </div>
 
-            <div class="bulletin-paper">
+            <div class="journal-header">
+                <h1 class="journal-title">The Blox Bulletin</h1>
+                <p class="journal-subtitle">A Rebuilt Beginning Is Taking Shape.</p>
+                <div class="journal-meta">Numéro : 024 | 31 Juillet 2026</div>
+            </div>
 
-                <!-- TITRE JOURNAL -->
-                <div class="bulletin-masthead">
-                    <h1 class="bulletin-title">The Blox Bulletin</h1>
-                    <p class="bulletin-tagline">A Rebuilt Beginning Is Taking Shape.</p>
-                    <p class="bulletin-issue">Numéro : 024 &nbsp;|&nbsp; 31 juillet 2026</p>
-                </div>
+            <div class="dashed-line"></div>
 
-                <hr class="bulletin-divider">
-
-                <!-- ARTICLE 1 -->
-                <article class="bulletin-article bulletin-article--pink">
-                    <h2 class="bulletin-article__title">Something Is Changing in the First Sea</h2>
-                    <p class="bulletin-article__byline">Par The Blox Bulletin Investigation Team</p>
-                    <img src="../024/img/1stSeaGlobe2.png" alt="First Sea" class="bulletin-article__img bulletin-article__img--full" onerror="this.style.display='none'">
+            <!-- ARTICLE 1 — À LA UNE -->
+            <div class="wanted-box">
+                <h2 class="wanted-title">QUELQUE CHOSE EST EN TRAIN DE CHANGER DANS LA FIRST SEA</h2>
+                <span class="wanted-subtitle">Par The Blox Bulletin Investigation Team</span>
+                <img src="../024/img/1stSeaGlobe2.png" alt="First Sea" class="wanted-img">
+                <div class="wanted-text">
                     <p>Les mers suivantes ont connu des puissances anciennes, des expériences étranges, des invasions et des conflits capables d'affecter le monde entier. Comparée à elles, la <strong>First Sea</strong> est restée étrangement calme ; ses îles figées dans le temps tandis que le reste du monde continuait d'évoluer.</p>
                     <p>Puis, <strong>en un éclair soudain</strong>, chaque île a semblé changer d'un coup. D'anciens lieux ont été reconstruits, de nouveaux chemins se sont ouverts, des ennemis familiers ont commencé à se comporter différemment — et le monde a soudainement semblé plus vivant, pour le meilleur et pour le pire.</p>
                     <p>Pirate Village lutte désormais contre des pirates incontrôlables, les opérations militaires mettent Magma Village en danger, et des rumeurs de corruption courent au sein de la Prison. D'autres îles commencent à découvrir leurs propres problèmes…</p>
                     <p>Quoi qu'il ait provoqué cette transformation, cela a fait bien plus que remodeler le territoire. Cela a donné à la First Sea de nouveaux mystères, de nouveaux dangers et des raisons pour tous les aventuriers de retourner là où leur voyage a commencé.</p>
-                </article>
+                    <div class="summary"><b>📌 Résumé :</b> La First Sea a subi une transformation soudaine et totale — îles reconstruites, nouveaux dangers, ennemis modifiés. Une nouvelle ère commence pour les aventuriers de tous niveaux.</div>
+                </div>
+            </div>
 
-                <hr class="bulletin-divider">
+            <!-- ARTICLE 2 — DEUX COLONNES -->
+            <div class="content-columns">
+                <div class="left-col">
+                    <h2>The Build-Up of the Summer</h2>
+                    <span class="section-subtext">Par rip_indra &amp; mygame43, Propriétaires de Blox Fruits</span>
 
-                <!-- ARTICLE 2 -->
-                <article class="bulletin-article bulletin-article--gray">
-                    <h2 class="bulletin-article__title">The Build-Up of the Summer</h2>
-                    <p class="bulletin-article__byline">Par rip_indra &amp; mygame43, Propriétaires de Blox Fruits</p>
-                    <p class="bulletin-article__salutation"><em>Chers joueurs fidèles…</em></p>
-
-                    <div class="bulletin-article__float-right">
-                        <img src="../024/img/MygameIndraBubbles.png" alt="Summer Build-Up" onerror="this.style.display='none'">
-                    </div>
+                    <p style="font-style:italic;font-size:17px;margin-bottom:14px"><em>Chers joueurs fidèles…</em></p>
 
                     <p>Nous voulions enfin vous parler de ce vers quoi l'équipe travaille cet été, et comment les histoires des derniers Bulletins se connectent à ce qui vient.</p>
                     <p>Vous avez peut-être déjà remarqué qu'une mise à jour est sortie : le <strong>Dog House Indra event</strong>. Si vous l'avez manqué, restez connectés — nous organiserons la sortie officielle de cet événement le <strong>1er août 2026 à 16h00</strong> !</p>
                     <p>En avançant, nous avons de véritables nouvelles informations à partager. Après avoir passé l'année dernière à reworker et moderniser des Fruits existants, notre nouveau <strong>Magnet Fruit</strong> lancera une nouvelle vague de Fruits qui arriveront plus tard cette année. Avant cela, nous devrons introduire notre plus grand patch de balance PvP à ce jour, suivi de plus d'aperçus et d'une bande-annonce menant vers la grande sortie de l'été : <strong>un début entièrement reconstruit pour Blox Fruits</strong>.</p>
-
-                    <div class="bulletin-article__float-left">
-                        <img src="../024/img/1stSeaMansion.png" alt="First Sea Map" onerror="this.style.display='none'">
-                    </div>
-
-                    <p>Alors, que voulons-nous dire par un début entièrement reconstruit ?</p>
                     <p>C'est bien plus que polir quelques îles. La First Sea est reconstruite avec une <strong>progression améliorée</strong>, des <strong>lieux repensés</strong>, des <strong>personnages plus expressifs</strong>, des <strong>histoires enrichies</strong> et de nouvelles activités qui donnent à chaque île un rôle plus fort.</p>
-                    <p>Nous savons que le grind original peut sembler répétitif, surtout lorsque le chemin principal consiste à vaincre les mêmes groupes d'ennemis encore et encore. Ces quêtes ne disparaissent pas, mais les joueurs auront désormais des <strong>moyens alternatifs de progresser</strong> en explorant les îles, en aidant leurs habitants, en découvrant des puzzles cachés et en relevant de nouveaux défis.</p>
-                    <p>Ces activités ne permettront pas seulement aux nouveaux joueurs d'avancer dans la First Sea, mais récompenseront également les joueurs expérimentés qui reviennent y participer.</p>
+                    <p>Nous savons que le grind original peut sembler répétitif. Ces quêtes ne disparaissent pas, mais les joueurs auront désormais des <strong>moyens alternatifs de progresser</strong> en explorant les îles, en aidant leurs habitants, en découvrant des puzzles cachés et en relevant de nouveaux défis.</p>
 
-                    <div class="bulletin-article__triple-img">
-                        <img src="../024/img/MagmaVillageCave.png" alt="Island 1" onerror="this.style.display='none'">
-                        <img src="../024/img/PipeProblem.png" alt="Island 2" onerror="this.style.display='none'">
-                        <img src="../024/img/UnderwaterCity.png" alt="Island 3" onerror="this.style.display='none'">
+                    <div class="summary"><b>📌 Résumé :</b> Le Magnet Fruit ouvre une nouvelle vague de Fruits. La First Sea est reconstruite de fond en comble avec progression repensée, lieux redessinés et nouvelles activités pour tous les joueurs.</div>
+
+                    <p style="margin-top:16px;font-size:13px;font-style:italic;color:#555"><em>P.S. Si vous avez lu jusqu'ici, vous devez être un vrai fan hardcore de Blox Fruits ! Montrez votre soutien en <strong>votant pour Blox Fruits</strong> dans les catégories Best Action et Best RPG aux Roblox 2026 Innovation Awards. <a href="#" style="color:#175ec2">Voter ici.</a></em></p>
+                </div>
+
+                <div class="right-col">
+                    <img src="../024/img/MygameIndraBubbles.png" class="side-img" alt="rip_indra & mygame43">
+                    <img src="../024/img/1stSeaMansion.png" class="side-img" alt="First Sea Mansion" style="margin-top:16px">
+                    <div class="summary" style="margin-top:12px"><b>📌 À venir :</b> Patch PvP majeur la semaine prochaine, puis bande-annonce, puis la grande sortie de l'été.</div>
+                </div>
+            </div>
+
+            <!-- ARTICLE 3 — SECTION DRAGON STYLE -->
+            <div class="dragon-section">
+                <h2>THE BIGGEST PVP BALANCE PATCH YET</h2>
+                <span class="section-subtext">Par the Blox Fruits Dev Team</span>
+                <div class="dragon-inner">
+                    <div class="dragon-text">
+                        <p>Avant d'arriver à la First Sea reconstruite, une autre grande mise à jour approche — et elle arrive <strong>la semaine prochaine</strong>.</p>
+                        <p>La prochaine mise à jour PvP introduira notre <strong>plus grand patch de balance à ce jour</strong>, avec des changements couvrant les Fruits, les Races, les Épées, les Armes à Feu et les Styles de Combat.</p>
+                        <p>Ce n'est pas simplement changer quelques chiffres de dégâts. Plusieurs capacités reçoivent de nouveaux comportements, des hitboxes améliorées, des temps d'incantation plus rapides, une end-lag réduite et des mécaniques entièrement reworkées. Les utilisateurs de Ghost, par exemple, pourront désormais utiliser des <strong>capacités d'épée</strong>.</p>
+                        <p>Pain's Last Stand est également entièrement reworké. Sa durée est maintenant plus courte, mais vaincre votre adversaire avant que le temps soit écoulé vous permettra de survivre.</p>
+                        <p>Préparez-vous à redécouvrir votre build préféré pour le PvP ou le grinding ! Nous n'avons jamais vu autant de changements de balance en une seule fois.</p>
+                        <div class="summary"><b>📌 Résumé :</b> Plus grand patch de balance PvP jamais vu — Fruits, Races, Épées, Guns et Styles de Combat tous concernés. Ghost obtient les capacités d'épée. Pain's Last Stand entièrement reworké.</div>
                     </div>
+                    <img src="../024/img/GhostSwords.png" class="dragon-img" alt="Ghost Swords PvP Patch">
+                </div>
+            </div>
 
-                    <p>Il y a aussi de nombreux petits changements cachés à travers la mer : le bâtiment central oublié de Middle Town pourrait enfin avoir un but, une nouvelle fonctionnalité de carte pour faciliter la navigation, et le suivi de votre progression à travers le monde deviendra bien plus clair. Mais les mots seuls ne peuvent pas capturer l'ampleur de ces changements — vous devrez le vivre vous-mêmes pour vraiment comprendre.</p>
-                    <p>Ce n'est que la première étape. Merci d'avoir lu nos derniers Bulletins — ce sera le dernier… pour l'instant. Si vous appréciez cette nouvelle direction, nous aimerions continuer à donner à chaque mer le même type d'expérience mise à jour et plus significative. Nous espérons que vous êtes aussi enthousiastes que nous pour ces changements ! Restez connectés !</p>
+            <!-- IMAGES TRIPLE -->
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:40px">
+                <img src="../024/img/MagmaVillageCave.png" style="width:100%;border-radius:12px;box-shadow:0 4px 16px rgba(0,0,0,0.08)" alt="Magma Village Cave">
+                <img src="../024/img/PipeProblem.png" style="width:100%;border-radius:12px;box-shadow:0 4px 16px rgba(0,0,0,0.08)" alt="Pipe Problem">
+                <img src="../024/img/UnderwaterCity.png" style="width:100%;border-radius:12px;box-shadow:0 4px 16px rgba(0,0,0,0.08)" alt="Underwater City">
+            </div>
 
-                    <p class="bulletin-article__ps"><em>P.S. Si vous avez lu jusqu'ici, vous devez être un vrai fan hardcore de Blox Fruits — et nous apprécions énormément votre dévouement au jeu. Nous espérons pouvoir compter sur votre vote aux Roblox 2026 Innovation Awards. Montrez votre soutien en <strong>votant pour Blox Fruits</strong> dans les catégories Best Action et Best RPG ! <a href="#">Voter ici.</a></em></p>
-                </article>
+            <!-- MOT DE FIN -->
+            <div class="yellow-box" style="text-align:center;font-style:italic;background:#f8f8f8;border:1px solid #ddd;color:#333">
+                <p style="margin:0;font-size:15px"><em>This concludes the Blox Bulletin… for now. Stay tuned via our Discord or Social Medias for upcoming News!</em></p>
+            </div>
 
-                <hr class="bulletin-divider">
+            <div class="social-share">
+                <a href="https://discord.gg/a6S6eugPn" class="td">
+                    <img src="../shared/discord.png" class="discord-icon" alt="Discord"> Discord
+                </a>
+                <a href="https://tiktok.com/@dc_neolixx" class="tt">
+                    <img src="../shared/tiktok.png" class="tiktok-icon" alt="TikTok"> TikTok
+                </a>
+                <a href="https://www.youtube.com/@Dc_neolixx" class="ty">
+                    <img src="../shared/youtube.png" class="youtube-icon" alt="Youtube"> Youtube
+                </a>
+            </div>
 
-                <!-- ARTICLE 3 -->
-                <article class="bulletin-article bulletin-article--gray">
-                    <h2 class="bulletin-article__title">The Biggest PvP Balance Patch Yet</h2>
-                    <p class="bulletin-article__byline">Par the Blox Fruits Dev Team</p>
-
-                    <div class="bulletin-article__float-right">
-                        <img src="../024/img/GhostSwords.png" alt="PvP Balance Patch" onerror="this.style.display='none'">
-                    </div>
-
-                    <p>Avant d'arriver à la First Sea reconstruite, une autre grande mise à jour approche — et elle arrive <strong>la semaine prochaine</strong>.</p>
-                    <p>La prochaine mise à jour PvP introduira notre <strong>plus grand patch de balance à ce jour</strong>, avec des changements couvrant les Fruits, les Races, les Épées, les Armes à Feu et les Styles de Combat.</p>
-                    <p>Ce n'est pas simplement changer quelques chiffres de dégâts. Plusieurs capacités reçoivent de nouveaux comportements, des hitboxes améliorées, des temps d'incantation plus rapides, une end-lag réduite et des mécaniques entièrement reworkées. Les utilisateurs de Ghost, par exemple, remarqueront peut-être que leurs fantômes invoqués sont devenus bien plus capables — ils pourront désormais utiliser des <strong>capacités d'épée</strong>.</p>
-                    <p>Pain's Last Stand est également entièrement reworké. Sa durée est maintenant plus courte, mais vaincre votre adversaire avant que le temps soit écoulé vous permettra de survivre.</p>
-                    <p>Ce n'est qu'une infime fraction des changements de balance à venir la semaine prochaine. Préparez-vous à redécouvrir votre build préféré pour le PvP ou le grinding ! Des Fruits haut de gamme aux armes oubliées depuis des années. Nous n'avons jamais vu autant de changements de balance en une seule fois — attendez-vous à un peu de folie le temps que tout se rééquilibre, à l'approche de la grande mise à jour à venir !</p>
-
-                    <hr class="bulletin-divider">
-                    <p class="bulletin-article__closing"><em>This concludes the Blox Bulletin… for now. Stay tuned via our Discord or Social Medias for upcoming News!</em></p>
-                </article>
-
-            </div><!-- /.bulletin-paper -->
+            <div class="back-button-container">
+                <a href="../index.html#bulletin-024" class="back-button">← Retour aux Actualités</a>
+            </div>
 
         </div>
 
@@ -648,8 +650,8 @@
     </footer>
 
     <script>
-        // Target: Friday, July 31, 2026 at 09:45 AM CEST (UTC+2) = 07:45 UTC
-        const TARGET = new Date(Date.UTC(2026, 6, 31, 7, 45, 0));
+        // Target: Friday, July 31, 2026 at 10:00 AM CEST (UTC+2) = 08:00 UTC
+        const TARGET = new Date(Date.UTC(2026, 6, 31, 8, 0, 0));
 
         function pad(n) { return String(n).padStart(2, '0'); }
 
