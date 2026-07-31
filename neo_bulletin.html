@@ -7482,8 +7482,10 @@
     }
 
     function _dcDelete(cid) {
+        const c = _dcDB.find(x => x.id === cid);
         _pendingDelete = () => {
-            _dcDB = _dcDB.filter(c => c.id !== cid);
+            _imgDelete(c?.images);
+            _dcDB = _dcDB.filter(x => x.id !== cid);
             _dcSave();
             _dcRender();
         };
@@ -8071,8 +8073,10 @@
     }
 
     function _ccDelete(cid) {
+        const c = _ccDB.find(x => x.id === cid);
         _pendingDelete = () => {
-            _ccDB = _ccDB.filter(c => c.id !== cid);
+            _imgDelete(c?.images);
+            _ccDB = _ccDB.filter(x => x.id !== cid);
             _ccRef.set(_ccDB.map(x => { const n={...x}; delete n.likedByMe; delete n.myReactions; return n; }))
                 .catch(e => console.error('[card-comments] delete error:', e));
             _ccRender();
@@ -8497,14 +8501,20 @@
             .catch(e => console.error('[actus] save error:', e));
     }
 
-    window._actusPostComment = function(cardId) {
+    window._actusPostComment = async function(cardId) {
         if (!window.currentUser) return;
         const inp = document.querySelector(`.actus-cc-input[data-actus-id="${cardId}"]`);
-        const txt = (inp?.value||'').trim(); if (!txt) return;
+        const txt = (inp?.value||'').trim();
         const check = _filterComment(txt);
         if (check.blocked) { _showCommentWarning('Contenu inapproprié.'); return; }
+        const taken = _imgTake(document.querySelector(`.actus-cc-write[data-actus-id="${cardId}"]`));
+        if (!txt && !taken.imgs.length) return;
         const c = { id: uid(), username: window.currentUser.username, avatar: window.currentUser.avatar||'',
-            text: txt, time: isoNow(), likes: 0, likedByMe: false, pinned: false };
+            text: txt, time: isoNow(), likes: 0, likedByMe: false, pinned: false, images: [] };
+        if (taken.imgs.length) {
+            try { c.images = await _imgUpload(taken.imgs); }
+            catch(e) { console.error('[actus] image upload error:', e); }
+        }
         const db = _actusCommentsDB[cardId] || [];
         db.unshift(c);
         _actusCommentsDB[cardId] = db;
@@ -8548,7 +8558,7 @@
             let cardId = '';
             Object.keys(_actusCommentsDB).forEach(k => {
                 const idx = _actusCommentsDB[k].findIndex(x => x.id === cid);
-                if (idx !== -1) { _actusCommentsDB[k].splice(idx, 1); cardId = k; }
+                if (idx !== -1) { _imgDelete(_actusCommentsDB[k][idx]?.images); _actusCommentsDB[k].splice(idx, 1); cardId = k; }
             });
             if (!cardId) return;
             _actusRenderComments(cardId);
@@ -8901,7 +8911,9 @@
     /* ─── Suppression ─── */
     let _pendingDelete = null;
     function deleteComment(id) {
+        const _del = COMMENTS_DB.find(c => c.id === id);
         _pendingDelete = () => {
+            _imgDelete(_del?.images);
             const i = COMMENTS_DB.findIndex(c => c.id === id);
             if (i !== -1) { COMMENTS_DB.splice(i, 1); }
             saveDB();
@@ -12569,14 +12581,20 @@
     }
 
     // ── Post commentaire ─────────────────────────────────────────
-    window._updPostComment = function(updId) {
+    window._updPostComment = async function(updId) {
         if (!window.currentUser) return;
         const inp = document.querySelector(`.upd-cc-input[data-upd-id="${updId}"]`);
-        const txt = (inp?.value||'').trim(); if (!txt) return;
+        const txt = (inp?.value||'').trim();
         const check = typeof _filterComment === 'function' ? _filterComment(txt) : {blocked:false};
         if (check.blocked) { _showCommentWarning?.('Contenu inapproprié.'); return; }
+        const taken = _imgTake(document.getElementById('updWriteBox-' + updId));
+        if (!txt && !taken.imgs.length) return;
         const c = { id: uid(), username: window.currentUser.username, avatar: window.currentUser.avatar||'',
-            text: txt, time: isoNow(), likes:0, likedByMe:false, pinned:false, replies:[], reactions:{} };
+            text: txt, time: isoNow(), likes:0, likedByMe:false, pinned:false, replies:[], reactions:{}, images: [] };
+        if (taken.imgs.length) {
+            try { c.images = await _imgUpload(taken.imgs); }
+            catch(e) { console.error('[updates] image upload error:', e); }
+        }
         (_updCommentsDB[updId] = _updCommentsDB[updId]||[]).unshift(c);
         _updFirebaseSave(updId);
         inp.value=''; inp.style.height='';
