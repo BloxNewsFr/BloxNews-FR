@@ -121,6 +121,14 @@
             .site-header { padding: 0 12px; height: 52px; }
             .site-header__logo img { height: 28px; }
             .site-header__icons { right: 12px; gap: 4px; }
+            .site-header__icons .dark-mode-toggle { font-size: 20px; }
+            .site-header__icons span[onclick="openSearch()"] { font-size: 22px; }
+            .discord-login-btn { padding: 3px 6px; font-size: 0; gap: 0; min-width: 30px; justify-content: center; }
+            .discord-login-btn svg { width: 16px; height: 16px; margin: 0; }
+            .discord-user-pill { padding: 2px; gap: 2px; min-width: 30px; justify-content: center; }
+            .discord-avatar { width: 26px; height: 26px; }
+            .discord-username { display: none; }
+            .discord-chevron { display: none; }
         }
 
         .mobile-nav-backdrop {
@@ -425,6 +433,219 @@
             .blue-banner { font-size: 24px; padding: 12px 30px; }
         }
 
+        /* ── RECHERCHE ── */
+        .search-overlay {
+            position: fixed; inset: 0;
+            background: linear-gradient(135deg, rgba(5,5,20,0.93), rgba(10,8,25,0.88));
+            backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+            z-index: 99999; display: flex; flex-direction: column;
+            align-items: center; padding-top: 120px;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.35s ease;
+        }
+        .search-overlay.is-active { opacity: 1; pointer-events: auto; }
+        .search-container {
+            width: 92%; max-width: 640px;
+            transform: translateY(-24px) scale(0.94);
+            transition: transform 0.45s cubic-bezier(0.34,1.56,0.64,1);
+        }
+        .search-overlay.is-active .search-container { transform: translateY(0) scale(1); }
+        .search-bar {
+            display: flex; align-items: center; gap: 8px;
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px; padding: 4px 4px 4px 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.06);
+            transition: box-shadow 0.25s, border-color 0.25s;
+        }
+        .search-bar:focus-within {
+            box-shadow: 0 8px 48px rgba(255,255,255,0.04), 0 0 0 1px rgba(255,255,255,0.12);
+            border-color: rgba(255,255,255,0.15);
+        }
+        .search-bar input {
+            flex: 1; border: none; outline: none; font-size: 17px;
+            font-family: 'Inter', sans-serif; color: #fff;
+            background: transparent; padding: 14px 0; letter-spacing: 0.1px;
+        }
+        .search-bar input::placeholder { color: rgba(255,255,255,0.3); }
+        .search-go-btn {
+            padding: 10px 22px; border-radius: 12px; border: none;
+            background: linear-gradient(135deg, #444, #222);
+            color: #fff; font-weight: 800; font-size: 13px;
+            cursor: pointer; font-family: 'Inter', sans-serif;
+            transition: all 0.25s ease; letter-spacing: 0.3px;
+            text-transform: uppercase; flex-shrink: 0;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+        }
+        .search-go-btn:hover { transform: scale(1.04); background: linear-gradient(135deg, #555, #333); box-shadow: 0 6px 24px rgba(0,0,0,0.45); }
+        .search-nav-btn {
+            width: 36px; height: 36px; border-radius: 10px; border: none;
+            background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.5); cursor: pointer;
+            font-size: 16px; display: flex; align-items: center;
+            justify-content: center; transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        .search-nav-btn:hover { background: rgba(255,255,255,0.12); color: #fff; }
+        .search-nav-btn:disabled { opacity: 0.2; cursor: default; }
+        .search-close-btn {
+            width: 36px; height: 36px; border-radius: 10px; border: none;
+            background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.5); cursor: pointer;
+            font-size: 20px; display: flex; align-items: center;
+            justify-content: center; transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        .search-close-btn:hover { background: rgba(255,50,50,0.15); color: #ff6b6b; }
+        .search-stats {
+            color: rgba(255,255,255,0.35); font-size: 14px; margin-top: 12px;
+            font-family: 'Inter', sans-serif; font-weight: 500;
+            letter-spacing: 0.3px; text-align: center;
+        }
+        mark.search-hl {
+            background: linear-gradient(135deg, #fce83a, #ffd700);
+            color: #000; border-radius: 3px; padding: 1px 4px;
+            box-shadow: 0 1px 6px rgba(252,232,58,0.4);
+            transition: all 0.2s;
+        }
+        mark.search-hl.active {
+            background: linear-gradient(135deg, #ff6b35, #ff4500);
+            color: #fff; border-radius: 3px; padding: 1px 4px;
+            box-shadow: 0 1px 10px rgba(255,107,53,0.5);
+        }
+        @media (max-width: 768px) {
+            .search-overlay { padding-top: 80px; }
+            .search-bar { gap: 4px; padding: 4px 4px 4px 14px; }
+            .search-bar input { font-size: 15px; padding: 10px 0; }
+            .search-go-btn { padding: 8px 12px; font-size: 11px; }
+            .search-nav-btn { width: 44px; height: 44px; font-size: 16px; }
+            .search-close-btn { width: 44px; height: 44px; font-size: 18px; }
+        }
+
+        /* ── DISCORD AUTH ── */
+        .discord-login-btn {
+            display: flex; align-items: center; gap: 8px;
+            padding: 7px 14px; border-radius: 20px; border: none; cursor: pointer;
+            background: #5865F2; color: #fff;
+            font-size: 13px; font-weight: 700; font-family: 'Inter', sans-serif;
+            transition: all 0.22s cubic-bezier(0.34,1.56,0.64,1);
+            box-shadow: 0 2px 12px rgba(88,101,242,0.35);
+            white-space: nowrap; user-select: none;
+        }
+        .discord-login-btn:hover {
+            background: #4752c4; transform: translateY(-1px);
+            box-shadow: 0 4px 20px rgba(88,101,242,0.5);
+        }
+        .discord-login-btn:active { transform: translateY(0); }
+        .discord-login-btn svg { flex-shrink: 0; }
+        .discord-user-pill {
+            display: none; align-items: center; gap: 8px;
+            padding: 4px 12px 4px 4px; border-radius: 20px; cursor: pointer;
+            background: rgba(88,101,242,0.12);
+            border: 1px solid rgba(88,101,242,0.25);
+            transition: all 0.2s; user-select: none; position: relative;
+        }
+        .discord-user-pill:hover {
+            background: rgba(88,101,242,0.2);
+            border-color: rgba(88,101,242,0.4);
+        }
+        .discord-user-pill.is-visible { display: flex; }
+        .discord-avatar {
+            width: 30px; height: 30px; border-radius: 50%;
+            object-fit: cover; flex-shrink: 0;
+            border: 2px solid rgba(88,101,242,0.5);
+            background: rgba(88,101,242,0.2);
+        }
+        .discord-username {
+            font-size: 13px; font-weight: 700; color: var(--color-text);
+            max-width: 110px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+        }
+        .discord-chevron {
+            font-size: 10px; color: rgba(88,101,242,0.7); margin-left: 2px;
+            transition: transform 0.2s;
+        }
+        .discord-user-pill.dropdown-open .discord-chevron { transform: rotate(180deg); }
+        .discord-dropdown {
+            position: absolute; top: calc(100% + 10px); right: 0;
+            background: rgba(12,12,20,0.98); backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 16px;
+            width: 220px; overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(88,101,242,0.1);
+            opacity: 0; pointer-events: none; transform: translateY(-6px);
+            transition: opacity 0.2s, transform 0.2s;
+            z-index: 9999;
+        }
+        .discord-user-pill.dropdown-open .discord-dropdown {
+            opacity: 1; pointer-events: all; transform: translateY(0);
+        }
+        .discord-dropdown-header {
+            padding: 14px 16px; background: rgba(88,101,242,0.08);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            display: flex; align-items: center; gap: 10px;
+        }
+        .discord-dropdown-avatar {
+            width: 38px; height: 38px; border-radius: 50%; object-fit: cover;
+            border: 2px solid rgba(88,101,242,0.5); flex-shrink: 0;
+        }
+        .discord-dropdown-name {
+            font-size: 13px; font-weight: 700; color: #fff; line-height: 1.2;
+        }
+        .discord-dropdown-tag {
+            font-size: 11px; color: rgba(88,101,242,0.8); margin-top: 1px;
+        }
+        .discord-dropdown-body { padding: 8px; }
+        .discord-dropdown-item {
+            display: flex; align-items: center; gap: 8px;
+            padding: 9px 10px; border-radius: 8px; cursor: pointer;
+            color: rgba(255,255,255,0.55); font-size: 13px; font-weight: 600;
+            transition: all 0.15s; font-family: 'Inter', sans-serif;
+        }
+        .discord-dropdown-item:hover { background: rgba(255,255,255,0.06); color: #fff; }
+        .discord-dropdown-item span { font-size: 15px; }
+        .discord-skeleton {
+            width: 120px; height: 30px; border-radius: 20px;
+            background: linear-gradient(90deg, rgba(0,0,0,0.05) 25%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.05) 75%);
+            background-size: 200% 100%; animation: skeletonShimmer 1.4s infinite;
+            display: none;
+        }
+        .discord-skeleton.is-visible { display: block; }
+        @keyframes skeletonShimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+        /* ── DARK MODE ── */
+        body.dark-mode { background-color: #0b0b12; color: #ddd; }
+        body.dark-mode .site-header { background-color: rgba(10,10,18,0.75); border-bottom-color: rgba(255,255,255,0.06); }
+        body.dark-mode .site-header__logo img { filter: brightness(0) invert(1); }
+        body.dark-mode .site-nav a { color: #ccc; }
+        body.dark-mode .site-nav a:hover { background: var(--color-primary); color: #000; }
+        body.dark-mode .site-header__icons { color: #ccc; }
+        body.dark-mode .site-header__icons span:hover { background: rgba(255,255,255,0.06); }
+        body.dark-mode .mobile-nav-dropdown { background: rgba(15,15,25,0.98); border-color: rgba(255,255,255,0.06); }
+        body.dark-mode .soon-title { color: #fff; text-shadow: 0 0 40px rgba(255,218,0,0.2), 0 4px 20px rgba(0,0,0,0.4); }
+        body.dark-mode .soon-subtitle { color: rgba(255,255,255,0.55); }
+        body.dark-mode .countdown-number { color: #fff; background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); box-shadow: 0 0 40px rgba(255,218,0,0.08), inset 0 1px 0 rgba(255,255,255,0.1); }
+        body.dark-mode .countdown-number::after { background: linear-gradient(180deg, rgba(255,255,255,0.04) 0%, transparent 50%, rgba(0,0,0,0.1) 100%); }
+        body.dark-mode .countdown-label { color: rgba(255,255,255,0.4); }
+        body.dark-mode .countdown-sep { color: rgba(255,255,255,0.15); }
+        body.dark-mode .journal-title { color: #eee; }
+        body.dark-mode .journal-subtitle { color: #bbb; }
+        body.dark-mode .journal-meta { color: #aaa; }
+        body.dark-mode .dashed-line { border-top-color: #2a2a35; }
+        body.dark-mode .wanted-box { background-color: #13131e; border-color: #2a2a35; }
+        body.dark-mode .wanted-title { color: #e05040; }
+        body.dark-mode .wanted-subtitle { color: #bbb; }
+        body.dark-mode .wanted-text p { color: #ccc; }
+        body.dark-mode .summary { background: rgba(88,101,242,0.12); color: #bbb; }
+        body.dark-mode .right-col { background-color: #13131e; border-color: #2a2a35; }
+        body.dark-mode #bulletin-content h2 { border-bottom-color: #444; color: #eee; }
+        body.dark-mode .section-subtext { color: #bbb; }
+        body.dark-mode .dragon-section { border-top-color: #444; }
+        body.dark-mode .dragon-img { border-color: #444; }
+        body.dark-mode .dragon-text p { color: #ccc; }
+        body.dark-mode .site-footer { background-color: #0c0c16; border-top-color: #2a2a35; }
+        body.dark-mode .back-button { background: linear-gradient(135deg, #ffda00, #ffc200); color: #000; }
+        body.dark-mode .discord-username { color: #ccc; }
+        body.dark-mode .discord-chevron { color: rgba(130,150,255,0.7); }
+        body.dark-mode .discord-user-pill:hover { border-color: rgba(130,150,255,0.5); }
+
 </style>
     <link rel="stylesheet" href="../shared/bulletin-lightbox.css">
 <body>
@@ -444,6 +665,34 @@
             </ul>
         </nav>
         <div class="site-header__icons">
+            <span class="material-symbols-outlined" onclick="openSearch()" title="Rechercher" role="button" tabindex="0" aria-label="Rechercher" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openSearch()}">search</span>
+            <span class="material-symbols-outlined dark-mode-toggle" id="darkModeToggle" onclick="toggleDarkMode()" title="Dark Mode" role="button" tabindex="0" aria-label="Changer de thème" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleDarkMode()}">dark_mode</span>
+            <div class="discord-skeleton" id="discordSkeleton"></div>
+            <button class="discord-login-btn" id="discordLoginBtn" onclick="_discordLogin()" style="display:none">
+                <svg width="16" height="12" viewBox="0 0 71 55" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M60.1045 4.8978C55.5792 2.8214 50.7265 1.2916 45.6527 0.41542C45.5603 0.39851 45.468 0.44077 45.4204 0.52529C44.7963 1.6353 44.105 3.0834 43.6209 4.2216C38.1637 3.4046 32.7345 3.4046 27.3892 4.2216C26.905 3.0581 26.1886 1.6353 25.5617 0.52529C25.5141 0.44359 25.4218 0.40133 25.3294 0.41542C20.2584 1.2888 15.4057 2.8186 10.8776 4.8978C10.8384 4.9147 10.8048 4.9429 10.7825 4.9795C1.57795 18.7309 -0.943561 32.1443 0.293408 45.3914C0.299005 45.4562 0.335386 45.5182 0.385761 45.5576C6.45866 50.0174 12.3413 52.7249 18.1147 54.5195C18.2071 54.5477 18.305 54.5139 18.3638 54.4378C19.7295 52.5728 20.9469 50.6063 21.9907 48.5383C22.0523 48.4172 21.9935 48.2735 21.8676 48.2256C19.9366 47.4931 18.0979 46.6 16.3292 45.5858C16.1893 45.5041 16.1781 45.304 16.3068 45.2082C16.679 44.9293 17.0513 44.6391 17.4067 44.3461C17.471 44.2926 17.5606 44.2813 17.6362 44.3151C29.2558 49.6202 41.8354 49.6202 53.3179 44.3151C53.3935 44.2785 53.4831 44.2898 53.5502 44.3433C53.9057 44.6363 54.2779 44.9293 54.6529 45.2082C54.7816 45.304 54.7732 45.5041 54.6333 45.5858C52.8646 46.6197 51.0259 47.4931 49.0921 48.2228C48.9662 48.2707 48.9102 48.4172 48.9718 48.5383C50.038 50.6034 51.2554 52.5699 52.5959 54.435C52.6519 54.5139 52.7526 54.5477 52.845 54.5195C58.6464 52.7249 64.529 50.0174 70.6019 45.5576C70.6551 45.5182 70.6887 45.459 70.6943 45.3942C72.1747 30.0791 68.2147 16.7757 60.1968 4.9823C60.1772 4.9429 60.1437 4.9147 60.1045 4.8978ZM23.7259 37.3253C20.2276 37.3253 17.3451 34.1136 17.3451 30.1693C17.3451 26.225 20.1717 23.0133 23.7259 23.0133C27.308 23.0133 30.1626 26.2532 30.1066 30.1693C30.1066 34.1136 27.28 37.3253 23.7259 37.3253ZM47.3178 37.3253C43.8196 37.3253 40.9371 34.1136 40.9371 30.1693C40.9371 26.225 43.7636 23.0133 47.3178 23.0133C50.9 23.0133 53.7545 26.2532 53.6986 30.1693C53.6986 34.1136 50.9 37.3253 47.3178 37.3253Z" fill="white"/>
+                </svg>
+                Connexion
+            </button>
+            <div class="discord-user-pill" id="discordUserPill">
+                <img class="discord-avatar" id="discordAvatar" src="" alt="Avatar">
+                <span class="discord-username" id="discordUsername"></span>
+                <span class="discord-chevron">&#9660;</span>
+                <div class="discord-dropdown" id="discordDropdown">
+                    <div class="discord-dropdown-header">
+                        <img class="discord-dropdown-avatar" id="discordDropdownAvatar" src="" alt="">
+                        <div>
+                            <div class="discord-dropdown-name" id="discordDropdownName"></div>
+                            <div class="discord-dropdown-tag" id="discordDropdownTag">Connect&#233; via Discord</div>
+                        </div>
+                    </div>
+                    <div class="discord-dropdown-body">
+                        <div class="discord-dropdown-item" onclick="_discordLogout()">
+                            <span>&#128682;</span> Se d&#233;connecter
+                        </div>
+                    </div>
+                </div>
+            </div>
             <span class="material-symbols-outlined mobile-menu-btn" id="menuToggle">menu</span>
         </div>
     </header>
@@ -553,7 +802,7 @@
                     <p style="font-style:italic;font-size:17px;margin-bottom:14px"><em>Chers joueurs fidèles…</em></p>
 
                     <p>Nous voulions enfin vous parler de ce vers quoi l'équipe travaille cet été, et comment les histoires des derniers Bulletins se connectent à ce qui vient.</p>
-                    <p>Vous avez peut-être déjà remarqué qu'une mise à jour est sortie : le <strong>Dog House Indra event</strong>. Si vous l'avez manqué, restez connectés — nous organiserons la sortie officielle de cet événement le <strong>1er août 2026 à 16h00</strong> !</p>
+                    <p>Vous avez peut-être déjà remarqué qu'une mise à jour est sortie : le <strong>Dog House Indra event</strong>. Si vous l'avez manqué, restez connectés — nous organiserons la sortie officielle de cet événement le <strong>1er août 2026 22h00 en France</strong> !</p>
                     <p>En avançant, nous avons de véritables nouvelles informations à partager. Après avoir passé l'année dernière à reworker et moderniser des Fruits existants, notre nouveau <strong>Magnet Fruit</strong> lancera une nouvelle vague de Fruits qui arriveront plus tard cette année. Avant cela, nous devrons introduire notre plus grand patch de balance PvP à ce jour, suivi de plus d'aperçus et d'une bande-annonce menant vers la grande sortie de l'été : <strong>un début entièrement reconstruit pour Blox Fruits</strong>.</p>
                     <p>C'est bien plus que polir quelques îles. La First Sea est reconstruite avec une <strong>progression améliorée</strong>, des <strong>lieux repensés</strong>, des <strong>personnages plus expressifs</strong>, des <strong>histoires enrichies</strong> et de nouvelles activités qui donnent à chaque île un rôle plus fort.</p>
                     <p>Nous savons que le grind original peut sembler répétitif. Ces quêtes ne disparaissent pas, mais les joueurs auront désormais des <strong>moyens alternatifs de progresser</strong> en explorant les îles, en aidant leurs habitants, en découvrant des puzzles cachés et en relevant de nouveaux défis.</p>
@@ -708,6 +957,217 @@
             mobileNav.querySelectorAll('a').forEach(a => a.addEventListener('click', close));
         })();
     </script>
+
+    <div id="searchOverlay" class="search-overlay" onclick="if(event.target===this)closeSearch()">
+        <div class="search-container">
+            <div class="search-bar">
+                <span class="material-symbols-outlined search-icon" style="font-size:22px;color:#999;flex-shrink:0">search</span>
+                <input id="searchInput" type="text" placeholder="Rechercher&#8230;" autofocus onkeydown="if(event.key==='Escape')closeSearch();if(event.key==='Enter'){event.preventDefault();executeSearch()}">
+                <button class="search-go-btn" onclick="executeSearch()">Chercher</button>
+                <button class="search-nav-btn" onclick="prevMatch()" id="searchPrevBtn">&#9650;</button>
+                <button class="search-nav-btn" onclick="nextMatch()" id="searchNextBtn">&#9660;</button>
+                <button class="search-close-btn" onclick="closeSearch()">&#10005;</button>
+            </div>
+            <div id="searchStats" class="search-stats"></div>
+        </div>
+    </div>
+
+    <script>
+        /* ─── SEARCH SYSTEM ── */
+        let searchMatches = [];
+        let searchCurrent = -1;
+        function openSearch() {
+            document.getElementById('searchOverlay').classList.add('is-active');
+            const inp = document.getElementById('searchInput');
+            inp.value = '';
+            document.getElementById('searchStats').textContent = '';
+            searchMatches = []; searchCurrent = -1;
+            removeHighlights();
+            setTimeout(() => inp.focus(), 200);
+        }
+        function closeSearch(keepHl) {
+            document.getElementById('searchOverlay').classList.remove('is-active');
+            if (!keepHl) removeHighlights();
+            if (!keepHl) { searchMatches = []; searchCurrent = -1; }
+        }
+        function removeHighlights() {
+            document.querySelectorAll('mark.search-hl').forEach(m => {
+                const p = m.parentNode;
+                p.replaceChild(document.createTextNode(m.textContent), m);
+                p.normalize();
+            });
+        }
+        function executeSearch() {
+            const q = document.getElementById('searchInput').value.trim().toLowerCase();
+            removeHighlights();
+            searchMatches = []; searchCurrent = -1;
+            document.getElementById('searchPrevBtn').disabled = true;
+            document.getElementById('searchNextBtn').disabled = true;
+            const stats = document.getElementById('searchStats');
+            stats.textContent = '';
+            if (!q) return;
+            const root = document.querySelector('.main-content') || document.body;
+            const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+                acceptNode: n => {
+                    const p = n.parentNode;
+                    if (!p || p.nodeName === 'SCRIPT' || p.nodeName === 'STYLE') return NodeFilter.FILTER_REJECT;
+                    if (p.closest('.search-overlay, .material-symbols-outlined, .mobile-menu-btn')) return NodeFilter.FILTER_REJECT;
+                    return NodeFilter.FILTER_ACCEPT;
+                }
+            });
+            const nodes = []; let n;
+            while (n = walker.nextNode()) nodes.push(n);
+            nodes.forEach(textNode => {
+                const text = textNode.textContent;
+                const lower = text.toLowerCase();
+                let idx = lower.indexOf(q);
+                if (idx === -1) return;
+                const frag = document.createDocumentFragment();
+                let last = 0;
+                while (idx !== -1) {
+                    if (idx > last) frag.appendChild(document.createTextNode(text.slice(last, idx)));
+                    const mark = document.createElement('mark');
+                    mark.className = 'search-hl';
+                    mark.textContent = text.slice(idx, idx + q.length);
+                    frag.appendChild(mark);
+                    searchMatches.push(mark);
+                    last = idx + q.length;
+                    idx = lower.indexOf(q, last);
+                }
+                if (last < text.length) frag.appendChild(document.createTextNode(text.slice(last)));
+                textNode.parentNode.replaceChild(frag, textNode);
+            });
+            const c = searchMatches.length;
+            if (c > 0) {
+                searchCurrent = 0;
+                searchMatches[0].classList.add('active');
+                searchMatches[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                stats.textContent = c + ' r\u00e9sultat' + (c > 1 ? 's' : '');
+                document.getElementById('searchPrevBtn').disabled = false;
+                document.getElementById('searchNextBtn').disabled = false;
+                closeSearch(true);
+            } else {
+                stats.textContent = 'Aucun r\u00e9sultat';
+            }
+        }
+        function nextMatch() {
+            if (searchMatches.length === 0) return;
+            searchMatches[searchCurrent]?.classList.remove('active');
+            searchCurrent = (searchCurrent + 1) % searchMatches.length;
+            searchMatches[searchCurrent].classList.add('active');
+            searchMatches[searchCurrent].scrollIntoView({ behavior: 'smooth', block: 'center' });
+            document.getElementById('searchStats').textContent = (searchCurrent+1) + '/' + searchMatches.length;
+        }
+        function prevMatch() {
+            if (searchMatches.length === 0) return;
+            searchMatches[searchCurrent]?.classList.remove('active');
+            searchCurrent = (searchCurrent - 1 + searchMatches.length) % searchMatches.length;
+            searchMatches[searchCurrent].classList.add('active');
+            searchMatches[searchCurrent].scrollIntoView({ behavior: 'smooth', block: 'center' });
+            document.getElementById('searchStats').textContent = (searchCurrent+1) + '/' + searchMatches.length;
+        }
+
+        /* ─── DARK MODE ── */
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('blox_dark_mode', document.body.classList.contains('dark-mode'));
+            document.getElementById('darkModeToggle').textContent = document.body.classList.contains('dark-mode') ? 'light_mode' : 'dark_mode';
+        }
+        (function() {
+            if (localStorage.getItem('blox_dark_mode') === 'true') {
+                document.body.classList.add('dark-mode');
+                var el = document.getElementById('darkModeToggle');
+                if (el) el.textContent = 'light_mode';
+            }
+        })();
+
+        /* ─── DISCORD AUTH ── */
+        const DISCORD_CLIENT_ID   = '1517793695573999646';
+        const DISCORD_REDIRECT_URI = window.location.href.split('#')[0].split('?')[0];
+        const DISCORD_SCOPE        = 'identify';
+        const DISCORD_TOKEN_KEY    = 'bloxbulletin_discord_token';
+        const DISCORD_USER_KEY     = 'bloxbulletin_discord_user';
+
+        function _discordLogin() {
+            const params = new URLSearchParams({
+                client_id: DISCORD_CLIENT_ID, redirect_uri: DISCORD_REDIRECT_URI,
+                response_type: 'token', scope: DISCORD_SCOPE,
+            });
+            window.location.href = 'https://discord.com/api/oauth2/authorize?' + params.toString();
+        }
+        async function _discordFetchUser(token) {
+            const res = await fetch('https://discord.com/api/users/@me', { headers: { Authorization: 'Bearer ' + token } });
+            if (!res.ok) throw new Error('Token invalide');
+            return res.json();
+        }
+        function _discordAvatarUrl(user) {
+            if (user.avatar) return 'https://cdn.discordapp.com/avatars/' + user.id + '/' + user.avatar + '.webp?size=80';
+            const idx = user.discriminator !== '0' ? parseInt(user.discriminator) % 5 : (parseInt(user.id) >> 22) % 6;
+            return 'https://cdn.discordapp.com/embed/avatars/' + idx + '.png';
+        }
+        function _discordShowUser(user) {
+            const avatarUrl = _discordAvatarUrl(user);
+            const displayName = user.global_name || user.username;
+            document.getElementById('discordLoginBtn').style.display = 'none';
+            document.getElementById('discordSkeleton').classList.remove('is-visible');
+            const pill = document.getElementById('discordUserPill');
+            document.getElementById('discordAvatar').src = avatarUrl;
+            document.getElementById('discordAvatar').onerror = function() { this.src = ''; };
+            document.getElementById('discordUsername').textContent = displayName;
+            pill.classList.add('is-visible');
+            document.getElementById('discordDropdownAvatar').src = avatarUrl;
+            document.getElementById('discordDropdownName').textContent = displayName;
+            document.getElementById('discordDropdownTag').textContent = '@' + user.username;
+            pill.onclick = function(e) { e.stopPropagation(); pill.classList.toggle('dropdown-open'); };
+            document.addEventListener('click', function() { pill.classList.remove('dropdown-open'); });
+        }
+        function _discordLogout() {
+            localStorage.removeItem(DISCORD_TOKEN_KEY);
+            localStorage.removeItem(DISCORD_USER_KEY);
+            document.getElementById('discordUserPill').classList.remove('is-visible', 'dropdown-open');
+            document.getElementById('discordLoginBtn').style.display = '';
+        }
+        (async function() {
+            var skeleton = document.getElementById('discordSkeleton');
+            var loginBtn = document.getElementById('discordLoginBtn');
+            var pill = document.getElementById('discordUserPill');
+            var hash = window.location.hash;
+            if (hash.includes('access_token=')) {
+                var params = new URLSearchParams(hash.slice(1));
+                var token = params.get('access_token');
+                var expiresIn = parseInt(params.get('expires_in') || '604800');
+                var expiresAt = Date.now() + expiresIn * 1000;
+                history.replaceState(null, '', window.location.pathname + window.location.search);
+                if (token) {
+                    skeleton.classList.add('is-visible');
+                    try {
+                        var user = await _discordFetchUser(token);
+                        localStorage.setItem(DISCORD_TOKEN_KEY, JSON.stringify({ token: token, expiresAt: expiresAt }));
+                        localStorage.setItem(DISCORD_USER_KEY, JSON.stringify(user));
+                        _discordShowUser(user);
+                    } catch(e) { skeleton.classList.remove('is-visible'); loginBtn.style.display = ''; }
+                    return;
+                }
+            }
+            try {
+                var stored = JSON.parse(localStorage.getItem(DISCORD_TOKEN_KEY) || 'null');
+                var cachedUser = JSON.parse(localStorage.getItem(DISCORD_USER_KEY) || 'null');
+                if (cachedUser) {
+                    _discordShowUser(cachedUser);
+                    if (stored && stored.expiresAt > Date.now()) {
+                        try {
+                            var freshUser = await _discordFetchUser(stored.token);
+                            localStorage.setItem(DISCORD_USER_KEY, JSON.stringify(freshUser));
+                            _discordShowUser(freshUser);
+                        } catch(e) {}
+                    }
+                    return;
+                }
+            } catch(e) {}
+            loginBtn.style.display = '';
+        })();
+    </script>
+
     <script src="../shared/bulletin-lightbox.js"></script>
 </body>
 </html>
