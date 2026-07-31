@@ -8820,6 +8820,7 @@
         document.getElementById("discordBanner").style.display = "none";
         const box = document.getElementById("commentWriteBox");
         box.classList.remove("is-hidden");
+        _imgBindWriteBox(box);
         const avatarWrap = document.querySelector('.card-comment-avatar-wrap');
         if (avatarWrap) avatarWrap.innerHTML = avatarHTML(user);
         renderList();
@@ -12619,7 +12620,9 @@
     // ── Delete commentaire ───────────────────────────────────────
     window._updDeleteComment = function(cid, updId) {
         if (!window.currentUser) return;
+        const _del = (_updCommentsDB[updId]||[]).find(x=>x.id===cid);
         _pendingDelete = () => {
+            _imgDelete(_del?.images);
             _updCommentsDB[updId] = (_updCommentsDB[updId]||[]).filter(c=>c.id!==cid);
             _updFirebaseSave(updId);
             _updRenderComments(updId);
