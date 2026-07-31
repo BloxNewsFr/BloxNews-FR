@@ -426,6 +426,7 @@
         }
 
 </style>
+    <link rel="stylesheet" href="../shared/bulletin-lightbox.css">
 <body>
 
     <div class="bg-particles" id="bgParticles"></div>
@@ -513,7 +514,7 @@
              Ce bloc apparaîtra automatiquement quand le compte à rebours
              atteindra zéro.
         ════════════════════════════════════════════════════════════════ -->
-        <div id="bulletin-content">
+        <div id="bulletin-content" class="bulletin-container">
 
             <div class="blue-banner">The Blox Bulletin #024</div>
 
@@ -707,5 +708,6 @@
             mobileNav.querySelectorAll('a').forEach(a => a.addEventListener('click', close));
         })();
     </script>
+    <script src="../shared/bulletin-lightbox.js"></script>
 </body>
 </html>
