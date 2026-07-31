@@ -7356,6 +7356,7 @@
             banner.style.display = 'none';
             box.classList.remove('is-hidden');
             if (wrap) wrap.innerHTML = avatarHTML(window.currentUser, 28);
+            _imgBindWriteBox(box);
         } else {
             banner.style.display = 'flex';
             box.classList.add('is-hidden');
@@ -7384,6 +7385,7 @@
             list.innerHTML = `<div class="card-comments-empty">🔓 Sois le premier à commenter ce document déclassifié !</div>`;
         } else {
             list.innerHTML = shown.map(c => _dcRenderItem(c)).join('');
+            _imgHydrate(list);
         }
         if (more) more.style.display = sorted.length > _dcShown ? 'block' : 'none';
     }
@@ -7446,6 +7448,7 @@
                     <span class="comment-item__time" title="${c.time}">${relativeTime(c.time)}</span>
                 </div>
                 <div class="comment-item__text">${c.text}</div>
+                ${_imgThumbs(c)}
                 ${reactBar}
                 <div class="comment-item__actions">
                     <button class="comment-btn ${c.likedByMe?'comment-btn--liked':''}"
@@ -7583,15 +7586,21 @@
         _dcRender();
     }
 
-    function postDecryptComment() {
+    async function postDecryptComment() {
         if (!window.currentUser || !_dcCardId) return;
         const inp = document.getElementById('decryptCommentInput');
-        const txt = (inp?.value||'').trim(); if (!txt) return;
+        const txt = (inp?.value||'').trim();
         const check = _filterComment(txt);
         if (check.blocked) { _showCommentWarning('Contenu inapproprié.'); return; }
+        const taken = _imgTake(document.getElementById('decryptCommentWriteBox'));
+        if (!txt && !taken.imgs.length) return;
         const c = { id: uid(), username: window.currentUser.username, avatar: window.currentUser.avatar||'',
             text: txt, time: isoNow(), likes: 0, likedByMe: false,
-            replies: [], reactions: {}, myReactions: {}, pinned: false };
+            replies: [], reactions: {}, myReactions: {}, pinned: false, images: [] };
+        if (taken.imgs.length) {
+            try { c.images = await _imgUpload(taken.imgs); }
+            catch(e) { console.error('[decrypt-comments] image upload error:', e); }
+        }
         _dcDB.unshift(c);
         _dcSave();
         inp.value = ''; inp.style.height = '';
@@ -7918,6 +7927,7 @@
             banner.style.display = 'none';
             box.classList.remove('is-hidden');
             if (wrap) wrap.innerHTML = avatarHTML(window.currentUser, 28);
+            _imgBindWriteBox(box);
         } else {
             banner.style.display = 'flex';
             box.classList.add('is-hidden');
@@ -7949,6 +7959,7 @@
             list.innerHTML = `<div class="card-comments-empty">💬 Sois le premier à commenter ce leak !</div>`;
         } else {
             list.innerHTML = shown.map(c => _ccRenderItem(c)).join('');
+            _imgHydrate(list);
         }
         if (more) more.style.display = sorted.length > _ccShown ? 'block' : 'none';
     }
@@ -8005,6 +8016,7 @@
                     <span class="comment-item__time" title="${c.time}">${relativeTime(c.time)}</span>
                 </div>
                 <div class="comment-item__text">${c.text}</div>
+                ${_imgThumbs(c)}
                 ${reactBar}
                 <div class="comment-item__actions">
                     <button class="comment-btn ${c.likedByMe?'comment-btn--liked':''}"
@@ -8026,15 +8038,21 @@
         </div>`;
     }
 
-    function postCardComment() {
+    async function postCardComment() {
         if (!window.currentUser || !_ccCardId) return;
         const inp = document.getElementById('cardCommentInput');
-        const txt = (inp?.value||'').trim(); if (!txt) return;
+        const txt = (inp?.value||'').trim();
         const check = _filterComment(txt);
         if (check.blocked) { _showCommentWarning('Contenu inapproprié.'); return; }
+        const taken = _imgTake(document.getElementById('cardCommentWriteBox'));
+        if (!txt && !taken.imgs.length) return;
         const c = { id: uid(), username: window.currentUser.username, avatar: window.currentUser.avatar||'',
             text: txt, time: isoNow(), likes: 0, likedByMe: false,
-            replies: [], reactions: {}, myReactions: {}, pinned: false };
+            replies: [], reactions: {}, myReactions: {}, pinned: false, images: [] };
+        if (taken.imgs.length) {
+            try { c.images = await _imgUpload(taken.imgs); }
+            catch(e) { console.error('[card-comments] image upload error:', e); }
+        }
         _ccDB.unshift(c);
         _ccRef.set(_ccDB.map(x => { const n={...x}; delete n.likedByMe; delete n.myReactions; return n; }))
             .catch(e => console.error('[card-comments] write error:', e));
@@ -8187,6 +8205,7 @@
         _actusShown[cardId] = ACTUS_CC_MAX;
         _actusSortMode[cardId] = 'new';
         _actusUpdateLogin(cardId);
+        _imgBindWriteBox(document.querySelector(`.actus-cc-write[data-actus-id="${cardId}"]`));
         const ref = FB_DB.ref('card_comments/' + cardId);
         ref.on('value', snap => {
             let val = snap.val();
@@ -8259,6 +8278,7 @@
             list.innerHTML = `<div class="card-comments-empty">💬 Sois le premier à commenter ce dossier !</div>`;
         } else {
             list.innerHTML = shown.map(c => _actusRenderItem(c, cardId)).join('');
+            _imgHydrate(list);
         }
         if (seeAll) seeAll.style.display = sorted.length > (_actusShown[cardId] || ACTUS_CC_MAX) ? 'block' : 'none';
     }
@@ -8318,6 +8338,7 @@
                     <span class="comment-item__time" title="${c.time}">${relativeTime(c.time)}</span>
                 </div>
                 <div class="comment-item__text">${c.text}</div>
+                ${_imgThumbs(c)}
                 ${reactBar}
                 <div class="comment-item__actions">
                     <button class="comment-btn ${c.likedByMe?'comment-btn--liked':''}"
@@ -8568,6 +8589,7 @@
                 list.innerHTML = `<div style="text-align:center;padding:30px 0;color:rgba(255,255,255,0.25);font-size:14px">💬 Aucun commentaire pour ce dossier.</div>`;
             } else {
                 list.innerHTML = sorted.map(c => _actusRenderItem(c, cardId)).join('');
+                _imgHydrate(list);
             }
         }
         modal.setAttribute('data-actus-modal-id', cardId);
@@ -8711,6 +8733,7 @@
                     <span class="comment-item__time" title="${c.time}">${relativeTime(c.time)}</span>
                 </div>
                 <div class="comment-item__text">${c.text}</div>
+                ${_imgThumbs(c)}
                 ${renderReactions(c, pfx)}
                 <div class="comment-item__actions">
                     <button class="comment-btn ${c.likedByMe?"comment-btn--liked":""}" onclick="likeComment('${c.id}',this)">
@@ -8749,6 +8772,7 @@
         list.innerHTML = top.length === 0
             ? `<div style="text-align:center;padding:32px 0;color:#ccc;font-size:14px;font-weight:600;"><div style="font-size:36px;margin-bottom:10px">💬</div>Soyez le premier à commenter !</div>`
             : top.map(c => renderComment(c,"")).join("");
+        _imgHydrate(list);
         const n = COMMENTS_DB.length;
         document.getElementById("commentCountBadge").textContent = n;
         const mb = document.getElementById("modalCountBadge");
@@ -8757,6 +8781,7 @@
     }
     function renderModal() {
         document.getElementById("modalCommentList").innerHTML = sorted().map(c=>renderComment(c,"m")).join("");
+        _imgHydrate(document.getElementById("modalCommentList"));
     }
 
     /* ─── Toggle ─── */
@@ -8793,18 +8818,25 @@
     function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
 
     /* ─── Poster commentaire ─── */
-    function postComment() {
+    async function postComment() {
         if (!window.currentUser) { console.warn('postComment: no currentUser', window.currentUser); return; }
         const inp = document.getElementById("commentInput");
-        const txt = inp.value.trim(); if (!txt) return;
+        const txt = inp.value.trim();
         const check = _filterComment(txt);
         if (check.blocked) {
             _showCommentWarning('Ce message contient du contenu inapproprié et ne peut pas être publié.');
             return;
         }
-        COMMENTS_DB.unshift({ id: uid(), username: window.currentUser.username,
+        const taken = _imgTake(document.getElementById("commentWriteBox"));
+        if (!txt && !taken.imgs.length) return;
+        const c = { id: uid(), username: window.currentUser.username,
             avatar: window.currentUser.avatar, text: txt, time: isoNow(),
-            likes: 0, likedByMe: false, reactions: {}, myReactions: {}, replies: [] });
+            likes: 0, likedByMe: false, reactions: {}, myReactions: {}, replies: [], images: [] };
+        if (taken.imgs.length) {
+            try { c.images = await _imgUpload(taken.imgs); }
+            catch(e) { console.error('[img] upload error:', e); }
+        }
+        COMMENTS_DB.unshift(c);
         saveDB();
         inp.value = ""; inp.style.height = "";
         updateCharCounter(inp);
@@ -12432,6 +12464,7 @@
                 onclick="_updShowMore('${updId}')" style="display:none">Voir tous les commentaires →</button>
         `;
         _updRenderComments(updId);
+        _imgBindWriteBox(document.getElementById('updWriteBox-' + updId));
     }
 
     // ── Render liste ─────────────────────────────────────────────
@@ -12452,6 +12485,7 @@
         list.innerHTML = shown.length === 0
             ? `<div class="card-comments-empty">💬 Sois le premier à commenter cette update !</div>`
             : shown.map(c => _updRenderItem(c, updId)).join('');
+        _imgHydrate(list);
 
         if (seeAll) seeAll.style.display = sorted.length > (_updShown[updId]||UPD_CC_MAX) ? 'block' : 'none';
     }
@@ -12512,6 +12546,7 @@
                     <span class="comment-item__time" title="${c.time}">${relativeTime(c.time)}</span>
                 </div>
                 <div class="comment-item__text">${c.text}</div>
+                ${_imgThumbs(c)}
                 ${reactBar}
                 <div class="comment-item__actions">
                     <button class="comment-btn ${c.likedByMe?'comment-btn--liked':''}"
@@ -12723,6 +12758,270 @@
         }, 1000);
         window.__mem = snapshot;
         console.log('🔍 Sonde mémoire active — `__mem()` pour une mesure à la demande');
+    })();
+    </script>
+
+    <!-- ════════════════════════════════════════════════════════════
+        IMAGES DANS LES COMMENTAIRES (attach · aperçu · lightbox)
+    ═══════════════════════════════════════════════════════════ -->
+    <style>
+        .card-comment-write { flex-wrap: wrap; }
+        .cc-attach-btn {
+            position: absolute; left: 6px; bottom: 6px; width: 30px; height: 30px;
+            border: 1px dashed rgba(128,128,128,.55); background: transparent; color: inherit;
+            border-radius: 9px; font-size: 14px; line-height: 1; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; padding: 0;
+            opacity: .6; transition: opacity .15s, background .15s, border-color .15s;
+        }
+        .cc-attach-btn:hover { opacity: 1; background: rgba(226,0,0,.08); border-color: rgba(226,0,0,.4); }
+        .cc-preview { flex: 1 1 100%; order: -1; display: flex; flex-wrap: wrap; gap: 8px; width: 100%; }
+        .cc-preview__item { position: relative; width: 62px; height: 62px; border-radius: 10px; overflow: hidden; border: 1px solid rgba(128,128,128,.25); }
+        .cc-preview__item img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .cc-preview__rm {
+            position: absolute; top: 3px; right: 3px; width: 19px; height: 19px; border-radius: 50%;
+            border: none; background: rgba(0,0,0,.75); color: #fff; font-size: 10px; line-height: 1;
+            cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0 0 1px 0;
+        }
+        .cc-preview__rm:hover { background: #e20000; }
+        .card-comment-write.cc-dragover { outline: 2px dashed rgba(226,0,0,.55); outline-offset: -2px; border-radius: 14px; }
+        .cc-attach { display: flex; flex-wrap: wrap; gap: 8px; margin: 9px 0 2px; }
+        .cc-attach__thumb {
+            width: 88px; height: 88px; object-fit: cover; border-radius: 11px; cursor: zoom-in;
+            border: 1px solid rgba(128,128,128,.18); background: rgba(128,128,128,.07);
+            transition: transform .15s, opacity .15s;
+        }
+        .cc-attach__thumb:hover { transform: scale(1.05); }
+        .cc-attach__thumb.cc-thumb--missing { opacity: .3; cursor: default; }
+        .cc-lightbox {
+            position: fixed; inset: 0; z-index: 200000; background: rgba(6,8,14,.94);
+            display: none; align-items: center; justify-content: center; cursor: zoom-out;
+        }
+        .cc-lightbox.is-open { display: flex; }
+        .cc-lightbox__img { max-width: 92vw; max-height: 88vh; border-radius: 8px; box-shadow: 0 20px 80px rgba(0,0,0,.6); transition: opacity .2s; }
+        .cc-lightbox__close, .cc-lightbox__nav {
+            position: fixed; color: #fff; background: rgba(255,255,255,.09); border: 1px solid rgba(255,255,255,.15);
+            cursor: pointer; user-select: none; line-height: 1; z-index: 1;
+        }
+        .cc-lightbox__close { top: 18px; right: 18px; width: 40px; height: 40px; border-radius: 50%; font-size: 15px; }
+        .cc-lightbox__nav { top: 50%; transform: translateY(-50%); width: 44px; height: 44px; border-radius: 50%; font-size: 24px; }
+        .cc-lightbox__prev { left: 18px; }
+        .cc-lightbox__next { right: 18px; }
+        .cc-lightbox__count { position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%); color: rgba(255,255,255,.55); font-size: 12px; letter-spacing: .5px; }
+    </style>
+
+    <!-- Lightbox commentaires -->
+    <div id="ccLightbox" class="cc-lightbox" onclick="_imgClose(event)">
+        <img id="ccLightboxImg" class="cc-lightbox__img" src="" alt="">
+        <button class="cc-lightbox__close" onclick="_imgClose(event)">✕</button>
+        <button id="ccLightboxPrev" class="cc-lightbox__nav cc-lightbox__prev" onclick="_imgNav(-1,event)">‹</button>
+        <button id="ccLightboxNext" class="cc-lightbox__nav cc-lightbox__next" onclick="_imgNav(1,event)">›</button>
+        <span class="cc-lightbox__count" id="ccLightboxCount"></span>
+    </div>
+
+    <script>
+    (function() {
+        // ── Cache + chargement distant ───────────────────────────────
+        const _urlCache = new Map();
+        function _imgFetch(id) {
+            if (_urlCache.has(id)) return Promise.resolve(_urlCache.get(id));
+            if (typeof FB_DB === 'undefined' || !FB_DB) return Promise.resolve(null);
+            return FB_DB.ref('comment_images/' + id).once('value')
+                .then(s => { const v = s.val(); _urlCache.set(id, v); return v; })
+                .catch(() => null);
+        }
+
+        // ── Traitement local : resize + compression JPEG ─────────────
+        function _imgProcess(file) {
+            return new Promise((resolve, reject) => {
+                const raw = URL.createObjectURL(file);
+                const img = new Image();
+                img.onload = () => {
+                    let w = img.naturalWidth || 1280, h = img.naturalHeight || 1280;
+                    const MAX = 1280;
+                    if (Math.max(w, h) > MAX) { const s = MAX / Math.max(w, h); w = Math.round(w*s); h = Math.round(h*s); }
+                    const cv = document.createElement('canvas');
+                    cv.width = w; cv.height = h;
+                    const ctx = cv.getContext('2d');
+                    ctx.drawImage(img, 0, 0, w, h);
+                    let q = 0.78, url = cv.toDataURL('image/jpeg', q);
+                    while (url.length > 640000 && q > 0.45) { q -= 0.1; url = cv.toDataURL('image/jpeg', q); }
+                    if (url.length > 640000 && Math.max(w, h) > 900) {
+                        const s = 900 / Math.max(w, h); w = Math.round(w*s); h = Math.round(h*s);
+                        cv.width = w; cv.height = h;
+                        ctx.drawImage(img, 0, 0, w, h);
+                        url = cv.toDataURL('image/jpeg', 0.65);
+                    }
+                    URL.revokeObjectURL(raw);
+                    resolve({ id: uid(), url });
+                };
+                img.onerror = () => { URL.revokeObjectURL(raw); reject(new Error('image illisible')); };
+                img.src = raw;
+            });
+        }
+
+        // ── Store par write-box ──────────────────────────────────────
+        const _stores = new WeakMap();
+        function _getStore(boxEl) { return boxEl ? _stores.get(boxEl) : null; }
+
+        function _renderStrip(st) {
+            const strip = st.boxEl.querySelector('.cc-preview');
+            if (!strip) return;
+            strip.innerHTML = st.imgs.map((im, i) =>
+                `<div class="cc-preview__item"><img src="${im.url}" alt="aperçu">` +
+                `<button class="cc-preview__rm" onclick="_imgRemoveEl(this,${i})" title="Retirer">✕</button></div>`
+            ).join('');
+            strip.style.display = st.imgs.length ? 'flex' : 'none';
+        }
+
+        function _addFiles(st, files) {
+            const max = st.max || 4;
+            const list = [...files].filter(f => f.type && f.type.startsWith('image/'))
+                .slice(0, Math.max(0, max - st.imgs.length));
+            (list.length ? Promise.all(list.map(_imgProcess)) : Promise.resolve([]))
+                .then(results => { results.forEach(r => st.imgs.push(r)); _renderStrip(st); })
+                .catch(e => console.error('[img] attach error:', e));
+        }
+
+        // ── Liaison d'une write-box ──────────────────────────────────
+        window._imgBindWriteBox = function(boxEl) {
+            if (!boxEl || boxEl.dataset.imgBound) return null;
+            boxEl.dataset.imgBound = '1';
+            const ta = boxEl.querySelector('textarea');
+            const st = { boxEl, imgs: [], max: 4 };
+            let strip = boxEl.querySelector(':scope > .cc-preview');
+            if (!strip) {
+                strip = document.createElement('div');
+                strip.className = 'cc-preview';
+                strip.style.display = 'none';
+                boxEl.insertBefore(strip, boxEl.firstChild);
+            }
+            const fi = document.createElement('input');
+            fi.type = 'file'; fi.accept = 'image/*'; fi.multiple = true; fi.style.display = 'none';
+            fi.addEventListener('change', () => { _addFiles(st, fi.files); fi.value = ''; });
+            let btn = boxEl.querySelector('.cc-attach-btn');
+            if (!btn) {
+                btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'cc-attach-btn';
+                btn.title = 'Ajouter une image (max 4)';
+                btn.textContent = '🖼';
+                btn.addEventListener('click', e => { e.stopPropagation(); e.preventDefault(); fi.click(); });
+                const wrap = boxEl.querySelector('.card-comment-input-wrap');
+                (wrap || boxEl).appendChild(btn);
+            }
+            boxEl.appendChild(fi);
+            st.fi = fi;
+            if (ta) {
+                ta.style.paddingLeft = '44px';
+                ta.addEventListener('paste', e => {
+                    const files = [...(e.clipboardData?.files || [])].filter(f => f.type && f.type.startsWith('image/'));
+                    if (files.length) { e.preventDefault(); _addFiles(st, files); }
+                });
+            }
+            let depth = 0;
+            const hasFiles = e => e.dataTransfer && [...(e.dataTransfer.types || [])].includes('Files');
+            boxEl.addEventListener('dragenter', e => { if (hasFiles(e)) { e.preventDefault(); depth++; boxEl.classList.add('cc-dragover'); } });
+            boxEl.addEventListener('dragover', e => { if (hasFiles(e)) e.preventDefault(); });
+            boxEl.addEventListener('dragleave', () => { if (depth > 0 && --depth === 0) boxEl.classList.remove('cc-dragover'); });
+            boxEl.addEventListener('drop', e => {
+                if (hasFiles(e)) { e.preventDefault(); depth = 0; boxEl.classList.remove('cc-dragover'); _addFiles(st, e.dataTransfer.files); }
+            });
+            _stores.set(boxEl, st);
+            return st;
+        };
+
+        window._imgAttach = function(btnEl) {
+            const st = _getStore(btnEl.closest('.card-comment-write'));
+            if (st?.fi) st.fi.click();
+        };
+
+        window._imgRemoveEl = function(btnEl, i) {
+            const st = _getStore(btnEl.closest('.card-comment-write'));
+            if (!st) return;
+            st.imgs.splice(i, 1);
+            _renderStrip(st);
+        };
+
+        // ── Upload / suppression Firebase ────────────────────────────
+        window._imgUpload = function(imgs) {
+            if (!imgs || !imgs.length) return Promise.resolve([]);
+            if (typeof FB_DB === 'undefined' || !FB_DB) return Promise.resolve(imgs.map(im => im.id));
+            return Promise.all(imgs.map(im =>
+                FB_DB.ref('comment_images/' + im.id).set(im.url)
+                    .catch(e => console.error('[img] upload error:', e))
+            )).then(() => imgs.map(im => im.id));
+        };
+        window._imgDelete = function(ids) {
+            if (!ids || !ids.length || typeof FB_DB === 'undefined' || !FB_DB) return;
+            ids.forEach(id => { _urlCache.delete(id); FB_DB.ref('comment_images/' + id).remove().catch(() => {}); });
+        };
+        window._imgTake = function(boxEl) {
+            const st = _getStore(boxEl);
+            if (!st) return { ids: [], imgs: [] };
+            const imgs = st.imgs.slice();
+            st.imgs = [];
+            _renderStrip(st);
+            return { ids: imgs.map(i => i.id), imgs };
+        };
+
+        // ── Rendu des images dans un commentaire ─────────────────────
+        window._imgThumbs = function(c) {
+            const ids = (c && c.images) || [];
+            if (!ids.length) return '';
+            return `<div class="cc-attach">${ids.map((id, i) =>
+                `<img class="cc-attach__thumb" data-lz="${id}" loading="lazy" alt="image" ` +
+                `onclick="_imgOpen(${ids.map(x => "'" + x + "'").join(',')},${i})">`).join('')}</div>`;
+        };
+        window._imgHydrate = function(root) {
+            if (!root) return;
+            root.querySelectorAll('img[data-lz]').forEach(el => {
+                if (el.dataset.lzDone) return;
+                el.dataset.lzDone = '1';
+                _imgFetch(el.dataset.lz).then(url => {
+                    if (!url) { el.classList.add('cc-thumb--missing'); return; }
+                    el.src = url;
+                });
+            });
+        };
+
+        // ── Lightbox ─────────────────────────────────────────────────
+        let _lbIds = [], _lbIdx = 0;
+        window._imgOpen = function() {
+            const ids = [...arguments].slice(0, -1), i = arguments[arguments.length - 1];
+            _lbIds = ids; _lbIdx = i;
+            _lbShow();
+        };
+        function _lbShow() {
+            const lb = document.getElementById('ccLightbox');
+            const img = document.getElementById('ccLightboxImg');
+            if (!lb || !img) return;
+            const id = _lbIds[_lbIdx];
+            img.style.opacity = '.25';
+            _imgFetch(id).then(url => { img.src = url || ''; img.style.opacity = '1'; });
+            const count = document.getElementById('ccLightboxCount');
+            if (count) count.textContent = _lbIds.length > 1 ? (_lbIdx + 1) + ' / ' + _lbIds.length : '';
+            const prev = document.getElementById('ccLightboxPrev'), next = document.getElementById('ccLightboxNext');
+            if (prev) prev.style.display = _lbIds.length > 1 ? '' : 'none';
+            if (next) next.style.display = _lbIds.length > 1 ? '' : 'none';
+            lb.classList.add('is-open');
+        }
+        window._imgNav = function(dir, e) {
+            if (e) e.stopPropagation();
+            if (_lbIds.length < 2) return;
+            _lbIdx = (_lbIdx + dir + _lbIds.length) % _lbIds.length;
+            _lbShow();
+        };
+        window._imgClose = function(e) {
+            if (e) e.stopPropagation();
+            document.getElementById('ccLightbox')?.classList.remove('is-open');
+        };
+        document.addEventListener('keydown', e => {
+            const lb = document.getElementById('ccLightbox');
+            if (!lb || !lb.classList.contains('is-open')) return;
+            if (e.key === 'Escape') window._imgClose();
+            if (e.key === 'ArrowLeft') window._imgNav(-1);
+            if (e.key === 'ArrowRight') window._imgNav(1);
+        });
     })();
     </script>
 
