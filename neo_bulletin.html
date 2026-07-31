@@ -10199,7 +10199,7 @@
         // Utiliser shortDesc pour la card extérieure, avec fallback sur desc pour compatibilité
         const displayDesc = update.shortDesc || update.desc || '';
 
-        const html = `<article class="update-card" onclick="openUpdateModal('${update.id}')">
+     /*   const html = `<article class="update-card" onclick="openUpdateModal('${update.id}')">
             <div class="update-card__stripe"></div>
             <div class="update-card__body">
                 <div class="update-card__meta">
@@ -10219,7 +10219,7 @@
                     <span class="update-card__open-btn">Lire le résumé →</span>
                 </div>
             </div>
-        </article>`;
+        </article>`; */
 
         grid.insertAdjacentHTML('beforeend', html);
 
@@ -12207,9 +12207,9 @@
     //   label    : titre de la card
     //   category : catégorie (affiché sous la miniature)
     //   catColor : couleur du badge catégorie
-    const UPDATES_DATA = [
+    /* const UPDATES_DATA = [
         {
-          /*  id: 'upd-001',
+            id: 'upd-001',
             version: 'Update 28',
             date: 'Juillet 2026',
             title: 'Blox Fruits Update 28',
@@ -12235,9 +12235,9 @@
                     type: 'image', src: './shared/blox_leaks/island_reworks1.png',
                     cardId: '', badge: 'MAP', section: '🗺️ Map & World'
                 },
-            ] */
+            ] 
         }
-    ]; 
+    ]; */
 
     // ── State commentaires ───────────────────────────────────────
     const _updCommentsDB  = {};
