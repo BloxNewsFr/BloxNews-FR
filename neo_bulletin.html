@@ -10199,7 +10199,7 @@
         // Utiliser shortDesc pour la card extérieure, avec fallback sur desc pour compatibilité
         const displayDesc = update.shortDesc || update.desc || '';
 
-     /*   const html = `<article class="update-card" onclick="openUpdateModal('${update.id}')">
+        const html = `<article class="update-card" onclick="openUpdateModal('${update.id}')">
             <div class="update-card__stripe"></div>
             <div class="update-card__body">
                 <div class="update-card__meta">
@@ -10219,7 +10219,7 @@
                     <span class="update-card__open-btn">Lire le résumé →</span>
                 </div>
             </div>
-        </article>`; */
+        </article>`; 
 
         grid.insertAdjacentHTML('beforeend', html);
 
