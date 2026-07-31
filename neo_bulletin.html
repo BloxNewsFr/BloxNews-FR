@@ -1120,6 +1120,7 @@
             z-index: 9998; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
         }
         .modal-overlay.is-active { opacity: 1; pointer-events: auto; }
+        #deleteModal { z-index: 100000; }
         .modal-content {
             position: relative; width: 90%; max-width: 820px;
             background: rgba(12,12,20,0.99);
@@ -12212,9 +12213,10 @@
                     : [];
 
                 // Fusionner avec UPDATES_DATA statique (pour garder l'exemple)
-                // mais prioriser les données Firebase
-                const staticIds = new Set(UPDATES_DATA.filter(u => u.id.startsWith('upd-')).map(u => u.id));
-                const merged = [...UPDATES_DATA.filter(u => !u.id.startsWith('upd-'))];
+                // mais prioriser les données Firebase. On garde les updates `upd-*`
+                // statiques dans la liste : la card HTML les référence encore
+                // (openUpdateModal('upd-001')) et _renderUpdateCard évite les doublons.
+                const merged = [...UPDATES_DATA];
 
                 fbUpdates.forEach(fbUpd => {
                     const existingIdx = merged.findIndex(u => u.id === fbUpd.id);
