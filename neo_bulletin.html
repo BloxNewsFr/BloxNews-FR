@@ -9825,8 +9825,17 @@
     // ── Miniature vidéo forcée en JS ─────────────────────────────────
     // (fonctionne aussi bien pour un lien classique que pour un data:URL,
     //  contrairement à l'astuce d'URL "#t=0.001" qui ne marche pas sur les data:)
+    // Le cache par src évite de re-seeker/re-buffer la vidéo à chaque
+    // nouvelle passe de rendu (groupes auto, snapshots Firebase, etc.)
+    const _videoPosterCache = {};
     function _captureVideoPoster(video) {
         if (!video || video.dataset.posterSet) return;
+        const src = video.getAttribute('src') || '';
+        if (src && _videoPosterCache[src]) {
+            video.poster = _videoPosterCache[src];
+            video.dataset.posterSet = '1';
+            return _videoPosterCache[src];
+        }
         try {
             if (video.readyState >= 2 && video.videoWidth > 0) {
                 const c = document.createElement('canvas');
@@ -9837,6 +9846,7 @@
                 c.getContext('2d').drawImage(video, 0, 0, c.width, c.height);
                 const dataUrl = c.toDataURL('image/jpeg', 0.7);
                 if (dataUrl && dataUrl.length > 500) {
+                    if (src) _videoPosterCache[src] = dataUrl;
                     video.poster = dataUrl;
                     video.dataset.posterSet = '1';
                     return dataUrl;
@@ -9848,6 +9858,13 @@
     function _ensureVideoThumbnail(video) {
         if (!video || video.dataset.thumbFixed) return;
         video.dataset.thumbFixed = '1';
+        // Poster déjà en cache → l'appliquer sans seeker (pas de buffer)
+        const src = video.getAttribute('src') || '';
+        if (src && _videoPosterCache[src]) {
+            video.poster = _videoPosterCache[src];
+            video.dataset.posterSet = '1';
+            return;
+        }
         const seek = () => {
             try {
                 if (video.duration && isFinite(video.duration)) {
@@ -9888,6 +9905,12 @@
                 if (video.parentNode) video.parentNode.replaceChild(img, video);
             }
         };
+        // Poster déjà en cache → remplacer sans jamais seeker/buffer la vidéo
+        const src = video.getAttribute('src') || '';
+        if (src && _videoPosterCache[src]) {
+            doReplace();
+            return;
+        }
         const seek = () => {
             try {
                 if (video.duration && isFinite(video.duration)) {
@@ -10767,7 +10790,9 @@
                 };
                 const secFilter = _ncmSectionFilter(cardData.section);
                 const img = cardData.imgSrc
-                    ? `<img src="${cardData.imgSrc}" style="width:100%;height:80px;object-fit:cover;border-radius:6px 6px 0 0;">`
+                    ? (cardData.imgSrc.indexOf('data:') === 0
+                        ? `<div style="width:100%;height:80px;background:${cardData.catColor}20;display:flex;align-items:center;justify-content:center;border-radius:6px 6px 0 0;font-size:24px;">🖼️</div>`
+                        : `<img src="${cardData.imgSrc}" loading="lazy" decoding="async" style="width:100%;height:80px;object-fit:cover;border-radius:6px 6px 0 0;">`)
                     : `<div style="width:100%;height:80px;background:${cardData.catColor}20;display:flex;align-items:center;justify-content:center;border-radius:6px 6px 0 0;font-size:24px;">📄</div>`;
 
                 return {
@@ -11082,10 +11107,12 @@
                 const imgEl    = card.querySelector('.news-card__image,.group-card__image');
                 const imgSrc   = imgEl?.tagName === 'IMG' ? imgEl.src : '';
                 const isVideo  = imgEl?.tagName === 'VIDEO';
+                const isDataUrl = imgSrc && imgSrc.indexOf('data:') === 0;
                 const thumb    = isActus ? `<span style="font-size:22px">📰</span>`
                     : isMsg    ? `<span style="font-size:22px">🔐</span>`
                     : isUpdate  ? `<span style="font-size:22px">🆙</span>`
-                    : imgSrc   ? `<img src="${_ccEsc(imgSrc)}" alt="">`
+                    : (imgSrc && !isDataUrl)
+                        ? `<img src="${_ccEsc(imgSrc)}" alt="" loading="lazy" decoding="async" style="width:56px;height:56px;object-fit:cover;border-radius:6px;">`
                     : `<span style="font-size:20px">${isGroup?'📦':isVideo?'🎬':'🖼️'}</span>`;
                 const typeLabel = isActus?' · actus':isMsg?' · message':isUpdate?' · update':isGroup?' · groupe':ccId?' · firebase':' · statique';
 
@@ -12447,6 +12474,37 @@
     (function _tryInitUpdates(tries=0) {
         if (typeof FB_DB !== 'undefined' && FB_DB) _initUpdates();
         else if (tries < 25) setTimeout(()=>_tryInitUpdates(tries+1), 300);
+    })();
+    </script>
+
+    <!-- Sonde mémoire (diagnostic) — activer avec #memdebug dans l'URL -->
+    <script>
+    (function() {
+        if (!location.hash.includes('memdebug')) return;
+        const fmt = m => (m / 1048576).toFixed(1) + ' Mo';
+        const snapshot = () => ({
+            js: performance.memory ? performance.memory.usedJSHeapSize : -1,
+            nodes: document.getElementsByTagName('*').length,
+            imgs: document.images.length,
+            imgsLoaded: [...document.images].reduce((n, i) => n + (i.complete ? 1 : 0), 0),
+            vids: document.querySelectorAll('video').length,
+            cc: document.querySelectorAll('[data-cc-id]').length
+        });
+        let prev = null;
+        setInterval(() => {
+            const s = snapshot();
+            const line = `[mem] js=${fmt(s.js)} nodes=${s.nodes} img=${s.imgs}(${s.imgsLoaded} chargées) vid=${s.vids} cc=${s.cc}`;
+            if (!prev) { console.log(line); prev = s; return; }
+            const dJs = s.js - prev.js, dNodes = s.nodes - prev.nodes;
+            if (Math.abs(dJs) > 20 * 1048576 || Math.abs(dNodes) > 300) {
+                console.log('%c' + line + `   (+${fmt(dJs)} / +${dNodes} nodes)`, 'color:#ffda00;font-weight:bold');
+            } else {
+                console.log(line);
+            }
+            prev = s;
+        }, 1000);
+        window.__mem = snapshot;
+        console.log('🔍 Sonde mémoire active — `__mem()` pour une mesure à la demande');
     })();
     </script>
 
