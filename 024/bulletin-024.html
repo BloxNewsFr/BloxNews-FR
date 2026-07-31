@@ -181,22 +181,22 @@
             font-family: 'Inter', sans-serif;
             font-size: clamp(48px, 12vw, 100px);
             font-weight: 900;
-            color: #fff;
+            color: #111;
             line-height: 1;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(0,0,0,0.04);
+            border: 1px solid rgba(0,0,0,0.1);
             border-radius: 20px;
             padding: clamp(12px, 3vw, 28px) clamp(8px, 2vw, 20px);
             min-width: clamp(70px, 14vw, 140px);
             text-align: center;
-            box-shadow: 0 0 40px rgba(255,218,0,0.08), inset 0 1px 0 rgba(255,255,255,0.1);
+            box-shadow: 0 0 40px rgba(255,218,0,0.15), inset 0 1px 0 rgba(255,255,255,0.8);
             backdrop-filter: blur(10px);
             position: relative;
             overflow: hidden;
         }
         .countdown-number::after {
             content: ''; position: absolute; inset: 0;
-            background: linear-gradient(180deg, rgba(255,255,255,0.04) 0%, transparent 50%, rgba(0,0,0,0.1) 100%);
+            background: linear-gradient(180deg, rgba(255,255,255,0.6) 0%, transparent 50%, rgba(0,0,0,0.03) 100%);
             pointer-events: none;
             border-radius: 20px;
         }
@@ -204,7 +204,7 @@
             font-family: 'Inter', sans-serif;
             font-size: clamp(11px, 2vw, 14px);
             font-weight: 600;
-            color: rgba(255,255,255,0.4);
+            color: rgba(0,0,0,0.5);
             text-transform: uppercase;
             letter-spacing: 3px;
             margin-top: 12px;
@@ -212,7 +212,7 @@
         .countdown-sep {
             font-size: clamp(36px, 8vw, 72px);
             font-weight: 900;
-            color: rgba(255,255,255,0.15);
+            color: rgba(0,0,0,0.2);
             align-self: center;
             padding-bottom: clamp(30px, 6vw, 56px);
             user-select: none;
@@ -235,8 +235,8 @@
         }
 
         .site-footer {
-            background: rgba(10,10,18,0.8);
-            border-top: 1px solid rgba(255,255,255,0.06);
+            background: rgba(0,0,0,0.04);
+            border-top: 1px solid rgba(0,0,0,0.08);
             padding: 40px 55px;
             display: flex; justify-content: space-between; flex-wrap: wrap; gap: 30px;
         }
@@ -571,7 +571,7 @@
 
             <!-- ARTICLE 3 — SECTION DRAGON STYLE -->
             <div class="dragon-section">
-                <h2>THE BIGGEST PVP BALANCE PATCH YET</h2>
+                <h2>**LE PLUS GROS PATCH D’ÉQUILIBRAGE PVP JAMAIS SORTI**</h2>
                 <span class="section-subtext">Par the Blox Fruits Dev Team</span>
                 <div class="dragon-inner">
                     <div class="dragon-text">
@@ -673,7 +673,7 @@
                 p.style.width = p.style.height = (2 + Math.random() * 4) + 'px';
                 p.style.animationDuration = (8 + Math.random() * 12) + 's';
                 p.style.animationDelay = (Math.random() * 10) + 's';
-                p.style.background = ['rgba(255,218,0,0.3)', 'rgba(88,101,242,0.3)', 'rgba(255,255,255,0.2)'][Math.floor(Math.random() * 3)];
+                p.style.background = ['rgba(255,218,0,0.5)', 'rgba(88,101,242,0.4)', 'rgba(0,0,0,0.15)'][Math.floor(Math.random() * 3)];
                 container.appendChild(p);
             }
         })();
