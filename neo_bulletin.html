@@ -7324,8 +7324,14 @@
             if (!val) { _dcDB = []; }
             else {
                 if (!Array.isArray(val)) val = Object.keys(val).sort((a,b)=>Number(a)-Number(b)).map(k=>val[k]);
-                const likes = {}; _dcDB.forEach(c => { likes[c.id] = c.likedByMe; });
-                _dcDB = val.map(c => ({ ...c, likedByMe: !!likes[c.id] }));
+                const likes    = {};
+                const myReacts = {};
+                _dcDB.forEach(c => { likes[c.id] = c.likedByMe; myReacts[c.id] = c.myReactions || {}; });
+                _dcDB = val.map(c => ({
+                    ...c,
+                    likedByMe:   !!likes[c.id],
+                    myReactions: myReacts[c.id] || {}
+                }));
             }
             _dcRender();
         }, err => console.warn('[decrypt-comments]', err));
@@ -7368,15 +7374,212 @@
         const more  = document.getElementById('decryptCommentMoreBtn');
         const badge = document.getElementById('decryptCommentCountBadge');
         if (!list) return;
-        const sorted = [..._dcDB].sort((a,b) => new Date(b.time) - new Date(a.time));
+        const pinned = _dcDB.filter(c => c.pinned);
+        const rest   = _dcDB.filter(c => !c.pinned).sort((a,b) => new Date(b.time) - new Date(a.time));
+        const sorted = [...pinned, ...rest];
         badge.textContent = sorted.length;
         const shown = sorted.slice(0, _dcShown);
         if (shown.length === 0) {
             list.innerHTML = `<div class="card-comments-empty">🔓 Sois le premier à commenter ce document déclassifié !</div>`;
         } else {
-            list.innerHTML = shown.map(c => _ccRenderItem(c)).join('');
+            list.innerHTML = shown.map(c => _dcRenderItem(c)).join('');
         }
         if (more) more.style.display = sorted.length > _dcShown ? 'block' : 'none';
+    }
+
+    function _dcSave() {
+        _dcRef.set(_dcDB.map(x => {
+            const n = { ...x }; delete n.likedByMe; delete n.myReactions;
+            n.replies = (n.replies||[]).map(r => { const q = { ...r }; delete q.likedByMe; return q; });
+            return n;
+        })).catch(e => console.error('[decrypt-comments] write error:', e));
+    }
+
+    function _dcRenderItem(c) {
+        const _isMod  = window.currentUser && MODERATORS.includes(window.currentUser.username);
+        const _canDel = window.currentUser && (_isMod || c.username === window.currentUser.username);
+        const isPinned = !!c.pinned;
+        const isFirst  = _dcDB.length > 0 && _dcDB.reduce((oldest, x) =>
+            x.time < oldest.time ? x : oldest, _dcDB[0]).id === c.id;
+        const pfx      = 'dc-';
+        const replies = (c.replies||[]).map(r => {
+            const canDelR = window.currentUser && (_isMod || r.username === window.currentUser.username);
+            return `<div class="comment-reply" id="${pfx}reply-${r.id}">
+                ${avatarHTML(r, 30)}
+                <div class="comment-reply__body">
+                    <div class="comment-reply__header">
+                        ${discordTag()}
+                        <span class="comment-item__username">${r.username}</span>
+                        <span class="comment-item__time" title="${r.time}">${relativeTime(r.time)}</span>
+                    </div>
+                    <div class="comment-reply__text">${r.text}</div>
+                    <div class="comment-item__actions" style="margin-top:7px">
+                        <button class="comment-btn ${r.likedByMe?'comment-btn--liked':''}"
+                            onclick="_dcLikeReply('${c.id}','${r.id}',this)">
+                            ${r.likedByMe?'❤️':'🤍'} <span class="comment-btn__like-count">${r.likes||0}</span>
+                        </button>
+                        ${canDelR?`<button class="comment-btn comment-btn--delete" onclick="_dcDeleteReply('${c.id}','${r.id}')">🗑 Suppr.</button>`:''}
+                    </div>
+                </div>
+            </div>`;
+        }).join('');
+        const reacts   = c.reactions  || {};
+        const myReacts = c.myReactions || {};
+        const pills    = REACTION_EMOJIS
+            .filter(em => reacts[em] > 0)
+            .map(em => `<button class="reaction-btn${myReacts[em]?' reacted':''}"
+                onclick="_dcToggleReaction('${c.id}','${em}')" title="${em}">
+                ${em} <span class="reaction-btn__count">${reacts[em]||0}</span></button>`).join('');
+        const reactBar = `<div class="comment-reactions" id="${pfx}reacts-${c.id}">
+            ${pills}
+            <button class="reaction-add-btn" onclick="_dcOpenEmoji(event,'${c.id}')" title="Ajouter une réaction">+</button>
+        </div>`;
+        return `<div class="comment-item${isPinned?' comment-item--pinned':''}" id="${pfx}comment-${c.id}">
+            ${avatarHTML(c, 38)}
+            <div class="comment-item__body">
+                <div class="comment-item__header">
+                    ${discordTag()}
+                    <span class="comment-item__username">${c.username}</span>
+                    ${isFirst?`<span class="comment-first-badge">Premier 🎉</span>`:''}
+                    ${isPinned?`<span class="comment-pin-badge">📌 Épinglé</span>`:''}
+                    <span class="comment-item__time" title="${c.time}">${relativeTime(c.time)}</span>
+                </div>
+                <div class="comment-item__text">${c.text}</div>
+                ${reactBar}
+                <div class="comment-item__actions">
+                    <button class="comment-btn ${c.likedByMe?'comment-btn--liked':''}"
+                        onclick="_dcLikeComment('${c.id}',this)">
+                        ${c.likedByMe?'❤️':'🤍'} <span class="comment-btn__like-count">${c.likes||0}</span>
+                    </button>
+                    ${window.currentUser?`<button class="comment-btn" onclick="_ccToggleReplyBox('${pfx}rw-${c.id}')">↩ Répondre</button>`:''}
+                    ${_canDel?`<button class="comment-btn comment-btn--delete" onclick="_dcDelete('${c.id}')">🗑 Suppr.</button>`:''}
+                    ${_isMod&&!isPinned?`<button class="comment-btn comment-btn--pin" onclick="_dcPinComment('${c.id}')" title="Épingler">📌</button>`:''}
+                    ${_isMod&&isPinned?`<button class="comment-btn comment-btn--pin is-pinned" onclick="_dcUnpinComment('${c.id}')" title="Désépingler">📌</button>`:''}
+                </div>
+                ${replies?`<div class="comment-replies">${replies}</div>`:''}
+                <div class="comment-reply-write" id="${pfx}rw-${c.id}" style="display:none">
+                    ${window.currentUser ? avatarHTML(window.currentUser, 30) : ''}
+                    <textarea class="comment-reply-input" placeholder="Ta réponse…" rows="1" oninput="autoResize(this)"></textarea>
+                    <button class="comment-reply-submit" onclick="_dcPostReply('${c.id}','${pfx}rw-${c.id}')">Poster</button>
+                </div>
+            </div>
+        </div>`;
+    }
+
+    function _dcLikeComment(cid, btn) {
+        if (!window.currentUser) return;
+        const c = _dcDB.find(x => x.id === cid); if (!c) return;
+        c.likedByMe = !c.likedByMe;
+        c.likes = Math.max(0, (c.likes||0) + (c.likedByMe ? 1 : -1));
+        if (c.likedByMe) { spawnLikeParticles(btn); animateLikeBtn(btn); }
+        btn.className = 'comment-btn' + (c.likedByMe?' comment-btn--liked':'');
+        btn.innerHTML = (c.likedByMe?'❤️':'🤍') + ' <span class="comment-btn__like-count">' + c.likes + '</span>';
+        _dcSave();
+    }
+
+    function _dcDelete(cid) {
+        _pendingDelete = () => {
+            _dcDB = _dcDB.filter(c => c.id !== cid);
+            _dcSave();
+            _dcRender();
+        };
+        openDeleteModal();
+    }
+
+    function _dcPostReply(cid, wrapId) {
+        if (!window.currentUser) return;
+        const wrap = document.getElementById(wrapId);
+        if (!wrap) return;
+        const ta = wrap.querySelector('textarea');
+        const txt = (ta?.value||'').trim(); if (!txt) return;
+        const check = _filterComment(txt);
+        if (check.blocked) { _showCommentWarning('Contenu inapproprié.'); return; }
+        const c = _dcDB.find(x => x.id === cid); if (!c) return;
+        if (!c.replies) c.replies = [];
+        c.replies.push({ id: uid(), username: window.currentUser.username, avatar: window.currentUser.avatar||'',
+            text: txt, time: isoNow(), likes: 0, likedByMe: false });
+        ta.value = ''; ta.style.height = '';
+        wrap.style.display = 'none';
+        _dcSave();
+        _dcRender();
+    }
+
+    function _dcLikeReply(cid, rid, btn) {
+        if (!window.currentUser) return;
+        const c = _dcDB.find(x => x.id === cid); if (!c) return;
+        const r = (c.replies||[]).find(x => x.id === rid); if (!r) return;
+        r.likedByMe = !r.likedByMe;
+        r.likes = Math.max(0, (r.likes||0) + (r.likedByMe ? 1 : -1));
+        if (r.likedByMe) { spawnLikeParticles(btn); animateLikeBtn(btn); }
+        btn.className = 'comment-btn' + (r.likedByMe?' comment-btn--liked':'');
+        btn.innerHTML = (r.likedByMe?'❤️':'🤍') + ' <span class="comment-btn__like-count">' + r.likes + '</span>';
+        _dcSave();
+    }
+
+    function _dcDeleteReply(cid, rid) {
+        _pendingDelete = () => {
+            const c = _dcDB.find(x => x.id === cid); if (!c) return;
+            c.replies = (c.replies||[]).filter(r => r.id !== rid);
+            _dcSave();
+            _dcRender();
+        };
+        openDeleteModal();
+    }
+
+    function _dcToggleReaction(cid, em) {
+        const c = _dcDB.find(x => x.id === cid); if (!c) return;
+        c.reactions   = c.reactions   || {};
+        c.myReactions = c.myReactions || {};
+        if (c.myReactions[em]) {
+            c.reactions[em] = Math.max(0, (c.reactions[em]||0) - 1);
+            delete c.myReactions[em];
+            if (c.reactions[em] <= 0) delete c.reactions[em];
+        } else {
+            c.reactions[em] = (c.reactions[em]||0) + 1;
+            c.myReactions[em] = true;
+            const els = document.querySelectorAll(`[onclick*="_dcToggleReaction('${c.id}','${em}')"]`);
+            els.forEach(el => { spawnEmojiParticles(el, em); animateLikeBtn(el); });
+        }
+        _dcSave();
+        _dcRender();
+    }
+
+    function _dcOpenEmoji(e, cid) {
+        const existing = document.getElementById('dc-emoji-picker');
+        if (existing) { existing.remove(); return; }
+        const picker = document.createElement('div');
+        picker.id = 'dc-emoji-picker';
+        picker.style.cssText = 'position:absolute;z-index:999;display:flex;gap:4px;padding:6px 8px;background:rgba(255,255,255,0.96);border:1px solid rgba(0,0,0,0.1);border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,0.18);';
+        REACTION_EMOJIS.forEach(em => {
+            const b = document.createElement('button');
+            b.textContent = em;
+            b.style.cssText = 'border:none;background:transparent;font-size:18px;cursor:pointer;padding:2px 4px;border-radius:6px;transition:background 0.12s;';
+            b.onmouseenter = () => b.style.background = 'rgba(0,0,0,0.06)';
+            b.onmouseleave = () => b.style.background = 'transparent';
+            b.onclick = (ev) => { ev.stopPropagation(); _dcToggleReaction(cid, em); picker.remove(); };
+            picker.appendChild(b);
+        });
+        const rect = e.target.getBoundingClientRect();
+        picker.style.left = Math.min(rect.left, window.innerWidth - 320) + 'px';
+        picker.style.top = (rect.bottom + 4) + 'px';
+        document.body.appendChild(picker);
+        setTimeout(() => { const cl = () => { picker.remove(); document.removeEventListener('click', cl); }; document.addEventListener('click', cl); }, 10);
+    }
+
+    function _dcPinComment(cid) {
+        if (!isMod()) return;
+        const c = _dcDB.find(x => x.id === cid); if (!c) return;
+        c.pinned = true;
+        _dcSave();
+        _dcRender();
+    }
+
+    function _dcUnpinComment(cid) {
+        if (!isMod()) return;
+        const c = _dcDB.find(x => x.id === cid); if (!c) return;
+        c.pinned = false;
+        _dcSave();
+        _dcRender();
     }
 
     function postDecryptComment() {
@@ -7386,10 +7589,10 @@
         const check = _filterComment(txt);
         if (check.blocked) { _showCommentWarning('Contenu inapproprié.'); return; }
         const c = { id: uid(), username: window.currentUser.username, avatar: window.currentUser.avatar||'',
-            text: txt, time: isoNow(), likes: 0, likedByMe: false };
+            text: txt, time: isoNow(), likes: 0, likedByMe: false,
+            replies: [], reactions: {}, myReactions: {}, pinned: false };
         _dcDB.unshift(c);
-        _dcRef.set(_dcDB.map(x => { const n={...x}; delete n.likedByMe; return n; }))
-            .catch(e => console.error('[decrypt-comments] write error:', e));
+        _dcSave();
         inp.value = ''; inp.style.height = '';
         _dcRender();
     }
@@ -8332,16 +8535,23 @@
         openDeleteModal();
     }
 
-    function _actusPinComment(cid) {
-        let cardId = ''; let db = [];
-        Object.keys(_actusCommentsDB).forEach(k => {
-            const c = _actusCommentsDB[k].find(x => x.id === cid);
-            if (c) { c.pinned = !c.pinned; cardId = k; db = _actusCommentsDB[k]; }
-        });
-        if (!cardId) return;
+    function _actusPinComment(cardId, cid) {
+        const db = _actusCommentsDB[cardId] || [];
+        const c = db.find(x => x.id === cid); if (!c) return;
+        c.pinned = true;
         const ref = FB_DB.ref('card_comments/' + cardId);
-        ref.set(db.map(x => { const n={...x}; delete n.likedByMe; return n; }))
+        ref.set(db.map(x => { const n={...x}; delete n.likedByMe; delete n.myReactions; return n; }))
             .catch(e => console.error('[actus-comments] pin error:', e));
+        _actusRenderComments(cardId);
+    }
+
+    function _actusUnpinComment(cardId, cid) {
+        const db = _actusCommentsDB[cardId] || [];
+        const c = db.find(x => x.id === cid); if (!c) return;
+        c.pinned = false;
+        const ref = FB_DB.ref('card_comments/' + cardId);
+        ref.set(db.map(x => { const n={...x}; delete n.likedByMe; delete n.myReactions; return n; }))
+            .catch(e => console.error('[actus-comments] unpin error:', e));
         _actusRenderComments(cardId);
     }
 
@@ -12354,9 +12564,12 @@
     // ── Delete commentaire ───────────────────────────────────────
     window._updDeleteComment = function(cid, updId) {
         if (!window.currentUser) return;
-        _updCommentsDB[updId] = (_updCommentsDB[updId]||[]).filter(c=>c.id!==cid);
-        _updFirebaseSave(updId);
-        _updRenderComments(updId);
+        _pendingDelete = () => {
+            _updCommentsDB[updId] = (_updCommentsDB[updId]||[]).filter(c=>c.id!==cid);
+            _updFirebaseSave(updId);
+            _updRenderComments(updId);
+        };
+        openDeleteModal();
     };
 
     // ── Reply ────────────────────────────────────────────────────
@@ -12385,9 +12598,12 @@
 
     window._updDeleteReply = function(updId, cid, rid) {
         if (!window.currentUser) return;
-        const c = (_updCommentsDB[updId]||[]).find(x=>x.id===cid); if(!c) return;
-        c.replies = (c.replies||[]).filter(r=>r.id!==rid);
-        _updFirebaseSave(updId); _updRenderComments(updId);
+        _pendingDelete = () => {
+            const c = (_updCommentsDB[updId]||[]).find(x=>x.id===cid); if(!c) return;
+            c.replies = (c.replies||[]).filter(r=>r.id!==rid);
+            _updFirebaseSave(updId); _updRenderComments(updId);
+        };
+        openDeleteModal();
     };
 
     // ── Réactions ────────────────────────────────────────────────
