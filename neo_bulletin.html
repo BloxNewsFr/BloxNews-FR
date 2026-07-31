@@ -9006,7 +9006,7 @@
                 const countEl = btn.querySelector('.post-like-count');
                 if (countEl) countEl.textContent = _plGlobalCounts[btn.dataset.postId] || 0;
             });
-            _sortAllSections();
+            _sortAllSections(false);
         }, err => {
             console.error('[likes] Firebase inaccessible en lecture (vérifie les règles de la base et le quota) :', err);
         });
@@ -9158,13 +9158,14 @@
         return btn ? (_plGlobalCounts[btn.dataset.postId] || 0) : 0;
     }
 
-    function _flipSort(grid, sortFn) {
+    function _flipSort(grid, sortFn, animate) {
         const cards = [...grid.querySelectorAll('.news-card')];
         if (cards.length < 2) return;
         const oldPositions = new Map();
-        cards.forEach(c => oldPositions.set(c, c.getBoundingClientRect()));
+        if (animate !== false) cards.forEach(c => oldPositions.set(c, c.getBoundingClientRect()));
         cards.sort(sortFn);
         cards.forEach(c => grid.appendChild(c));
+        if (animate === false) return;
         requestAnimationFrame(() => {
             cards.forEach(card => {
                 const oldRect = oldPositions.get(card);
@@ -9181,31 +9182,35 @@
         });
     }
 
-    function _sortSection(section) {
+    function _sortSection(section, animate) {
         const grid = section.querySelector('.news-grid');
         if (!grid) return;
         const mode = _sortModes.get(section.id) || 'recent';
         if (mode === 'liked') {
-            _flipSort(grid, (a, b) => _cardLikeCount(b) - _cardLikeCount(a));
+            _flipSort(grid, (a, b) => _cardLikeCount(b) - _cardLikeCount(a), animate);
         } else {
             const orig = _originalOrder.get(section.id);
-            if (orig) _flipSort(grid, (a, b) => orig.indexOf(a) - orig.indexOf(b));
+            if (orig) {
+                const rank = new Map(orig.map((c, i) => [c, i]));
+                _flipSort(grid, (a, b) => (rank.get(a) ?? 0) - (rank.get(b) ?? 0), animate);
+            }
         }
     }
 
-    function _sortActusSection() {
+    function _sortActusSection(animate) {
         const section = document.getElementById('cat-actus');
         if (!section) return;
         const dossiers = [...section.querySelectorAll('.secret-bulletin')];
         if (dossiers.length < 2) return;
         const oldPositions = new Map();
-        dossiers.forEach(d => oldPositions.set(d, d.getBoundingClientRect()));
+        if (animate !== false) dossiers.forEach(d => oldPositions.set(d, d.getBoundingClientRect()));
         dossiers.sort((a, b) => {
             const tsA = a.dataset.date ? parseInt(a.dataset.date, 10) || 0 : 0;
             const tsB = b.dataset.date ? parseInt(b.dataset.date, 10) || 0 : 0;
             return tsB - tsA;
         });
         dossiers.forEach(d => section.appendChild(d));
+        if (animate === false) return;
         requestAnimationFrame(() => {
             dossiers.forEach(d => {
                 const oldRect = oldPositions.get(d);
@@ -9222,9 +9227,9 @@
         });
     }
 
-    function _sortAllSections() {
-        document.querySelectorAll('.category-section:not(#cat-actus):not(#cat-updates)').forEach(s => _sortSection(s));
-        _sortActusSection();
+    function _sortAllSections(animate) {
+        document.querySelectorAll('.category-section:not(#cat-actus):not(#cat-updates)').forEach(s => _sortSection(s, animate));
+        _sortActusSection(animate);
         if (typeof initPostLikes === 'function') initPostLikes();
     }
 
@@ -9525,28 +9530,39 @@
             if (id) { parts.unshift('#' + id); break; }
             const parent = cur.parentNode;
             if (parent) {
-                const siblings = [...parent.children].filter(c => c.tagName === cur.tagName);
-                if (siblings.length > 1) tag += ':nth('+(siblings.indexOf(cur)+1)+')';
+                let idx = 0, total = 0;
+                for (const child of parent.children) {
+                    if (child.tagName !== cur.tagName) continue;
+                    total++;
+                    if (child === cur) idx = total;
+                }
+                if (total > 1) tag += ':nth(' + idx + ')';
             }
             parts.unshift(tag);
-            cur = cur.parentNode;
+            cur = parent;
         }
         return parts.join('>');
     }
 
+    let _appliedEditsCache = null;
     function applyStoredEdits() {
         const edits = loadEdits();
+        const cache = _appliedEditsCache || (_appliedEditsCache = {});
         Object.entries(edits).forEach(([path, text]) => {
             try {
+                if (cache[path] === text) return;
                 const el = document.querySelector(path.replace(/:nth\((\d+)\)/g, ':nth-child($1)'));
                 if (el) el.innerHTML = renderMarkdown(text);
+                cache[path] = text;
             } catch(e) {}
         });
     }
 
-    function tagEditables() {
+    function tagEditables(root) {
+        const scope = root || document;
         EDITABLE_SELS.forEach(sel => {
-            document.querySelectorAll(sel).forEach(el => {
+            scope.querySelectorAll(sel).forEach(el => {
+                if (el.dataset.editable === '1') return;
                 // Vérifier si l'élément ou un parent est dans la liste d'exclusion
                 let isExcluded = false;
                 for (const exclSel of EXCLUDED_SELS) {
@@ -9596,6 +9612,7 @@
     function editLog(type, msg) {
         const log = document.getElementById('editLog');
         if (!log) return;
+        while (log.childElementCount >= 60) log.firstChild.remove();
         const line = document.createElement('div');
         line.className = 'log-line ' + type;
         line.textContent = '› ' + msg;
@@ -9653,6 +9670,7 @@
         const path  = _editEl.dataset.editPath || getEditPath(_editEl);
         const edits = loadEdits();
         edits[path] = newText;
+        if (_appliedEditsCache) _appliedEditsCache[path] = newText;
 
         // Si l'élément édité est dans le modal update → sauvegarder dans Firebase blox_updates
         const updModalFields = { updModalTitle:'title', updModalVersion:'version', updModalDate:'date', updModalDesc:'desc' };
@@ -9689,26 +9707,6 @@
         if (e.key === 'Escape' && _editEl) { closeEditInline(); return; }
         if (e.key === 'Enter' && !e.shiftKey && _editEl) {
             e.preventDefault(); saveEditInline();
-        }
-        // Ctrl+Shift+E
-        if (e.ctrlKey && e.shiftKey && e.key === 'E') {
-            const inlineTa = document.getElementById('editInlineTextarea');
-            const actusTa  = document.getElementById('ncmActusContent');
-            const updateShortTa = document.getElementById('ncmUpdateShortDesc');
-            const updateFullTa = document.getElementById('ncmUpdateFullDesc');
-            // Dans l'inline editor → sélecteur de couleur
-            if (inlineTa && document.activeElement === inlineTa) {
-                e.preventDefault();
-                _fmtHlPending = true;
-                document.getElementById('fmtHlColorInput')?.click();
-                return;
-            }
-            // Dans les textareas de /new → laisser le handler bas gérer
-            if (actusTa && document.activeElement === actusTa) return;
-            if (updateShortTa && document.activeElement === updateShortTa) return;
-            if (updateFullTa && document.activeElement === updateFullTa) return;
-            // Ailleurs → basculer le mode édition
-            e.preventDefault(); toggleEditMode();
         }
     });
 
@@ -10122,6 +10120,7 @@
         if (grid.firstChild) grid.insertBefore(el, grid.firstChild);
         else grid.appendChild(el);
         _ensureAllVideoThumbnails(el);
+        if (_editMode && typeof tagEditables === 'function') tagEditables(el);
 
         // Like button (cartes standard et message seulement)
         try {
@@ -10213,15 +10212,19 @@
     // complètement le dépôt de fichiers vidéo (il faut un lien hébergé ailleurs).
     const NCM_MAX_IMAGE_BYTES = 900 * 1024; // ~900 Ko
 
+    // ── Toast unifié pour le wizard /new ─────────────────────────────
+    function _ncmShowToast(label, text) {
+        const toast = document.getElementById('newCardToast');
+        if (!toast) return;
+        toast.innerHTML = `<span class="toast-badge">${_ccEsc(label)}</span><span class="toast-title">${_ccEsc(text)}</span>`;
+        toast.classList.add('is-visible');
+        clearTimeout(toast._hide);
+        toast._hide = setTimeout(() => toast.classList.remove('is-visible'), 3200);
+    }
+
     function _ncmRejectFile(msg) {
         editLog('err', msg);
-        const toast = document.getElementById('newCardToast');
-        if (toast) {
-            toast.innerHTML = `<span class="toast-badge">⚠️ Fichier refusé</span><span class="toast-title">${msg}</span>`;
-            toast.classList.add('is-visible');
-            clearTimeout(toast._hide);
-            toast._hide = setTimeout(() => toast.classList.remove('is-visible'), 3200);
-        }
+        _ncmShowToast('⚠️ Fichier refusé', msg);
     }
 
     function _ncmFileSelected(input) {
@@ -10373,19 +10376,23 @@
         _ncmGoToStep(1);
     }
 
+    let _ncmSectionOptionsBuilt = false;
     function _cmdNew() {
         _ncmImageData = null;
         _ncmShowImage(null);
         const sel = document.getElementById('ncmSection');
         if (sel) {
             const prev = sel.value;
-            sel.innerHTML = '';
-            document.querySelectorAll('.category-section:not(#cat-actus):not(#cat-messages)').forEach(sec => {
-                const opt = document.createElement('option');
-                opt.value = sec.id;
-                opt.textContent = sec.id.replace('cat-', '');
-                sel.appendChild(opt);
-            });
+            if (!_ncmSectionOptionsBuilt) {
+                _ncmSectionOptionsBuilt = true;
+                sel.innerHTML = '';
+                document.querySelectorAll('.category-section:not(#cat-actus):not(#cat-messages)').forEach(sec => {
+                    const opt = document.createElement('option');
+                    opt.value = sec.id;
+                    opt.textContent = sec.id.replace('cat-', '');
+                    sel.appendChild(opt);
+                });
+            }
             if (prev && [...sel.options].some(o => o.value === prev)) sel.value = prev;
         }
         // Reset kind → standard
@@ -10495,13 +10502,7 @@
             }
 
             // Toast de confirmation
-            const toast = document.getElementById('newCardToast');
-            if (toast) {
-                toast.innerHTML = `<span class="toast-badge">UPDATE</span><span class="toast-title">${title}</span>`;
-                toast.classList.add('is-visible');
-                clearTimeout(toast._hide);
-                toast._hide = setTimeout(() => toast.classList.remove('is-visible'), 3200);
-            }
+            _ncmShowToast('UPDATE', title);
 
             return;
         }
@@ -10584,22 +10585,12 @@
             }
         } catch(e) { console.warn('[new-badge]', e); }
 
-        const escFn = _ccEsc;
-        const toast = document.getElementById('newCardToast');
-        function _ncmShowToast(label, text) {
-            if (!toast) return;
-            toast.innerHTML = `<span class="toast-badge">${escFn(label)}</span><span class="toast-title">${escFn(text)}</span>`;
-            toast.classList.add('is-visible');
-            clearTimeout(toast._hide);
-            toast._hide = setTimeout(() => toast.classList.remove('is-visible'), 3200);
-        }
-
         // Tri immédiat (affichage local, avant même la confirmation Firebase)
         try {
             document.querySelectorAll('.category-section:not(#cat-actus)').forEach(s => {
                 _originalOrder.set(s.id, [...s.querySelectorAll('.news-card')]);
             });
-            _sortAllSections();
+            _sortAllSections(false);
         } catch(e) { console.warn('[sort]', e); }
 
         // Sauvegarde Firebase — la carte affichée doit refléter la vraie sauvegarde
@@ -10712,9 +10703,20 @@
     }
 
     // ── Charger le sélecteur de cards liées ───────────────────────────
+    let _ncmLinkedCache = null;
+    let _ncmLinkedCacheTs = 0;
+    const _NCM_LINKED_CACHE_TTL = 60000;
     function _ncmLoadLinkedCardsSelector() {
         const selector = document.getElementById('ncmLinkedCardsSelector');
         if (!selector) return;
+
+        // Restaurer depuis le cache si encore frais (évite un re-fetch + rebuild
+        // à chaque ouverture du sélecteur pendant la même session)
+        if (_ncmLinkedCache && (Date.now() - _ncmLinkedCacheTs) < _NCM_LINKED_CACHE_TTL) {
+            selector.innerHTML = _ncmLinkedCache;
+            _ncmBindLinkedFilters(selector);
+            return;
+        }
 
         if (typeof FB_CC_REF === 'undefined' || !FB_CC_REF) {
             selector.innerHTML = '<div class="ncm-field-info" style="text-align:center;padding:20px;">Firebase non disponible</div>';
@@ -10795,29 +10797,37 @@
                 </div>
             `;
 
-            // Ajouter les styles
-            const style = document.createElement('style');
-            style.textContent = `
-                .ncm-linked-card-item:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,218,0,0.3); transform: translateY(-2px); }
-                .ncm-linked-card-item input:checked { accent-color: #ffda00; }
-                .ncm-linked-card-item:has(input:checked) { border-color: #ffda00; background: rgba(255,218,0,0.08); }
-                .ncm-filter-btn:hover { background: rgba(255,255,255,0.1) !important; }
-                .ncm-filter-btn.active { background: rgba(255,218,0,0.2) !important; border-color: rgba(255,218,0,0.5) !important; }
-            `;
-            selector.appendChild(style);
+            _ncmLinkedCache = selector.innerHTML;
+            _ncmLinkedCacheTs = Date.now();
 
-            // Logique de filtrage (classes uniquement, pas d'inline)
-            const filterBtns = selector.querySelectorAll('.ncm-filter-btn');
-            const items = selector.querySelectorAll('.ncm-linked-card-item');
+            // Ajouter les styles (une seule fois, pas un <style> à chaque ouverture)
+            if (!document.getElementById('ncmLinkedStyle')) {
+                const style = document.createElement('style');
+                style.id = 'ncmLinkedStyle';
+                style.textContent = `
+                    .ncm-linked-card-item:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,218,0,0.3); transform: translateY(-2px); }
+                    .ncm-linked-card-item input:checked { accent-color: #ffda00; }
+                    .ncm-linked-card-item:has(input:checked) { border-color: #ffda00; background: rgba(255,218,0,0.08); }
+                    .ncm-filter-btn:hover { background: rgba(255,255,255,0.1) !important; }
+                    .ncm-filter-btn.active { background: rgba(255,218,0,0.2) !important; border-color: rgba(255,218,0,0.5) !important; }
+                `;
+                document.head.appendChild(style);
+            }
 
-            filterBtns.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const filter = btn.dataset.filter;
-                    filterBtns.forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    items.forEach(item => {
-                        item.style.display = (filter === 'tout' || item.dataset.filter === filter) ? '' : 'none';
-                    });
+            _ncmBindLinkedFilters(selector);
+        });
+    }
+
+    function _ncmBindLinkedFilters(selector) {
+        const filterBtns = selector.querySelectorAll('.ncm-filter-btn');
+        const items = selector.querySelectorAll('.ncm-linked-card-item');
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const filter = btn.dataset.filter;
+                filterBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                items.forEach(item => {
+                    item.style.display = (filter === 'tout' || item.dataset.filter === filter) ? '' : 'none';
                 });
             });
         });
@@ -10890,23 +10900,27 @@
         `;
     }
 
+    let _ncmActusPreviewTimer = null;
     function _ncmActusSyncPreview() {
-        const ta = document.getElementById('ncmActusContent');
-        const preview = document.getElementById('ncmActusText');
-        if (!ta || !preview) return;
-        let val = ta.value;
-        val = val.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
-        val = val.replace(/\*(.+?)\*/g, '<i>$1</i>');
-        // Colored highlights: ==[#HEX]text== (renderMarkdown format) and legacy ==#HEX text==
-        val = val.replace(/==\[#([0-9a-fA-F]{3,6})\](.+?)==/g,
-            (m, color, txt) => `<mark style="background:#${color};color:#fff;padding:0 3px;border-radius:3px">${txt}</mark>`);
-        val = val.replace(/==#([0-9a-fA-F]{6}) (.+?)==/g,
-            (m, color, txt) => `<mark style="background:#${color};color:#fff;padding:0 3px;border-radius:3px">${txt}</mark>`);
-        val = val.replace(/==(.+?)==/g, '<mark style="background:rgba(255,200,50,0.25);color:#ffd966;padding:0 3px;border-radius:3px">$1</mark>');
-        val = val.replace(/__(.+?)__/g, '<u>$1</u>');
-        val = val.replace(/~~(.+?)~~/g, '<s>$1</s>');
-        val = val.replace(/\n/g, '<br>');
-        preview.innerHTML = val || 'Écris le contenu du dossier ici…';
+        clearTimeout(_ncmActusPreviewTimer);
+        _ncmActusPreviewTimer = setTimeout(() => {
+            const ta = document.getElementById('ncmActusContent');
+            const preview = document.getElementById('ncmActusText');
+            if (!ta || !preview) return;
+            let val = ta.value;
+            val = val.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
+            val = val.replace(/\*(.+?)\*/g, '<i>$1</i>');
+            // Colored highlights: ==[#HEX]text== (renderMarkdown format) and legacy ==#HEX text==
+            val = val.replace(/==\[#([0-9a-fA-F]{3,6})\](.+?)==/g,
+                (m, color, txt) => `<mark style="background:#${color};color:#fff;padding:0 3px;border-radius:3px">${txt}</mark>`);
+            val = val.replace(/==#([0-9a-fA-F]{6}) (.+?)==/g,
+                (m, color, txt) => `<mark style="background:#${color};color:#fff;padding:0 3px;border-radius:3px">${txt}</mark>`);
+            val = val.replace(/==(.+?)==/g, '<mark style="background:rgba(255,200,50,0.25);color:#ffd966;padding:0 3px;border-radius:3px">$1</mark>');
+            val = val.replace(/__(.+?)__/g, '<u>$1</u>');
+            val = val.replace(/~~(.+?)~~/g, '<s>$1</s>');
+            val = val.replace(/\n/g, '<br>');
+            preview.innerHTML = val || 'Écris le contenu du dossier ici…';
+        }, 120);
     }
 
     function _ncmWrapSelection(ta, before, after) {
@@ -10986,34 +11000,39 @@
         }
     });
 
+    // ── Ctrl+Shift+E unifié ──────────────────────────────────────────
+    // inline editor → sélecteur de couleur  ·  textarea /new → surlignage
+    // ailleurs → bascule du mode édition
     document.addEventListener('keydown', function(e) {
-        if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'e') {
-            const taActus = document.getElementById('ncmActusContent');
-            const taFull = document.getElementById('ncmUpdateFullDesc');
-            const taShort = document.getElementById('ncmUpdateShortDesc');
-            let activeTa = null;
-            if (taActus && document.activeElement === taActus) {
-                activeTa = 'ncmActusContent';
-            } else if (taFull && document.activeElement === taFull) {
-                activeTa = 'ncmUpdateFullDesc';
-            } else if (taShort && document.activeElement === taShort) {
-                activeTa = 'ncmUpdateShortDesc';
-            }
-            if (activeTa) {
-                e.preventDefault();
-                e.stopPropagation();
-                _ncmHlPending = true;
-                const inputId = activeTa === 'ncmActusContent' ? 'ncmHlColorInput' : 
-                               activeTa === 'ncmUpdateFullDesc' ? 'ncmHlColorInputFull' : 'ncmHlColorInput';
-                document.getElementById(inputId)?.click();
-            }
+        if (!(e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'e')) return;
+        const inlineTa = document.getElementById('editInlineTextarea');
+        const taActus  = document.getElementById('ncmActusContent');
+        const taFull   = document.getElementById('ncmUpdateFullDesc');
+        const taShort  = document.getElementById('ncmUpdateShortDesc');
+        const active   = document.activeElement;
+        if (inlineTa && active === inlineTa) {
+            e.preventDefault();
+            _fmtHlPending = true;
+            document.getElementById('fmtHlColorInput')?.click();
+            return;
         }
+        if ((taActus && active === taActus) || (taFull && active === taFull) || (taShort && active === taShort)) {
+            e.preventDefault();
+            e.stopPropagation();
+            _ncmHlPending = true;
+            const inputId = active === taFull ? 'ncmHlColorInputFull' : 'ncmHlColorInput';
+            document.getElementById(inputId)?.click();
+            return;
+        }
+        e.preventDefault();
+        toggleEditMode();
     });
 
     // ══════════════════════════════════════════════════════════════
     //  COMMANDE /DELETE — Suppression de N'IMPORTE QUELLE carte
     // ══════════════════════════════════════════════════════════════
     let _dcmCurrentFilter = 'all';
+    let _dcmFilterTimer = null;
 
     function _cmdDelete() {
         const list = document.getElementById('dcmList');
@@ -11158,28 +11177,32 @@
         _dcmApplyFilterSearch();
     }
 
-    function _dcmFilter() { _dcmApplyFilterSearch(); }
+    function _dcmFilter() {
+        clearTimeout(_dcmFilterTimer);
+        _dcmFilterTimer = setTimeout(_dcmApplyFilterSearch, 120);
+    }
 
     function _dcmApplyFilterSearch() {
+        const list = document.getElementById('dcmList');
+        if (!list) return;
         const q = (document.getElementById('dcmSearch')?.value || '').toLowerCase().trim();
         const f = _dcmCurrentFilter;
-        document.querySelectorAll('#dcmList .dcm-item').forEach(item => {
+        const items = list.querySelectorAll('.dcm-item');
+        const visibleBySection = new Map();
+        items.forEach(item => {
             const secMatch = f === 'all' || item.dataset.section === f;
-            const titleMatch = !q || item.dataset.title?.includes(q) || item.dataset.badge?.includes(q);
-            item.style.display = (secMatch && titleMatch) ? '' : 'none';
+            const titleMatch = !q || (item.dataset.title || '').includes(q) || (item.dataset.badge || '').includes(q);
+            const show = secMatch && titleMatch;
+            item.style.display = show ? '' : 'none';
+            if (show) visibleBySection.set(item.dataset.section, true);
         });
         // Séparateurs : cacher si aucun item visible dans leur section
-        document.querySelectorAll('#dcmList .dcm-section-sep').forEach(sep => {
+        list.querySelectorAll('.dcm-section-sep').forEach(sep => {
             const secFilter = sep.dataset.sepFilter;
-            const secMatch = f === 'all' || secFilter === f;
-            if (!secMatch) { sep.style.display = 'none'; return; }
-            // Vérifier si au moins un item visible dans cette section
-            const hasVisible = [...document.querySelectorAll(`#dcmList .dcm-item[data-section="${secFilter}"]`)]
-                .some(el => el.style.display !== 'none');
-            sep.style.display = hasVisible ? '' : 'none';
+            sep.style.display = (f === 'all' || secFilter === f) && visibleBySection.has(secFilter) ? '' : 'none';
         });
         // Cacher aussi les confirm-zones qui ne sont pas visibles
-        document.querySelectorAll('#dcmList .dcm-confirm-zone').forEach(z => {
+        list.querySelectorAll('.dcm-confirm-zone').forEach(z => {
             const uid = z.id.replace('dcm-confirm-', '');
             const item = document.getElementById('dcm-item-' + uid);
             if (item && item.style.display === 'none') z.classList.remove('is-open');
@@ -11274,7 +11297,7 @@
         document.querySelectorAll('.category-section:not(#cat-actus)').forEach(s => {
             _originalOrder.set(s.id, [...s.querySelectorAll('.news-card')]);
         });
-        _sortAllSections();
+        _sortAllSections(false);
         editLog('ok', 'Élément supprimé.');
         _cmdDelete();
     }
@@ -11339,28 +11362,38 @@
 
         // 3. Firebase est la source de vérité pour les cards custom
         //    → on rend uniquement depuis Firebase (pas depuis localStorage)
+        //    → coalescing : on traite le dernier snapshot par burst (évite
+        //      les passes complètes répétées pendant une sync/des pushes multiples)
         if (FB_CC_REF) {
+            let _ccSnapTimer = null;
+            let _ccLastIds = null;
             FB_CC_REF.on('value', snap => {
-                const raw = snap.val();
-                const fbCards = raw
-                    ? (Array.isArray(raw) ? raw : Object.values(raw))
-                    : [];
-                _ccSave(fbCards);
-                _autoCreateGroups(fbCards);
-                fbCards.forEach(_renderOneCard);
-                // Retirer du DOM les cards supprimées
-                const fbIds = new Set(fbCards.map(c => c.id));
-                document.querySelectorAll('[data-cc-id]').forEach(el => {
-                    if (!fbIds.has(el.dataset.ccId)) el.remove();
-                });
-                // Remettre à jour _originalOrder avec les nouvelles cards, puis trier
-                document.querySelectorAll('.category-section:not(#cat-actus)').forEach(s => {
-                    _originalOrder.set(s.id, [...s.querySelectorAll('.news-card')]);
-                });
-                _sortAllSections();
-                // Synchroniser les group-cards avec les cards Firebase
-                _syncGroupCards(fbCards);
-                _injectDateLabels();
+                clearTimeout(_ccSnapTimer);
+                _ccSnapTimer = setTimeout(() => {
+                    const raw = snap.val();
+                    const fbCards = raw
+                        ? (Array.isArray(raw) ? raw : Object.values(raw))
+                        : [];
+                    _ccSave(fbCards);
+                    const ids = fbCards.map(c => c.id).sort().join(',');
+                    if (_ccLastIds === ids) return;
+                    _ccLastIds = ids;
+                    _autoCreateGroups(fbCards);
+                    fbCards.forEach(_renderOneCard);
+                    // Retirer du DOM les cards supprimées
+                    const fbIds = new Set(fbCards.map(c => c.id));
+                    document.querySelectorAll('[data-cc-id]').forEach(el => {
+                        if (!fbIds.has(el.dataset.ccId)) el.remove();
+                    });
+                    // Remettre à jour _originalOrder avec les nouvelles cards, puis trier
+                    document.querySelectorAll('.category-section:not(#cat-actus)').forEach(s => {
+                        _originalOrder.set(s.id, [...s.querySelectorAll('.news-card')]);
+                    });
+                    _sortAllSections(false);
+                    // Synchroniser les group-cards avec les cards Firebase
+                    _syncGroupCards(fbCards);
+                    _injectDateLabels();
+                }, 120);
             });
         } else {
             _renderCustomCards();
