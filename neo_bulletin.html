@@ -11527,6 +11527,15 @@
                 });
             }
 
+            // Persister la suppression pour qu'elle survive au reload
+            if (typeof FB_DELETED_REF !== 'undefined' && FB_DELETED_REF) {
+                FB_DELETED_REF.transaction(current => {
+                    const ids = Array.isArray(current) ? current : Object.values(current || {});
+                    if (!ids.includes(updateId)) ids.push(updateId);
+                    return ids;
+                });
+            }
+
             // Supprimer l'élément DOM
             const cardEl = document.querySelector(`.update-card[onclick="openUpdateModal('${updateId}')"]`);
             if (cardEl) cardEl.remove();
@@ -12248,7 +12257,30 @@
     let   _updModalCurrent = null;
 
     // ── Init compteurs Firebase et chargement des updates depuis Firebase ──
+    const _updDeleted = new Set();
+
+    function _updRenderGrid() {
+        const grid = document.getElementById('updatesGrid');
+        if (!grid) return;
+        grid.innerHTML = '';
+        UPDATES_DATA.forEach(upd => {
+            if (_updDeleted.has(String(upd.id))) return;
+            _renderUpdateCard(upd);
+        });
+    }
+
     function _initUpdates() {
+        // 0. Suivre les ids d'updates supprimées (persistés via deleted_static_ids)
+        if (typeof FB_DELETED_REF !== 'undefined' && FB_DELETED_REF) {
+            FB_DELETED_REF.on('value', snap => {
+                _updDeleted.clear();
+                const val = snap.val();
+                const ids = Array.isArray(val) ? val : (val ? Object.values(val) : []);
+                ids.forEach(id => _updDeleted.add(String(id)));
+                _updRenderGrid();
+            });
+        }
+
         // 1. Charger les updates depuis Firebase
         if (typeof FB_DB !== 'undefined' && FB_DB) {
             FB_DB.ref('updates').on('value', snap => {
@@ -12276,17 +12308,14 @@
                 UPDATES_DATA.length = 0;
                 UPDATES_DATA.push(...merged);
 
-                // Re-render toutes les updates
-                const grid = document.getElementById('updatesGrid');
-                if (grid) {
-                    grid.innerHTML = '';
-                    UPDATES_DATA.forEach(upd => _renderUpdateCard(upd));
-                }
+                // Re-render toutes les updates (les ids supprimées sont filtrées)
+                _updRenderGrid();
             });
         }
 
         // 2. Initialiser les compteurs de commentaires
         UPDATES_DATA.forEach(upd => {
+            if (_updDeleted.has(String(upd.id))) return;
             if (typeof FB_DB === 'undefined' || !FB_DB) return;
             FB_DB.ref('update_comments/' + upd.id).on('value', snap => {
                 const val = snap.val();
