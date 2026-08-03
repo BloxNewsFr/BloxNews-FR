@@ -9906,7 +9906,7 @@
         if (_appliedEditsCache) _appliedEditsCache[path] = newText;
 
         // Si l'élément édité est dans le modal update → sauvegarder dans Firebase blox_updates
-        const updModalFields = { updModalTitle:'title', updModalVersion:'version', updModalDate:'date', updModalDesc:'desc' };
+        const updModalFields = { updModalTitle:'title', updModalVersion:'version', updModalDate:'date', updModalDesc:'fullDesc' };
         if (_editEl.id && updModalFields[_editEl.id] && typeof _updModalCurrent !== 'undefined' && _updModalCurrent && typeof FB_UPDATES_REF !== 'undefined' && FB_UPDATES_REF) {
             const field = updModalFields[_editEl.id];
             FB_UPDATES_REF.child(_updModalCurrent).child(field).set(newText)
