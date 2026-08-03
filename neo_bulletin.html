@@ -5455,7 +5455,8 @@
                     <div class="category-title">🆙 UPDATES BLOX FRUITS</div>
                     <div class="updates-grid" id="updatesGrid">
 
-                        
+
+
                     </div>
                 </section>
 
@@ -9578,7 +9579,8 @@
     <script>
     // ─── Éditeur de contenu ────────────────────────────────────────
     const EDIT_KEY      = 'blox_content_edits_v1';
-    const FB_EDITS_REF  = typeof FB_DB !== 'undefined' ? FB_DB.ref('content_edits') : null;
+    const FB_EDITS_REF    = typeof FB_DB !== 'undefined' ? FB_DB.ref('content_edits') : null;
+    const FB_UPDATES_REF  = typeof FB_DB !== 'undefined' ? FB_DB.ref('updates')        : null;
     const EDITABLE_SELS = [
         '.news-card__title', '.news-card__eyebrow', '.news-card__badge',
         '.news-card__button:not(.open-modal-btn)',
@@ -12191,37 +12193,7 @@
     //   label    : titre de la card
     //   category : catégorie (affiché sous la miniature)
     //   catColor : couleur du badge catégorie
-    const UPDATES_DATA = [
-        {
-            id: 'upd-001',
-            version: 'Update 28',
-            date: 'Juillet 2026',
-            title: 'Blox Fruits Update 28',
-            desc: `La plus grande update de l'année avec le rework complet de Dark, l'arrivée de trois nouveaux fruits Celestial, Oni et Wraith, et une refonte totale de la map Third Sea.\n\nLe PvP a été entièrement rééquilibré avec de nouveaux moves et des ajustements sur les cooldowns. Plusieurs fruits du meta ont été retravaillés suite aux retours de la communauté.\n\nLa Third Sea propose désormais de nouvelles zones explorables, un boss world inédit et une série de quêtes scénarisées.`,
-            linkedCards: [
-                {
-                    label: 'Dark Rework', category: 'Fruit', catColor: '#7b2fff', emoji: '🌑',
-                    imgSrc: './shared/blox_leaks/dark_rework.jpeg',
-                    type: 'image', src: './shared/blox_leaks/dark_rework.jpeg',
-                    cardId: 'dark-rework', badge: 'REWORK', section: '🍎 Fruits & Reworks'
-                },
-                {
-                    label: 'Celestial Fruit', category: 'Fruit', catColor: '#ffda00', emoji: '⚡',
-                    imgSrc: '', type: 'image', src: '', cardId: '', badge: 'LEAK', section: '🍎 Fruits & Reworks'
-                },
-                {
-                    label: 'Oni Fruit', category: 'Fruit', catColor: '#cc0000', emoji: '👹',
-                    imgSrc: '', type: 'image', src: '', cardId: '', badge: 'LEAK', section: '🍎 Fruits & Reworks'
-                },
-                {
-                    label: 'Refonte Third Sea', category: 'Map', catColor: '#175ec2', emoji: '🗺️',
-                    imgSrc: './shared/blox_leaks/island_reworks1.png',
-                    type: 'image', src: './shared/blox_leaks/island_reworks1.png',
-                    cardId: '', badge: 'MAP', section: '🗺️ Map & World'
-                },
-            ]
-        }
-    ];
+    const UPDATES_DATA = [];
 
     // ── State commentaires ───────────────────────────────────────
     const _updCommentsDB  = {};
