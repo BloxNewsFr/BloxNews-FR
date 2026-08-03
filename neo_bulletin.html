@@ -6639,17 +6639,11 @@
                             video.src = sourceUrl;
                             video.style.display = 'block';
                             video.currentTime   = 0;
-                            video.onerror = () => {
-                                video.style.display = 'none';
-                                video.onerror = null;
-                                _showExtVideoBtn(sourceUrl, video);
-                            };
-                            video.play().catch(() => {
-                                if (video.readyState === 0 || video.error) {
-                                    video.style.display = 'none';
-                                    _showExtVideoBtn(sourceUrl, video);
-                                }
-                            });
+                            const _fallback = () => { video.style.display='none'; video.onerror=null; video.oncanplay=null; clearTimeout(_timer); _showExtVideoBtn(sourceUrl, video); };
+                            video.onerror = _fallback;
+                            video.oncanplay = () => { clearTimeout(_timer); video.oncanplay=null; };
+                            const _timer = setTimeout(() => { if (video.readyState < 3) _fallback(); }, 2000);
+                            video.play().catch(() => { if (video.readyState===0||video.error) _fallback(); });
                         } else if (type === 'image' && modalImg) {
                             modalImg.src = sourceUrl;
                             modalImg.style.display = 'block';
@@ -6700,8 +6694,11 @@
                     if (type === 'video' && video) {
                         video.src = src; video.style.display = 'block';
                         video.currentTime = 0;
-                        video.onerror = () => { video.style.display='none'; video.onerror=null; _showExtVideoBtn(src,video); };
-                        video.play().catch(() => { if (video.readyState===0||video.error) { video.style.display='none'; _showExtVideoBtn(src,video); } });
+                        const _vidFallback = () => { video.style.display='none'; video.onerror=null; video.oncanplay=null; clearTimeout(_vidTimer); _showExtVideoBtn(src,video); };
+                        video.onerror = _vidFallback;
+                        video.oncanplay = () => { clearTimeout(_vidTimer); video.oncanplay=null; };
+                        const _vidTimer = setTimeout(() => { if (video.readyState < 3) _vidFallback(); }, 2000);
+                        video.play().catch(() => { if (video.readyState===0||video.error) _vidFallback(); });
                     } else if (modalImg) {
                         modalImg.src = src; modalImg.style.display = 'block';
                     }
@@ -7085,9 +7082,10 @@
             'border-radius:12px','transition:background 0.2s','width:100%','box-sizing:border-box'
         ].join(';');
         extBtn.innerHTML = `
-            <span style="font-size:40px;line-height:1">▶</span>
-            <span style="font-size:14px;font-weight:700;opacity:0.75;letter-spacing:0.3px">Ouvrir la vidéo</span>
-            <span style="font-size:10px;opacity:0.3;word-break:break-all;max-width:300px;text-align:center;font-family:monospace">${src.split('/').pop()}</span>`;
+            <span style="font-size:36px;line-height:1">🎬</span>
+            <span style="font-size:14px;font-weight:700;opacity:0.9;letter-spacing:0.3px">Vidéo non supportée sur ce navigateur</span>
+            <span style="font-size:12px;opacity:0.55;margin-top:-4px">Cliquer pour ouvrir dans le navigateur</span>
+            <span style="font-size:10px;opacity:0.25;word-break:break-all;max-width:300px;text-align:center;font-family:monospace">${src.split('/').pop()}</span>`;
         extBtn.onmouseover = () => extBtn.style.background = 'rgba(255,255,255,0.06)';
         extBtn.onmouseout  = () => extBtn.style.background = 'rgba(255,255,255,0.03)';
         videoEl.parentNode.insertBefore(extBtn, videoEl);
@@ -7115,39 +7113,16 @@
             const existingExtBtn = document.getElementById('_modalExtVideoBtn');
             if (existingExtBtn) existingExtBtn.remove();
 
-            if (isExternal) {
-                // URL externe : tenter un embed direct dans <video> avec fallback lien
+            {
+                // Tenter la lecture (local ou externe), fallback bouton si Chrome ne supporte pas le format
                 video.src = item.src;
                 video.style.display = 'block';
                 video.currentTime = 0;
-                video.play().catch(() => {
-                    // Échec : afficher le lien externe proprement
-                    video.style.display = 'none';
-                    _showExtVideoBtn(item.src, video);
-                });
-                // Double sécurité : si aucun format supporté, déclenché par onerror
-                video.onerror = () => {
-                    video.style.display = 'none';
-                    video.onerror = null;
-                    _showExtVideoBtn(item.src, video);
-                };
-            } else {
-                // Fichier local : tenter la lecture, fallback si format non supporté (ex: .mov sur Chrome)
-                video.src = item.src;
-                video.style.display = 'block';
-                video.currentTime = 0;
-                video.onerror = () => {
-                    video.style.display = 'none';
-                    video.onerror = null;
-                    _showExtVideoBtn(item.src, video);
-                };
-                video.play().catch(() => {
-                    // play() peut rejeter si le codec n'est pas supporté
-                    if (video.readyState === 0 || video.error) {
-                        video.style.display = 'none';
-                        _showExtVideoBtn(item.src, video);
-                    }
-                });
+                const _gFallback = () => { video.style.display='none'; video.onerror=null; video.oncanplay=null; clearTimeout(_gTimer); _showExtVideoBtn(item.src, video); };
+                video.onerror = _gFallback;
+                video.oncanplay = () => { clearTimeout(_gTimer); video.oncanplay=null; };
+                const _gTimer = setTimeout(() => { if (video.readyState < 3) _gFallback(); }, 2000);
+                video.play().catch(() => { if (video.readyState===0||video.error) _gFallback(); });
             }
         } else {
             img.src = item.src; img.style.display = 'block';
@@ -9906,7 +9881,7 @@
         if (_appliedEditsCache) _appliedEditsCache[path] = newText;
 
         // Si l'élément édité est dans le modal update → sauvegarder dans Firebase blox_updates
-        const updModalFields = { updModalTitle:'title', updModalVersion:'version', updModalDate:'date', updModalDesc:'fullDesc' };
+        const updModalFields = { updModalTitle:'title', updModalVersion:'version', updModalDate:'date', updModalDesc:'desc' };
         if (_editEl.id && updModalFields[_editEl.id] && typeof _updModalCurrent !== 'undefined' && _updModalCurrent && typeof FB_UPDATES_REF !== 'undefined' && FB_UPDATES_REF) {
             const field = updModalFields[_editEl.id];
             FB_UPDATES_REF.child(_updModalCurrent).child(field).set(newText)
