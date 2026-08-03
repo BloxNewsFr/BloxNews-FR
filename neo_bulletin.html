@@ -5500,8 +5500,8 @@
                     <div class="card-comment-login" id="discordBanner">
                         <span style="font-size:16px">🎮</span>
                         <div style="flex:1;min-width:0">
-                            <div style="font-weight:600;font-size:13px">Connecte-toi pour commenter</div>
-                            <div class="card-comment-login__sub">Ton pseudo et ton avatar Discord seront utilisés</div>
+                            <div style="font-weight:600;font-size:13px;color:rgba(255,255,255,0.7)">Connecte-toi pour commenter</div>
+                            <div class="card-comment-login__sub" style="font-size:12px;color:rgba(255,255,255,0.35)">Ton pseudo et ton avatar Discord seront utilisés</div>
                         </div>
                         <button class="card-comment-login__btn" onclick="_discordLogin()">Se connecter</button>
                     </div>
@@ -7252,17 +7252,25 @@
         const imgWrap = document.getElementById('decryptImgWrap');
         const resolvedImgSrc = imgSrc || STATIC_DECRYPT_IMAGES[cardId] || '';
 
+        // Toujours jouer l'animation "DÉCRYPTAGE EN COURS…" à l'ouverture
+        overlay.classList.remove('done');
         if (resolvedImgSrc) {
             imgWrap.style.display = '';
+            imgWrap.style.minHeight = '';
             img.src = resolvedImgSrc;
             img.style.display = 'block';
-            // Animation de révélation
-            overlay.classList.remove('done');
             setTimeout(() => overlay.classList.add('done'), 1400);
         } else {
-            // Pas d'image : masquer la zone image
-            imgWrap.style.display = 'none';
-            overlay.classList.add('done');
+            // Pas d'image : afficher quand même l'animation sur fond noir minimal
+            imgWrap.style.display = '';
+            imgWrap.style.minHeight = '100px';
+            img.src = '';
+            img.style.display = 'none';
+            setTimeout(() => {
+                overlay.classList.add('done');
+                imgWrap.style.minHeight = '';
+                imgWrap.style.display = 'none';
+            }, 1400);
         }
 
         // Commentaires
@@ -10293,8 +10301,8 @@
                         <div class="card-comment-login actus-cc-login" data-actus-id="${e(card.id)}">
                             <span style="font-size:16px">🎮</span>
                             <div style="flex:1;min-width:0">
-                                <div style="font-weight:600;font-size:13px">Connecte-toi pour commenter</div>
-                                <div class="card-comment-login__sub">Ton pseudo et ton avatar Discord seront utilisés</div>
+                                <div style="font-weight:600;font-size:13px;color:rgba(255,255,255,0.7)">Connecte-toi pour commenter</div>
+                                <div class="card-comment-login__sub" style="font-size:12px;color:rgba(255,255,255,0.35)">Ton pseudo et ton avatar Discord seront utilisés</div>
                             </div>
                             <button class="card-comment-login__btn" onclick="_discordLogin()">Se connecter</button>
                         </div>
