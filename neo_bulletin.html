@@ -5500,8 +5500,8 @@
                     <div class="card-comment-login" id="discordBanner">
                         <span style="font-size:16px">🎮</span>
                         <div style="flex:1;min-width:0">
-                            <div style="font-weight:600;font-size:13px;color:rgba(255,255,255,0.7)">Connecte-toi pour commenter</div>
-                            <div class="card-comment-login__sub" style="font-size:12px;color:rgba(255,255,255,0.35)">Ton pseudo et ton avatar Discord seront utilisés</div>
+                            <div style="font-weight:600;font-size:13px">Connecte-toi pour commenter</div>
+                            <div class="card-comment-login__sub">Ton pseudo et ton avatar Discord seront utilisés</div>
                         </div>
                         <button class="card-comment-login__btn" onclick="_discordLogin()">Se connecter</button>
                     </div>
@@ -6638,18 +6638,14 @@
                             if (existing) existing.remove();
                             video.src = sourceUrl;
                             video.style.display = 'block';
-                            video.currentTime   = 0;
-                            video.onerror = () => {
-                                video.style.display = 'none';
-                                video.onerror = null;
-                                _showExtVideoBtn(sourceUrl, video);
-                            };
-                            video.play().catch(() => {
-                                if (video.readyState === 0 || video.error) {
-                                    video.style.display = 'none';
-                                    _showExtVideoBtn(sourceUrl, video);
-                                }
-                            });
+                            video.currentTime = 0;
+                            const _fb1 = () => { if (!_fb1.done) { _fb1.done=true; clearTimeout(_t1); video.style.display='none'; video.onerror=null; video.oncanplay=null; video.onstalled=null; _showExtVideoBtn(sourceUrl, video); } };
+                            video.onerror = _fb1;
+                            video.oncanplay = () => { _fb1.done=true; clearTimeout(_t1); video.oncanplay=null; };
+                            video.onstalled = _fb1;
+                            const _t1 = setTimeout(_fb1, 1500);
+                            video.load();
+                            video.play().catch(_fb1);
                         } else if (type === 'image' && modalImg) {
                             modalImg.src = sourceUrl;
                             modalImg.style.display = 'block';
@@ -6700,8 +6696,13 @@
                     if (type === 'video' && video) {
                         video.src = src; video.style.display = 'block';
                         video.currentTime = 0;
-                        video.onerror = () => { video.style.display='none'; video.onerror=null; _showExtVideoBtn(src,video); };
-                        video.play().catch(() => { if (video.readyState===0||video.error) { video.style.display='none'; _showExtVideoBtn(src,video); } });
+                        const _fb2 = () => { if (!_fb2.done) { _fb2.done=true; clearTimeout(_t2); video.style.display='none'; video.onerror=null; video.oncanplay=null; video.onstalled=null; _showExtVideoBtn(src, video); } };
+                        video.onerror = _fb2;
+                        video.oncanplay = () => { _fb2.done=true; clearTimeout(_t2); video.oncanplay=null; };
+                        video.onstalled = _fb2;
+                        const _t2 = setTimeout(_fb2, 1500);
+                        video.load();
+                        video.play().catch(_fb2);
                     } else if (modalImg) {
                         modalImg.src = src; modalImg.style.display = 'block';
                     }
@@ -7085,9 +7086,10 @@
             'border-radius:12px','transition:background 0.2s','width:100%','box-sizing:border-box'
         ].join(';');
         extBtn.innerHTML = `
-            <span style="font-size:40px;line-height:1">▶</span>
-            <span style="font-size:14px;font-weight:700;opacity:0.75;letter-spacing:0.3px">Ouvrir la vidéo</span>
-            <span style="font-size:10px;opacity:0.3;word-break:break-all;max-width:300px;text-align:center;font-family:monospace">${src.split('/').pop()}</span>`;
+            <span style="font-size:36px;line-height:1">🎬</span>
+            <span style="font-size:14px;font-weight:700;opacity:0.9;letter-spacing:0.3px">Vidéo non supportée sur ce navigateur</span>
+            <span style="font-size:12px;opacity:0.6;margin-top:-4px">Cliquer pour ouvrir dans le navigateur</span>
+            <span style="font-size:10px;opacity:0.25;word-break:break-all;max-width:300px;text-align:center;font-family:monospace">${src.split('/').pop()}</span>`;
         extBtn.onmouseover = () => extBtn.style.background = 'rgba(255,255,255,0.06)';
         extBtn.onmouseout  = () => extBtn.style.background = 'rgba(255,255,255,0.03)';
         videoEl.parentNode.insertBefore(extBtn, videoEl);
@@ -7115,39 +7117,17 @@
             const existingExtBtn = document.getElementById('_modalExtVideoBtn');
             if (existingExtBtn) existingExtBtn.remove();
 
-            if (isExternal) {
-                // URL externe : tenter un embed direct dans <video> avec fallback lien
+            {
                 video.src = item.src;
                 video.style.display = 'block';
                 video.currentTime = 0;
-                video.play().catch(() => {
-                    // Échec : afficher le lien externe proprement
-                    video.style.display = 'none';
-                    _showExtVideoBtn(item.src, video);
-                });
-                // Double sécurité : si aucun format supporté, déclenché par onerror
-                video.onerror = () => {
-                    video.style.display = 'none';
-                    video.onerror = null;
-                    _showExtVideoBtn(item.src, video);
-                };
-            } else {
-                // Fichier local : tenter la lecture, fallback si format non supporté (ex: .mov sur Chrome)
-                video.src = item.src;
-                video.style.display = 'block';
-                video.currentTime = 0;
-                video.onerror = () => {
-                    video.style.display = 'none';
-                    video.onerror = null;
-                    _showExtVideoBtn(item.src, video);
-                };
-                video.play().catch(() => {
-                    // play() peut rejeter si le codec n'est pas supporté
-                    if (video.readyState === 0 || video.error) {
-                        video.style.display = 'none';
-                        _showExtVideoBtn(item.src, video);
-                    }
-                });
+                const _fb3 = () => { if (!_fb3.done) { _fb3.done=true; clearTimeout(_t3); video.style.display='none'; video.onerror=null; video.oncanplay=null; video.onstalled=null; _showExtVideoBtn(item.src, video); } };
+                video.onerror = _fb3;
+                video.oncanplay = () => { _fb3.done=true; clearTimeout(_t3); video.oncanplay=null; };
+                video.onstalled = _fb3;
+                const _t3 = setTimeout(_fb3, 1500);
+                video.load();
+                video.play().catch(_fb3);
             }
         } else {
             img.src = item.src; img.style.display = 'block';
@@ -7261,7 +7241,6 @@
             img.style.display = 'block';
             setTimeout(() => overlay.classList.add('done'), 1400);
         } else {
-            // Pas d'image : afficher quand même l'animation sur fond noir minimal
             imgWrap.style.display = '';
             imgWrap.style.minHeight = '100px';
             img.src = '';
@@ -9914,7 +9893,7 @@
         if (_appliedEditsCache) _appliedEditsCache[path] = newText;
 
         // Si l'élément édité est dans le modal update → sauvegarder dans Firebase blox_updates
-        const updModalFields = { updModalTitle:'title', updModalVersion:'version', updModalDate:'date', updModalDesc:'desc' };
+        const updModalFields = { updModalTitle:'title', updModalVersion:'version', updModalDate:'date', updModalDesc:'fullDesc' };
         if (_editEl.id && updModalFields[_editEl.id] && typeof _updModalCurrent !== 'undefined' && _updModalCurrent && typeof FB_UPDATES_REF !== 'undefined' && FB_UPDATES_REF) {
             const field = updModalFields[_editEl.id];
             FB_UPDATES_REF.child(_updModalCurrent).child(field).set(newText)
@@ -10301,8 +10280,8 @@
                         <div class="card-comment-login actus-cc-login" data-actus-id="${e(card.id)}">
                             <span style="font-size:16px">🎮</span>
                             <div style="flex:1;min-width:0">
-                                <div style="font-weight:600;font-size:13px;color:rgba(255,255,255,0.7)">Connecte-toi pour commenter</div>
-                                <div class="card-comment-login__sub" style="font-size:12px;color:rgba(255,255,255,0.35)">Ton pseudo et ton avatar Discord seront utilisés</div>
+                                <div style="font-weight:600;font-size:13px">Connecte-toi pour commenter</div>
+                                <div class="card-comment-login__sub">Ton pseudo et ton avatar Discord seront utilisés</div>
                             </div>
                             <button class="card-comment-login__btn" onclick="_discordLogin()">Se connecter</button>
                         </div>
