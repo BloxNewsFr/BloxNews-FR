@@ -12376,6 +12376,12 @@
                     <div class="stats-ranking-list" id="statsRanking"></div>
                 </div>
 
+                <!-- Classement des cards (leaks) -->
+                <div class="stats-ranking">
+                    <div class="stats-ranking-title">🔥 Cards les plus vues</div>
+                    <div class="stats-ranking-list" id="statsCardRanking"></div>
+                </div>
+
                 <!-- Visiteurs par jour -->
                 <div class="stats-daily">
                     <div class="stats-daily-title">Visiteurs par jour — 7 derniers jours</div>
@@ -12521,12 +12527,14 @@
             _statsRefreshAggregates();
             _statsRefreshDaily();
             _statsRefreshRanking();
+            _statsRefreshCardRanking();
             _statsRefreshVisitors();
             _statsRenderOnline();
             STORE.timers.push(setInterval(_statsRefreshCounters, 5000));
             STORE.timers.push(setInterval(_statsRefreshAggregates, 5000));
             STORE.timers.push(setInterval(_statsRefreshDaily, 15000));
             STORE.timers.push(setInterval(_statsRefreshRanking, 15000));
+            STORE.timers.push(setInterval(_statsRefreshCardRanking, 15000));
             STORE.timers.push(setInterval(() => { if (STORE.popupOpen && _statsVisitorsOpen()) _statsRefreshVisitors(); }, 10000));
         }
         window.openStats = openStats;
@@ -12663,6 +12671,66 @@
                             <span class="stats-ranking-count">${x.n.toLocaleString('fr-FR')} vue${x.n > 1 ? 's' : ''}</span>
                         </div>`).join('')
                     : '<div class="stats-ranking-empty">Aucune visite de bulletin enregistrée</div>';
+            });
+        }
+
+        /* ─── Vues des cards (leaks) ─────────────────────────── */
+        function _statsCardKey(art) {
+            const tagged = art.querySelector('[data-card-id]');
+            if (tagged && tagged.dataset.cardId) return tagged.dataset.cardId;
+            const oc = art.getAttribute('onclick') || '';
+            const m = oc.match(/openGroupDrawer\(['"]([^'"]+)['"]\)/);
+            if (m) return m[1];
+            const titleEl = art.querySelector('.news-card__title, .group-card__title');
+            if (titleEl) {
+                const slug = titleEl.textContent.trim()
+                    .toLowerCase()
+                    .replace(/&/g, ' et ')
+                    .replace(/[^a-z0-9]+/g, '-')
+                    .replace(/^-+|-+$/g, '');
+                if (slug) return slug;
+            }
+            const sec = art.closest('section');
+            const parent = sec || art.parentElement;
+            const idx = Array.prototype.indexOf.call(parent.children, art);
+            return (sec && sec.id ? sec.id : 'card') + '-' + idx;
+        }
+
+        function _statsTrackCard(art) {
+            const key = _statsCardKey(art);
+            if (!key) return;
+            const titleEl = art.querySelector('.news-card__title, .group-card__title');
+            const title = titleEl ? titleEl.textContent.trim() : key;
+            FB_DB.ref('site_stats/card_views/' + key)
+                .transaction(cur => (cur && cur.n ? { n: cur.n + 1, t: title } : { n: 1, t: title }))
+                .catch(() => {});
+        }
+
+        document.addEventListener('click', e => {
+            const t = e.target;
+            if (!t || !t.closest) return;
+            const art = t.closest('article.group-card, article.news-card');
+            if (art) _statsTrackCard(art);
+        }, true);
+
+        function _statsRefreshCardRanking() {
+            const listEl = document.getElementById('statsCardRanking');
+            if (!listEl) return;
+            FB_DB.ref('site_stats/card_views').once('value', snap => {
+                const raw = snap.val() || {};
+                const items = Object.keys(raw)
+                    .map(k => ({ key: k, n: (raw[k] && raw[k].n) || raw[k] || 0, t: (raw[k] && raw[k].t) || k }))
+                    .filter(x => x.n > 0)
+                    .sort((a, b) => b.n - a.n)
+                    .slice(0, 10);
+                listEl.innerHTML = items.length
+                    ? items.map((x, i) => `
+                        <div class="stats-ranking-item">
+                            <span class="stats-ranking-pos ${i < 3 ? 'stats-ranking-pos--top' : ''}">${i + 1}</span>
+                            <span class="stats-ranking-name">${_statsEsc(x.t)}</span>
+                            <span class="stats-ranking-count">${x.n.toLocaleString('fr-FR')} vue${x.n > 1 ? 's' : ''}</span>
+                        </div>`).join('')
+                    : '<div class="stats-ranking-empty">Aucune vue de card enregistrée</div>';
             });
         }
 
