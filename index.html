@@ -35,6 +35,8 @@
     <link rel="shortcut icon" href="./shared/bf_logo.png" type="image/png">
     <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
     <style>
         @font-face { font-family: 'LuckiestGuy Regular'; src: url('./fonts/LuckiestGuy-Regular.ttf') format('truetype'); }
         :root { --color-text: #1a1a2e; --color-border: #e8e8f0; --color-primary: #ffda00; --color-accent: #175ec2; --color-muted: #888; }
@@ -626,10 +628,180 @@
         }
         .settings-btn:hover { opacity: 0.85; }
         .settings-btn--primary { background: #5865f2; color: #fff; }
+        .settings-btn--secondary { background: rgba(23,94,194,0.1); color: #175ec2; }
+        html[data-theme="dark"] .settings-btn--secondary { background: rgba(23,94,194,0.2); color: #7fa8e8; }
         .settings-btn--danger { background: rgba(220,38,38,0.1); color: #dc2626; }
         html[data-theme="dark"] .settings-btn--danger { background: rgba(220,38,38,0.2); }
 
         .settings-footer { padding: 14px 24px; text-align: center; font-size: 11px; color: #bbb; }
+
+        .settings-admin-badge {
+            background: linear-gradient(135deg, #ffda00, #ff9900);
+            color: #000; font-size: 9px; font-weight: 800;
+            padding: 2px 7px; border-radius: 20px; letter-spacing: 0.5px;
+        }
+
+        /* ═══════════════════════════════════════════════
+           STATS POPUP
+        ═══════════════════════════════════════════════ */
+        .stats-overlay {
+            position: fixed; inset: 0; z-index: 9999;
+            background: rgba(0,0,0,0.55);
+            backdrop-filter: blur(4px);
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none;
+            transition: opacity .25s;
+        }
+        .stats-overlay.is-open { opacity: 1; pointer-events: all; }
+
+        .stats-panel {
+            background: #fff;
+            border-radius: 20px;
+            width: min(560px, calc(100vw - 32px));
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 24px 64px rgba(0,0,0,0.25);
+            transform: translateY(20px) scale(0.97);
+            transition: transform .25s cubic-bezier(.34,1.56,.64,1);
+        }
+        .stats-overlay.is-open .stats-panel { transform: translateY(0) scale(1); }
+        html[data-theme="dark"] .stats-panel { background: #171827; }
+
+        .stats-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 20px 24px 16px;
+            border-bottom: 1px solid rgba(0,0,0,0.07);
+            position: sticky; top: 0; background: inherit; z-index: 1;
+            border-radius: 20px 20px 0 0;
+        }
+        html[data-theme="dark"] .stats-header { border-bottom-color: rgba(255,255,255,0.07); }
+        .stats-title { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 17px; color: var(--color-text); display: flex; align-items: center; gap: 10px; }
+        .stats-live {
+            display: inline-flex; align-items: center; gap: 5px;
+            font-size: 10px; font-weight: 700; letter-spacing: .6px; text-transform: uppercase;
+            color: #16a34a; background: rgba(22,163,74,0.1);
+            padding: 3px 8px; border-radius: 20px;
+        }
+        .stats-live::before {
+            content: ''; width: 7px; height: 7px; border-radius: 50%;
+            background: #16a34a; animation: stats-pulse 1.4s infinite;
+        }
+        @keyframes stats-pulse { 0%,100% { opacity: 1; } 50% { opacity: .25; } }
+        html[data-theme="dark"] .stats-live { color: #4ade80; background: rgba(74,222,128,0.12); }
+        html[data-theme="dark"] .stats-live::before { background: #4ade80; }
+        .stats-close {
+            background: rgba(0,0,0,0.06); border: none; cursor: pointer;
+            width: 30px; height: 30px; border-radius: 50%;
+            font-size: 14px; color: #666;
+            display: flex; align-items: center; justify-content: center;
+            transition: background .15s;
+        }
+        .stats-close:hover { background: rgba(0,0,0,0.12); }
+        html[data-theme="dark"] .stats-close { background: rgba(255,255,255,0.08); color: #aaa; }
+        html[data-theme="dark"] .stats-close:hover { background: rgba(255,255,255,0.14); }
+
+        .stats-body { padding: 20px 24px 24px; }
+
+        .stats-online {
+            background: linear-gradient(135deg, rgba(22,163,74,0.08), rgba(22,163,74,0.02));
+            border: 1px solid rgba(22,163,74,0.18);
+            border-radius: 16px;
+            padding: 18px;
+            text-align: center;
+            margin-bottom: 18px;
+        }
+        html[data-theme="dark"] .stats-online { border-color: rgba(74,222,128,0.18); background: linear-gradient(135deg, rgba(74,222,128,0.1), rgba(74,222,128,0.02)); }
+        .stats-online-count { font-size: 44px; font-weight: 800; line-height: 1; color: #16a34a; font-family: 'Inter', sans-serif; }
+        html[data-theme="dark"] .stats-online-count { color: #4ade80; }
+        .stats-online-label { font-size: 13px; font-weight: 600; color: #555; margin-top: 6px; }
+        html[data-theme="dark"] .stats-online-label { color: #999; }
+        .stats-online-users { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin-top: 14px; }
+        .stats-user-chip {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: rgba(0,0,0,0.05); border-radius: 20px; padding: 3px 10px 3px 3px;
+            font-size: 12px; font-weight: 600; color: #333; max-width: 170px;
+        }
+        html[data-theme="dark"] .stats-user-chip { background: rgba(255,255,255,0.07); color: #ddd; }
+        .stats-user-avatar { width: 22px; height: 22px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+        .stats-user-avatar--empty {
+            background: #5865f2; color: #fff; font-size: 11px; font-weight: 800;
+            display: inline-flex; align-items: center; justify-content: center;
+        }
+        .stats-user-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .stats-online-empty { font-size: 12px; color: #888; font-style: italic; }
+
+        .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .stats-tile {
+            background: rgba(0,0,0,0.03);
+            border: 1px solid rgba(0,0,0,0.05);
+            border-radius: 14px; padding: 16px; text-align: center;
+        }
+        html[data-theme="dark"] .stats-tile { background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.05); }
+        .stats-tile-value { font-size: 26px; font-weight: 800; color: var(--color-text); font-family: 'Inter', sans-serif; }
+        .stats-tile-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .6px; color: #999; margin-top: 4px; }
+        html[data-theme="dark"] .stats-tile-label { color: #777; }
+        .stats-tile--accent .stats-tile-value { color: #ff1a1a; }
+        .stats-tile--clickable { cursor: pointer; transition: background .15s, transform .15s, border-color .15s; }
+        .stats-tile--clickable:hover { background: rgba(0,0,0,0.05); transform: translateY(-2px); }
+        .stats-tile--clickable:hover .stats-tile-label { color: #ff1a1a; }
+        html[data-theme="dark"] .stats-tile--clickable:hover { background: rgba(255,255,255,0.06); }
+
+        .stats-visitors { margin-top: 12px; display: none; }
+        .stats-visitors-header {
+            display: flex; align-items: center; justify-content: space-between;
+            font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .6px;
+            color: #999; margin-bottom: 8px;
+        }
+        html[data-theme="dark"] .stats-visitors-header { color: #777; }
+        .stats-visitors-count {
+            background: rgba(255,26,26,0.12); color: #ff1a1a;
+            font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 20px;
+        }
+        .stats-visitors-list {
+            max-height: 220px; overflow-y: auto;
+            border: 1px solid rgba(0,0,0,0.06); border-radius: 12px;
+            padding: 6px;
+        }
+        html[data-theme="dark"] .stats-visitors-list { border-color: rgba(255,255,255,0.06); }
+        .stats-visitor-item {
+            display: flex; align-items: center; gap: 10px;
+            padding: 7px 8px; border-radius: 8px;
+            font-size: 13px; color: #333;
+        }
+        .stats-visitor-item + .stats-visitor-item { border-top: 1px solid rgba(0,0,0,0.04); }
+        html[data-theme="dark"] .stats-visitor-item { color: #ddd; }
+        html[data-theme="dark"] .stats-visitor-item + .stats-visitor-item { border-top-color: rgba(255,255,255,0.04); }
+        .stats-visitor-avatar { width: 26px; height: 26px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+        .stats-visitor-avatar--empty {
+            background: #5865f2; color: #fff; font-size: 12px; font-weight: 800;
+            display: inline-flex; align-items: center; justify-content: center;
+        }
+        .stats-visitor-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
+        .stats-visitor-time { font-size: 11px; color: #aaa; }
+        html[data-theme="dark"] .stats-visitor-time { color: #666; }
+        .stats-visitors-empty { padding: 12px; text-align: center; font-size: 12px; color: #888; font-style: italic; }
+
+        .stats-ranking { margin-top: 18px; }
+        .stats-ranking-title { font-size: 12px; font-weight: 700; letter-spacing: .6px; text-transform: uppercase; color: #999; margin-bottom: 10px; }
+        html[data-theme="dark"] .stats-ranking-title { color: #777; }
+        .stats-ranking-list { border: 1px solid rgba(0,0,0,0.06); border-radius: 12px; padding: 6px; max-height: 260px; overflow-y: auto; }
+        html[data-theme="dark"] .stats-ranking-list { border-color: rgba(255,255,255,0.06); }
+        .stats-ranking-item { display: flex; align-items: center; gap: 10px; padding: 7px 8px; font-size: 13px; color: #333; border-radius: 8px; }
+        .stats-ranking-item + .stats-ranking-item { border-top: 1px solid rgba(0,0,0,0.04); }
+        html[data-theme="dark"] .stats-ranking-item { color: #ddd; }
+        html[data-theme="dark"] .stats-ranking-item + .stats-ranking-item { border-top-color: rgba(255,255,255,0.04); }
+        .stats-ranking-pos {
+            width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0;
+            display: inline-flex; align-items: center; justify-content: center;
+            background: rgba(0,0,0,0.06); color: #888; font-size: 11px; font-weight: 800;
+        }
+        .stats-ranking-pos--top { background: linear-gradient(135deg, #ffda00, #ff9900); color: #000; }
+        .stats-ranking-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
+        .stats-ranking-count { font-size: 11px; color: #aaa; font-weight: 600; }
+        html[data-theme="dark"] .stats-ranking-count { color: #777; }
+        .stats-ranking-empty { padding: 12px; text-align: center; font-size: 12px; color: #888; font-style: italic; }
+
+        .stats-refresh { margin-top: 14px; text-align: center; font-size: 11px; color: #aaa; }
 
         body.force-reduce-motion *,
         body.force-reduce-motion *::before,
@@ -2611,7 +2783,7 @@
                         deco = `<div class="val-deco" aria-hidden="true"><span class="val-heart" style="--hx:8%;--hd:-0.1s;--hs:1em"></span><span class="val-heart" style="--hx:28%;--hd:-1.7s;--hs:1.4em"></span><span class="val-heart" style="--hx:52%;--hd:-0.8s;--hs:.85em"></span><span class="val-heart" style="--hx:72%;--hd:-2.3s;--hs:1.2em"></span><span class="val-heart" style="--hx:88%;--hd:-0.5s;--hs:.96em"></span><span class="val-rose"></span></div>`;
                     }
 
-                    return `<article class="news-card ${special.className || ""}" id="bulletin-${b.num}" onclick="window.location='${b.href}'">
+                    return `<article class="news-card ${special.className || ""}" id="bulletin-${b.num}" onclick="_statsTrackBulletinView('${b.num}');window.location='${b.href}'">
                         ${deco}
                         <div class="news-card__image-wrapper">
                             <img src="${b.img}" class="news-card__image" alt="Bulletin #${b.num}" loading="lazy" decoding="async">
@@ -2622,7 +2794,7 @@
                             <div class="news-card__eyebrow">${special.eyebrow || "The Blox Bulletin"}</div>
                             <div class="news-card__date">${special.dateLabel || relativeTime(b.date)}</div>
                             <h2 class="news-card__title">${special.title || `Bulletin #${b.num}`}</h2>
-                            <a href="${b.href}" class="news-card__button" onclick="event.stopPropagation()">${special.button || "Lire maintenant →"}</a>
+                            <a href="${b.href}" class="news-card__button" onclick="event.stopPropagation();_statsTrackBulletinView('${b.num}')">${special.button || "Lire maintenant →"}</a>
                         </div>
                         <div class="news-card__bar"></div>
                     </article>`;
@@ -3107,6 +3279,13 @@
     const SETTINGS_PER_PAGE_KEY = 'bloxnews_per_page';
     const SETTINGS_NEW_DAYS_KEY = 'bloxnews_new_days';
 
+    // IDs Discord des admins autorisés à voir la section Avancé
+    const SETTINGS_ADMIN_IDS = [
+        '1503444854410317984', // fn_n0klip
+        '775096691240992798',  // neolixx
+        '965365062334308412',  // bryanbg
+    ];
+
     function _getDiscordUser() {
         try { return JSON.parse(localStorage.getItem('bloxbulletin_discord_user') || 'null'); } catch { return null; }
     }
@@ -3140,15 +3319,18 @@
         const user    = _getDiscordUser();
         const guestEl = document.getElementById('settingsGuest');
         const userEl  = document.getElementById('settingsUser');
+        const adminEl = document.getElementById('settingsAdminSection');
         if (user) {
             document.getElementById('settingsAvatar').src       = _discordAvatarUrl(user);
             document.getElementById('settingsName').textContent = user.global_name || user.username;
             document.getElementById('settingsTag').textContent  = '@' + user.username;
             guestEl.classList.add('is-hidden');
             userEl.classList.remove('is-hidden');
+            if (adminEl) adminEl.classList.toggle('is-hidden', !SETTINGS_ADMIN_IDS.includes(user.id));
         } else {
             guestEl.classList.remove('is-hidden');
             userEl.classList.add('is-hidden');
+            if (adminEl) adminEl.classList.add('is-hidden');
         }
     }
 
@@ -3331,9 +3513,447 @@
                 </div>
             </div>
 
+            <!-- ── AVANCÉ (admin uniquement) ── -->
+            <div class="settings-section is-hidden" id="settingsAdminSection">
+                <div class="settings-section-label">Avancé <span class="settings-admin-badge">Admin</span></div>
+
+                <div class="settings-row">
+                    <div class="settings-row-info">
+                        <div class="settings-row-label">Statistiques du site</div>
+                        <div class="settings-row-sub">Nombre de visiteurs en temps réel, classement des bulletins…</div>
+                    </div>
+                    <button class="settings-btn settings-btn--secondary" onclick="closeSettings(null);setTimeout(openStats,250)">
+                        Ouvrir
+                    </button>
+                </div>
+            </div>
+
             <div class="settings-footer">BloxNews-FR • v2026</div>
         </div>
     </div>
+
+    <!-- ═══════════════════════════════════════════════
+         STATS POPUP (admin uniquement)
+    ═══════════════════════════════════════════════ -->
+    <div class="stats-overlay" id="statsOverlay" onclick="closeStats(event)" aria-hidden="true">
+        <div class="stats-panel" role="dialog" aria-modal="true" aria-label="Statistiques du site">
+
+            <div class="stats-header">
+                <span class="stats-title">
+                    📊 Statistiques du site
+                    <span class="stats-live">En temps réel</span>
+                </span>
+                <button class="stats-close" onclick="closeStats(null)">✕</button>
+            </div>
+
+            <div class="stats-body">
+                <!-- Présence temps réel -->
+                <div class="stats-online">
+                    <div class="stats-online-count" id="statsOnlineCount">—</div>
+                    <div class="stats-online-label" id="statsOnlineLabel">personnes sur le site</div>
+                    <div class="stats-online-users" id="statsOnlineUsers"></div>
+                </div>
+
+                <!-- Compteurs -->
+                <div class="stats-grid">
+                    <div class="stats-tile stats-tile--accent stats-tile--clickable" onclick="toggleStatsVisitors(event)" title="Afficher la liste des visiteurs du jour">
+                        <div class="stats-tile-value" id="statsVisitorsToday">—</div>
+                        <div class="stats-tile-label">Visiteurs aujourd'hui</div>
+                    </div>
+                    <div class="stats-tile">
+                        <div class="stats-tile-value" id="statsPageviews">—</div>
+                        <div class="stats-tile-label">Vues du site</div>
+                    </div>
+                    <div class="stats-tile">
+                        <div class="stats-tile-value" id="statsBulletins">—</div>
+                        <div class="stats-tile-label">Bulletins vus</div>
+                    </div>
+                    <div class="stats-tile">
+                        <div class="stats-tile-value" id="statsComments">—</div>
+                        <div class="stats-tile-label">Commentaires</div>
+                    </div>
+                    <div class="stats-tile">
+                        <div class="stats-tile-value" id="statsLikes">—</div>
+                        <div class="stats-tile-label">Likes</div>
+                    </div>
+                </div>
+
+                <!-- Visiteurs par jour -->
+                <div class="stats-daily">
+                    <div class="stats-daily-title">Visiteurs par jour — 7 derniers jours</div>
+                    <div class="stats-daily-bars" id="statsDaily"></div>
+                </div>
+
+                <!-- Liste des visiteurs du jour -->
+                <div class="stats-visitors" id="statsVisitors">
+                    <div class="stats-visitors-header">
+                        <span>Visiteurs aujourd'hui</span>
+                        <span class="stats-visitors-count" id="statsVisitorsCount">0</span>
+                    </div>
+                    <div class="stats-visitors-list" id="statsVisitorsList"></div>
+                </div>
+
+                <!-- Classement des bulletins -->
+                <div class="stats-ranking">
+                    <div class="stats-ranking-title">🏆 Bulletins les plus visités</div>
+                    <div class="stats-ranking-list" id="statsRanking"></div>
+                </div>
+
+                <div class="stats-refresh">Mise à jour automatique toutes les 5 secondes</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    /* ════════════════════════════════════════════════════════════════
+       STATISTIQUES DU SITE — index.html
+       - Présence temps réel via .info/connected + nœud
+         site_stats/presence/<sessionId> avec onDisconnect().remove()
+       - Compteurs persistés dans site_stats/ (pageviews, visitors_today,
+         visitors_daily) + vues de bulletins site_stats/bulletin_views
+       - Total commentaires & likes agrégés depuis les refs partagées
+       - Popup admin (bouton dans Paramètres → Avancé)
+    ════════════════════════════════════════════════════════════════ */
+    (function _statsInit() {
+        if (typeof firebase === 'undefined') return;
+        if (!window.FB_DB) {
+            firebase.initializeApp({
+                apiKey: "AIzaSyBkJsHWyoiEeqmEktUlgcED-8mBPnar_0w",
+                authDomain: "blox-bulletin-comments.firebaseapp.com",
+                databaseURL: "https://blox-bulletin-comments-default-rtdb.europe-west1.firebasedatabase.app",
+                projectId: "blox-bulletin-comments",
+                storageBucket: "blox-bulletin-comments.firebasestorage.app",
+                messagingSenderId: "774633429491",
+                appId: "1:774633429491:web:d1f534a0df346fbea79a86",
+                measurementId: "G-DKKQK7N4DQ"
+            });
+            window.FB_DB = firebase.database();
+        }
+        const FB_DB = window.FB_DB;
+
+        const STORE = { online: [], popupOpen: false, counters: {}, daily: {}, aggComments: 0, aggLikes: 0, timers: [] };
+        const REF_PRESENCE  = FB_DB.ref('site_stats/presence');
+        const REF_STATS     = FB_DB.ref('site_stats');
+        const STALE_MS      = 180000;
+
+        function _statsEsc(s) { return (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+        function _statsNowKey() { return new Date().toISOString().slice(0,10); }
+
+        function _statsSessionId() {
+            let id = null;
+            try { id = sessionStorage.getItem('blox_stats_sid'); } catch(e) {}
+            if (!id) {
+                id = Math.random().toString(36).slice(2,10) + Date.now().toString(36);
+                try { sessionStorage.setItem('blox_stats_sid', id); } catch(e) {}
+            }
+            return id;
+        }
+
+        function _statsUser() {
+            let u = null;
+            try { u = window.currentUser || JSON.parse(localStorage.getItem('bloxbulletin_discord_user') || 'null'); } catch(e) {}
+            return u;
+        }
+        function _statsUserName() {
+            const u = _statsUser();
+            return u && u.username ? u.username : 'invité';
+        }
+        function _statsAvatar() {
+            const u = _statsUser();
+            if (!u || !u.avatar) return '';
+            return (u.avatar.indexOf('http') === 0) ? u.avatar
+                : 'https://cdn.discordapp.com/avatars/' + (u.id || '') + '/' + u.avatar + '.webp?size=80';
+        }
+
+        /* ─── Présence temps réel ─────────────────────────────── */
+        const MY_PRESENCE = FB_DB.ref('site_stats/presence/' + _statsSessionId());
+
+        FB_DB.ref('.info/connected').on('value', snap => {
+            if (snap.val() === true) {
+                MY_PRESENCE.set({ u: _statsUserName(), a: _statsAvatar(), p: window.location.pathname + window.location.search, t: Date.now() });
+                MY_PRESENCE.onDisconnect().remove();
+            }
+        });
+        window.addEventListener('pagehide', () => { MY_PRESENCE.remove(); });
+        window.addEventListener('pageshow', () => {
+            MY_PRESENCE.set({ u: _statsUserName(), a: _statsAvatar(), p: window.location.pathname + window.location.search, t: Date.now() });
+            MY_PRESENCE.onDisconnect().remove();
+        });
+        setInterval(() => { MY_PRESENCE.update({ t: Date.now(), u: _statsUserName(), a: _statsAvatar() }).catch(() => {}); }, 30000);
+
+        /* ─── Compteurs persistés ─────────────────────────────── */
+        function _statsBump(path, amount) {
+            FB_DB.ref(path).transaction(v => (v || 0) + (amount || 1)).catch(() => {});
+        }
+
+        _statsBump('site_stats/pageviews', 1);
+        const _vdToday = _statsNowKey();
+        let _vdStored = null;
+        try { _vdStored = localStorage.getItem('blox_stats_vd'); } catch(e) {}
+        if (_vdStored !== _vdToday) {
+            try { localStorage.setItem('blox_stats_vd', _vdToday); } catch(e) {}
+            _statsBump('site_stats/visitors_today', 1);
+            _statsBump('site_stats/visitors_daily/' + _vdToday, 1);
+            _statsLogVisitor(_vdToday);
+        }
+
+        /* ─── Journal des visiteurs du jour ────────────────────── */
+        function _statsVisitorKey() {
+            const u = _statsUser();
+            if (u && u.id) return 'd:' + u.id;
+            return 's:' + _statsSessionId();
+        }
+        function _statsLogVisitor(day) {
+            FB_DB.ref('site_stats/visitors_log/' + day + '/' + _statsVisitorKey())
+                .set({ u: _statsUserName(), a: _statsAvatar(), t: Date.now() }).catch(() => {});
+        }
+
+        /* ─── Vues des bulletins ──────────────────────────────── */
+        function _statsTrackBulletinView(num) {
+            if (typeof num === 'undefined' || num === null) return;
+            _statsBump('site_stats/bulletin_views/' + num, 1);
+        }
+        window._statsTrackBulletinView = _statsTrackBulletinView;
+
+        /* ─── Nettoyage des entrées présences orphelines ─────── */
+        setInterval(() => {
+            const cutoff = Date.now() - STALE_MS;
+            REF_PRESENCE.once('value', snap => {
+                snap.forEach(child => {
+                    const v = child.val();
+                    if (v && (v.t || 0) < cutoff) child.ref.remove();
+                });
+            });
+        }, 120000);
+
+        /* ─── Écoute en direct de la présence ────────────────── */
+        REF_PRESENCE.on('value', snap => {
+            const list = [];
+            const cutoff = Date.now() - STALE_MS;
+            snap.forEach(child => {
+                const v = child.val();
+                if (v && (v.t || 0) > cutoff) list.push(v);
+            });
+            STORE.online = list;
+            if (STORE.popupOpen) _statsRenderOnline();
+        });
+
+        /* ─── Administration ──────────────────────────────────── */
+        function _statsIsAdmin() {
+            try {
+                const u = JSON.parse(localStorage.getItem('bloxbulletin_discord_user') || 'null');
+                return !!u && SETTINGS_ADMIN_IDS.includes(u.id);
+            } catch(e) { return false; }
+        }
+
+        function openStats() {
+            if (!_statsIsAdmin()) return;
+            const ov = document.getElementById('statsOverlay');
+            if (!ov || STORE.popupOpen) return;
+            STORE.popupOpen = true;
+            ov.setAttribute('aria-hidden', 'false');
+            ov.classList.add('is-open');
+            document.body.style.overflow = 'hidden';
+            _statsRefreshCounters();
+            _statsRefreshAggregates();
+            _statsRefreshDaily();
+            _statsRefreshRanking();
+            _statsRefreshVisitors();
+            _statsRenderOnline();
+            STORE.timers.push(setInterval(_statsRefreshCounters, 5000));
+            STORE.timers.push(setInterval(_statsRefreshAggregates, 5000));
+            STORE.timers.push(setInterval(_statsRefreshDaily, 15000));
+            STORE.timers.push(setInterval(_statsRefreshRanking, 15000));
+            STORE.timers.push(setInterval(() => { if (STORE.popupOpen && _statsVisitorsOpen()) _statsRefreshVisitors(); }, 10000));
+        }
+        window.openStats = openStats;
+
+        function closeStats(e) {
+            const ov = document.getElementById('statsOverlay');
+            if (!ov) return;
+            if (e && e.target !== ov) return;
+            STORE.popupOpen = false;
+            ov.setAttribute('aria-hidden', 'true');
+            ov.classList.remove('is-open');
+            document.body.style.overflow = '';
+            STORE.timers.forEach(t => clearInterval(t));
+            STORE.timers = [];
+        }
+        window.closeStats = closeStats;
+
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeStats(null); });
+
+        /* ─── Compteurs ───────────────────────────────────────── */
+        function _statsRefreshCounters() {
+            REF_STATS.once('value', snap => {
+                const v = snap.val() || {};
+                const bv = v.bulletin_views || {};
+                const bulletins = Object.keys(bv).reduce((s, k) => s + (bv[k] || 0), 0);
+                STORE.counters = {
+                    visitors_today: v.visitors_today || 0,
+                    pageviews:      v.pageviews      || 0,
+                    bulletins:      bulletins        || 0
+                };
+                if (STORE.popupOpen) _statsRenderCounters();
+            });
+        }
+
+        /* ─── Agrégation commentaires / likes ────────────────── */
+        function _statsRefreshAggregates() {
+            const refs = [FB_DB.ref('comments'), FB_DB.ref('card_comments'), FB_DB.ref('update_comments')];
+            let pending = refs.length, comments = 0, likes = 0, done = false;
+            const finish = () => {
+                if (done) return;
+                done = true;
+                STORE.aggComments = comments;
+                STORE.aggLikes = likes;
+                if (STORE.popupOpen) _statsRenderAggregates();
+            };
+            const walkComment = c => {
+                if (!c || typeof c !== 'object') return;
+                comments += 1;
+                if (c.likes) likes += c.likes;
+                const reps = Array.isArray(c.replies) ? c.replies : (c.replies ? Object.values(c.replies) : []);
+                reps.forEach(r => { if (r && r.likes) likes += r.likes; });
+            };
+            const onVal = snap => {
+                const val = snap.val();
+                if (val) {
+                    if (Array.isArray(val)) { val.forEach(walkComment); }
+                    else if (typeof val === 'object') {
+                        Object.keys(val).forEach(k => {
+                            const v = val[k];
+                            if (Array.isArray(v)) v.forEach(walkComment);
+                            else walkComment(v);
+                        });
+                    }
+                }
+                if (--pending <= 0) finish();
+            };
+            refs.forEach(r => r.once('value', onVal, onVal));
+            setTimeout(finish, 4000);
+        }
+
+        /* ─── Journal quotidien ───────────────────────────────── */
+        function _statsRefreshDaily() {
+            FB_DB.ref('site_stats/visitors_daily').once('value', snap => {
+                STORE.daily = snap.val() || {};
+                if (STORE.popupOpen) _statsRenderDaily();
+            });
+        }
+
+        /* ─── Liste des visiteurs du jour ──────────────────────── */
+        function _statsVisitorsOpen() {
+            const box = document.getElementById('statsVisitors');
+            return !!box && box.style.display !== 'none';
+        }
+        function _statsTime(t) {
+            if (!t) return '';
+            return new Date(t).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+        }
+        function toggleStatsVisitors(e) {
+            if (e) e.stopPropagation();
+            const box = document.getElementById('statsVisitors');
+            if (!box) return;
+            const open = box.style.display === 'none';
+            box.style.display = open ? 'block' : 'none';
+            if (open) _statsRefreshVisitors();
+        }
+        window.toggleStatsVisitors = toggleStatsVisitors;
+
+        function _statsRefreshVisitors() {
+            const listEl = document.getElementById('statsVisitorsList');
+            if (!listEl) return;
+            FB_DB.ref('site_stats/visitors_log/' + _statsNowKey()).once('value', snap => {
+                const raw = snap.val() || {};
+                const list = Object.values(raw);
+                const countEl = document.getElementById('statsVisitorsCount');
+                if (countEl) countEl.textContent = list.length;
+                list.sort((a, b) => (b.t || 0) - (a.t || 0));
+                listEl.innerHTML = list.length
+                    ? list.map(v => {
+                        const av = v.a
+                            ? `<img class="stats-visitor-avatar" src="${_statsEsc(v.a)}" alt="" onerror="this.remove()">`
+                            : `<span class="stats-visitor-avatar stats-visitor-avatar--empty">${_statsEsc((v.u || '?').charAt(0).toUpperCase())}</span>`;
+                        return `<div class="stats-visitor-item">${av}<span class="stats-visitor-name">${_statsEsc(v.u || 'invité')}</span><span class="stats-visitor-time">${_statsEsc(_statsTime(v.t))}</span></div>`;
+                    }).join('')
+                    : '<div class="stats-visitors-empty">Aucun visiteur enregistré aujourd&#39;hui</div>';
+            });
+        }
+
+        /* ─── Classement des bulletins ─────────────────────────── */
+        function _statsRefreshRanking() {
+            const listEl = document.getElementById('statsRanking');
+            if (!listEl) return;
+            FB_DB.ref('site_stats/bulletin_views').once('value', snap => {
+                const raw = snap.val() || {};
+                const items = Object.keys(raw)
+                    .map(k => ({ num: k, n: raw[k] || 0 }))
+                    .filter(x => x.n > 0)
+                    .sort((a, b) => b.n - a.n)
+                    .slice(0, 10);
+                listEl.innerHTML = items.length
+                    ? items.map((x, i) => `
+                        <div class="stats-ranking-item">
+                            <span class="stats-ranking-pos ${i < 3 ? 'stats-ranking-pos--top' : ''}">${i + 1}</span>
+                            <span class="stats-ranking-name">Bulletin #${_statsEsc(x.num)}</span>
+                            <span class="stats-ranking-count">${x.n.toLocaleString('fr-FR')} vue${x.n > 1 ? 's' : ''}</span>
+                        </div>`).join('')
+                    : '<div class="stats-ranking-empty">Aucune visite de bulletin enregistrée</div>';
+            });
+        }
+
+        /* ─── Rendu ───────────────────────────────────────────── */
+        function _statsRenderOnline() {
+            const countEl = document.getElementById('statsOnlineCount');
+            const labelEl = document.getElementById('statsOnlineLabel');
+            const usersEl = document.getElementById('statsOnlineUsers');
+            if (!countEl || !usersEl) return;
+            const n = STORE.online.length;
+            countEl.textContent = n;
+            if (labelEl) labelEl.textContent = n <= 1 ? 'personne sur le site' : 'personnes sur le site';
+            const chips = STORE.online.slice(0, 24).map(p => {
+                const av = p.a
+                    ? `<img class="stats-user-avatar" src="${_statsEsc(p.a)}" alt="" onerror="this.remove()">`
+                    : `<span class="stats-user-avatar stats-user-avatar--empty">${_statsEsc((p.u || '?').charAt(0).toUpperCase())}</span>`;
+                return `<span class="stats-user-chip" title="${_statsEsc(p.p || '')}">${av}<span class="stats-user-name">${_statsEsc(p.u || 'invité')}</span></span>`;
+            });
+            usersEl.innerHTML = chips.length ? chips.join('') : '<span class="stats-online-empty">Aucun visiteur connecté…</span>';
+        }
+
+        function _statsRenderCounters() {
+            const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v == null ? '—' : v.toLocaleString('fr-FR'); };
+            set('statsVisitorsToday', STORE.counters.visitors_today);
+            set('statsPageviews', STORE.counters.pageviews);
+            set('statsBulletins', STORE.counters.bulletins);
+        }
+
+        function _statsRenderAggregates() {
+            const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v == null ? '—' : v.toLocaleString('fr-FR'); };
+            set('statsComments', STORE.aggComments);
+            set('statsLikes', STORE.aggLikes);
+        }
+
+        function _statsRenderDaily() {
+            const wrap = document.getElementById('statsDaily');
+            if (!wrap) return;
+            const days = [];
+            for (let i = 6; i >= 0; i--) {
+                const d = new Date();
+                d.setDate(d.getDate() - i);
+                const key = d.toISOString().slice(0,10);
+                days.push({ key, v: STORE.daily[key] || 0, label: i === 0 ? "auj." : key.slice(5) });
+            }
+            const max = Math.max(1, ...days.map(x => x.v));
+            wrap.innerHTML = days.map(x => `
+                <div class="stats-daily-bar" title="${x.key}">
+                    <div class="stats-daily-bar-val">${x.v}</div>
+                    <div class="stats-daily-bar-fill" style="height:${Math.round((x.v / max) * 100)}%"></div>
+                    <div class="stats-daily-bar-day">${x.label}</div>
+                </div>`).join('');
+        }
+    })();
+    </script>
 
 </body>
 </html>

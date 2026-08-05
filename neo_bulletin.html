@@ -5106,6 +5106,26 @@
         html[data-theme="dark"] .stats-visitor-time { color: #666; }
         .stats-visitors-empty { padding: 12px; text-align: center; font-size: 12px; color: #888; font-style: italic; }
 
+        .stats-ranking { margin-top: 18px; }
+        .stats-ranking-title { font-size: 12px; font-weight: 700; letter-spacing: .6px; text-transform: uppercase; color: #999; margin-bottom: 10px; }
+        html[data-theme="dark"] .stats-ranking-title { color: #777; }
+        .stats-ranking-list { border: 1px solid rgba(0,0,0,0.06); border-radius: 12px; padding: 6px; max-height: 260px; overflow-y: auto; }
+        html[data-theme="dark"] .stats-ranking-list { border-color: rgba(255,255,255,0.06); }
+        .stats-ranking-item { display: flex; align-items: center; gap: 10px; padding: 7px 8px; font-size: 13px; color: #333; border-radius: 8px; }
+        .stats-ranking-item + .stats-ranking-item { border-top: 1px solid rgba(0,0,0,0.04); }
+        html[data-theme="dark"] .stats-ranking-item { color: #ddd; }
+        html[data-theme="dark"] .stats-ranking-item + .stats-ranking-item { border-top-color: rgba(255,255,255,0.04); }
+        .stats-ranking-pos {
+            width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0;
+            display: inline-flex; align-items: center; justify-content: center;
+            background: rgba(0,0,0,0.06); color: #888; font-size: 11px; font-weight: 800;
+        }
+        .stats-ranking-pos--top { background: linear-gradient(135deg, #ffda00, #ff9900); color: #000; }
+        .stats-ranking-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
+        .stats-ranking-count { font-size: 11px; color: #aaa; font-weight: 600; }
+        html[data-theme="dark"] .stats-ranking-count { color: #777; }
+        .stats-ranking-empty { padding: 12px; text-align: center; font-size: 12px; color: #888; font-style: italic; }
+
         .stats-daily { margin-top: 18px; }
         .stats-daily-title { font-size: 12px; font-weight: 700; letter-spacing: .6px; text-transform: uppercase; color: #999; margin-bottom: 10px; }
         html[data-theme="dark"] .stats-daily-title { color: #777; }
@@ -6821,7 +6841,6 @@
                         if (edBtn) edBtn.classList.remove('is-active');
                         edBtn.textContent = '✏️ Éditer';
                         modal.classList.add('is-active');
-                        if (typeof _statsTrackCardView === 'function') _statsTrackCardView();
                     });
                 });
 
@@ -6874,7 +6893,6 @@
                     const edBtn = document.getElementById('modalEditToggle');
                     if (edBtn) { edBtn.classList.remove('is-active'); edBtn.textContent = '✏️ Éditer'; }
                     modal.classList.add('is-active');
-                    if (typeof _statsTrackCardView === 'function') _statsTrackCardView();
                 };
             }
         });
@@ -7305,7 +7323,6 @@
         const edBtn = document.getElementById('modalEditToggle');
         if (edBtn) { edBtn.classList.remove('is-active'); edBtn.textContent = '✏️ Éditer'; }
         modal.classList.add('is-active');
-        if (typeof _statsTrackCardView === 'function') _statsTrackCardView();
         // Nettoyer le bouton vidéo externe à la fermeture
         const _cleanExt = () => { document.getElementById('_modalExtVideoBtn')?.remove(); };
         modal.addEventListener('click', e => { if (e.target === modal) _cleanExt(); }, { once: true });
@@ -12331,8 +12348,8 @@
                         <div class="stats-tile-label">Vues du site</div>
                     </div>
                     <div class="stats-tile">
-                        <div class="stats-tile-value" id="statsCardViews">—</div>
-                        <div class="stats-tile-label">Cards vues</div>
+                        <div class="stats-tile-value" id="statsBulletins">—</div>
+                        <div class="stats-tile-label">Bulletins vus</div>
                     </div>
                     <div class="stats-tile">
                         <div class="stats-tile-value" id="statsComments">—</div>
@@ -12353,6 +12370,12 @@
                     <div class="stats-visitors-list" id="statsVisitorsList"></div>
                 </div>
 
+                <!-- Classement des bulletins -->
+                <div class="stats-ranking">
+                    <div class="stats-ranking-title">🏆 Bulletins les plus visités</div>
+                    <div class="stats-ranking-list" id="statsRanking"></div>
+                </div>
+
                 <!-- Visiteurs par jour -->
                 <div class="stats-daily">
                     <div class="stats-daily-title">Visiteurs par jour — 7 derniers jours</div>
@@ -12370,7 +12393,7 @@
        - Présence temps réel via .info/connected + nœud
          site_stats/presence/<sessionId> avec onDisconnect().remove()
        - Compteurs persistés dans site_stats/ (pageviews, visitors_today,
-         visitors_daily, card_views)
+         visitors_daily, bulletin_views)
        - Total commentaires & likes agrégés en direct depuis les refs
          comments / card_comments / update_comments
        - Popup admin (bouton dans Paramètres → Avancé)
@@ -12444,9 +12467,6 @@
             _statsLogVisitor(_vdToday);
         }
 
-        function _statsTrackCardView() { _statsBump('site_stats/card_views', 1); }
-        window._statsTrackCardView = _statsTrackCardView;
-
         /* ─── Journal des visiteurs du jour ────────────────────── */
         function _statsVisitorKey() {
             const u = _statsUser();
@@ -12500,11 +12520,13 @@
             _statsRefreshCounters();
             _statsRefreshAggregates();
             _statsRefreshDaily();
+            _statsRefreshRanking();
             _statsRefreshVisitors();
             _statsRenderOnline();
             STORE.timers.push(setInterval(_statsRefreshCounters, 5000));
             STORE.timers.push(setInterval(_statsRefreshAggregates, 5000));
             STORE.timers.push(setInterval(_statsRefreshDaily, 15000));
+            STORE.timers.push(setInterval(_statsRefreshRanking, 15000));
             STORE.timers.push(setInterval(() => { if (STORE.popupOpen && _statsVisitorsOpen()) _statsRefreshVisitors(); }, 10000));
         }
         window.openStats = openStats;
@@ -12528,10 +12550,12 @@
         function _statsRefreshCounters() {
             REF_STATS.once('value', snap => {
                 const v = snap.val() || {};
+                const bv = v.bulletin_views || {};
+                const bulletins = Object.keys(bv).reduce((s, k) => s + (bv[k] || 0), 0);
                 STORE.counters = {
                     visitors_today: v.visitors_today || 0,
                     pageviews:      v.pageviews      || 0,
-                    card_views:     v.card_views     || 0
+                    bulletins:      bulletins        || 0
                 };
                 if (STORE.popupOpen) _statsRenderCounters();
             });
@@ -12620,6 +12644,28 @@
             });
         }
 
+        /* ─── Classement des bulletins ─────────────────────────── */
+        function _statsRefreshRanking() {
+            const listEl = document.getElementById('statsRanking');
+            if (!listEl) return;
+            FB_DB.ref('site_stats/bulletin_views').once('value', snap => {
+                const raw = snap.val() || {};
+                const items = Object.keys(raw)
+                    .map(k => ({ num: k, n: raw[k] || 0 }))
+                    .filter(x => x.n > 0)
+                    .sort((a, b) => b.n - a.n)
+                    .slice(0, 10);
+                listEl.innerHTML = items.length
+                    ? items.map((x, i) => `
+                        <div class="stats-ranking-item">
+                            <span class="stats-ranking-pos ${i < 3 ? 'stats-ranking-pos--top' : ''}">${i + 1}</span>
+                            <span class="stats-ranking-name">Bulletin #${_statsEsc(x.num)}</span>
+                            <span class="stats-ranking-count">${x.n.toLocaleString('fr-FR')} vue${x.n > 1 ? 's' : ''}</span>
+                        </div>`).join('')
+                    : '<div class="stats-ranking-empty">Aucune visite de bulletin enregistrée</div>';
+            });
+        }
+
         /* ─── Rendu ───────────────────────────────────────────── */
         function _statsRenderOnline() {
             const countEl = document.getElementById('statsOnlineCount');
@@ -12642,7 +12688,7 @@
             const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v == null ? '—' : v.toLocaleString('fr-FR'); };
             set('statsVisitorsToday', STORE.counters.visitors_today);
             set('statsPageviews', STORE.counters.pageviews);
-            set('statsCardViews', STORE.counters.card_views);
+            set('statsBulletins', STORE.counters.bulletins);
         }
 
         function _statsRenderAggregates() {
