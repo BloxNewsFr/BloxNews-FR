@@ -1024,15 +1024,16 @@
         .decrypt-panel__reveal-overlay.done { opacity: 0; pointer-events: none; }
         .decrypt-panel__reveal-anim {
             font-family: 'Share Tech Mono', monospace;
-            font-size: 15px; color: rgba(255,180,0,0.75);
-            letter-spacing: 3px; animation: revealScan 1.2s steps(8) forwards;
+            font-size: 15px; color: rgba(255,180,0,0.9);
+            letter-spacing: 3px;
             background: rgba(0,0,0,0.5); padding: 12px 28px; border-radius: 8px;
-            border: 1px solid rgba(255,180,0,0.12);
+            border: 1px solid rgba(255,180,0,0.2);
             backdrop-filter: blur(4px);
+            animation: revealBlink 0.7s steps(2) infinite;
         }
-        @keyframes revealScan {
-            0%   { opacity: 1; }
-            100% { opacity: 0; }
+        @keyframes revealBlink {
+            0%, 100% { opacity: 1; }
+            50%       { opacity: 0.4; }
         }
         .decrypt-panel__scanline {
             position: absolute; inset: 0; pointer-events: none;
@@ -7083,7 +7084,8 @@
             'display:flex','flex-direction:column','align-items:center','justify-content:center',
             'gap:12px','padding:36px 24px','text-decoration:none','color:#fff',
             'background:rgba(255,255,255,0.03)','border:1px solid rgba(255,255,255,0.09)',
-            'border-radius:12px','transition:background 0.2s','width:100%','box-sizing:border-box'
+            'border-radius:12px','transition:background 0.2s',
+            'width:100%','min-height:180px','box-sizing:border-box','position:relative','z-index:2'
         ].join(';');
         extBtn.innerHTML = `
             <span style="font-size:36px;line-height:1">🎬</span>
@@ -7092,7 +7094,9 @@
             <span style="font-size:10px;opacity:0.25;word-break:break-all;max-width:300px;text-align:center;font-family:monospace">${src.split('/').pop()}</span>`;
         extBtn.onmouseover = () => extBtn.style.background = 'rgba(255,255,255,0.06)';
         extBtn.onmouseout  = () => extBtn.style.background = 'rgba(255,255,255,0.03)';
-        videoEl.parentNode.insertBefore(extBtn, videoEl);
+        const container = videoEl.parentNode;
+        container.insertBefore(extBtn, videoEl);
+        container.style.display = 'flex';
     }
 
     function openGroupItem(groupId, idx) {
