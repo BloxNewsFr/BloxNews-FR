@@ -5066,6 +5066,45 @@
         .stats-tile-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .6px; color: #999; margin-top: 4px; }
         html[data-theme="dark"] .stats-tile-label { color: #777; }
         .stats-tile--accent .stats-tile-value { color: #ff1a1a; }
+        .stats-tile--clickable { cursor: pointer; transition: background .15s, transform .15s, border-color .15s; }
+        .stats-tile--clickable:hover { background: rgba(0,0,0,0.05); transform: translateY(-2px); }
+        .stats-tile--clickable:hover .stats-tile-label { color: #ff1a1a; }
+        html[data-theme="dark"] .stats-tile--clickable:hover { background: rgba(255,255,255,0.06); }
+
+        .stats-visitors { margin-top: 12px; display: none; }
+        .stats-visitors-header {
+            display: flex; align-items: center; justify-content: space-between;
+            font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .6px;
+            color: #999; margin-bottom: 8px;
+        }
+        html[data-theme="dark"] .stats-visitors-header { color: #777; }
+        .stats-visitors-count {
+            background: rgba(255,26,26,0.12); color: #ff1a1a;
+            font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 20px;
+        }
+        .stats-visitors-list {
+            max-height: 220px; overflow-y: auto;
+            border: 1px solid rgba(0,0,0,0.06); border-radius: 12px;
+            padding: 6px;
+        }
+        html[data-theme="dark"] .stats-visitors-list { border-color: rgba(255,255,255,0.06); }
+        .stats-visitor-item {
+            display: flex; align-items: center; gap: 10px;
+            padding: 7px 8px; border-radius: 8px;
+            font-size: 13px; color: #333;
+        }
+        .stats-visitor-item + .stats-visitor-item { border-top: 1px solid rgba(0,0,0,0.04); }
+        html[data-theme="dark"] .stats-visitor-item { color: #ddd; }
+        html[data-theme="dark"] .stats-visitor-item + .stats-visitor-item { border-top-color: rgba(255,255,255,0.04); }
+        .stats-visitor-avatar { width: 26px; height: 26px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+        .stats-visitor-avatar--empty {
+            background: #5865f2; color: #fff; font-size: 12px; font-weight: 800;
+            display: inline-flex; align-items: center; justify-content: center;
+        }
+        .stats-visitor-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
+        .stats-visitor-time { font-size: 11px; color: #aaa; }
+        html[data-theme="dark"] .stats-visitor-time { color: #666; }
+        .stats-visitors-empty { padding: 12px; text-align: center; font-size: 12px; color: #888; font-style: italic; }
 
         .stats-daily { margin-top: 18px; }
         .stats-daily-title { font-size: 12px; font-weight: 700; letter-spacing: .6px; text-transform: uppercase; color: #999; margin-bottom: 10px; }
@@ -12283,7 +12322,7 @@
 
                 <!-- Compteurs -->
                 <div class="stats-grid">
-                    <div class="stats-tile stats-tile--accent">
+                    <div class="stats-tile stats-tile--accent stats-tile--clickable" onclick="toggleStatsVisitors(event)" title="Afficher la liste des visiteurs du jour">
                         <div class="stats-tile-value" id="statsVisitorsToday">—</div>
                         <div class="stats-tile-label">Visiteurs aujourd'hui</div>
                     </div>
@@ -12303,6 +12342,15 @@
                         <div class="stats-tile-value" id="statsLikes">—</div>
                         <div class="stats-tile-label">Likes</div>
                     </div>
+                </div>
+
+                <!-- Liste des visiteurs du jour -->
+                <div class="stats-visitors" id="statsVisitors">
+                    <div class="stats-visitors-header">
+                        <span>Visiteurs aujourd'hui</span>
+                        <span class="stats-visitors-count" id="statsVisitorsCount">0</span>
+                    </div>
+                    <div class="stats-visitors-list" id="statsVisitorsList"></div>
                 </div>
 
                 <!-- Visiteurs par jour -->
@@ -12393,10 +12441,22 @@
             try { localStorage.setItem('blox_stats_vd', _vdToday); } catch(e) {}
             _statsBump('site_stats/visitors_today', 1);
             _statsBump('site_stats/visitors_daily/' + _vdToday, 1);
+            _statsLogVisitor(_vdToday);
         }
 
         function _statsTrackCardView() { _statsBump('site_stats/card_views', 1); }
         window._statsTrackCardView = _statsTrackCardView;
+
+        /* ─── Journal des visiteurs du jour ────────────────────── */
+        function _statsVisitorKey() {
+            const u = _statsUser();
+            if (u && u.id) return 'd:' + u.id;
+            return 's:' + _statsSessionId();
+        }
+        function _statsLogVisitor(day) {
+            FB_DB.ref('site_stats/visitors_log/' + day + '/' + _statsVisitorKey())
+                .set({ u: _statsUserName(), a: _statsAvatar(), t: Date.now() }).catch(() => {});
+        }
 
         /* ─── Nettoyage des entrées présences orphelines ─────── */
         setInterval(() => {
@@ -12440,10 +12500,12 @@
             _statsRefreshCounters();
             _statsRefreshAggregates();
             _statsRefreshDaily();
+            _statsRefreshVisitors();
             _statsRenderOnline();
             STORE.timers.push(setInterval(_statsRefreshCounters, 5000));
             STORE.timers.push(setInterval(_statsRefreshAggregates, 5000));
             STORE.timers.push(setInterval(_statsRefreshDaily, 15000));
+            STORE.timers.push(setInterval(() => { if (STORE.popupOpen && _statsVisitorsOpen()) _statsRefreshVisitors(); }, 10000));
         }
         window.openStats = openStats;
 
@@ -12516,6 +12578,45 @@
             FB_DB.ref('site_stats/visitors_daily').once('value', snap => {
                 STORE.daily = snap.val() || {};
                 if (STORE.popupOpen) _statsRenderDaily();
+            });
+        }
+
+        /* ─── Liste des visiteurs du jour ──────────────────────── */
+        function _statsVisitorsOpen() {
+            const box = document.getElementById('statsVisitors');
+            return !!box && box.style.display !== 'none';
+        }
+        function _statsTime(t) {
+            if (!t) return '';
+            return new Date(t).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+        }
+        function toggleStatsVisitors(e) {
+            if (e) e.stopPropagation();
+            const box = document.getElementById('statsVisitors');
+            if (!box) return;
+            const open = box.style.display === 'none';
+            box.style.display = open ? 'block' : 'none';
+            if (open) _statsRefreshVisitors();
+        }
+        window.toggleStatsVisitors = toggleStatsVisitors;
+
+        function _statsRefreshVisitors() {
+            const listEl = document.getElementById('statsVisitorsList');
+            if (!listEl) return;
+            FB_DB.ref('site_stats/visitors_log/' + _statsNowKey()).once('value', snap => {
+                const raw = snap.val() || {};
+                const list = Object.values(raw);
+                const countEl = document.getElementById('statsVisitorsCount');
+                if (countEl) countEl.textContent = list.length;
+                list.sort((a, b) => (b.t || 0) - (a.t || 0));
+                listEl.innerHTML = list.length
+                    ? list.map(v => {
+                        const av = v.a
+                            ? `<img class="stats-visitor-avatar" src="${_statsEsc(v.a)}" alt="" onerror="this.remove()">`
+                            : `<span class="stats-visitor-avatar stats-visitor-avatar--empty">${_statsEsc((v.u || '?').charAt(0).toUpperCase())}</span>`;
+                        return `<div class="stats-visitor-item">${av}<span class="stats-visitor-name">${_statsEsc(v.u || 'invité')}</span><span class="stats-visitor-time">${_statsEsc(_statsTime(v.t))}</span></div>`;
+                    }).join('')
+                    : '<div class="stats-visitors-empty">Aucun visiteur enregistré aujourd&#39;hui</div>';
             });
         }
 
