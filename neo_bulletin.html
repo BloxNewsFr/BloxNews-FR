@@ -4966,6 +4966,124 @@
             border-radius: 4px; margin-top: 4px; word-break: break-all;
         }
 
+        /* ═══════════════════════════════════════════════
+           STATS POPUP
+        ═══════════════════════════════════════════════ */
+        .stats-overlay {
+            position: fixed; inset: 0; z-index: 9999;
+            background: rgba(0,0,0,0.55);
+            backdrop-filter: blur(4px);
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none;
+            transition: opacity .25s;
+        }
+        .stats-overlay.is-open { opacity: 1; pointer-events: all; }
+
+        .stats-panel {
+            background: #fff;
+            border-radius: 20px;
+            width: min(560px, calc(100vw - 32px));
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 24px 64px rgba(0,0,0,0.25);
+            transform: translateY(20px) scale(0.97);
+            transition: transform .25s cubic-bezier(.34,1.56,.64,1);
+        }
+        .stats-overlay.is-open .stats-panel { transform: translateY(0) scale(1); }
+        html[data-theme="dark"] .stats-panel { background: #171827; }
+
+        .stats-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 20px 24px 16px;
+            border-bottom: 1px solid rgba(0,0,0,0.07);
+            position: sticky; top: 0; background: inherit; z-index: 1;
+            border-radius: 20px 20px 0 0;
+        }
+        html[data-theme="dark"] .stats-header { border-bottom-color: rgba(255,255,255,0.07); }
+        .stats-title { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 17px; color: var(--color-text); display: flex; align-items: center; gap: 10px; }
+        .stats-live {
+            display: inline-flex; align-items: center; gap: 5px;
+            font-size: 10px; font-weight: 700; letter-spacing: .6px; text-transform: uppercase;
+            color: #16a34a; background: rgba(22,163,74,0.1);
+            padding: 3px 8px; border-radius: 20px;
+        }
+        .stats-live::before {
+            content: ''; width: 7px; height: 7px; border-radius: 50%;
+            background: #16a34a; animation: stats-pulse 1.4s infinite;
+        }
+        @keyframes stats-pulse { 0%,100% { opacity: 1; } 50% { opacity: .25; } }
+        html[data-theme="dark"] .stats-live { color: #4ade80; background: rgba(74,222,128,0.12); }
+        html[data-theme="dark"] .stats-live::before { background: #4ade80; }
+        .stats-close {
+            background: rgba(0,0,0,0.06); border: none; cursor: pointer;
+            width: 30px; height: 30px; border-radius: 50%;
+            font-size: 14px; color: #666;
+            display: flex; align-items: center; justify-content: center;
+            transition: background .15s;
+        }
+        .stats-close:hover { background: rgba(0,0,0,0.12); }
+        html[data-theme="dark"] .stats-close { background: rgba(255,255,255,0.08); color: #aaa; }
+        html[data-theme="dark"] .stats-close:hover { background: rgba(255,255,255,0.14); }
+
+        .stats-body { padding: 20px 24px 24px; }
+
+        .stats-online {
+            background: linear-gradient(135deg, rgba(22,163,74,0.08), rgba(22,163,74,0.02));
+            border: 1px solid rgba(22,163,74,0.18);
+            border-radius: 16px;
+            padding: 18px;
+            text-align: center;
+            margin-bottom: 18px;
+        }
+        html[data-theme="dark"] .stats-online { border-color: rgba(74,222,128,0.18); background: linear-gradient(135deg, rgba(74,222,128,0.1), rgba(74,222,128,0.02)); }
+        .stats-online-count { font-size: 44px; font-weight: 800; line-height: 1; color: #16a34a; font-family: 'Inter', sans-serif; }
+        html[data-theme="dark"] .stats-online-count { color: #4ade80; }
+        .stats-online-label { font-size: 13px; font-weight: 600; color: #555; margin-top: 6px; }
+        html[data-theme="dark"] .stats-online-label { color: #999; }
+        .stats-online-users { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin-top: 14px; }
+        .stats-user-chip {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: rgba(0,0,0,0.05); border-radius: 20px; padding: 3px 10px 3px 3px;
+            font-size: 12px; font-weight: 600; color: #333; max-width: 170px;
+        }
+        html[data-theme="dark"] .stats-user-chip { background: rgba(255,255,255,0.07); color: #ddd; }
+        .stats-user-avatar { width: 22px; height: 22px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+        .stats-user-avatar--empty {
+            background: #5865f2; color: #fff; font-size: 11px; font-weight: 800;
+            display: inline-flex; align-items: center; justify-content: center;
+        }
+        .stats-user-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .stats-online-empty { font-size: 12px; color: #888; font-style: italic; }
+
+        .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .stats-tile {
+            background: rgba(0,0,0,0.03);
+            border: 1px solid rgba(0,0,0,0.05);
+            border-radius: 14px; padding: 16px; text-align: center;
+        }
+        html[data-theme="dark"] .stats-tile { background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.05); }
+        .stats-tile-value { font-size: 26px; font-weight: 800; color: var(--color-text); font-family: 'Inter', sans-serif; }
+        .stats-tile-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .6px; color: #999; margin-top: 4px; }
+        html[data-theme="dark"] .stats-tile-label { color: #777; }
+        .stats-tile--accent .stats-tile-value { color: #ff1a1a; }
+
+        .stats-daily { margin-top: 18px; }
+        .stats-daily-title { font-size: 12px; font-weight: 700; letter-spacing: .6px; text-transform: uppercase; color: #999; margin-bottom: 10px; }
+        html[data-theme="dark"] .stats-daily-title { color: #777; }
+        .stats-daily-bars { display: flex; align-items: flex-end; gap: 6px; height: 90px; }
+        .stats-daily-bar { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 4px; height: 100%; }
+        .stats-daily-bar-fill {
+            width: 100%; max-width: 34px; height: 0;
+            background: linear-gradient(180deg, #ff1a1a, #b30000);
+            border-radius: 5px 5px 2px 2px;
+            transition: height .4s ease;
+        }
+        .stats-daily-bar-val { font-size: 10px; font-weight: 700; color: #666; }
+        html[data-theme="dark"] .stats-daily-bar-val { color: #aaa; }
+        .stats-daily-bar-day { font-size: 10px; color: #aaa; }
+        html[data-theme="dark"] .stats-daily-bar-day { color: #666; }
+        .stats-refresh { margin-top: 14px; text-align: center; font-size: 11px; color: #aaa; }
+
         /* Reduced motion override */
         body.force-reduce-motion *,
         body.force-reduce-motion *::before,
@@ -6664,6 +6782,7 @@
                         if (edBtn) edBtn.classList.remove('is-active');
                         edBtn.textContent = '✏️ Éditer';
                         modal.classList.add('is-active');
+                        if (typeof _statsTrackCardView === 'function') _statsTrackCardView();
                     });
                 });
 
@@ -6716,6 +6835,7 @@
                     const edBtn = document.getElementById('modalEditToggle');
                     if (edBtn) { edBtn.classList.remove('is-active'); edBtn.textContent = '✏️ Éditer'; }
                     modal.classList.add('is-active');
+                    if (typeof _statsTrackCardView === 'function') _statsTrackCardView();
                 };
             }
         });
@@ -7146,6 +7266,7 @@
         const edBtn = document.getElementById('modalEditToggle');
         if (edBtn) { edBtn.classList.remove('is-active'); edBtn.textContent = '✏️ Éditer'; }
         modal.classList.add('is-active');
+        if (typeof _statsTrackCardView === 'function') _statsTrackCardView();
         // Nettoyer le bouton vidéo externe à la fermeture
         const _cleanExt = () => { document.getElementById('_modalExtVideoBtn')?.remove(); };
         modal.addEventListener('click', e => { if (e.target === modal) _cleanExt(); }, { once: true });
@@ -12122,11 +12243,333 @@
                         <span class="settings-toggle-knob"></span>
                     </button>
                 </div>
+
+                <div class="settings-row">
+                    <div class="settings-row-info">
+                        <div class="settings-row-label">Statistiques du site</div>
+                        <div class="settings-row-sub">Nombre de visiteurs en temps réel, commentaires, likes…</div>
+                    </div>
+                    <button class="settings-btn settings-btn--secondary" onclick="closeSettings(null);setTimeout(openStats,250)">
+                        Ouvrir
+                    </button>
+                </div>
             </div>
 
             <div class="settings-footer">BloxNews-FR • v2026</div>
         </div>
     </div>
+
+    <!-- ═══════════════════════════════════════════════
+         STATS POPUP (admin uniquement)
+    ═══════════════════════════════════════════════ -->
+    <div class="stats-overlay" id="statsOverlay" onclick="closeStats(event)" aria-hidden="true">
+        <div class="stats-panel" role="dialog" aria-modal="true" aria-label="Statistiques du site">
+
+            <div class="stats-header">
+                <span class="stats-title">
+                    📊 Statistiques du site
+                    <span class="stats-live">En temps réel</span>
+                </span>
+                <button class="stats-close" onclick="closeStats(null)">✕</button>
+            </div>
+
+            <div class="stats-body">
+                <!-- Présence temps réel -->
+                <div class="stats-online">
+                    <div class="stats-online-count" id="statsOnlineCount">—</div>
+                    <div class="stats-online-label" id="statsOnlineLabel">personnes sur le site</div>
+                    <div class="stats-online-users" id="statsOnlineUsers"></div>
+                </div>
+
+                <!-- Compteurs -->
+                <div class="stats-grid">
+                    <div class="stats-tile stats-tile--accent">
+                        <div class="stats-tile-value" id="statsVisitorsToday">—</div>
+                        <div class="stats-tile-label">Visiteurs aujourd'hui</div>
+                    </div>
+                    <div class="stats-tile">
+                        <div class="stats-tile-value" id="statsPageviews">—</div>
+                        <div class="stats-tile-label">Vues du site</div>
+                    </div>
+                    <div class="stats-tile">
+                        <div class="stats-tile-value" id="statsCardViews">—</div>
+                        <div class="stats-tile-label">Cards vues</div>
+                    </div>
+                    <div class="stats-tile">
+                        <div class="stats-tile-value" id="statsComments">—</div>
+                        <div class="stats-tile-label">Commentaires</div>
+                    </div>
+                    <div class="stats-tile">
+                        <div class="stats-tile-value" id="statsLikes">—</div>
+                        <div class="stats-tile-label">Likes</div>
+                    </div>
+                </div>
+
+                <!-- Visiteurs par jour -->
+                <div class="stats-daily">
+                    <div class="stats-daily-title">Visiteurs par jour — 7 derniers jours</div>
+                    <div class="stats-daily-bars" id="statsDaily"></div>
+                </div>
+
+                <div class="stats-refresh">Mise à jour automatique toutes les 5 secondes</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    /* ════════════════════════════════════════════════════════════════
+       STATISTIQUES DU SITE
+       - Présence temps réel via .info/connected + nœud
+         site_stats/presence/<sessionId> avec onDisconnect().remove()
+       - Compteurs persistés dans site_stats/ (pageviews, visitors_today,
+         visitors_daily, card_views)
+       - Total commentaires & likes agrégés en direct depuis les refs
+         comments / card_comments / update_comments
+       - Popup admin (bouton dans Paramètres → Avancé)
+    ════════════════════════════════════════════════════════════════ */
+    (function _statsInit() {
+        if (typeof FB_DB === 'undefined' || !FB_DB) return;
+
+        const STORE = { online: [], popupOpen: false, counters: {}, daily: {}, aggComments: 0, aggLikes: 0, timers: [] };
+        const REF_PRESENCE  = FB_DB.ref('site_stats/presence');
+        const REF_STATS     = FB_DB.ref('site_stats');
+        const STALE_MS      = 180000;
+
+        function _statsEsc(s) { return (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+        function _statsNowKey() { return new Date().toISOString().slice(0,10); }
+
+        function _statsSessionId() {
+            let id = null;
+            try { id = sessionStorage.getItem('blox_stats_sid'); } catch(e) {}
+            if (!id) {
+                id = Math.random().toString(36).slice(2,10) + Date.now().toString(36);
+                try { sessionStorage.setItem('blox_stats_sid', id); } catch(e) {}
+            }
+            return id;
+        }
+
+        function _statsUser() {
+            let u = null;
+            try { u = window.currentUser || JSON.parse(localStorage.getItem('bloxbulletin_discord_user') || 'null'); } catch(e) {}
+            return u;
+        }
+        function _statsUserName() {
+            const u = _statsUser();
+            return u && u.username ? u.username : 'invité';
+        }
+        function _statsAvatar() {
+            const u = _statsUser();
+            if (!u || !u.avatar) return '';
+            return (u.avatar.indexOf('http') === 0) ? u.avatar
+                : 'https://cdn.discordapp.com/avatars/' + (u.id || '') + '/' + u.avatar + '.webp?size=80';
+        }
+
+        /* ─── Présence temps réel ─────────────────────────────── */
+        const MY_PRESENCE = FB_DB.ref('site_stats/presence/' + _statsSessionId());
+
+        FB_DB.ref('.info/connected').on('value', snap => {
+            if (snap.val() === true) {
+                MY_PRESENCE.set({ u: _statsUserName(), a: _statsAvatar(), p: window.location.pathname + window.location.search, t: Date.now() });
+                MY_PRESENCE.onDisconnect().remove();
+            }
+        });
+        window.addEventListener('pagehide', () => { MY_PRESENCE.remove(); });
+        window.addEventListener('pageshow', () => {
+            MY_PRESENCE.set({ u: _statsUserName(), a: _statsAvatar(), p: window.location.pathname + window.location.search, t: Date.now() });
+            MY_PRESENCE.onDisconnect().remove();
+        });
+        setInterval(() => { MY_PRESENCE.update({ t: Date.now(), u: _statsUserName(), a: _statsAvatar() }).catch(() => {}); }, 30000);
+
+        /* ─── Compteurs persistés ─────────────────────────────── */
+        function _statsBump(path, amount) {
+            FB_DB.ref(path).transaction(v => (v || 0) + (amount || 1)).catch(() => {});
+        }
+
+        _statsBump('site_stats/pageviews', 1);
+        const _vdToday = _statsNowKey();
+        let _vdStored = null;
+        try { _vdStored = localStorage.getItem('blox_stats_vd'); } catch(e) {}
+        if (_vdStored !== _vdToday) {
+            try { localStorage.setItem('blox_stats_vd', _vdToday); } catch(e) {}
+            _statsBump('site_stats/visitors_today', 1);
+            _statsBump('site_stats/visitors_daily/' + _vdToday, 1);
+        }
+
+        function _statsTrackCardView() { _statsBump('site_stats/card_views', 1); }
+        window._statsTrackCardView = _statsTrackCardView;
+
+        /* ─── Nettoyage des entrées présences orphelines ─────── */
+        setInterval(() => {
+            const cutoff = Date.now() - STALE_MS;
+            REF_PRESENCE.once('value', snap => {
+                snap.forEach(child => {
+                    const v = child.val();
+                    if (v && (v.t || 0) < cutoff) child.ref.remove();
+                });
+            });
+        }, 120000);
+
+        /* ─── Écoute en direct de la présence ────────────────── */
+        REF_PRESENCE.on('value', snap => {
+            const list = [];
+            const cutoff = Date.now() - STALE_MS;
+            snap.forEach(child => {
+                const v = child.val();
+                if (v && (v.t || 0) > cutoff) list.push(v);
+            });
+            STORE.online = list;
+            if (STORE.popupOpen) _statsRenderOnline();
+        });
+
+        /* ─── Administration ──────────────────────────────────── */
+        function _statsIsAdmin() {
+            try {
+                const u = JSON.parse(localStorage.getItem('bloxbulletin_discord_user') || 'null');
+                return !!u && SETTINGS_ADMIN_IDS.includes(u.id);
+            } catch(e) { return false; }
+        }
+
+        function openStats() {
+            if (!_statsIsAdmin()) return;
+            const ov = document.getElementById('statsOverlay');
+            if (!ov || STORE.popupOpen) return;
+            STORE.popupOpen = true;
+            ov.setAttribute('aria-hidden', 'false');
+            ov.classList.add('is-open');
+            document.body.style.overflow = 'hidden';
+            _statsRefreshCounters();
+            _statsRefreshAggregates();
+            _statsRefreshDaily();
+            _statsRenderOnline();
+            STORE.timers.push(setInterval(_statsRefreshCounters, 5000));
+            STORE.timers.push(setInterval(_statsRefreshAggregates, 5000));
+            STORE.timers.push(setInterval(_statsRefreshDaily, 15000));
+        }
+        window.openStats = openStats;
+
+        function closeStats(e) {
+            const ov = document.getElementById('statsOverlay');
+            if (!ov) return;
+            if (e && e.target !== ov) return;
+            STORE.popupOpen = false;
+            ov.setAttribute('aria-hidden', 'true');
+            ov.classList.remove('is-open');
+            document.body.style.overflow = '';
+            STORE.timers.forEach(t => clearInterval(t));
+            STORE.timers = [];
+        }
+        window.closeStats = closeStats;
+
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeStats(null); });
+
+        /* ─── Compteurs ───────────────────────────────────────── */
+        function _statsRefreshCounters() {
+            REF_STATS.once('value', snap => {
+                const v = snap.val() || {};
+                STORE.counters = {
+                    visitors_today: v.visitors_today || 0,
+                    pageviews:      v.pageviews      || 0,
+                    card_views:     v.card_views     || 0
+                };
+                if (STORE.popupOpen) _statsRenderCounters();
+            });
+        }
+
+        /* ─── Agrégation commentaires / likes ────────────────── */
+        function _statsRefreshAggregates() {
+            const refs = [FB_DB.ref('comments'), FB_DB.ref('card_comments'), FB_DB.ref('update_comments')];
+            let pending = refs.length, comments = 0, likes = 0, done = false;
+            const finish = () => {
+                if (done) return;
+                done = true;
+                STORE.aggComments = comments;
+                STORE.aggLikes = likes;
+                if (STORE.popupOpen) _statsRenderAggregates();
+            };
+            const walkComment = c => {
+                if (!c || typeof c !== 'object') return;
+                comments += 1;
+                if (c.likes) likes += c.likes;
+                const reps = Array.isArray(c.replies) ? c.replies : (c.replies ? Object.values(c.replies) : []);
+                reps.forEach(r => { if (r && r.likes) likes += r.likes; });
+            };
+            const onVal = snap => {
+                const val = snap.val();
+                if (val) {
+                    if (Array.isArray(val)) { val.forEach(walkComment); }
+                    else if (typeof val === 'object') {
+                        Object.keys(val).forEach(k => {
+                            const v = val[k];
+                            if (Array.isArray(v)) v.forEach(walkComment);
+                            else walkComment(v);
+                        });
+                    }
+                }
+                if (--pending <= 0) finish();
+            };
+            refs.forEach(r => r.once('value', onVal, onVal));
+            setTimeout(finish, 4000);
+        }
+
+        /* ─── Journal quotidien ───────────────────────────────── */
+        function _statsRefreshDaily() {
+            FB_DB.ref('site_stats/visitors_daily').once('value', snap => {
+                STORE.daily = snap.val() || {};
+                if (STORE.popupOpen) _statsRenderDaily();
+            });
+        }
+
+        /* ─── Rendu ───────────────────────────────────────────── */
+        function _statsRenderOnline() {
+            const countEl = document.getElementById('statsOnlineCount');
+            const labelEl = document.getElementById('statsOnlineLabel');
+            const usersEl = document.getElementById('statsOnlineUsers');
+            if (!countEl || !usersEl) return;
+            const n = STORE.online.length;
+            countEl.textContent = n;
+            if (labelEl) labelEl.textContent = n <= 1 ? 'personne sur le site' : 'personnes sur le site';
+            const chips = STORE.online.slice(0, 24).map(p => {
+                const av = p.a
+                    ? `<img class="stats-user-avatar" src="${_statsEsc(p.a)}" alt="" onerror="this.remove()">`
+                    : `<span class="stats-user-avatar stats-user-avatar--empty">${_statsEsc((p.u || '?').charAt(0).toUpperCase())}</span>`;
+                return `<span class="stats-user-chip" title="${_statsEsc(p.p || '')}">${av}<span class="stats-user-name">${_statsEsc(p.u || 'invité')}</span></span>`;
+            });
+            usersEl.innerHTML = chips.length ? chips.join('') : '<span class="stats-online-empty">Aucun visiteur connecté…</span>';
+        }
+
+        function _statsRenderCounters() {
+            const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v == null ? '—' : v.toLocaleString('fr-FR'); };
+            set('statsVisitorsToday', STORE.counters.visitors_today);
+            set('statsPageviews', STORE.counters.pageviews);
+            set('statsCardViews', STORE.counters.card_views);
+        }
+
+        function _statsRenderAggregates() {
+            const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v == null ? '—' : v.toLocaleString('fr-FR'); };
+            set('statsComments', STORE.aggComments);
+            set('statsLikes', STORE.aggLikes);
+        }
+
+        function _statsRenderDaily() {
+            const wrap = document.getElementById('statsDaily');
+            if (!wrap) return;
+            const days = [];
+            for (let i = 6; i >= 0; i--) {
+                const d = new Date();
+                d.setDate(d.getDate() - i);
+                const key = d.toISOString().slice(0,10);
+                days.push({ key, v: STORE.daily[key] || 0, label: i === 0 ? "auj." : key.slice(5) });
+            }
+            const max = Math.max(1, ...days.map(x => x.v));
+            wrap.innerHTML = days.map(x => `
+                <div class="stats-daily-bar" title="${x.key}">
+                    <div class="stats-daily-bar-val">${x.v}</div>
+                    <div class="stats-daily-bar-fill" style="height:${Math.round((x.v / max) * 100)}%"></div>
+                    <div class="stats-daily-bar-day">${x.label}</div>
+                </div>`).join('');
+        }
+    })();
+    </script>
 
     <!-- ═══════════════════════════════════════════════
          MODAL UPDATE
