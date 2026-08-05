@@ -744,9 +744,24 @@
         .stats-tile--clickable { cursor: pointer; transition: background .15s, transform .15s, border-color .15s; }
         .stats-tile--clickable:hover { background: rgba(0,0,0,0.05); transform: translateY(-2px); }
         .stats-tile--clickable:hover .stats-tile-label { color: #ff1a1a; }
-        html[data-theme="dark"] .stats-tile--clickable:hover { background: rgba(255,255,255,0.06); }
+         html[data-theme="dark"] .stats-tile--clickable:hover { background: rgba(255,255,255,0.06); }
 
-        .stats-visitors { margin-top: 12px; display: none; }
+         .stats-daily { margin-top: 18px; }
+         .stats-daily-title { font-size: 12px; font-weight: 700; letter-spacing: .6px; text-transform: uppercase; color: #999; margin-bottom: 10px; }
+         html[data-theme="dark"] .stats-daily-title { color: #777; }
+         .stats-daily-bars { display: flex; align-items: flex-end; gap: 6px; height: 90px; }
+         .stats-daily-bar { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 4px; height: 100%; }
+         .stats-daily-bar-fill {
+             background: linear-gradient(180deg, #ff1a1a, #ff6a00);
+             width: 100%; border-radius: 6px 6px 2px 2px; min-height: 3px;
+         }
+         html[data-theme="dark"] .stats-daily-bar-fill { background: linear-gradient(180deg, #ff4444, #ff8c42); }
+         .stats-daily-bar-val { font-size: 10px; font-weight: 700; color: #666; }
+         html[data-theme="dark"] .stats-daily-bar-val { color: #aaa; }
+         .stats-daily-bar-day { font-size: 10px; color: #aaa; }
+         html[data-theme="dark"] .stats-daily-bar-day { color: #666; }
+
+         .stats-visitors { margin-top: 12px; display: none; }
         .stats-visitors-header {
             display: flex; align-items: center; justify-content: space-between;
             font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .6px;
