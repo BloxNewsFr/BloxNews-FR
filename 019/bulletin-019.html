@@ -1154,6 +1154,7 @@
         document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMobileNav(); });
         mobileNav.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMobileNav));
     }
+    });
     async function _discordFetchUser(token) {
         const res = await fetch('https://discord.com/api/users/@me', { headers: { Authorization: 'Bearer ' + token } });
         if (!res.ok) throw new Error('Token invalide');

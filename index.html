@@ -2829,7 +2829,6 @@
             document.getElementById("prev-mobile").disabled = currentPage === 1;
             document.getElementById("next-mobile").disabled = currentPage === total;
 
-            try { initCardTilt(); } catch (e) {}
             // ── Accessibilité / perf : ne pas lancer les moteurs canvas décoratifs
             // si l'utilisateur a activé "réduire les animations" sur son appareil.
             const _prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;

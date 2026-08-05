@@ -1841,7 +1841,7 @@
             width: 32px !important; height: 32px !important; font-size: 13px !important;
         }
         .card-comments-section .comment-reply-write {
-            display: flex; align-items: flex-start; gap: 10px;
+            align-items: flex-start; gap: 10px;
             margin-top: 12px; padding-top: 10px;
             border-top: 1px solid rgba(0,0,0,0.04);
         }
@@ -7605,7 +7605,7 @@
                     ${_isMod&&isPinned?`<button class="comment-btn comment-btn--pin is-pinned" onclick="_dcUnpinComment('${c.id}')" title="Désépingler">📌</button>`:''}
                 </div>
                 ${replies?`<div class="comment-replies">${replies}</div>`:''}
-                <div class="comment-reply-write" id="${pfx}rw-${c.id}" style="display:none">
+                <div class="comment-reply-write" id="${pfx}rw-${c.id}">
                     ${window.currentUser ? avatarHTML(window.currentUser, 30) : ''}
                     <textarea class="comment-reply-input" placeholder="Ta réponse…" rows="1" oninput="autoResize(this)"></textarea>
                     <button class="comment-reply-submit" onclick="_dcPostReply('${c.id}','${pfx}rw-${c.id}')">Poster</button>
@@ -8175,7 +8175,7 @@
                     ${_isMod&&isPinned?`<button class="comment-btn comment-btn--pin is-pinned" onclick="_ccUnpinComment('${c.id}')" title="Désépingler">📌</button>`:''}
                 </div>
                 ${replies?`<div class="comment-replies">${replies}</div>`:''}
-                <div class="comment-reply-write" id="${pfx}rw-${c.id}" style="display:none">
+                <div class="comment-reply-write" id="${pfx}rw-${c.id}">
                     ${avatarHTML(window.currentUser,30)}
                     <textarea class="comment-reply-input" placeholder="Ta réponse..." rows="1" oninput="autoResize(this)"></textarea>
                     <button class="comment-reply-submit" onclick="_ccPostReply('${c.id}','${pfx}rw-${c.id}')">Poster</button>
@@ -11478,7 +11478,7 @@
             { id: 'cat-gameplay', label: 'Gameplay', filter: 'gameplay', icon: '🎮' },
             { id: 'cat-map',   label: 'Map',       filter: 'map',    icon: '🗺️' },
             { id: 'cat-gui',   label: 'GUI',       filter: 'gui',    icon: '🖥️' },
-            { id: 'cat-msg',   label: 'Messages',  filter: 'msg',    icon: '🔐' },
+            { id: 'cat-messages', label: 'Messages',  filter: 'msg',    icon: '🔐' },
             { id: 'cat-updates', label: 'Updates', filter: 'updates', icon: '🆙' },
         ];
         const counts = { all: 0, actus: 0, fruit: 0, vfx: 0, gameplay: 0, map: 0, gui: 0, msg: 0, groupe: 0, updates: 0 };
