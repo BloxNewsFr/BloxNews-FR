@@ -12348,8 +12348,8 @@
                         <div class="stats-tile-label">Vues du site</div>
                     </div>
                     <div class="stats-tile">
-                        <div class="stats-tile-value" id="statsBulletins">—</div>
-                        <div class="stats-tile-label">Bulletins vus</div>
+                        <div class="stats-tile-value" id="statsCards">—</div>
+                        <div class="stats-tile-label">Cards vus</div>
                     </div>
                     <div class="stats-tile">
                         <div class="stats-tile-value" id="statsComments">—</div>
@@ -12368,12 +12368,6 @@
                         <span class="stats-visitors-count" id="statsVisitorsCount">0</span>
                     </div>
                     <div class="stats-visitors-list" id="statsVisitorsList"></div>
-                </div>
-
-                <!-- Classement des bulletins -->
-                <div class="stats-ranking">
-                    <div class="stats-ranking-title">🏆 Bulletins les plus visités</div>
-                    <div class="stats-ranking-list" id="statsRanking"></div>
                 </div>
 
                 <!-- Classement des cards (leaks) -->
@@ -12399,7 +12393,7 @@
        - Présence temps réel via .info/connected + nœud
          site_stats/presence/<sessionId> avec onDisconnect().remove()
        - Compteurs persistés dans site_stats/ (pageviews, visitors_today,
-         visitors_daily, bulletin_views)
+         visitors_daily, card_views)
        - Total commentaires & likes agrégés en direct depuis les refs
          comments / card_comments / update_comments
        - Popup admin (bouton dans Paramètres → Avancé)
@@ -12526,14 +12520,12 @@
             _statsRefreshCounters();
             _statsRefreshAggregates();
             _statsRefreshDaily();
-            _statsRefreshRanking();
             _statsRefreshCardRanking();
             _statsRefreshVisitors();
             _statsRenderOnline();
             STORE.timers.push(setInterval(_statsRefreshCounters, 5000));
             STORE.timers.push(setInterval(_statsRefreshAggregates, 5000));
             STORE.timers.push(setInterval(_statsRefreshDaily, 15000));
-            STORE.timers.push(setInterval(_statsRefreshRanking, 15000));
             STORE.timers.push(setInterval(_statsRefreshCardRanking, 15000));
             STORE.timers.push(setInterval(() => { if (STORE.popupOpen && _statsVisitorsOpen()) _statsRefreshVisitors(); }, 10000));
         }
@@ -12558,12 +12550,12 @@
         function _statsRefreshCounters() {
             REF_STATS.once('value', snap => {
                 const v = snap.val() || {};
-                const bv = v.bulletin_views || {};
-                const bulletins = Object.keys(bv).reduce((s, k) => s + (bv[k] || 0), 0);
+                const cv = v.card_views || {};
+                const cards = Object.keys(cv).reduce((s, k) => s + ((cv[k] && cv[k].n) || cv[k] || 0), 0);
                 STORE.counters = {
                     visitors_today: v.visitors_today || 0,
                     pageviews:      v.pageviews      || 0,
-                    bulletins:      bulletins        || 0
+                    cards:          cards            || 0
                 };
                 if (STORE.popupOpen) _statsRenderCounters();
             });
@@ -12652,28 +12644,6 @@
             });
         }
 
-        /* ─── Classement des bulletins ─────────────────────────── */
-        function _statsRefreshRanking() {
-            const listEl = document.getElementById('statsRanking');
-            if (!listEl) return;
-            FB_DB.ref('site_stats/bulletin_views').once('value', snap => {
-                const raw = snap.val() || {};
-                const items = Object.keys(raw)
-                    .map(k => ({ num: k, n: raw[k] || 0 }))
-                    .filter(x => x.n > 0)
-                    .sort((a, b) => b.n - a.n)
-                    .slice(0, 10);
-                listEl.innerHTML = items.length
-                    ? items.map((x, i) => `
-                        <div class="stats-ranking-item">
-                            <span class="stats-ranking-pos ${i < 3 ? 'stats-ranking-pos--top' : ''}">${i + 1}</span>
-                            <span class="stats-ranking-name">Bulletin #${_statsEsc(x.num)}</span>
-                            <span class="stats-ranking-count">${x.n.toLocaleString('fr-FR')} vue${x.n > 1 ? 's' : ''}</span>
-                        </div>`).join('')
-                    : '<div class="stats-ranking-empty">Aucune visite de bulletin enregistrée</div>';
-            });
-        }
-
         /* ─── Vues des cards (leaks) ─────────────────────────── */
         function _statsCardKey(art) {
             const tagged = art.querySelector('[data-card-id]');
@@ -12756,7 +12726,7 @@
             const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v == null ? '—' : v.toLocaleString('fr-FR'); };
             set('statsVisitorsToday', STORE.counters.visitors_today);
             set('statsPageviews', STORE.counters.pageviews);
-            set('statsBulletins', STORE.counters.bulletins);
+            set('statsCards', STORE.counters.cards);
         }
 
         function _statsRenderAggregates() {
