@@ -257,6 +257,7 @@
         }
         .filter-empty.is-visible { display: block; }
         .item-card.is-hidden { display: none; }
+        .item-card.is-collapsed-card { display: none; }
         .cat-header.is-hidden { display: none; }
 
         /* ===== CAT HEADER ===== */
@@ -264,8 +265,17 @@
             display: flex; align-items: center; gap: 12px;
             background: #1e293b; border-radius: 10px 10px 0 0;
             padding: 14px 20px; margin-top: 32px;
+            cursor: pointer; user-select: none;
+            transition: background 0.2s, border-radius 0.2s;
         }
-        .cat-header-title { font-size: 20px; font-weight: 900; color: #fff; }
+        .cat-header:hover { background: #243247; }
+        .cat-header.is-collapsed { border-radius: 10px; }
+        .cat-header-title { font-size: 20px; font-weight: 900; color: #fff; flex: 1; }
+        .cat-toggle {
+            color: rgba(255,255,255,0.6); font-size: 24px;
+            transition: transform 0.25s; flex-shrink: 0;
+        }
+        .cat-header.is-collapsed .cat-toggle { transform: rotate(-90deg); }
         .cat-icon-slot {
             width: 40px; height: 40px; border-radius: 8px;
             background: rgba(255,255,255,0.12);
@@ -825,9 +835,10 @@
     <div class="filter-empty" id="filterEmpty">Aucun résultat ne correspond à ta recherche.</div>
 
     <!-- ==================== FRUITS ==================== -->
-    <div class="cat-header" id="fruits">
+    <div class="cat-header" id="fruits" onclick="toggleCategory(this)" role="button" tabindex="0" aria-expanded="true" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleCategory(this)}">
         <div class="cat-icon-slot"><img src="../pvp1/img/icons/Misc_Bulletin_Fruit.png.webp" alt=""></div>
         <div class="cat-header-title">Fruits</div>
+        <span class="cat-toggle material-symbols-outlined">expand_more</span>
     </div>
 
     <div class="item-card">
@@ -1186,9 +1197,10 @@
     </div>
 
     <!-- ==================== FIGHTING STYLES ==================== -->
-    <div class="cat-header" id="fighting-styles">
+    <div class="cat-header" id="fighting-styles" onclick="toggleCategory(this)" role="button" tabindex="0" aria-expanded="true" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleCategory(this)}">
         <div class="cat-icon-slot"><img src="../pvp1/img/icons/Misc_Bulletin_FS.png.webp" alt=""></div>
         <div class="cat-header-title">Fighting Styles</div>
+        <span class="cat-toggle material-symbols-outlined">expand_more</span>
     </div>
 
     <div class="item-card">
@@ -1229,9 +1241,10 @@
     </div>
 
     <!-- ==================== SWORDS ==================== -->
-    <div class="cat-header" id="swords">
+    <div class="cat-header" id="swords" onclick="toggleCategory(this)" role="button" tabindex="0" aria-expanded="true" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleCategory(this)}">
         <div class="cat-icon-slot"><img src="../pvp1/img/icons/Misc_Bulletin_Sword.png.webp" alt=""></div>
         <div class="cat-header-title">Swords</div>
+        <span class="cat-toggle material-symbols-outlined">expand_more</span>
     </div>
 
     <div class="item-card">
@@ -1302,9 +1315,10 @@
     </div>
 
     <!-- ==================== GUNS ==================== -->
-    <div class="cat-header" id="guns">
+    <div class="cat-header" id="guns" onclick="toggleCategory(this)" role="button" tabindex="0" aria-expanded="true" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleCategory(this)}">
         <div class="cat-icon-slot"><img src="../pvp1/img/icons/Misc_Bulletin_Gun.png.webp" alt=""></div>
         <div class="cat-header-title">Guns</div>
+        <span class="cat-toggle material-symbols-outlined">expand_more</span>
     </div>
 
     <div class="item-card">
@@ -1344,9 +1358,10 @@
     </div>
 
     <!-- ==================== RACES ==================== -->
-    <div class="cat-header" id="races">
+    <div class="cat-header" id="races" onclick="toggleCategory(this)" role="button" tabindex="0" aria-expanded="true" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleCategory(this)}">
         <div class="cat-icon-slot"><img src="../pvp1/img/icons/Misc_Bulletin_Race.png.webp" alt=""></div>
         <div class="cat-header-title">Races</div>
+        <span class="cat-toggle material-symbols-outlined">expand_more</span>
     </div>
 
     <div class="item-card">
@@ -1383,9 +1398,10 @@
     </div>
 
     <!-- ==================== SYSTEMS ==================== -->
-    <div class="cat-header" id="systems">
+    <div class="cat-header" id="systems" onclick="toggleCategory(this)" role="button" tabindex="0" aria-expanded="true" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleCategory(this)}">
         <div class="cat-icon-slot"><img src="../pvp1/img/icons/Misc_Bulletin_System.png.webp" alt=""></div>
         <div class="cat-header-title">Systems</div>
+        <span class="cat-toggle material-symbols-outlined">expand_more</span>
     </div>
 
     <div class="item-card">
@@ -1579,13 +1595,26 @@
                 while (next && next.classList.contains('is-hidden')) next = next.nextElementSibling;
                 header.classList.toggle('is-hidden', !(next && next.classList.contains('item-card')));
             });
+            fixLastCards();
+            document.getElementById('filterEmpty').classList.toggle('is-visible', visible === 0);
+        }
+        function fixLastCards() {
             document.querySelectorAll('.item-card.last').forEach(card => card.classList.remove('last'));
-            document.querySelectorAll('.item-card:not(.is-hidden)').forEach(card => {
+            document.querySelectorAll('.item-card:not(.is-hidden):not(.is-collapsed-card)').forEach(card => {
                 let next = card.nextElementSibling;
-                while (next && next.classList.contains('is-hidden')) next = next.nextElementSibling;
+                while (next && (next.classList.contains('is-hidden') || next.classList.contains('is-collapsed-card'))) next = next.nextElementSibling;
                 if (!next || !next.classList.contains('item-card')) card.classList.add('last');
             });
-            document.getElementById('filterEmpty').classList.toggle('is-visible', visible === 0);
+        }
+        function toggleCategory(header) {
+            const collapsed = header.classList.toggle('is-collapsed');
+            header.setAttribute('aria-expanded', String(!collapsed));
+            let next = header.nextElementSibling;
+            while (next && next.classList.contains('item-card')) {
+                next.classList.toggle('is-collapsed-card', collapsed);
+                next = next.nextElementSibling;
+            }
+            fixLastCards();
         }
         function setFilter(btn) {
             document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
