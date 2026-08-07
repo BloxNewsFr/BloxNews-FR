@@ -1,0 +1,1169 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Balance Log – Summer PvP Patch 001 – BloxNews FR</title>
+    <link rel="icon" type="image/png" href="../shared/favicon.png">
+    <link rel="shortcut icon" href="../shared/bf_logo.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
+    <style>
+        @font-face { font-family: 'LuckiestGuy Regular'; src: url('../fonts/LuckiestGuy-Regular.ttf') format('truetype'); }
+
+        :root {
+            --color-text: #333132;
+            --color-border: #ebebeb;
+            --color-primary: #ffda00;
+            --color-secondary: #175ec2;
+            --color-buff: #16a34a;
+            --color-buff-bg: #dcfce7;
+            --color-nerf: #dc2626;
+            --color-nerf-bg: #fee2e2;
+            --color-adj: #d97706;
+            --color-adj-bg: #fef3c7;
+        }
+
+        * { box-sizing: border-box; }
+        body { margin: 0; font-family: 'Inter', sans-serif; color: var(--color-text); background-color: #f5f6fa; line-height: 1.6; }
+
+        /* ===== SITE BACKGROUND ===== */
+        .site-background { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; z-index: -1; pointer-events: none; }
+        .site-background img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        @media (max-width: 768px) { .site-background { display: none; } }
+
+        /* ===== HEADER ===== */
+        .site-header {
+            display: flex; align-items: center; justify-content: center;
+            padding: 0 55px; position: sticky; top: 0; z-index: 1000; height: 72px;
+            background-color: rgba(255,255,255,0.08);
+            backdrop-filter: blur(24px) saturate(180%); -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 4px 30px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.2);
+        }
+        .site-header__logo { position: absolute; left: 55px; }
+        .site-header__logo img { height: 42px; width: auto; display: block; }
+        .site-nav { display: flex; gap: 8px; padding: 0; margin: 0; list-style: none; font-weight: 900; }
+        .site-nav a { color: var(--color-text); text-decoration: none; font-weight: 900; font-size: 17px; text-transform: uppercase; font-family: 'LuckiestGuy Regular', cursive; padding: 8px 16px; border-radius: 10px; transition: background 0.2s, color 0.2s; }
+        .site-nav a:hover { background: var(--color-primary); color: #000; }
+        .site-header__icons { display: flex; gap: 12px; color: var(--color-text); cursor: pointer; align-items: center; position: absolute; right: 55px; }
+        .site-header__icons span { padding: 8px; border-radius: 10px; transition: background 0.2s; }
+        .site-header__icons span:hover { background: rgba(0,0,0,0.06); }
+        .mobile-menu-btn { display: none; }
+
+        @media (max-width: 1024px) {
+            .site-header { padding: 0 28px; }
+            .site-header__logo { left: 28px; }
+            .site-header__logo img { height: 36px; }
+            .site-header__icons { right: 28px; }
+            .site-nav a { font-size: 15px; padding: 6px 14px; }
+        }
+        @media (max-width: 768px) {
+            .site-header { padding: 0 16px; height: 60px; }
+            .site-header__logo { left: 16px; }
+            .site-header__logo img { height: 32px; }
+            .site-header__icons { right: 16px; gap: 6px; }
+            .site-nav { display: none; }
+            .mobile-menu-btn { display: block; }
+        }
+
+        /* ===== MOBILE NAV ===== */
+        .mobile-nav-backdrop {
+            position: fixed; inset: 0; z-index: 9990;
+            background: rgba(0,0,0,0.5); backdrop-filter: blur(6px);
+            display: none; opacity: 0; transition: opacity 0.35s;
+        }
+        .mobile-nav-backdrop.is-open { display: block; opacity: 1; }
+        .mobile-nav-dropdown {
+            display: flex; flex-direction: column;
+            position: fixed; top: 0; right: -85vw; bottom: 0;
+            width: min(82vw, 320px);
+            background: rgba(10,10,20,0.96);
+            backdrop-filter: blur(28px); -webkit-backdrop-filter: blur(28px);
+            box-shadow: -12px 0 50px rgba(0,0,0,0.5);
+            z-index: 9991; transition: right 0.35s cubic-bezier(0.4,0,0.2,1);
+            overflow-y: auto;
+        }
+        .mobile-nav-dropdown.is-open { right: 0; }
+        .mnav-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 18px 16px; border-bottom: 1px solid rgba(255,255,255,0.07); }
+        .mnav-header__title { font-family: 'LuckiestGuy Regular', cursive; font-size: 20px; color: #fff; text-transform: uppercase; }
+        .mnav-close { width: 36px; height: 36px; border-radius: 50%; border: none; background: rgba(255,255,255,0.08); color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .mnav-links { display: flex; flex-direction: column; gap: 6px; padding: 14px; }
+        .mobile-nav-dropdown a.mnav-link { display: flex; align-items: center; gap: 14px; text-decoration: none; color: rgba(255,255,255,0.85); font-weight: 800; font-size: 15px; padding: 13px 16px; border-radius: 14px; transition: background 0.2s; }
+        .mnav-link__icon { font-size: 22px; color: rgba(255,255,255,0.4); }
+        .mobile-nav-dropdown a.mnav-link:hover { background: rgba(255,255,255,0.06); }
+
+        /* ===== BULLETIN CONTAINER ===== */
+        .bulletin-container {
+            max-width: 860px;
+            margin: 32px auto 60px;
+            padding: 0 20px;
+        }
+
+        /* ===== BLUE BANNER ===== */
+        .blue-banner {
+            background: #175ec2;
+            color: #fff;
+            font-family: 'LuckiestGuy Regular', cursive;
+            font-size: 32px;
+            text-align: center;
+            padding: 14px 40px;
+            letter-spacing: 1px;
+            border-radius: 8px 8px 0 0;
+        }
+
+        /* ===== HERO IMAGE ===== */
+        .hero-image-wrapper {
+            width: 100%;
+            background: #dde3ed;
+            border: 1px solid var(--color-border);
+            border-top: none;
+            aspect-ratio: 16/6;
+            display: flex; align-items: center; justify-content: center;
+            overflow: hidden;
+        }
+        .hero-image-wrapper img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .hero-img-placeholder {
+            width: 100%; height: 100%;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            gap: 8px; color: #94a3b8; font-size: 14px; font-weight: 600;
+        }
+        .hero-img-placeholder span { font-size: 40px; opacity: 0.4; }
+
+        /* ===== JOURNAL HEADER ===== */
+        .publish-date { text-align: center; font-size: 13px; color: #888; font-weight: 600; margin: 16px 0 4px; }
+        .journal-header { text-align: center; margin-bottom: 16px; }
+        .journal-title { font-size: 38px; font-weight: 900; color: #111; margin: 0 0 6px; }
+        .journal-subtitle { font-size: 16px; color: #666; font-style: italic; margin: 0 0 8px; }
+        .journal-meta { font-size: 13px; font-weight: 700; color: #555; }
+        .dashed-line { border: none; border-top: 2px dashed #ccc; margin: 18px 0; }
+
+        /* ===== INTRO BOX ===== */
+        .intro-box {
+            background: #fff;
+            border: 1px solid var(--color-border);
+            border-radius: 10px;
+            padding: 28px 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .intro-box h2 { font-size: 20px; font-weight: 800; margin: 0 0 12px; color: #0f172a; }
+        .intro-box p { font-size: 15px; line-height: 1.75; color: #374151; margin: 0 0 12px; }
+        .intro-box p:last-child { margin-bottom: 0; }
+
+        /* ===== OVERVIEW BOX ===== */
+        .overview-box {
+            background: #fff;
+            border: 1px solid var(--color-border);
+            border-radius: 10px;
+            padding: 28px 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .ov-eyebrow { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: #94a3b8; font-weight: 700; margin-bottom: 4px; }
+        .ov-title { font-size: 26px; font-weight: 900; color: #0f172a; margin-bottom: 4px; }
+        .ov-desc { font-size: 14px; color: #64748b; margin-bottom: 18px; }
+        .ov-divider { border: none; border-top: 2px dashed #e2e8f0; margin-bottom: 18px; }
+
+        .ov-section { margin-bottom: 22px; }
+        .ov-section-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+        .ov-section-title { font-size: 15px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; padding-left: 12px; border-left: 4px solid; }
+        .ov-section-title.buff { color: var(--color-buff); border-color: var(--color-buff); }
+        .ov-section-title.nerf { color: var(--color-nerf); border-color: var(--color-nerf); }
+        .ov-section-title.adj { color: var(--color-adj); border-color: var(--color-adj); }
+        .ov-count { font-size: 12px; font-weight: 700; border-radius: 100px; padding: 3px 11px; }
+        .ov-count.buff { background: var(--color-buff-bg); color: var(--color-buff); }
+        .ov-count.nerf { background: var(--color-nerf-bg); color: var(--color-nerf); }
+        .ov-count.adj { background: var(--color-adj-bg); color: var(--color-adj); }
+
+        .ov-icons { display: flex; flex-wrap: wrap; gap: 10px; }
+        .ov-item { display: flex; flex-direction: column; align-items: center; gap: 4px; width: 68px; text-align: center; font-size: 11px; font-weight: 600; color: #475569; }
+        .ov-icon-slot {
+            width: 52px; height: 52px; border-radius: 10px;
+            border: 2px solid; overflow: hidden;
+            display: flex; align-items: center; justify-content: center;
+            background: #f8fafc;
+        }
+        .ov-icon-slot img { width: 100%; height: 100%; object-fit: cover; }
+        .ov-icon-slot.buff { border-color: var(--color-buff); background: var(--color-buff-bg); }
+        .ov-icon-slot.nerf { border-color: var(--color-nerf); background: var(--color-nerf-bg); }
+        .ov-icon-slot.adj { border-color: var(--color-adj); background: var(--color-adj-bg); }
+
+        /* ===== JUMP BAR ===== */
+        .jump-bar {
+            background: #fff; border: 1px solid var(--color-border);
+            border-radius: 10px; padding: 16px 20px;
+            margin-bottom: 24px;
+            display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .jump-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: #94a3b8; margin-right: 4px; }
+        .jump-btn {
+            padding: 6px 14px; border-radius: 7px;
+            border: 1.5px solid var(--color-border);
+            background: #f8fafc; font-size: 13px; font-weight: 700;
+            color: #374151; cursor: pointer; text-decoration: none;
+            transition: all 0.15s; font-family: 'Inter', sans-serif;
+        }
+        .jump-btn:hover { background: var(--color-secondary); border-color: var(--color-secondary); color: #fff; }
+
+        /* ===== CAT HEADER ===== */
+        .cat-header {
+            display: flex; align-items: center; gap: 12px;
+            background: #1e293b; border-radius: 10px 10px 0 0;
+            padding: 14px 20px; margin-top: 32px;
+        }
+        .cat-header-title { font-size: 20px; font-weight: 900; color: #fff; }
+        .cat-icon-slot {
+            width: 40px; height: 40px; border-radius: 8px;
+            background: rgba(255,255,255,0.12);
+            display: flex; align-items: center; justify-content: center;
+            overflow: hidden; flex-shrink: 0;
+        }
+        .cat-icon-slot img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* ===== ITEM CARD ===== */
+        .item-card {
+            background: #fff;
+            border: 1px solid var(--color-border); border-top: none;
+            padding: 22px 24px;
+        }
+        .item-card + .item-card { border-top: 1px solid var(--color-border); }
+        .item-card.last { border-radius: 0 0 10px 10px; border-bottom: 1px solid var(--color-border); margin-bottom: 0; }
+
+        .item-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+        .item-icon-slot {
+            width: 50px; height: 50px; border-radius: 10px;
+            border: 2.5px solid; overflow: hidden; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            background: #f8fafc;
+        }
+        .item-icon-slot img { width: 100%; height: 100%; object-fit: cover; }
+        .item-icon-slot.buff { border-color: var(--color-buff); background: var(--color-buff-bg); }
+        .item-icon-slot.nerf { border-color: var(--color-nerf); background: var(--color-nerf-bg); }
+        .item-icon-slot.adj { border-color: var(--color-adj); background: var(--color-adj-bg); }
+
+        .item-name { font-size: 21px; font-weight: 900; color: #0f172a; flex: 1; }
+        .item-badge {
+            display: inline-flex; align-items: center; gap: 5px;
+            font-size: 11px; font-weight: 700; border-radius: 100px;
+            padding: 4px 12px; text-transform: uppercase; letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+        .item-badge.buff { background: var(--color-buff-bg); color: var(--color-buff); }
+        .item-badge.nerf { background: var(--color-nerf-bg); color: var(--color-nerf); }
+        .item-badge.adj { background: var(--color-adj-bg); color: var(--color-adj); }
+        .badge-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+        .section-label { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #94a3b8; margin: 14px 0 8px; }
+        .section-label:first-child { margin-top: 0; }
+        .section-sep { border: none; border-top: 1.5px dashed #e2e8f0; margin: 12px 0; }
+
+        .change-list { display: flex; flex-direction: column; }
+        .change-row { display: flex; align-items: flex-start; gap: 12px; padding: 9px 0; border-bottom: 1px solid #f1f5f9; }
+        .change-row:last-child { border-bottom: none; padding-bottom: 0; }
+        .change-row:first-child { padding-top: 0; }
+
+        .key-badge {
+            flex-shrink: 0; min-width: 52px; padding: 3px 7px;
+            background: #f8fafc; border: 1.5px solid #cbd5e1;
+            border-radius: 6px; font-size: 11px; font-weight: 700;
+            text-align: center; color: #334155; white-space: nowrap;
+        }
+        .change-desc { font-size: 14px; line-height: 1.6; color: #374151; padding-top: 2px; }
+        .change-desc strong { font-weight: 700; color: #0f172a; }
+
+        /* ===== BUG FIX ===== */
+        .bugfix-box {
+            background: #fff; border: 1px solid var(--color-border);
+            border-radius: 10px; padding: 24px 28px;
+            margin-top: 32px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .bugfix-header { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+        .bugfix-icon { font-size: 28px; }
+        .bugfix-title { font-size: 20px; font-weight: 900; color: #0f172a; }
+        .bugfix-divider { border: none; border-top: 1.5px dashed #e2e8f0; margin-bottom: 14px; }
+
+        /* ===== FOOTER NOTE ===== */
+        .footer-note { text-align: center; font-style: italic; font-size: 14px; color: #94a3b8; padding: 28px 0 0; }
+
+        /* ===== BACK BUTTON ===== */
+        .back-button-container { text-align: center; margin-top: 36px; }
+        .back-button {
+            display: inline-block; padding: 13px 32px;
+            background: linear-gradient(135deg, #ffda00, #ffc200);
+            color: #000; font-weight: 800; font-size: 15px;
+            border-radius: 100px; text-decoration: none;
+            transition: all 0.2s;
+        }
+        .back-button:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(255,218,0,0.4); }
+
+        /* ===== SOCIAL SHARE ===== */
+        .social-share { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin: 28px 0 0; }
+        .social-share a { display: flex; align-items: center; gap: 8px; padding: 10px 20px; border-radius: 100px; text-decoration: none; font-weight: 700; font-size: 14px; transition: all 0.2s; }
+        .social-share a.td { background: #5865F2; color: #fff; }
+        .social-share a.tt { background: #000; color: #fff; }
+        .social-share a.ty { background: #FF0000; color: #fff; }
+        .social-share a:hover { opacity: 0.85; transform: translateY(-1px); }
+        .social-share img { width: 18px; height: 18px; object-fit: contain; }
+
+        /* ===== SITE FOOTER ===== */
+        .site-footer { background: #0d1117; border-top: 1px solid rgba(255,255,255,0.06); display: flex; flex-wrap: wrap; gap: 40px; padding: 48px 55px; justify-content: space-between; }
+        .footer-col h3 { font-family: 'LuckiestGuy Regular', cursive; font-size: 16px; color: #fff; margin-bottom: 12px; text-transform: uppercase; }
+        .footer-col p { font-size: 13px; color: rgba(255,255,255,0.4); line-height: 1.7; }
+        .footer-col ul { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+        .footer-col ul li a { color: rgba(255,255,255,0.5); text-decoration: none; font-size: 13px; transition: color 0.2s; }
+        .footer-col ul li a:hover { color: var(--color-primary); }
+        .footer-community-links { display: flex; gap: 10px; flex-wrap: wrap; }
+        .footer-community-links a { color: rgba(255,255,255,0.5); text-decoration: none; font-size: 13px; padding: 6px 14px; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; transition: all 0.2s; }
+        .footer-community-links a:hover { color: #fff; border-color: rgba(255,255,255,0.3); }
+
+        @media (max-width: 600px) {
+            .blue-banner { font-size: 22px; padding: 12px 20px; }
+            .journal-title { font-size: 26px; }
+            .intro-box, .overview-box, .bugfix-box { padding: 18px 16px; }
+            .item-card { padding: 16px 14px; }
+            .ov-item { width: 58px; }
+            .ov-icon-slot { width: 44px; height: 44px; }
+            .site-footer { padding: 32px 20px; gap: 28px; }
+            .cat-header { padding: 12px 14px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- BG -->
+<div class="site-background">
+    <img src="../shared/bg.png" alt="">
+</div>
+
+<!-- HEADER -->
+<header class="site-header">
+    <div class="site-header__logo">
+        <img src="../BF_news.png" alt="BloxNews FR">
+    </div>
+    <nav>
+        <ul class="site-nav">
+            <li><a href="https://www.roblox.com/fr/games/2753915549/Blox-Fruits">Game</a></li>
+            <li><a href="../index.html">News</a></li>
+            <li><a href="../neo_bulletin.html">Leaks</a></li>
+            <li><a href="../archives.html">Archives</a></li>
+        </ul>
+    </nav>
+    <div class="site-header__icons">
+        <span class="material-symbols-outlined mobile-menu-btn" id="menuToggle" role="button" aria-label="Menu" aria-expanded="false">menu</span>
+    </div>
+</header>
+
+<div class="mobile-nav-backdrop" id="mobileNavBackdrop"></div>
+<nav class="mobile-nav-dropdown" id="mobileNav" aria-hidden="true">
+    <div class="mnav-header">
+        <span class="mnav-header__title">Menu</span>
+        <button class="mnav-close" id="mobileNavClose" aria-label="Fermer"><span class="material-symbols-outlined">close</span></button>
+    </div>
+    <div class="mnav-links">
+        <a href="https://www.roblox.com/fr/games/2753915549/Blox-Fruits" class="mnav-link"><span class="material-symbols-outlined mnav-link__icon">sports_esports</span> Jouer</a>
+        <a href="../index.html" class="mnav-link"><span class="material-symbols-outlined mnav-link__icon">newspaper</span> News</a>
+        <a href="../neo_bulletin.html" class="mnav-link"><span class="material-symbols-outlined mnav-link__icon">key</span> Leaks</a>
+        <a href="../archives.html" class="mnav-link"><span class="material-symbols-outlined mnav-link__icon">inventory_2</span> Archives</a>
+    </div>
+</nav>
+
+<!-- MAIN -->
+<main class="bulletin-container">
+
+    <div class="blue-banner">The Balance Blog – Summer PvP Patch 001</div>
+
+    <!-- HERO IMAGE -->
+    <div class="hero-image-wrapper">
+        <!-- Remplace ce bloc par : <img src="../pvp1/img/hero.png" class="" alt=""> -->
+        <div class="hero-img-placeholder">
+            <span class="material-symbols-outlined">image</span>
+            Image hero à ajouter
+        </div>
+    </div>
+
+    <div class="publish-date">6 Août 2026</div>
+
+    <div class="journal-header">
+        <h1 class="journal-title">Summer PvP Patch Notes</h1>
+        <p class="journal-subtitle">La plus grande mise à jour d'équilibrage PvP de tous les temps</p>
+        <div class="journal-meta">Balance Patch : 001 &nbsp;|&nbsp; 6 Août 2026</div>
+    </div>
+
+    <div class="dashed-line"></div>
+
+    <!-- INTRO -->
+    <div class="intro-box">
+        <h2>Une multitude de changements pour remodeler le PvP</h2>
+        <p>La <strong>2026 Summer Balance Update</strong> est le plus grand patch d'équilibrage jamais publié, avec plus de 100 changements sur les Fruits, les Fighting Styles, les Swords, les Guns, les Races et les mécaniques d'Instinct.</p>
+        <p>Certains builds familiers ont dominé le PvP depuis longtemps, tandis que d'autres outils ont peiné à trouver leur place. Cette mise à jour vise à bouleverser la meta en réduisant les options dominantes et en donnant aux Fruits, Armes et Fighting Styles sous-utilisés de meilleures hitboxes, des capacités plus rapides, de nouveaux outils utiles et, dans certains cas, <strong>un comportement complètement nouveau</strong>.</p>
+        <p>Tu risques de redécouvrir de vieux favoris, d'essayer des combinaisons inhabituelles et de repenser les builds sur lesquels tu comptais. Avec autant de changements en même temps, le PvP peut sembler un peu chaotique au début — c'est ce qui rend une mise à jour aussi grande excitante !</p>
+        <p><strong>L'équilibre continuera d'évoluer après la mise en ligne de ces changements.</strong> Des ajustements de valeurs, mécaniques et interactions pourront être faits après observation de la meta en conditions réelles.</p>
+    </div>
+
+    <!-- OVERVIEW -->
+    <div class="overview-box" id="overview">
+        <div class="ov-eyebrow">Update Overview</div>
+        <div class="ov-title">Vue d'ensemble des changements</div>
+        <p class="ov-desc">Voici en un coup d'œil quels Fruits, Swords, Guns, Races, Fighting Styles et mécaniques ont été modifiés.</p>
+        <hr class="ov-divider">
+
+        <!-- BUFFS 26 -->
+        <div class="ov-section">
+            <div class="ov-section-head">
+                <div class="ov-section-title buff">▲ BUFFS</div>
+                <span class="ov-count buff">26</span>
+            </div>
+            <div class="ov-icons">
+                <div class="ov-item"><div class="ov-icon-slot buff"><!-- <img src="../pvp1/img/icons/dark.png" alt=""> --></div>Dark</div>
+                <div class="ov-item"><div class="ov-icon-slot buff"><!-- <img src="../pvp1/img/icons/dark-blade.png" alt=""> --></div>Dark Blade</div>
+                <div class="ov-item"><div class="ov-icon-slot buff"><!-- <img src="../pvp1/img/icons/death-step.png" alt=""> --></div>Death Step</div>
+                <div class="ov-item"><div class="ov-icon-slot buff"><!-- <img src="../pvp1/img/icons/dough.png" alt=""> --></div>Dough</div>
+                <div class="ov-item"><div class="ov-icon-slot buff"><!-- <img src="../pvp1/img/icons/dragon.png" alt=""> --></div>Dragon (H)</div>
+                <div class="ov-item"><div class="ov-icon-slot buff"><!-- <img src="../pvp1/img/icons/eagle.png" alt=""> --></div>Eagle</div>
+                <div class="ov-item"><div class="ov-icon-slot buff"><!-- <img src="../pvp1/img/icons/fiend.png" alt=""> --></div>Fiend</div>
+                <div class="ov-item"><div class="ov-icon-slot buff"><!-- <img src="../pvp1/img/icons/flame.png" alt=""> --></div>Flame</div>
+                <div class="ov-item"><div class="ov-icon-slot buff"><!-- <img src="../pvp1/img/icons/gas.png" alt=""> --></div>Gas</div>
+                <div class="ov-item"><div class="ov-icon-slot buff"><!-- <img src="../pvp1/img/icons/ghost.png" alt=""> --></div>Ghost</div>
+                <div class="ov-item"><div class="ov-icon-slot buff"><!-- <img src="../pvp1/img/icons/ice.png" alt=""> --></div>Ice</div>
+                <div class="ov-item"><div class="ov-icon-slot buff"><!-- <img src="../pvp1/img/icons/instinct.png" alt=""> --></div>Instinct</div>
+                <div class="ov-item"><div class="ov-icon-slot buff"><!-- <img src="../pvp1/img/icons/kabucha.png" alt=""> --></div>Kabucha</div>
+                <div class="ov-item"><div class="ov-icon-slot buff"><!-- <img src="../pvp1/img/icons/mammoth.png" alt=""> --></div>Mammoth</div>
+                <div class="ov-item"><div class="ov-icon-slot buff"><!-- <img src="../pvp1/img/icons/phoenix.png" alt=""> --></div>Phoenix</div>
+                <div class="ov-item"><div class="ov-icon-slot buff"><!-- <img src="../pvp1/img/icons/pole-v2.png" alt=""> --></div>Pole V2</div>
+                <div class="ov-item"><div class="ov-icon-slot buff"><!-- <img src="../pvp1/img/icons/quake.png" alt=""> --></div>Quake</div>
+                <div class="ov-item"><div class="ov-icon-slot buff"><!-- <img src="../pvp1/img/icons/sand.png" alt=""> --></div>Sand</div>
+                <div class="ov-item"><div class="ov-icon-slot buff"><!-- <img src="../pvp1/img/icons/sharkman.png" alt=""> --></div>Sharkman K.</div>
+                <div class="ov-item"><div class="ov-icon-slot buff"><!-- <img src="../pvp1/img/icons/spider.png" alt=""> --></div>Spider</div>
+                <div class="ov-item"><div class="ov-icon-slot buff"><!-- <img src="../pvp1/img/icons/tiger.png" alt=""> --></div>Tiger</div>
+                <div class="ov-item"><div class="ov-icon-slot buff"><!-- <img src="../pvp1/img/icons/twin-hooks.png" alt=""> --></div>Twin Hooks</div>
+                <div class="ov-item"><div class="ov-icon-slot buff"><!-- <img src="../pvp1/img/icons/venom-bow.png" alt=""> --></div>Venom Bow</div>
+                <div class="ov-item"><div class="ov-icon-slot buff"><!-- <img src="../pvp1/img/icons/werewolf.png" alt=""> --></div>Werewolf</div>
+                <div class="ov-item"><div class="ov-icon-slot buff"><!-- <img src="../pvp1/img/icons/yeti.png" alt=""> --></div>Yeti</div>
+                <div class="ov-item"><div class="ov-icon-slot buff"><!-- <img src="../pvp1/img/icons/gun-m1.png" alt=""> --></div>Gun M1s</div>
+            </div>
+        </div>
+
+        <!-- NERFS 8 -->
+        <div class="ov-section">
+            <div class="ov-section-head">
+                <div class="ov-section-title nerf">▼ NERFS</div>
+                <span class="ov-count nerf">8</span>
+            </div>
+            <div class="ov-icons">
+                <div class="ov-item"><div class="ov-icon-slot nerf"><!-- <img src="../pvp1/img/icons/dragonheart.png" alt=""> --></div>Dragonheart</div>
+                <div class="ov-item"><div class="ov-icon-slot nerf"><!-- <img src="../pvp1/img/icons/empyrean-kitsune.png" alt=""> --></div>Empyrean Kitsune</div>
+                <div class="ov-item"><div class="ov-icon-slot nerf"><!-- <img src="../pvp1/img/icons/ghoul-v4.png" alt=""> --></div>Ghoul v4</div>
+                <div class="ov-item"><div class="ov-icon-slot nerf"><!-- <img src="../pvp1/img/icons/kitsune.png" alt=""> --></div>Kitsune</div>
+                <div class="ov-item"><div class="ov-icon-slot nerf"><!-- <img src="../pvp1/img/icons/lightning.png" alt=""> --></div>Lightning</div>
+                <div class="ov-item"><div class="ov-icon-slot nerf"><!-- <img src="../pvp1/img/icons/sanguine.png" alt=""> --></div>Sanguine</div>
+                <div class="ov-item"><div class="ov-icon-slot nerf"><!-- <img src="../pvp1/img/icons/skull-guitar.png" alt=""> --></div>Skull Guitar</div>
+                <div class="ov-item"><div class="ov-icon-slot nerf"><!-- <img src="../pvp1/img/icons/yama.png" alt=""> --></div>Yama</div>
+            </div>
+        </div>
+
+        <!-- ADJUSTED 5 -->
+        <div class="ov-section">
+            <div class="ov-section-head">
+                <div class="ov-section-title adj">↺ ADJUSTED</div>
+                <span class="ov-count adj">5</span>
+            </div>
+            <div class="ov-icons">
+                <div class="ov-item"><div class="ov-icon-slot adj"><!-- <img src="../pvp1/img/icons/control.png" alt=""> --></div>Control</div>
+                <div class="ov-item"><div class="ov-icon-slot adj"><!-- <img src="../pvp1/img/icons/diamond.png" alt=""> --></div>Diamond</div>
+                <div class="ov-item"><div class="ov-icon-slot adj"><!-- <img src="../pvp1/img/icons/pain.png" alt=""> --></div>Pain</div>
+                <div class="ov-item"><div class="ov-icon-slot adj"><!-- <img src="../pvp1/img/icons/shark-v4.png" alt=""> --></div>Shark v4</div>
+                <div class="ov-item"><div class="ov-icon-slot adj"><!-- <img src="../pvp1/img/icons/true-triple-katana.png" alt=""> --></div>True Triple Katana</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JUMP BAR -->
+    <div class="jump-bar">
+        <span class="jump-label">Aller à :</span>
+        <a class="jump-btn" href="#fruits">Fruits</a>
+        <a class="jump-btn" href="#fighting-styles">Fighting Styles</a>
+        <a class="jump-btn" href="#swords">Swords</a>
+        <a class="jump-btn" href="#guns">Guns</a>
+        <a class="jump-btn" href="#races">Races</a>
+        <a class="jump-btn" href="#systems">Systems</a>
+    </div>
+
+    <!-- ==================== FRUITS ==================== -->
+    <div class="cat-header" id="fruits">
+        <div class="cat-icon-slot"><!-- <img src="../pvp1/img/icons/fruit-cat.png" alt=""> --></div>
+        <div class="cat-header-title">Fruits</div>
+    </div>
+
+    <div class="item-card">
+        <div class="item-header">
+            <div class="item-icon-slot adj"><!-- <img src="../pvp1/img/icons/control.png" alt=""> --></div>
+            <div class="item-name">Control</div>
+            <span class="item-badge adj"><span class="badge-dot"></span>Adjusted</span>
+        </div>
+        <div class="section-label">Outside Domain</div>
+        <div class="change-list">
+            <div class="change-row"><div class="key-badge">X</div><div class="change-desc">Cooldown augmenté de 4 secondes ; hitbox réduite de 10%.</div></div>
+            <div class="change-row"><div class="key-badge">C</div><div class="change-desc">Cooldown augmenté de 4 secondes.</div></div>
+            <div class="change-row"><div class="key-badge">F</div><div class="change-desc">End-lag augmenté de 0,25 seconde en cas de touche.</div></div>
+        </div>
+        <hr class="section-sep">
+        <div class="section-label">Dagger Mode</div>
+        <div class="change-list">
+            <div class="change-row"><div class="key-badge">M1</div><div class="change-desc">Dégâts augmentés de 350% ; cooldown augmenté de 250%.</div></div>
+            <div class="change-row"><div class="key-badge">X</div><div class="change-desc">End-lag augmenté de 0,25 seconde ; portée réduite de 10% ; hitbox réduite de 10%.</div></div>
+            <div class="change-row"><div class="key-badge">C</div><div class="change-desc">End-lag augmenté de 0,5 seconde ; portée réduite de 10% ; hitbox réduite de 20%.</div></div>
+        </div>
+    </div>
+
+    <div class="item-card">
+        <div class="item-header">
+            <div class="item-icon-slot buff"><!-- <img src="../pvp1/img/icons/dark.png" alt=""> --></div>
+            <div class="item-name">Dark</div>
+            <span class="item-badge buff"><span class="badge-dot"></span>Buffed</span>
+        </div>
+        <div class="section-label">Awakened</div>
+        <div class="change-list">
+            <div class="change-row"><div class="key-badge">Z</div><div class="change-desc">Ne se stun plus soi-même ; portée augmentée de 25% ; hitbox augmentée de 25%.</div></div>
+            <div class="change-row"><div class="key-badge">X</div><div class="change-desc">Brise maintenant l'Instinct ; end-lag réduit de 25%.</div></div>
+            <div class="change-row"><div class="key-badge">C</div><div class="change-desc">Hitbox augmentée de 15%. Lorsqu'il est maintenu pleinement, la durée du stun du dernier coup augmente de 50%.</div></div>
+            <div class="change-row"><div class="key-badge">V</div><div class="change-desc">Temps de lancement réduit de 25% ; end-lag réduit de 25% ; vitesse de déplacement augmentée de 20%.</div></div>
+        </div>
+    </div>
+
+    <div class="item-card">
+        <div class="item-header">
+            <div class="item-icon-slot adj"><!-- <img src="../pvp1/img/icons/diamond.png" alt=""> --></div>
+            <div class="item-name">Diamond</div>
+            <span class="item-badge adj"><span class="badge-dot"></span>Adjusted</span>
+        </div>
+        <div class="change-list">
+            <div class="change-row"><div class="key-badge">M1</div><div class="change-desc">Ne brise plus l'Instinct ; cooldown réduit de 20%.</div></div>
+            <div class="change-row"><div class="key-badge">C</div><div class="change-desc">Ajoute un stun de 1 seconde.</div></div>
+            <div class="change-row"><div class="key-badge">ALL</div><div class="change-desc">Tous les dégâts réduits de 10%.</div></div>
+        </div>
+    </div>
+
+    <div class="item-card">
+        <div class="item-header">
+            <div class="item-icon-slot buff"><!-- <img src="../pvp1/img/icons/dough.png" alt=""> --></div>
+            <div class="item-name">Dough</div>
+            <span class="item-badge buff"><span class="badge-dot"></span>Buffed</span>
+        </div>
+        <div class="section-label">Awakened</div>
+        <div class="change-list">
+            <div class="change-row"><div class="key-badge">Z · TAP</div><div class="change-desc">Hitbox augmentée de 15%.</div></div>
+            <div class="change-row"><div class="key-badge">Z · HOLD</div><div class="change-desc">Vitesse de déplacement augmentée de 20% ; hitbox augmentée de 15%.</div></div>
+            <div class="change-row"><div class="key-badge">X</div><div class="change-desc">End-lag en cas de touche réduit de 20% ; hitbox augmentée de 20% sur les deux variantes.</div></div>
+            <div class="change-row"><div class="key-badge">C</div><div class="change-desc">Hitbox augmentée de 25% ; durée du stun augmentée de 40%.</div></div>
+            <div class="change-row"><div class="key-badge">V</div><div class="change-desc">Durée maximale de maintien passée de 3 à 4 secondes ; temps de lancement réduit de 20%.</div></div>
+        </div>
+    </div>
+
+    <div class="item-card">
+        <div class="item-header">
+            <div class="item-icon-slot buff"><!-- <img src="../pvp1/img/icons/dragon.png" alt=""> --></div>
+            <div class="item-name">Dragon (Hybrid)</div>
+            <span class="item-badge buff"><span class="badge-dot"></span>Buffed</span>
+        </div>
+        <div class="section-label">Hybrid</div>
+        <div class="change-list">
+            <div class="change-row"><div class="key-badge">X</div><div class="change-desc">Brise maintenant l'Instinct ; hitbox augmentée de 20%.</div></div>
+        </div>
+    </div>
+
+    <div class="item-card">
+        <div class="item-header">
+            <div class="item-icon-slot buff"><!-- <img src="../pvp1/img/icons/eagle.png" alt=""> --></div>
+            <div class="item-name">Eagle</div>
+            <span class="item-badge buff"><span class="badge-dot"></span>Buffed</span>
+        </div>
+        <div class="change-list">
+            <div class="change-row"><div class="key-badge">Z</div><div class="change-desc">End-lag réduit de 20%.</div></div>
+            <div class="change-row"><div class="key-badge">C</div><div class="change-desc">Wind-up réduit de 45% ; vitesse de déplacement augmentée de 25%.</div></div>
+            <div class="change-row"><div class="key-badge">V</div><div class="change-desc">Hitbox augmentée de 20% ; durée du stun augmentée de 30%.</div></div>
+            <div class="change-row"><div class="key-badge">F</div><div class="change-desc">Vitesse de vol augmentée de 30%.</div></div>
+            <div class="change-row"><div class="key-badge">FLIGHT</div><div class="change-desc">La jauge se vide plus vite si une arme à feu ou une épée est équipée en vol.</div></div>
+        </div>
+    </div>
+
+    <div class="item-card">
+        <div class="item-header">
+            <div class="item-icon-slot nerf"><!-- <img src="../pvp1/img/icons/empyrean-kitsune.png" alt=""> --></div>
+            <div class="item-name">Empyrean Kitsune</div>
+            <span class="item-badge nerf"><span class="badge-dot"></span>Nerfed</span>
+        </div>
+        <div class="section-label">Untransformed</div>
+        <div class="change-list">
+            <div class="change-row"><div class="key-badge">Z · TAP</div><div class="change-desc">Ne brise plus l'Instinct.</div></div>
+            <div class="change-row"><div class="key-badge">Z · HOLD</div><div class="change-desc">Dégâts réduits de 30%.</div></div>
+            <div class="change-row"><div class="key-badge">X</div><div class="change-desc">Se canalise désormais au toucher ; l'utilisateur ne peut pas lancer d'autre capacité avant la fin de l'animation.</div></div>
+            <div class="change-row"><div class="key-badge">C</div><div class="change-desc">End-lag augmenté de 0,3 seconde.</div></div>
+        </div>
+    </div>
+
+    <div class="item-card">
+        <div class="item-header">
+            <div class="item-icon-slot buff"><!-- <img src="../pvp1/img/icons/fiend.png" alt=""> --></div>
+            <div class="item-name">Fiend</div>
+            <span class="item-badge buff"><span class="badge-dot"></span>Buffed</span>
+        </div>
+        <div class="section-label">Transformed</div>
+        <div class="change-list">
+            <div class="change-row"><div class="key-badge">Z · TAP</div><div class="change-desc">Wind-up réduit de 20% ; hitbox augmentée de 15%.</div></div>
+            <div class="change-row"><div class="key-badge">Z · HOLD</div><div class="change-desc">Temps de lancement réduit à 0,75 seconde.</div></div>
+            <div class="change-row"><div class="key-badge">X · HOLD</div><div class="change-desc">Temps de lancement réduit de 20% ; portée augmentée ; hitbox augmentée de 25%.</div></div>
+            <div class="change-row"><div class="key-badge">C</div><div class="change-desc">End-lag réduit de 60%.</div></div>
+            <div class="change-row"><div class="key-badge">F</div><div class="change-desc">Hitbox augmentée de 15%.</div></div>
+            <div class="change-row"><div class="key-badge">ALL</div><div class="change-desc">Tous les dégâts augmentés de 17%.</div></div>
+        </div>
+    </div>
+
+    <div class="item-card">
+        <div class="item-header">
+            <div class="item-icon-slot buff"><!-- <img src="../pvp1/img/icons/flame.png" alt=""> --></div>
+            <div class="item-name">Flame</div>
+            <span class="item-badge buff"><span class="badge-dot"></span>Buffed</span>
+        </div>
+        <div class="section-label">Awakened</div>
+        <div class="change-list">
+            <div class="change-row"><div class="key-badge">X</div><div class="change-desc">Vitesse de déplacement augmentée de 40%.</div></div>
+            <div class="change-row"><div class="key-badge">V</div><div class="change-desc">Temps de lancement réduit de 30% ; vitesse de déplacement augmentée de 30%.</div></div>
+            <div class="change-row"><div class="key-badge">F</div><div class="change-desc">Cooldown réduit de 20%.</div></div>
+        </div>
+    </div>
+
+    <div class="item-card">
+        <div class="item-header">
+            <div class="item-icon-slot buff"><!-- <img src="../pvp1/img/icons/gas.png" alt=""> --></div>
+            <div class="item-name">Gas</div>
+            <span class="item-badge buff"><span class="badge-dot"></span>Buffed</span>
+        </div>
+        <div class="section-label">Transformed</div>
+        <div class="change-list">
+            <div class="change-row"><div class="key-badge">Z</div><div class="change-desc">Hitbox augmentée de 15%.</div></div>
+            <div class="change-row"><div class="key-badge">C</div><div class="change-desc">Dégâts augmentés de 30% ; temps de chargement réduit de 30%.</div></div>
+        </div>
+    </div>
+
+    <div class="item-card">
+        <div class="item-header">
+            <div class="item-icon-slot buff"><!-- <img src="../pvp1/img/icons/ghost.png" alt=""> --></div>
+            <div class="item-name">Ghost</div>
+            <span class="item-badge buff"><span class="badge-dot"></span>Buffed</span>
+        </div>
+        <div class="change-list">
+            <div class="change-row"><div class="key-badge">Z</div><div class="change-desc">Temps de lancement réduit de 50% ; durée du stun augmentée de 1 à 1,2 seconde.</div></div>
+            <div class="change-row"><div class="key-badge">X</div><div class="change-desc">Portée augmentée de 15%.</div></div>
+            <div class="change-row"><div class="key-badge">C</div><div class="change-desc">Knockback réduit de 30%.</div></div>
+            <div class="change-row"><div class="key-badge">V</div><div class="change-desc"><strong>Nouveau :</strong> Les fantômes invoqués reçoivent une mise à niveau majeure et peuvent maintenant reproduire les capacités des épées.</div></div>
+            <div class="change-row"><div class="key-badge">F</div><div class="change-desc">Temps de lancement réduit de 50%.</div></div>
+        </div>
+    </div>
+
+    <div class="item-card">
+        <div class="item-header">
+            <div class="item-icon-slot buff"><!-- <img src="../pvp1/img/icons/ice.png" alt=""> --></div>
+            <div class="item-name">Ice</div>
+            <span class="item-badge buff"><span class="badge-dot"></span>Buffed</span>
+        </div>
+        <div class="section-label">Awakened</div>
+        <div class="change-list">
+            <div class="change-row"><div class="key-badge">X</div><div class="change-desc">Brise maintenant l'Instinct ; hitbox augmentée de 25%.</div></div>
+            <div class="change-row"><div class="key-badge">C</div><div class="change-desc">Vitesse de déplacement augmentée de 60%.</div></div>
+            <div class="change-row"><div class="key-badge">V</div><div class="change-desc">Utilisable dans les airs.</div></div>
+        </div>
+    </div>
+
+    <div class="item-card">
+        <div class="item-header">
+            <div class="item-icon-slot nerf"><!-- <img src="../pvp1/img/icons/kitsune.png" alt=""> --></div>
+            <div class="item-name">Kitsune</div>
+            <span class="item-badge nerf"><span class="badge-dot"></span>Nerfed</span>
+        </div>
+        <div class="section-label">Untransformed</div>
+        <div class="change-list">
+            <div class="change-row"><div class="key-badge">Z · TAP</div><div class="change-desc">Ne brise plus l'Instinct ; désormais esquivable par l'Instinct.</div></div>
+            <div class="change-row"><div class="key-badge">X</div><div class="change-desc">Se canalise désormais au toucher ; l'utilisateur ne peut pas lancer d'autre capacité avant la fin de l'animation.</div></div>
+            <div class="change-row"><div class="key-badge">C</div><div class="change-desc">End-lag augmenté de 0,3 seconde.</div></div>
+        </div>
+    </div>
+
+    <div class="item-card">
+        <div class="item-header">
+            <div class="item-icon-slot nerf"><!-- <img src="../pvp1/img/icons/lightning.png" alt=""> --></div>
+            <div class="item-name">Lightning</div>
+            <span class="item-badge nerf"><span class="badge-dot"></span>Nerfed</span>
+        </div>
+        <div class="change-list">
+            <div class="change-row"><div class="key-badge">V · TAP</div><div class="change-desc">Hitbox réduite de 10%.</div></div>
+            <div class="change-row"><div class="key-badge">V · HOLD</div><div class="change-desc">Hitbox gagnée en chargeant réduite de 25%.</div></div>
+        </div>
+    </div>
+
+    <div class="item-card">
+        <div class="item-header">
+            <div class="item-icon-slot buff"><!-- <img src="../pvp1/img/icons/mammoth.png" alt=""> --></div>
+            <div class="item-name">Mammoth</div>
+            <span class="item-badge buff"><span class="badge-dot"></span>Buffed</span>
+        </div>
+        <div class="change-list">
+            <div class="change-row"><div class="key-badge">ALL</div><div class="change-desc">Tous les dégâts augmentés de 10%.</div></div>
+        </div>
+        <hr class="section-sep">
+        <div class="section-label">Transformed</div>
+        <div class="change-list">
+            <div class="change-row"><div class="key-badge">DASH</div><div class="change-desc">Distance du dash augmentée de 10%.</div></div>
+        </div>
+    </div>
+
+    <div class="item-card">
+        <div class="item-header">
+            <div class="item-icon-slot adj"><!-- <img src="../pvp1/img/icons/pain.png" alt=""> --></div>
+            <div class="item-name">Pain</div>
+            <span class="item-badge adj"><span class="badge-dot"></span>Adjusted</span>
+        </div>
+        <div class="section-label">Last Stand</div>
+        <div class="change-list">
+            <div class="change-row"><div class="key-badge">PASSIVE</div><div class="change-desc">Last Stand maintient l'utilisateur en combat le temps qu'il est actif. La vie se réinitialise au maximum et se vide progressivement ; la guérison est désactivée. Éliminer un joueur adverse désactive Last Stand et remet le compteur à 0 — les PNJ ne comptent pas.</div></div>
+        </div>
+    </div>
+
+    <div class="item-card">
+        <div class="item-header">
+            <div class="item-icon-slot buff"><!-- <img src="../pvp1/img/icons/phoenix.png" alt=""> --></div>
+            <div class="item-name">Phoenix</div>
+            <span class="item-badge buff"><span class="badge-dot"></span>Buffed</span>
+        </div>
+        <div class="section-label">Awakened · Transformed</div>
+        <div class="change-list">
+            <div class="change-row"><div class="key-badge">M1</div><div class="change-desc">Dégâts augmentés de 20% ; hitbox augmentée de 20% ; hitbox d'explosion augmentée de 20%.</div></div>
+            <div class="change-row"><div class="key-badge">Z</div><div class="change-desc">Dégâts augmentés de 15%.</div></div>
+            <div class="change-row"><div class="key-badge">X</div><div class="change-desc">Coût en énergie réduit de 40%.</div></div>
+        </div>
+    </div>
+
+    <div class="item-card">
+        <div class="item-header">
+            <div class="item-icon-slot buff"><!-- <img src="../pvp1/img/icons/quake.png" alt=""> --></div>
+            <div class="item-name">Quake</div>
+            <span class="item-badge buff"><span class="badge-dot"></span>Buffed</span>
+        </div>
+        <div class="section-label">Awakened</div>
+        <div class="change-list">
+            <div class="change-row"><div class="key-badge">Z</div><div class="change-desc">Dégâts augmentés de 20% ; end-lag réduit de 70%.</div></div>
+            <div class="change-row"><div class="key-badge">X</div><div class="change-desc">Dégâts augmentés de 40% ; wind-up réduit de 30% ; end-lag réduit de 30%.</div></div>
+            <div class="change-row"><div class="key-badge">C</div><div class="change-desc">Dégâts augmentés de 40% ; wind-up réduit de 30% ; end-lag réduit de 30%.</div></div>
+            <div class="change-row"><div class="key-badge">V</div><div class="change-desc">Dégâts augmentés de 20%.</div></div>
+        </div>
+    </div>
+
+    <div class="item-card">
+        <div class="item-header">
+            <div class="item-icon-slot buff"><!-- <img src="../pvp1/img/icons/sand.png" alt=""> --></div>
+            <div class="item-name">Sand</div>
+            <span class="item-badge buff"><span class="badge-dot"></span>Buffed</span>
+        </div>
+        <div class="section-label">Awakened</div>
+        <div class="change-list">
+            <div class="change-row"><div class="key-badge">X</div><div class="change-desc">End-lag en cas de touche réduit de 40%.</div></div>
+            <div class="change-row"><div class="key-badge">C</div><div class="change-desc">End-lag réduit de 60% ; hitbox augmentée de 25%.</div></div>
+            <div class="change-row"><div class="key-badge">V</div><div class="change-desc">Force du vortex augmentée de 100%, attirant les ennemis bien plus vers le centre ; temps de lancement réduit de 50%.</div></div>
+            <div class="change-row"><div class="key-badge">F</div><div class="change-desc">Vitesse de vol augmentée de 25%.</div></div>
+        </div>
+    </div>
+
+    <div class="item-card">
+        <div class="item-header">
+            <div class="item-icon-slot buff"><!-- <img src="../pvp1/img/icons/spider.png" alt=""> --></div>
+            <div class="item-name">Spider</div>
+            <span class="item-badge buff"><span class="badge-dot"></span>Buffed</span>
+        </div>
+        <div class="section-label">Awakened</div>
+        <div class="change-list">
+            <div class="change-row"><div class="key-badge">Z</div><div class="change-desc">Dégâts augmentés de 50% ; portée augmentée de 20% ; hitbox augmentée de 60%.</div></div>
+            <div class="change-row"><div class="key-badge">X</div><div class="change-desc">Hitbox augmentée de 30% ; durée du stun augmentée de 20%.</div></div>
+        </div>
+    </div>
+
+    <div class="item-card">
+        <div class="item-header">
+            <div class="item-icon-slot buff"><!-- <img src="../pvp1/img/icons/tiger.png" alt=""> --></div>
+            <div class="item-name">Tiger</div>
+            <span class="item-badge buff"><span class="badge-dot"></span>Buffed</span>
+        </div>
+        <div class="section-label">Transformed</div>
+        <div class="change-list">
+            <div class="change-row"><div class="key-badge">X</div><div class="change-desc">Wind-up réduit de 20% ; hitbox augmentée de 15%.</div></div>
+            <div class="change-row"><div class="key-badge">C · TAP</div><div class="change-desc">Vitesse de déplacement augmentée de 20% ; hitbox augmentée de 10%.</div></div>
+            <div class="change-row"><div class="key-badge">C · HOLD</div><div class="change-desc">Temps de lancement réduit à 0,75 seconde ; portée augmentée.</div></div>
+            <div class="change-row"><div class="key-badge">F</div><div class="change-desc">Désormais esquivable avec l'Instinct ; vitesse de déplacement augmentée de 10%.</div></div>
+        </div>
+        <hr class="section-sep">
+        <div class="section-label">Blazing Form</div>
+        <div class="change-list">
+            <div class="change-row"><div class="key-badge">V</div><div class="change-desc">Soigne 30% de la vie maximale en entrant en Blazing Form.</div></div>
+            <div class="change-row"><div class="key-badge">Z</div><div class="change-desc">Dégâts augmentés de 30%.</div></div>
+            <div class="change-row"><div class="key-badge">X</div><div class="change-desc">Vitesse de déplacement augmentée de 50%.</div></div>
+            <div class="change-row"><div class="key-badge">C</div><div class="change-desc">Dégâts augmentés de 10% ; vitesse de déplacement augmentée de 15% ; hitbox augmentée de 15%.</div></div>
+            <div class="change-row"><div class="key-badge">F</div><div class="change-desc">Brise maintenant l'Instinct ; wind-up réduit de 30%.</div></div>
+        </div>
+    </div>
+
+    <div class="item-card">
+        <div class="item-header">
+            <div class="item-icon-slot buff"><!-- <img src="../pvp1/img/icons/werewolf.png" alt=""> --></div>
+            <div class="item-name">Werewolf</div>
+            <span class="item-badge buff"><span class="badge-dot"></span>Buffed</span>
+        </div>
+        <div class="section-label">Transformed</div>
+        <div class="change-list">
+            <div class="change-row"><div class="key-badge">PASSIVE</div><div class="change-desc">Lifesteal : soigne 3% de tous les dégâts infligés.</div></div>
+            <div class="change-row"><div class="key-badge">Z</div><div class="change-desc">Dégâts du dernier coup augmentés de 30% ; hitbox augmentée de 5%.</div></div>
+            <div class="change-row"><div class="key-badge">X</div><div class="change-desc">Wind-up réduit de 20% ; hitbox augmentée de 10%.</div></div>
+            <div class="change-row"><div class="key-badge">C · TAP</div><div class="change-desc">Vitesse de déplacement augmentée de 20% ; hitbox augmentée de 10%.</div></div>
+            <div class="change-row"><div class="key-badge">C · HOLD</div><div class="change-desc">Temps de lancement réduit à 0,75 seconde ; hitbox augmentée de 10%.</div></div>
+            <div class="change-row"><div class="key-badge">F</div><div class="change-desc">Désormais esquivable avec l'Instinct ; cooldown réduit de 15% ; vitesse de déplacement augmentée de 10%.</div></div>
+        </div>
+        <hr class="section-sep">
+        <div class="section-label">Blazing Form</div>
+        <div class="change-list">
+            <div class="change-row"><div class="key-badge">PASSIVE</div><div class="change-desc">Lifesteal : soigne 3% de tous les dégâts infligés.</div></div>
+            <div class="change-row"><div class="key-badge">V</div><div class="change-desc">Soigne 30% de la vie maximale lors de l'infection par la rage.</div></div>
+            <div class="change-row"><div class="key-badge">Z</div><div class="change-desc">Knockback réduit de 30%.</div></div>
+            <div class="change-row"><div class="key-badge">X</div><div class="change-desc">Vitesse de déplacement augmentée de 20%.</div></div>
+            <div class="change-row"><div class="key-badge">C</div><div class="change-desc">Dégâts augmentés de 20% ; vitesse de déplacement augmentée de 15% ; hitbox augmentée de 15%.</div></div>
+            <div class="change-row"><div class="key-badge">F</div><div class="change-desc">Wind-up réduit de 30%.</div></div>
+        </div>
+    </div>
+
+    <div class="item-card last">
+        <div class="item-header">
+            <div class="item-icon-slot buff"><!-- <img src="../pvp1/img/icons/yeti.png" alt=""> --></div>
+            <div class="item-name">Yeti</div>
+            <span class="item-badge buff"><span class="badge-dot"></span>Buffed</span>
+        </div>
+        <div class="section-label">Transformed</div>
+        <div class="change-list">
+            <div class="change-row"><div class="key-badge">F</div><div class="change-desc">Hitbox augmentée de 10%.</div></div>
+            <div class="change-row"><div class="key-badge">ALL</div><div class="change-desc">Tous les dégâts augmentés de 10%.</div></div>
+        </div>
+    </div>
+
+    <!-- ==================== FIGHTING STYLES ==================== -->
+    <div class="cat-header" id="fighting-styles">
+        <div class="cat-icon-slot"><!-- <img src="../pvp1/img/icons/fs-cat.png" alt=""> --></div>
+        <div class="cat-header-title">Fighting Styles</div>
+    </div>
+
+    <div class="item-card">
+        <div class="item-header">
+            <div class="item-icon-slot buff"><!-- <img src="../pvp1/img/icons/death-step.png" alt=""> --></div>
+            <div class="item-name">Death Step</div>
+            <span class="item-badge buff"><span class="badge-dot"></span>Buffed</span>
+        </div>
+        <div class="change-list">
+            <div class="change-row"><div class="key-badge">Z</div><div class="change-desc">Portée augmentée de 50% ; hitbox augmentée de 50%.</div></div>
+            <div class="change-row"><div class="key-badge">X</div><div class="change-desc">Portée augmentée de 20% ; hitbox augmentée de 20%.</div></div>
+            <div class="change-row"><div class="key-badge">C</div><div class="change-desc">Dégâts par seconde augmentés de 20% ; end-lag réduit de 0,25 à 0,1 seconde ; hitbox augmentée de 15%.</div></div>
+            <div class="change-row"><div class="key-badge">V</div><div class="change-desc">Cooldown réduit de 50% ; durée réduite de 50%.</div></div>
+        </div>
+    </div>
+
+    <div class="item-card">
+        <div class="item-header">
+            <div class="item-icon-slot nerf"><!-- <img src="../pvp1/img/icons/sanguine.png" alt=""> --></div>
+            <div class="item-name">Sanguine</div>
+            <span class="item-badge nerf"><span class="badge-dot"></span>Nerfed</span>
+        </div>
+        <div class="change-list">
+            <div class="change-row"><div class="key-badge">C</div><div class="change-desc">Portée réduite de 15% ; hitbox réduite de 10%.</div></div>
+        </div>
+    </div>
+
+    <div class="item-card last">
+        <div class="item-header">
+            <div class="item-icon-slot buff"><!-- <img src="../pvp1/img/icons/sharkman.png" alt=""> --></div>
+            <div class="item-name">Sharkman Karate</div>
+            <span class="item-badge buff"><span class="badge-dot"></span>Buffed</span>
+        </div>
+        <div class="change-list">
+            <div class="change-row"><div class="key-badge">X</div><div class="change-desc">Ne projette plus l'adversaire dans les airs ; vitesse des orbes augmentée de 25%.</div></div>
+            <div class="change-row"><div class="key-badge">C</div><div class="change-desc"><strong>Nouveau :</strong> Accorde maintenant une santé temporaire basée sur les dégâts absorbés. N'est plus esquivable par l'Instinct ; la prise ne peut plus être annulée par les dégâts entrants ; réduction des dégâts augmentée pendant la prise ; durée maximale de maintien de 1,5 seconde.</div></div>
+        </div>
+    </div>
+
+    <!-- ==================== SWORDS ==================== -->
+    <div class="cat-header" id="swords">
+        <div class="cat-icon-slot"><!-- <img src="../pvp1/img/icons/sword-cat.png" alt=""> --></div>
+        <div class="cat-header-title">Swords</div>
+    </div>
+
+    <div class="item-card">
+        <div class="item-header">
+            <div class="item-icon-slot buff"><!-- <img src="../pvp1/img/icons/dark-blade.png" alt=""> --></div>
+            <div class="item-name">Dark Blade</div>
+            <span class="item-badge buff"><span class="badge-dot"></span>Buffed</span>
+        </div>
+        <div class="change-list">
+            <div class="change-row"><div class="key-badge">Z</div><div class="change-desc">Vitesse de chargement maintenu augmentée de 10% ; end-lag réduit de 30% ; portée augmentée de 10% ; hitbox augmentée de 10%.</div></div>
+        </div>
+    </div>
+
+    <div class="item-card">
+        <div class="item-header">
+            <div class="item-icon-slot nerf"><!-- <img src="../pvp1/img/icons/dragonheart.png" alt=""> --></div>
+            <div class="item-name">Dragonheart</div>
+            <span class="item-badge nerf"><span class="badge-dot"></span>Nerfed</span>
+        </div>
+        <div class="change-list">
+            <div class="change-row"><div class="key-badge">Z</div><div class="change-desc">Drain d'Instinct réduit de 50% pour les premiers coups.</div></div>
+        </div>
+    </div>
+
+    <div class="item-card">
+        <div class="item-header">
+            <div class="item-icon-slot buff"><!-- <img src="../pvp1/img/icons/pole-v2.png" alt=""> --></div>
+            <div class="item-name">Pole V2</div>
+            <span class="item-badge buff"><span class="badge-dot"></span>Buffed</span>
+        </div>
+        <div class="change-list">
+            <div class="change-row"><div class="key-badge">Z</div><div class="change-desc">Hitbox augmentée de 35%.</div></div>
+            <div class="change-row"><div class="key-badge">X</div><div class="change-desc">End-lag réduit de 0,3 à 0,15 seconde ; portée augmentée de 20% ; hitbox augmentée de 20%.</div></div>
+        </div>
+    </div>
+
+    <div class="item-card">
+        <div class="item-header">
+            <div class="item-icon-slot adj"><!-- <img src="../pvp1/img/icons/true-triple-katana.png" alt=""> --></div>
+            <div class="item-name">True Triple Katana</div>
+            <span class="item-badge adj"><span class="badge-dot"></span>Adjusted</span>
+        </div>
+        <div class="change-list">
+            <div class="change-row"><div class="key-badge">X</div><div class="change-desc">End-lag augmenté de 0,5 seconde ; vitesse de déplacement augmentée de 25%.</div></div>
+        </div>
+    </div>
+
+    <div class="item-card">
+        <div class="item-header">
+            <div class="item-icon-slot buff"><!-- <img src="../pvp1/img/icons/twin-hooks.png" alt=""> --></div>
+            <div class="item-name">Twin Hooks</div>
+            <span class="item-badge buff"><span class="badge-dot"></span>Buffed</span>
+        </div>
+        <div class="change-list">
+            <div class="change-row"><div class="key-badge">Z</div><div class="change-desc">La zone d'atterrissage de l'ennemi est désormais plus prévisible.</div></div>
+        </div>
+    </div>
+
+    <div class="item-card last">
+        <div class="item-header">
+            <div class="item-icon-slot nerf"><!-- <img src="../pvp1/img/icons/yama.png" alt=""> --></div>
+            <div class="item-name">Yama</div>
+            <span class="item-badge nerf"><span class="badge-dot"></span>Nerfed</span>
+        </div>
+        <div class="change-list">
+            <div class="change-row"><div class="key-badge">X</div><div class="change-desc">Ne brise plus l'Instinct ; ne draine l'Instinct que tant que la cible reste dans la hitbox.</div></div>
+        </div>
+    </div>
+
+    <!-- ==================== GUNS ==================== -->
+    <div class="cat-header" id="guns">
+        <div class="cat-icon-slot"><!-- <img src="../pvp1/img/icons/gun-cat.png" alt=""> --></div>
+        <div class="cat-header-title">Guns</div>
+    </div>
+
+    <div class="item-card">
+        <div class="item-header">
+            <div class="item-icon-slot buff"><!-- <img src="../pvp1/img/icons/kabucha.png" alt=""> --></div>
+            <div class="item-name">Kabucha</div>
+            <span class="item-badge buff"><span class="badge-dot"></span>Buffed</span>
+        </div>
+        <div class="change-list">
+            <div class="change-row"><div class="key-badge">Z</div><div class="change-desc">Applique maintenant un stun de 0,5 seconde au lieu d'un knockup.</div></div>
+            <div class="change-row"><div class="key-badge">X</div><div class="change-desc">End-lag réduit de 0,4 à 0,2 seconde.</div></div>
+        </div>
+    </div>
+
+    <div class="item-card">
+        <div class="item-header">
+            <div class="item-icon-slot nerf"><!-- <img src="../pvp1/img/icons/skull-guitar.png" alt=""> --></div>
+            <div class="item-name">Skull Guitar</div>
+            <span class="item-badge nerf"><span class="badge-dot"></span>Nerfed</span>
+        </div>
+        <div class="change-list">
+            <div class="change-row"><div class="key-badge">FIX</div><div class="change-desc">Exploit de mouvement atténué.</div></div>
+            <div class="change-row"><div class="key-badge">X</div><div class="change-desc">Hitbox réduite de 15%.</div></div>
+        </div>
+    </div>
+
+    <div class="item-card last">
+        <div class="item-header">
+            <div class="item-icon-slot buff"><!-- <img src="../pvp1/img/icons/venom-bow.png" alt=""> --></div>
+            <div class="item-name">Venom Bow</div>
+            <span class="item-badge buff"><span class="badge-dot"></span>Buffed</span>
+        </div>
+        <div class="change-list">
+            <div class="change-row"><div class="key-badge">Z</div><div class="change-desc">Portée augmentée de 15%.</div></div>
+            <div class="change-row"><div class="key-badge">X</div><div class="change-desc">Applique désormais un stun de 1 seconde même en cas d'esquive par l'Instinct.</div></div>
+        </div>
+    </div>
+
+    <!-- ==================== RACES ==================== -->
+    <div class="cat-header" id="races">
+        <div class="cat-icon-slot"><!-- <img src="../pvp1/img/icons/race-cat.png" alt=""> --></div>
+        <div class="cat-header-title">Races</div>
+    </div>
+
+    <div class="item-card">
+        <div class="item-header">
+            <div class="item-icon-slot nerf"><!-- <img src="../pvp1/img/icons/ghoul-v4.png" alt=""> --></div>
+            <div class="item-name">Ghoul v4</div>
+            <span class="item-badge nerf"><span class="badge-dot"></span>Nerfed</span>
+        </div>
+        <div class="change-list">
+            <div class="change-row"><div class="key-badge">1 GEAR</div><div class="change-desc">Lifesteal réduit de 27% à 20%.</div></div>
+            <div class="change-row"><div class="key-badge">2 GEAR</div><div class="change-desc">Lifesteal réduit de 37% à 30%.</div></div>
+            <div class="change-row"><div class="key-badge">CROWS</div><div class="change-desc">Les corbeaux drainent maintenant l'Instinct au lieu de le briser instantanément.</div></div>
+            <div class="change-row"><div class="key-badge">DAMAGE</div><div class="change-desc">Dégâts des corbeaux réduits de 10%.</div></div>
+        </div>
+    </div>
+
+    <div class="item-card last">
+        <div class="item-header">
+            <div class="item-icon-slot adj"><!-- <img src="../pvp1/img/icons/shark-v4.png" alt=""> --></div>
+            <div class="item-name">Shark v4</div>
+            <span class="item-badge adj"><span class="badge-dot"></span>Adjusted</span>
+        </div>
+        <div class="section-label">V3</div>
+        <div class="change-list">
+            <div class="change-row"><div class="key-badge">COOLDOWN</div><div class="change-desc">Cooldown augmenté de 15%.</div></div>
+            <div class="change-row"><div class="key-badge">DURATION</div><div class="change-desc">Durée augmentée de 4,5 à 5 secondes.</div></div>
+        </div>
+        <hr class="section-sep">
+        <div class="section-label">V4</div>
+        <div class="change-list">
+            <div class="change-row"><div class="key-badge">SHIELD</div><div class="change-desc">Le bouclier amélioré peut désormais absorber jusqu'à 60% de la vie maximale.</div></div>
+            <div class="change-row"><div class="key-badge">DAMAGE</div><div class="change-desc">Les ennemis touchés par le tourbillon subissent 20% de dégâts en moins.</div></div>
+        </div>
+    </div>
+
+    <!-- ==================== SYSTEMS ==================== -->
+    <div class="cat-header" id="systems">
+        <div class="cat-icon-slot"><!-- <img src="../pvp1/img/icons/system-cat.png" alt=""> --></div>
+        <div class="cat-header-title">Systems</div>
+    </div>
+
+    <div class="item-card">
+        <div class="item-header">
+            <div class="item-icon-slot buff"><!-- <img src="../pvp1/img/icons/gun-m1.png" alt=""> --></div>
+            <div class="item-name">Gun M1s</div>
+            <span class="item-badge buff"><span class="badge-dot"></span>Buffed</span>
+        </div>
+        <div class="section-label">System Change</div>
+        <div class="change-list">
+            <div class="change-row"><div class="key-badge">M1</div><div class="change-desc">Toutes les attaques M1 des armes à feu ont désormais l'Aim Assist.</div></div>
+        </div>
+    </div>
+
+    <div class="item-card last">
+        <div class="item-header">
+            <div class="item-icon-slot buff"><!-- <img src="../pvp1/img/icons/instinct.png" alt=""> --></div>
+            <div class="item-name">Instinct</div>
+            <span class="item-badge buff"><span class="badge-dot"></span>Buffed</span>
+        </div>
+        <div class="change-list">
+            <div class="change-row"><div class="key-badge">DODGES</div><div class="change-desc">Temps de régénération des esquives réduit de 40 à 30 secondes, permettant de récupérer les esquives d'Instinct 25% plus vite.</div></div>
+        </div>
+    </div>
+
+    <!-- BUG FIXES -->
+    <div class="bugfix-box" id="bugfixes">
+        <div class="bugfix-header">
+            <div class="bugfix-icon">🐛</div>
+            <div class="bugfix-title">Bug Fixes</div>
+        </div>
+        <hr class="bugfix-divider">
+        <div class="change-list">
+            <div class="change-row">
+                <div class="key-badge" style="min-width:80px;font-size:10px;line-height:1.3;">TAB BOOST MOVEMENT EXPLOIT</div>
+                <div class="change-desc">Corrigé pour Dragon Talon, Diamond, Electric Claw et Sanguine. L'exploit permettait aux joueurs de se déplacer beaucoup plus loin que prévu lorsqu'il était déclenché.</div>
+            </div>
+            <div class="change-row">
+                <div class="key-badge" style="min-width:80px;font-size:10px;line-height:1.3;">FLASH STEP INSTANT COMBO EXPLOIT</div>
+                <div class="change-desc">Corrigé. L'exploit permettait à certains joueurs d'enchaîner instantanément des coups après le Flash Step.</div>
+            </div>
+        </div>
+    </div>
+
+    <p class="footer-note">Nous continuerons à surveiller l'évolution de la nouvelle meta et à effectuer les ajustements d'équilibrage nécessaires au fil du temps.</p>
+
+    <div class="social-share">
+        <a href="https://discord.gg/a6S6eugPn" class="td">
+            <img src="../shared/discord.png" alt="Discord"> Discord
+        </a>
+        <a href="https://tiktok.com/@dc_neolixx" class="tt">
+            <img src="../shared/tiktok.png" alt="TikTok"> TikTok
+        </a>
+        <a href="https://www.youtube.com/@Dc_neolixx" class="ty">
+            <img src="../shared/youtube.png" alt="YouTube"> YouTube
+        </a>
+    </div>
+
+    <div class="back-button-container">
+        <a href="../index.html" class="back-button">← Retour aux Actualités</a>
+    </div>
+
+</main>
+
+<footer class="site-footer">
+    <div class="footer-col">
+        <h3>Blox Fruits News</h3>
+        <p>Votre source d'information sur Blox Fruits.<br>Bulletins, mises à jour, leaks et communauté.</p>
+    </div>
+    <div class="footer-col">
+        <h3>Liens</h3>
+        <ul>
+            <li><a href="../index.html">News</a></li>
+            <li><a href="../neo_bulletin.html">Leaks</a></li>
+            <li><a href="../archives.html">Archives</a></li>
+        </ul>
+    </div>
+    <div class="footer-col">
+        <h3>Communauté</h3>
+        <div class="footer-community-links">
+            <a href="https://discord.gg/a6S6eugPn">Discord</a>
+            <a href="https://tiktok.com/@dc_neolixx">TikTok</a>
+            <a href="https://www.youtube.com/@Dc_neolixx">YouTube</a>
+        </div>
+    </div>
+</footer>
+
+<script>
+    (function() {
+        const menuBtn = document.getElementById('menuToggle');
+        const mobileNav = document.getElementById('mobileNav');
+        const backdrop = document.getElementById('mobileNavBackdrop');
+        const closeBtn = document.getElementById('mobileNavClose');
+        function open() {
+            mobileNav.classList.add('is-open'); backdrop.classList.add('is-open');
+            mobileNav.setAttribute('aria-hidden', 'false');
+            menuBtn.textContent = 'close'; menuBtn.setAttribute('aria-expanded', 'true');
+            document.body.style.overflow = 'hidden';
+        }
+        function close() {
+            mobileNav.classList.remove('is-open'); backdrop.classList.remove('is-open');
+            mobileNav.setAttribute('aria-hidden', 'true');
+            menuBtn.textContent = 'menu'; menuBtn.setAttribute('aria-expanded', 'false');
+            document.body.style.overflow = '';
+        }
+        menuBtn.addEventListener('click', () => mobileNav.classList.contains('is-open') ? close() : open());
+        backdrop.addEventListener('click', close);
+        closeBtn.addEventListener('click', close);
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+        mobileNav.querySelectorAll('a').forEach(a => a.addEventListener('click', close));
+    })();
+</script>
+</body>
+</html>
