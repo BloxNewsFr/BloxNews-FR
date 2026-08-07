@@ -148,6 +148,7 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
         .intro-box h2 { font-size: 20px; font-weight: 800; margin: 0 0 12px; color: #0f172a; }
+        .intro-box .intro-img { width: 100%; height: auto; display: block; border-radius: 10px; margin: 0 0 16px; }
         .intro-box p { font-size: 15px; line-height: 1.75; color: #374151; margin: 0 0 12px; }
         .intro-box p:last-child { margin-bottom: 0; }
 
@@ -281,7 +282,13 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
         .bugfix-header { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
-        .bugfix-icon { font-size: 28px; }
+        .bugfix-icon {
+            width: 50px; height: 50px; border-radius: 10px;
+            border: 2.5px solid var(--color-adj); overflow: hidden; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            background: var(--color-adj-bg);
+        }
+        .bugfix-icon img { width: 100%; height: 100%; object-fit: cover; }
         .bugfix-title { font-size: 20px; font-weight: 900; color: #0f172a; }
         .bugfix-divider { border: none; border-top: 1.5px dashed #e2e8f0; margin-bottom: 14px; }
 
@@ -377,11 +384,7 @@
 
     <!-- HERO IMAGE -->
     <div class="hero-image-wrapper">
-        <!-- Remplace ce bloc par : <img src="../pvp1/img/hero.png" class="" alt=""> -->
-        <div class="hero-img-placeholder">
-            <img src="../pvp1/img/PvpChanges.png" class="" alt="">
-            Image hero à ajouter
-        </div>
+        <img src="../pvp1/img/PvpChanges.png" alt="">
     </div>
 
     <div class="publish-date">6 Août 2026</div>
@@ -397,6 +400,7 @@
     <!-- INTRO -->
     <div class="intro-box">
         <h2>Une multitude de changements pour remodeler le PvP</h2>
+        <img src="../pvp1/img/FSMeeting.png" class="intro-img" alt="Réunion des développeurs – Summer PvP Patch">
         <p>La <strong>2026 Summer Balance Update</strong> est le plus grand patch d'équilibrage jamais publié, avec plus de 100 changements sur les Fruits, les Fighting Styles, les Swords, les Guns, les Races et les mécaniques d'Instinct.</p>
         <p>Certains builds familiers ont dominé le PvP depuis longtemps, tandis que d'autres outils ont peiné à trouver leur place. Cette mise à jour vise à bouleverser la meta en réduisant les options dominantes et en donnant aux Fruits, Armes et Fighting Styles sous-utilisés de meilleures hitboxes, des capacités plus rapides, de nouveaux outils utiles et, dans certains cas, <strong>un comportement complètement nouveau</strong>.</p>
         <p>Tu risques de redécouvrir de vieux favoris, d'essayer des combinaisons inhabituelles et de repenser les builds sur lesquels tu comptais. Avec autant de changements en même temps, le PvP peut sembler un peu chaotique au début — c'est ce qui rend une mise à jour aussi grande excitante !</p>
@@ -493,13 +497,13 @@
 
     <!-- ==================== FRUITS ==================== -->
     <div class="cat-header" id="fruits">
-        <div class="cat-icon-slot"><!-- <img src="../pvp1/img/icons/fruit-cat.png" alt=""> --></div>
+        <div class="cat-icon-slot"><img src="../pvp1/img/icons/Bulletin_Fruit_Flame.png.webp" alt=""></div>
         <div class="cat-header-title">Fruits</div>
     </div>
 
     <div class="item-card">
         <div class="item-header">
-            <div class="item-icon-slot adj"><!-- <img src="../pvp1/img/icons/control.png" alt=""> --></div>
+            <div class="item-icon-slot adj"><img src="../pvp1/img/icons/Bulletin_Fruit_Control.png.webp" alt=""></div>
             <div class="item-name">Control</div>
             <span class="item-badge adj"><span class="badge-dot"></span>Adjusted</span>
         </div>
@@ -520,7 +524,7 @@
 
     <div class="item-card">
         <div class="item-header">
-            <div class="item-icon-slot buff"><!-- <img src="../pvp1/img/icons/dark.png" alt=""> --></div>
+            <div class="item-icon-slot buff"><img src="../pvp1/img/icons/Bulletin_Fruit_Dark.png.webp" alt=""></div>
             <div class="item-name">Dark</div>
             <span class="item-badge buff"><span class="badge-dot"></span>Buffed</span>
         </div>
@@ -535,7 +539,7 @@
 
     <div class="item-card">
         <div class="item-header">
-            <div class="item-icon-slot adj"><!-- <img src="../pvp1/img/icons/diamond.png" alt=""> --></div>
+            <div class="item-icon-slot adj"><img src="../pvp1/img/icons/Bulletin_Fruit_Diamond.png.webp" alt=""></div>
             <div class="item-name">Diamond</div>
             <span class="item-badge adj"><span class="badge-dot"></span>Adjusted</span>
         </div>
@@ -548,7 +552,7 @@
 
     <div class="item-card">
         <div class="item-header">
-            <div class="item-icon-slot buff"><!-- <img src="../pvp1/img/icons/dough.png" alt=""> --></div>
+            <div class="item-icon-slot buff"><img src="../pvp1/img/icons/Bulletin_Fruit_Dough.png.webp" alt=""></div>
             <div class="item-name">Dough</div>
             <span class="item-badge buff"><span class="badge-dot"></span>Buffed</span>
         </div>
@@ -564,7 +568,7 @@
 
     <div class="item-card">
         <div class="item-header">
-            <div class="item-icon-slot buff"><!-- <img src="../pvp1/img/icons/dragon.png" alt=""> --></div>
+            <div class="item-icon-slot buff"><img src="../pvp1/img/icons/BF_Dragon_Hybrid.png.webp" alt=""></div>
             <div class="item-name">Dragon (Hybrid)</div>
             <span class="item-badge buff"><span class="badge-dot"></span>Buffed</span>
         </div>
@@ -576,7 +580,7 @@
 
     <div class="item-card">
         <div class="item-header">
-            <div class="item-icon-slot buff"><!-- <img src="../pvp1/img/icons/eagle.png" alt=""> --></div>
+            <div class="item-icon-slot buff"><img src="../pvp1/img/icons/Bulletin_Fruit_Eagle.png.webp" alt=""></div>
             <div class="item-name">Eagle</div>
             <span class="item-badge buff"><span class="badge-dot"></span>Buffed</span>
         </div>
@@ -591,7 +595,7 @@
 
     <div class="item-card">
         <div class="item-header">
-            <div class="item-icon-slot nerf"><!-- <img src="../pvp1/img/icons/empyrean-kitsune.png" alt=""> --></div>
+            <div class="item-icon-slot nerf"><img src="../pvp1/img/icons/Bulletin_Fruit_Empyrean.png.webp" alt=""></div>
             <div class="item-name">Empyrean Kitsune</div>
             <span class="item-badge nerf"><span class="badge-dot"></span>Nerfed</span>
         </div>
@@ -606,7 +610,7 @@
 
     <div class="item-card">
         <div class="item-header">
-            <div class="item-icon-slot buff"><!-- <img src="../pvp1/img/icons/fiend.png" alt=""> --></div>
+            <div class="item-icon-slot buff"><img src="../pvp1/img/icons/Bulletin_Fruit_Fiend.png.webp" alt=""></div>
             <div class="item-name">Fiend</div>
             <span class="item-badge buff"><span class="badge-dot"></span>Buffed</span>
         </div>
@@ -623,7 +627,7 @@
 
     <div class="item-card">
         <div class="item-header">
-            <div class="item-icon-slot buff"><!-- <img src="../pvp1/img/icons/flame.png" alt=""> --></div>
+            <div class="item-icon-slot buff"><img src="../pvp1/img/icons/Bulletin_Fruit_Flame.png.webp" alt=""></div>
             <div class="item-name">Flame</div>
             <span class="item-badge buff"><span class="badge-dot"></span>Buffed</span>
         </div>
@@ -637,7 +641,7 @@
 
     <div class="item-card">
         <div class="item-header">
-            <div class="item-icon-slot buff"><!-- <img src="../pvp1/img/icons/gas.png" alt=""> --></div>
+            <div class="item-icon-slot buff"><img src="../pvp1/img/icons/Bulletin_Fruit_Gas.png.webp" alt=""></div>
             <div class="item-name">Gas</div>
             <span class="item-badge buff"><span class="badge-dot"></span>Buffed</span>
         </div>
@@ -650,7 +654,7 @@
 
     <div class="item-card">
         <div class="item-header">
-            <div class="item-icon-slot buff"><!-- <img src="../pvp1/img/icons/ghost.png" alt=""> --></div>
+            <div class="item-icon-slot buff"><img src="../pvp1/img/icons/Bulletin_Fruit_Ghost.png.webp" alt=""></div>
             <div class="item-name">Ghost</div>
             <span class="item-badge buff"><span class="badge-dot"></span>Buffed</span>
         </div>
@@ -665,7 +669,7 @@
 
     <div class="item-card">
         <div class="item-header">
-            <div class="item-icon-slot buff"><!-- <img src="../pvp1/img/icons/ice.png" alt=""> --></div>
+            <div class="item-icon-slot buff"><img src="../pvp1/img/icons/Bulletin_Fruit_Ice.png.webp" alt=""></div>
             <div class="item-name">Ice</div>
             <span class="item-badge buff"><span class="badge-dot"></span>Buffed</span>
         </div>
@@ -679,7 +683,7 @@
 
     <div class="item-card">
         <div class="item-header">
-            <div class="item-icon-slot nerf"><!-- <img src="../pvp1/img/icons/kitsune.png" alt=""> --></div>
+            <div class="item-icon-slot nerf"><img src="../pvp1/img/icons/Bulletin_Fruit_Kitsune.png.webp" alt=""></div>
             <div class="item-name">Kitsune</div>
             <span class="item-badge nerf"><span class="badge-dot"></span>Nerfed</span>
         </div>
@@ -693,7 +697,7 @@
 
     <div class="item-card">
         <div class="item-header">
-            <div class="item-icon-slot nerf"><!-- <img src="../pvp1/img/icons/lightning.png" alt=""> --></div>
+            <div class="item-icon-slot nerf"><img src="../pvp1/img/icons/Bulletin_Fruit_Lightning.png.webp" alt=""></div>
             <div class="item-name">Lightning</div>
             <span class="item-badge nerf"><span class="badge-dot"></span>Nerfed</span>
         </div>
@@ -705,7 +709,7 @@
 
     <div class="item-card">
         <div class="item-header">
-            <div class="item-icon-slot buff"><!-- <img src="../pvp1/img/icons/mammoth.png" alt=""> --></div>
+            <div class="item-icon-slot buff"><img src="../pvp1/img/icons/Bulletin_Fruit_Mammoth.png.webp" alt=""></div>
             <div class="item-name">Mammoth</div>
             <span class="item-badge buff"><span class="badge-dot"></span>Buffed</span>
         </div>
@@ -721,7 +725,7 @@
 
     <div class="item-card">
         <div class="item-header">
-            <div class="item-icon-slot adj"><!-- <img src="../pvp1/img/icons/pain.png" alt=""> --></div>
+            <div class="item-icon-slot adj"><img src="../pvp1/img/icons/Bulletin_Fruit_Pain.png.webp" alt=""></div>
             <div class="item-name">Pain</div>
             <span class="item-badge adj"><span class="badge-dot"></span>Adjusted</span>
         </div>
@@ -733,7 +737,7 @@
 
     <div class="item-card">
         <div class="item-header">
-            <div class="item-icon-slot buff"><!-- <img src="../pvp1/img/icons/phoenix.png" alt=""> --></div>
+            <div class="item-icon-slot buff"><img src="../pvp1/img/icons/Bulletin_Fruit_Phoenix.png.webp" alt=""></div>
             <div class="item-name">Phoenix</div>
             <span class="item-badge buff"><span class="badge-dot"></span>Buffed</span>
         </div>
@@ -747,7 +751,7 @@
 
     <div class="item-card">
         <div class="item-header">
-            <div class="item-icon-slot buff"><!-- <img src="../pvp1/img/icons/quake.png" alt=""> --></div>
+            <div class="item-icon-slot buff"><img src="../pvp1/img/icons/Bulletin_Fruit_Quake.png.webp" alt=""></div>
             <div class="item-name">Quake</div>
             <span class="item-badge buff"><span class="badge-dot"></span>Buffed</span>
         </div>
@@ -762,7 +766,7 @@
 
     <div class="item-card">
         <div class="item-header">
-            <div class="item-icon-slot buff"><!-- <img src="../pvp1/img/icons/sand.png" alt=""> --></div>
+            <div class="item-icon-slot buff"><img src="../pvp1/img/icons/Bulletin_Fruit_Sand.png.webp" alt=""></div>
             <div class="item-name">Sand</div>
             <span class="item-badge buff"><span class="badge-dot"></span>Buffed</span>
         </div>
@@ -777,7 +781,7 @@
 
     <div class="item-card">
         <div class="item-header">
-            <div class="item-icon-slot buff"><!-- <img src="../pvp1/img/icons/spider.png" alt=""> --></div>
+            <div class="item-icon-slot buff"><img src="../pvp1/img/icons/Bulletin_Fruit_Spider.png.webp" alt=""></div>
             <div class="item-name">Spider</div>
             <span class="item-badge buff"><span class="badge-dot"></span>Buffed</span>
         </div>
@@ -790,7 +794,7 @@
 
     <div class="item-card">
         <div class="item-header">
-            <div class="item-icon-slot buff"><!-- <img src="../pvp1/img/icons/tiger.png" alt=""> --></div>
+            <div class="item-icon-slot buff"><img src="../pvp1/img/icons/Bulletin_Fruit_Tiger.png.webp" alt=""></div>
             <div class="item-name">Tiger</div>
             <span class="item-badge buff"><span class="badge-dot"></span>Buffed</span>
         </div>
@@ -814,7 +818,7 @@
 
     <div class="item-card">
         <div class="item-header">
-            <div class="item-icon-slot buff"><!-- <img src="../pvp1/img/icons/werewolf.png" alt=""> --></div>
+            <div class="item-icon-slot buff"><img src="../pvp1/img/icons/Bulletin_Fruit_Werewolf.png.webp" alt=""></div>
             <div class="item-name">Werewolf</div>
             <span class="item-badge buff"><span class="badge-dot"></span>Buffed</span>
         </div>
@@ -841,7 +845,7 @@
 
     <div class="item-card last">
         <div class="item-header">
-            <div class="item-icon-slot buff"><!-- <img src="../pvp1/img/icons/yeti.png" alt=""> --></div>
+            <div class="item-icon-slot buff"><img src="../pvp1/img/icons/Bulletin_Fruit_Yeti.png.webp" alt=""></div>
             <div class="item-name">Yeti</div>
             <span class="item-badge buff"><span class="badge-dot"></span>Buffed</span>
         </div>
@@ -854,13 +858,13 @@
 
     <!-- ==================== FIGHTING STYLES ==================== -->
     <div class="cat-header" id="fighting-styles">
-        <div class="cat-icon-slot"><!-- <img src="../pvp1/img/icons/fs-cat.png" alt=""> --></div>
+        <div class="cat-icon-slot"><img src="../pvp1/img/icons/FS_Bulletin_DeathStep.png.webp" alt=""></div>
         <div class="cat-header-title">Fighting Styles</div>
     </div>
 
     <div class="item-card">
         <div class="item-header">
-            <div class="item-icon-slot buff"><!-- <img src="../pvp1/img/icons/death-step.png" alt=""> --></div>
+            <div class="item-icon-slot buff"><img src="../pvp1/img/icons/FS_Bulletin_DeathStep.png.webp" alt=""></div>
             <div class="item-name">Death Step</div>
             <span class="item-badge buff"><span class="badge-dot"></span>Buffed</span>
         </div>
@@ -874,7 +878,7 @@
 
     <div class="item-card">
         <div class="item-header">
-            <div class="item-icon-slot nerf"><!-- <img src="../pvp1/img/icons/sanguine.png" alt=""> --></div>
+            <div class="item-icon-slot nerf"><img src="../pvp1/img/icons/FS_Bulletin_SanguineArt.png.webp" alt=""></div>
             <div class="item-name">Sanguine</div>
             <span class="item-badge nerf"><span class="badge-dot"></span>Nerfed</span>
         </div>
@@ -885,7 +889,7 @@
 
     <div class="item-card last">
         <div class="item-header">
-            <div class="item-icon-slot buff"><!-- <img src="../pvp1/img/icons/sharkman.png" alt=""> --></div>
+            <div class="item-icon-slot buff"><img src="../pvp1/img/icons/FS_Bulletin_SharkmanKarate.png.webp" alt=""></div>
             <div class="item-name">Sharkman Karate</div>
             <span class="item-badge buff"><span class="badge-dot"></span>Buffed</span>
         </div>
@@ -897,13 +901,13 @@
 
     <!-- ==================== SWORDS ==================== -->
     <div class="cat-header" id="swords">
-        <div class="cat-icon-slot"><!-- <img src="../pvp1/img/icons/sword-cat.png" alt=""> --></div>
+        <div class="cat-icon-slot"><img src="../pvp1/img/icons/Sword_Bulletin_DarkBlade.webp" alt=""></div>
         <div class="cat-header-title">Swords</div>
     </div>
 
     <div class="item-card">
         <div class="item-header">
-            <div class="item-icon-slot buff"><!-- <img src="../pvp1/img/icons/dark-blade.png" alt=""> --></div>
+            <div class="item-icon-slot buff"><img src="../pvp1/img/icons/Sword_Bulletin_DarkBlade.webp" alt=""></div>
             <div class="item-name">Dark Blade</div>
             <span class="item-badge buff"><span class="badge-dot"></span>Buffed</span>
         </div>
@@ -914,7 +918,7 @@
 
     <div class="item-card">
         <div class="item-header">
-            <div class="item-icon-slot nerf"><!-- <img src="../pvp1/img/icons/dragonheart.png" alt=""> --></div>
+            <div class="item-icon-slot nerf"><img src="../pvp1/img/icons/Sword_Bulletin_Dragonheart.webp" alt=""></div>
             <div class="item-name">Dragonheart</div>
             <span class="item-badge nerf"><span class="badge-dot"></span>Nerfed</span>
         </div>
@@ -925,7 +929,7 @@
 
     <div class="item-card">
         <div class="item-header">
-            <div class="item-icon-slot buff"><!-- <img src="../pvp1/img/icons/pole-v2.png" alt=""> --></div>
+            <div class="item-icon-slot buff"><img src="../pvp1/img/icons/Sword_Bulletin_Pole_2ndForm.webp.jxl" alt=""></div>
             <div class="item-name">Pole V2</div>
             <span class="item-badge buff"><span class="badge-dot"></span>Buffed</span>
         </div>
@@ -937,7 +941,7 @@
 
     <div class="item-card">
         <div class="item-header">
-            <div class="item-icon-slot adj"><!-- <img src="../pvp1/img/icons/true-triple-katana.png" alt=""> --></div>
+            <div class="item-icon-slot adj"><img src="../pvp1/img/icons/Sword_Bulletin_TrueTripleKatana.webp" alt=""></div>
             <div class="item-name">True Triple Katana</div>
             <span class="item-badge adj"><span class="badge-dot"></span>Adjusted</span>
         </div>
@@ -948,7 +952,7 @@
 
     <div class="item-card">
         <div class="item-header">
-            <div class="item-icon-slot buff"><!-- <img src="../pvp1/img/icons/twin-hooks.png" alt=""> --></div>
+            <div class="item-icon-slot buff"><img src="../pvp1/img/icons/Sword_Bulletin_TwinHooks.webp" alt=""></div>
             <div class="item-name">Twin Hooks</div>
             <span class="item-badge buff"><span class="badge-dot"></span>Buffed</span>
         </div>
@@ -959,7 +963,7 @@
 
     <div class="item-card last">
         <div class="item-header">
-            <div class="item-icon-slot nerf"><!-- <img src="../pvp1/img/icons/yama.png" alt=""> --></div>
+            <div class="item-icon-slot nerf"><img src="../pvp1/img/icons/Sword_Bulletin_Yama.webp" alt=""></div>
             <div class="item-name">Yama</div>
             <span class="item-badge nerf"><span class="badge-dot"></span>Nerfed</span>
         </div>
@@ -970,13 +974,13 @@
 
     <!-- ==================== GUNS ==================== -->
     <div class="cat-header" id="guns">
-        <div class="cat-icon-slot"><!-- <img src="../pvp1/img/icons/gun-cat.png" alt=""> --></div>
+        <div class="cat-icon-slot"><img src="../pvp1/img/icons/Gun_Bulletin_Kabucha.webp.jxl" alt=""></div>
         <div class="cat-header-title">Guns</div>
     </div>
 
     <div class="item-card">
         <div class="item-header">
-            <div class="item-icon-slot buff"><!-- <img src="../pvp1/img/icons/kabucha.png" alt=""> --></div>
+            <div class="item-icon-slot buff"><img src="../pvp1/img/icons/Gun_Bulletin_Kabucha.webp.jxl" alt=""></div>
             <div class="item-name">Kabucha</div>
             <span class="item-badge buff"><span class="badge-dot"></span>Buffed</span>
         </div>
@@ -988,7 +992,7 @@
 
     <div class="item-card">
         <div class="item-header">
-            <div class="item-icon-slot nerf"><!-- <img src="../pvp1/img/icons/skull-guitar.png" alt=""> --></div>
+            <div class="item-icon-slot nerf"><img src="../pvp1/img/icons/Gun_Bulletin_SkullGuitar.webp" alt=""></div>
             <div class="item-name">Skull Guitar</div>
             <span class="item-badge nerf"><span class="badge-dot"></span>Nerfed</span>
         </div>
@@ -1000,7 +1004,7 @@
 
     <div class="item-card last">
         <div class="item-header">
-            <div class="item-icon-slot buff"><!-- <img src="../pvp1/img/icons/venom-bow.png" alt=""> --></div>
+            <div class="item-icon-slot buff"><img src="../pvp1/img/icons/Gun_Bulletin_VenomBow.webp" alt=""></div>
             <div class="item-name">Venom Bow</div>
             <span class="item-badge buff"><span class="badge-dot"></span>Buffed</span>
         </div>
@@ -1012,13 +1016,13 @@
 
     <!-- ==================== RACES ==================== -->
     <div class="cat-header" id="races">
-        <div class="cat-icon-slot"><!-- <img src="../pvp1/img/icons/race-cat.png" alt=""> --></div>
+        <div class="cat-icon-slot"><img src="../pvp1/img/icons/Shark_Bulletin.png.webp" alt=""></div>
         <div class="cat-header-title">Races</div>
     </div>
 
     <div class="item-card">
         <div class="item-header">
-            <div class="item-icon-slot nerf"><!-- <img src="../pvp1/img/icons/ghoul-v4.png" alt=""> --></div>
+            <div class="item-icon-slot nerf"><img src="../pvp1/img/icons/Ghoul_Bulletin.png.webp" alt=""></div>
             <div class="item-name">Ghoul v4</div>
             <span class="item-badge nerf"><span class="badge-dot"></span>Nerfed</span>
         </div>
@@ -1032,7 +1036,7 @@
 
     <div class="item-card last">
         <div class="item-header">
-            <div class="item-icon-slot adj"><!-- <img src="../pvp1/img/icons/shark-v4.png" alt=""> --></div>
+            <div class="item-icon-slot adj"><img src="../pvp1/img/icons/Shark_Bulletin.png.webp" alt=""></div>
             <div class="item-name">Shark v4</div>
             <span class="item-badge adj"><span class="badge-dot"></span>Adjusted</span>
         </div>
@@ -1081,7 +1085,7 @@
     <!-- BUG FIXES -->
     <div class="bugfix-box" id="bugfixes">
         <div class="bugfix-header">
-            <div class="bugfix-icon">🐛</div>
+            <div class="bugfix-icon"><img src="../pvp1/img/icons/Misc_Bulletin_BugFix.png.webp" alt=""></div>
             <div class="bugfix-title">Bug Fixes</div>
         </div>
         <hr class="bugfix-divider">
