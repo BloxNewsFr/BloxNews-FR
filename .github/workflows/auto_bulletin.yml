@@ -2,8 +2,8 @@ name: Auto bulletin Blox Fruits
 
 on:
   schedule:
-    - cron: "*/10 * * * *"
-  workflow_dispatch:
+    - cron: "*/10 * * * *"   # toutes les 10 minutes
+  workflow_dispatch:         # declenchement manuel
 
 permissions:
   contents: write
