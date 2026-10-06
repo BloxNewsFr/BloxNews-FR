@@ -2,11 +2,11 @@ name: Auto bulletin Blox Fruits
 
 on:
   schedule:
-    - cron: "0 */6 * * *"   # toutes les 6 heures (UTC)
-  workflow_dispatch:         # déclenchement manuel
+    - cron: "*/10 * * * *"   # toutes les 10 minutes
+  workflow_dispatch:           # déclenchement manuel
 
 permissions:
-  contents: write            # nécessaire pour committer les nouveaux bulletins
+  contents: write
 
 concurrency:
   group: auto-bulletin
@@ -31,7 +31,7 @@ jobs:
       - name: Run script
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-        run: python fetch_bulletin.py --init
+        run: python fetch_bulletin.py
 
       - name: Commit & push if changes
         run: |
