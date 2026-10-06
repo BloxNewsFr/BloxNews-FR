@@ -186,22 +186,25 @@ def next_number() -> int:
 
 
 def fetch_entries() -> list[dict]:
-    """Essaie le proxy RSS2JSON, puis l'Atom direct, puis le scraping HTML."""
     entries = _from_rss2json()
     if entries:
         print(f"[rss2json] {len(entries)} entrees recuperees.")
+        print("[rss2json] URLs trouvees :")
+        for e in entries:
+            print(f"  - {e['url']}")
         return entries
     print("[rss2json] echec, essai Atom direct...")
     entries = _from_atom_direct()
     if entries:
         print(f"[atom] {len(entries)} entrees recuperees.")
+        for e in entries:
+            print(f"  - {e['url']}")
         return entries
     print("[atom] echec, essai scraping HTML...")
     return _from_html()
 
 
 def _from_rss2json() -> list[dict]:
-    """Utilise api.rss2json.com comme proxy pour contourner le blocage IP."""
     try:
         r = requests.get(
             RSS2JSON_URL,
@@ -230,12 +233,10 @@ def _from_rss2json() -> list[dict]:
 
 
 def _from_atom_direct() -> list[dict]:
-    """Tente de lire l'Atom feed directement."""
     import xml.etree.ElementTree as ET
     try:
         r = requests.get(FEED_URL, headers=HEADERS, timeout=TIMEOUT)
         r.raise_for_status()
-        # Verifie que c'est bien du XML (pas une page HTML d'erreur)
         content_type = r.headers.get("content-type", "")
         if "html" in content_type and "xml" not in content_type:
             print(f"[atom] reponse HTML (pas XML), content-type={content_type}")
@@ -450,10 +451,12 @@ def main() -> int:
         return 1
 
     state = load_state()
+    print(f"[state] {len(state['seen'])} URLs deja vues.")
+
     entries = fetch_entries()
     if not entries:
         print("No entries fetched (toutes les sources ont echoue).")
-        return 0  # exit 0 pour ne pas faire echouer le workflow inutilement
+        return 0
 
     if "--init" in sys.argv:
         state["seen"] = sorted({*state["seen"], *(e["url"] for e in entries)})
@@ -461,8 +464,8 @@ def main() -> int:
         print(f"{len(entries)} entries marked as seen.")
         return 0
 
-    new = [e for e in entries
-           if e["url"] not in state["seen"] and is_relevant(e)]
+    new = [e for e in entries if e["url"] not in state["seen"] and is_relevant(e)]
+    print(f"[filter] {len(new)} nouveaux bulletins non vus.")
     if not new:
         print("No new bulletin.")
         return 0
