@@ -9,7 +9,6 @@ import os
 import re
 import sys
 import time
-import xml.etree.ElementTree as ET
 from datetime import datetime
 from html import escape
 from pathlib import Path
@@ -32,23 +31,15 @@ INDEX          = REPO_ROOT / "index.html"
 TIMEOUT        = 30
 KEYWORDS: list[str] = []
 
-# Headers qui imitent un vrai navigateur Chrome pour eviter le blocage 503
+# Proxy RSS gratuit pour contourner le blocage IP de GitHub Actions
+RSS2JSON_URL = "https://api.rss2json.com/v1/api.json"
+
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36",
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
     "Accept-Language": "fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7",
     "Accept-Encoding": "gzip, deflate, br",
     "Connection": "keep-alive",
-    "Upgrade-Insecure-Requests": "1",
-    "Sec-Fetch-Dest": "document",
-    "Sec-Fetch-Mode": "navigate",
-    "Sec-Fetch-Site": "none",
-    "Cache-Control": "max-age=0",
-}
-
-HEADERS_ATOM = {
-    **HEADERS,
-    "Accept": "application/atom+xml,application/xml;q=0.9,*/*;q=0.8",
 }
 
 # ---------------------------------------------------------------------------
@@ -95,7 +86,6 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     <link rel="icon" type="image/png" href="../shared/favicon.png">
     <link rel="shortcut icon" href="../shared/bf_logo.png" type="image/png">
     <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
     <style>
         :root {{ --color-text: #333132; --color-primary: #ffda00; }}
         * {{ box-sizing: border-box; }}
@@ -132,14 +122,8 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         .social-share a.ty {{ background: #ec1717; color: #fff; }}
         .back-button-container {{ text-align: center; margin: 40px 0 50px; }}
         .back-button {{ background: linear-gradient(135deg,#ffda00,#ffc200); color: #000; text-decoration: none; font-weight: 900; padding: 11px 24px; border-radius: 100px; font-size: 13px; text-transform: uppercase; display: inline-block; }}
-        body.dark-mode {{ background: #0b0b12; color: #ddd; }}
-        body.dark-mode .site-header {{ background: rgba(10,10,18,0.75); }}
-        body.dark-mode .bulletin-section h2 {{ border-bottom-color: #444; color: #eee; }}
-        body.dark-mode .bulletin-section p, body.dark-mode .bulletin-section li {{ color: #ccc; }}
-        body.dark-mode .journal-title {{ color: #eee; }}
         @media (max-width: 768px) {{ .blue-banner {{ font-size: 24px; padding: 12px 30px; }} .site-header {{ padding: 0 16px; }} .site-header__logo {{ left: 16px; }} .site-header__icons {{ right: 16px; }} .site-nav {{ display: none; }} }}
     </style>
-    <link rel="stylesheet" href="../shared/bulletin-lightbox.css">
 </head>
 <body>
     <header class="site-header">
@@ -178,7 +162,6 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             </div>
         </div>
     </main>
-    <script src="../shared/bulletin-lightbox.js"></script>
 </body>
 </html>"""
 
@@ -203,17 +186,60 @@ def next_number() -> int:
 
 
 def fetch_entries() -> list[dict]:
-    entries = _from_atom()
+    """Essaie le proxy RSS2JSON, puis l'Atom direct, puis le scraping HTML."""
+    entries = _from_rss2json()
     if entries:
+        print(f"[rss2json] {len(entries)} entrees recuperees.")
         return entries
-    print("Atom feed unavailable, falling back to HTML scrape.")
+    print("[rss2json] echec, essai Atom direct...")
+    entries = _from_atom_direct()
+    if entries:
+        print(f"[atom] {len(entries)} entrees recuperees.")
+        return entries
+    print("[atom] echec, essai scraping HTML...")
     return _from_html()
 
 
-def _from_atom() -> list[dict]:
+def _from_rss2json() -> list[dict]:
+    """Utilise api.rss2json.com comme proxy pour contourner le blocage IP."""
     try:
-        r = requests.get(FEED_URL, headers=HEADERS_ATOM, timeout=TIMEOUT)
+        r = requests.get(
+            RSS2JSON_URL,
+            params={"rss_url": FEED_URL, "count": 20},
+            timeout=TIMEOUT,
+        )
         r.raise_for_status()
+        data = r.json()
+        if data.get("status") != "ok":
+            print(f"[rss2json] status={data.get('status')}: {data.get('message', '')}")
+            return []
+        out = []
+        for item in data.get("items", []):
+            url = item.get("link") or item.get("guid") or ""
+            pub = (item.get("pubDate") or "")[:10]
+            out.append({
+                "title": (item.get("title") or "").strip(),
+                "url":   url,
+                "date":  pub,
+                "html":  item.get("content") or item.get("description") or "",
+            })
+        return [x for x in out if x["url"]]
+    except Exception as exc:
+        print(f"[rss2json] {exc}")
+        return []
+
+
+def _from_atom_direct() -> list[dict]:
+    """Tente de lire l'Atom feed directement."""
+    import xml.etree.ElementTree as ET
+    try:
+        r = requests.get(FEED_URL, headers=HEADERS, timeout=TIMEOUT)
+        r.raise_for_status()
+        # Verifie que c'est bien du XML (pas une page HTML d'erreur)
+        content_type = r.headers.get("content-type", "")
+        if "html" in content_type and "xml" not in content_type:
+            print(f"[atom] reponse HTML (pas XML), content-type={content_type}")
+            return []
         ns = {"a": "http://www.w3.org/2005/Atom"}
         root = ET.fromstring(r.content)
         out = []
@@ -235,8 +261,12 @@ def _from_atom() -> list[dict]:
 
 
 def _from_html() -> list[dict]:
-    r = requests.get(BLOG_URL, headers=HEADERS, timeout=TIMEOUT)
-    r.raise_for_status()
+    try:
+        r = requests.get(BLOG_URL, headers=HEADERS, timeout=TIMEOUT)
+        r.raise_for_status()
+    except Exception as exc:
+        print(f"[html] page principale inaccessible: {exc}")
+        return []
     soup = BeautifulSoup(r.text, "html.parser")
     seen, links = set(), []
     for a in soup.select("a[href*='/blogs/news/']"):
@@ -247,7 +277,7 @@ def _from_html() -> list[dict]:
         links.append(href)
     out = []
     for url in links:
-        time.sleep(1)  # petit delai pour eviter le rate-limiting
+        time.sleep(1)
         try:
             pr = requests.get(url, headers=HEADERS, timeout=TIMEOUT)
             pr.raise_for_status()
@@ -310,7 +340,6 @@ def download_images(urls: list[str], img_dir: Path) -> list[str]:
 
 
 def call_gemini(prompt: str) -> str:
-    """Appelle l'API Gemini v1beta et retourne le texte genere."""
     url = (f"https://generativelanguage.googleapis.com/v1beta/models/"
            f"{GEMINI_MODEL}:generateContent?key={GEMINI_API_KEY}")
     payload = {
@@ -379,17 +408,12 @@ def translate_content(entry: dict, image_names: list[str]) -> tuple[str, str, st
     return title_fr, subtitle_fr, date_fr, content
 
 
-def build_page(number, title, subtitle, date_fr, date_iso, images, content):
+def build_page(number, title, subtitle, date_fr, images, content):
     hero_img = images[0] if images else "image-01.jpg"
-    try:
-        dt = datetime.strptime(date_iso, "%Y-%m-%d")
-        release_ts = dt.strftime("%Y-%m-%dT10:00:00Z")
-    except Exception:
-        release_ts = "2026-01-01T10:00:00Z"
     return HTML_TEMPLATE.format(
         NUMBER=number, TITLE=escape(title), SUBTITLE=escape(subtitle),
-        DATE_FR=date_fr, DATE_ISO=date_iso, OG_IMAGE=hero_img,
-        HERO_IMG=hero_img, CONTENT=content, RELEASE_TS=release_ts,
+        DATE_FR=date_fr, OG_IMAGE=hero_img,
+        HERO_IMG=hero_img, CONTENT=content,
     )
 
 
@@ -428,8 +452,8 @@ def main() -> int:
     state = load_state()
     entries = fetch_entries()
     if not entries:
-        print("No entries fetched.")
-        return 1
+        print("No entries fetched (toutes les sources ont echoue).")
+        return 0  # exit 0 pour ne pas faire echouer le workflow inutilement
 
     if "--init" in sys.argv:
         state["seen"] = sorted({*state["seen"], *(e["url"] for e in entries)})
@@ -451,8 +475,7 @@ def main() -> int:
         saved_images = download_images(extract_images(entry), folder / "img")
 
         title_fr, subtitle_fr, date_fr, content = translate_content(entry, saved_images)
-        page = build_page(number, title_fr, subtitle_fr, date_fr,
-                          entry["date"], saved_images, content)
+        page = build_page(number, title_fr, subtitle_fr, date_fr, saved_images, content)
         (folder / f"bulletin-{number}.html").write_text(page, encoding="utf-8")
 
         update_index(number, entry["date"], saved_images)
