@@ -2,8 +2,8 @@ name: Auto bulletin Blox Fruits
 
 on:
   schedule:
-    - cron: "*/10 * * * *"   # toutes les 10 minutes
-  workflow_dispatch:           # déclenchement manuel
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -26,11 +26,11 @@ jobs:
           cache: pip
 
       - name: Install dependencies
-        run: pip install requests beautifulsoup4 anthropic
+        run: pip install requests beautifulsoup4
 
       - name: Run script
         env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: python fetch_bulletin.py
 
       - name: Commit & push if changes
@@ -39,7 +39,7 @@ jobs:
           git config user.email "bulletin-bot@users.noreply.github.com"
           git add -A
           if git diff --cached --quiet; then
-            echo "Rien à committer."
+            echo "Rien a committer."
           else
             git commit -m "Auto : nouveau bulletin Blox Fruits"
             git push
