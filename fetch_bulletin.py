@@ -22,16 +22,16 @@ from bs4 import BeautifulSoup
 # ─────────────────────────────────────────────────────────────────────────────
 # CONFIGURATION
 # ─────────────────────────────────────────────────────────────────────────────
-BLOG_URL    = "https://gamerrobot.com/blogs/news"
-FEED_URL    = BLOG_URL + ".atom"
-GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-1.5-flash")
+BLOG_URL       = "https://gamerrobot.com/blogs/news"
+FEED_URL       = BLOG_URL + ".atom"
+GEMINI_MODEL   = os.getenv("GEMINI_MODEL", "gemini-2.0-flash")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
-MAX_NEW     = int(os.getenv("MAX_NEW_PER_RUN", "3"))
-REPO_ROOT   = Path(__file__).resolve().parent
-STATE       = REPO_ROOT / "sources.json"
-INDEX       = REPO_ROOT / "index.html"
-HEADERS     = {"User-Agent": "Mozilla/5.0 (compatible; BloxBulletinBot/1.0)"}
-TIMEOUT     = 30
+MAX_NEW        = int(os.getenv("MAX_NEW_PER_RUN", "3"))
+REPO_ROOT      = Path(__file__).resolve().parent
+STATE          = REPO_ROOT / "sources.json"
+INDEX          = REPO_ROOT / "index.html"
+HEADERS        = {"User-Agent": "Mozilla/5.0 (compatible; BloxBulletinBot/1.0)"}
+TIMEOUT        = 30
 KEYWORDS: list[str] = []
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -373,7 +373,6 @@ def download_images(urls: list[str], img_dir: Path) -> list[str]:
 
 
 def call_gemini(prompt: str) -> str:
-    """Appelle l'API Gemini et retourne le texte généré."""
     url = f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}:generateContent?key={GEMINI_API_KEY}"
     payload = {
         "contents": [{"parts": [{"text": SYSTEM_PROMPT + "\n\n" + prompt}]}],
