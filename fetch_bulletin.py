@@ -2,6 +2,7 @@
 """
 fetch_bulletin.py - Blox Fruits FR auto-bulletin
 Utilise Google Gemini (gratuit) pour traduire les bulletins.
+Strategique : sonde les URLs previsibles des bulletins au lieu de scraper.
 """
 
 import json
@@ -9,7 +10,6 @@ import os
 import re
 import sys
 import time
-import xml.etree.ElementTree as ET
 from html import escape
 from pathlib import Path
 from urllib.parse import urljoin, urlparse
@@ -20,8 +20,7 @@ from bs4 import BeautifulSoup
 # ---------------------------------------------------------------------------
 # CONFIGURATION
 # ---------------------------------------------------------------------------
-BLOG_URL       = "https://gamerrobot.com/blogs/news"
-SITEMAP_INDEX  = "https://gamerrobot.com/sitemap.xml"
+BLOG_BASE      = "https://gamerrobot.com/blogs/news/"
 GEMINI_MODEL   = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 MAX_NEW        = int(os.getenv("MAX_NEW_PER_RUN", "3"))
@@ -29,14 +28,26 @@ REPO_ROOT      = Path(__file__).resolve().parent
 STATE          = REPO_ROOT / "sources.json"
 INDEX          = REPO_ROOT / "index.html"
 TIMEOUT        = 30
-KEYWORDS: list[str] = []
+
+# Pattern des URLs de bulletins GamerRobot
+BULLETIN_URL_PATTERNS = [
+    "the-blox-bulletin-{num:03d}",
+    "the-blox-bulletin-{num}",
+    "blox-bulletin-{num:03d}",
+    "blox-bulletin-{num}",
+]
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36",
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-    "Accept-Language": "fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7",
+    "Accept-Language": "en-US,en;q=0.9",
     "Accept-Encoding": "gzip, deflate, br",
     "Connection": "keep-alive",
+    "Upgrade-Insecure-Requests": "1",
+    "Sec-Fetch-Dest": "document",
+    "Sec-Fetch-Mode": "navigate",
+    "Sec-Fetch-Site": "none",
+    "Cache-Control": "max-age=0",
 }
 
 # ---------------------------------------------------------------------------
@@ -164,118 +175,85 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 
 
 # ---------------------------------------------------------------------------
-# HELPERS
+# STATE
 # ---------------------------------------------------------------------------
 def load_state() -> dict:
     if STATE.exists():
         return json.loads(STATE.read_text(encoding="utf-8"))
-    return {"seen": []}
+    return {"seen": [], "last_bulletin_num": 24}
 
 
 def save_state(state: dict) -> None:
     STATE.write_text(json.dumps(state, indent=2, ensure_ascii=False), encoding="utf-8")
 
 
-def next_number() -> int:
+def next_folder_number() -> int:
     nums = [int(p.name) for p in REPO_ROOT.iterdir()
             if p.is_dir() and re.fullmatch(r"\d{3}", p.name)]
     return (max(nums) if nums else 0) + 1
 
 
-def fetch_entries() -> list[dict]:
-    """Recupere les URLs du blog via le sitemap Shopify (toujours accessible)."""
-    entries = _from_sitemap()
-    if entries:
-        print(f"[sitemap] {len(entries)} entrees recuperees.")
-        print("[sitemap] URLs trouvees :")
-        for e in entries:
-            print(f"  - {e['url']}")
-        return entries
-    print("[sitemap] echec.")
-    return []
-
-
-def _from_sitemap() -> list[dict]:
-    """Parse le sitemap Shopify pour lister les articles du blog.
-    Le sitemap est du XML statique servi par Shopify CDN, pas bloque par GamerRobot.
+# ---------------------------------------------------------------------------
+# DETECTION DES NOUVEAUX BULLETINS
+# ---------------------------------------------------------------------------
+def probe_bulletin(num: int) -> dict | None:
+    """Tente de charger le bulletin numero 'num' en testant les patterns d'URL connus.
+    Retourne un dict avec url+html si trouve, None sinon.
     """
-    try:
-        # D'abord le sitemap index
-        r = requests.get(SITEMAP_INDEX, headers=HEADERS, timeout=TIMEOUT)
-        r.raise_for_status()
-        root = ET.fromstring(r.content)
-        ns = {"sm": "http://www.sitemaps.org/schemas/sitemap/0.9"}
-
-        # Cherche le sitemap des articles de blog
-        blog_sitemap_url = None
-        for loc in root.findall(".//sm:loc", ns):
-            url = loc.text or ""
-            if "blog" in url or "news" in url or "article" in url:
-                blog_sitemap_url = url
-                print(f"[sitemap] sitemap blog trouve: {url}")
-                break
-
-        if not blog_sitemap_url:
-            # Essaie directement sitemap_blogs_1.xml
-            blog_sitemap_url = "https://gamerrobot.com/sitemap_blogs_1.xml"
-            print(f"[sitemap] essai direct: {blog_sitemap_url}")
-
-        r2 = requests.get(blog_sitemap_url, headers=HEADERS, timeout=TIMEOUT)
-        r2.raise_for_status()
-        root2 = ET.fromstring(r2.content)
-
-        out = []
-        for url_el in root2.findall(".//sm:url", ns):
-            loc = url_el.findtext("sm:loc", namespaces=ns) or ""
-            lastmod = (url_el.findtext("sm:lastmod", namespaces=ns) or "")[:10]
-            # Filtre uniquement les articles du blog news
-            if "/blogs/news/" not in loc:
-                continue
-            # Exclut la page principale du blog
-            if loc.rstrip("/") == BLOG_URL.rstrip("/"):
-                continue
-            out.append({
-                "title": loc.split("/")[-1].replace("-", " ").title(),
-                "url":   loc,
-                "date":  lastmod,
-                "html":  "",  # sera charge plus tard si necessaire
-            })
-
-        # Trie du plus recent au plus ancien
-        out.sort(key=lambda x: x["date"], reverse=True)
-        return out
-
-    except Exception as exc:
-        print(f"[sitemap] {exc}")
-        return []
+    for pattern in BULLETIN_URL_PATTERNS:
+        slug = pattern.format(num=num)
+        url = BLOG_BASE + slug
+        try:
+            r = requests.get(url, headers=HEADERS, timeout=TIMEOUT, allow_redirects=True)
+            # 200 = existe, 404 = n'existe pas encore
+            if r.status_code == 200:
+                # Verifie que c'est bien une page article (pas une redirect vers /blogs/news)
+                final_url = r.url.rstrip("/")
+                if final_url == "https://gamerrobot.com/blogs/news" or "/blogs/news" not in final_url:
+                    print(f"  [probe] {url} -> redirect vers page principale, skip")
+                    continue
+                print(f"  [probe] TROUVE: {url} (status {r.status_code})")
+                return {"url": url, "html_response": r, "slug": slug}
+            elif r.status_code == 404:
+                print(f"  [probe] {url} -> 404 (n'existe pas encore)")
+            else:
+                print(f"  [probe] {url} -> {r.status_code}")
+        except Exception as exc:
+            print(f"  [probe] {url} -> erreur: {exc}")
+    return None
 
 
-def fetch_article_html(entry: dict) -> str:
-    """Charge le HTML d'un article specifique."""
-    try:
-        r = requests.get(entry["url"], headers=HEADERS, timeout=TIMEOUT)
-        r.raise_for_status()
-        soup = BeautifulSoup(r.text, "html.parser")
-        body = soup.select_one("article, .article-template, .rte, main") or soup
+def fetch_entries(state: dict) -> list[dict]:
+    """Cherche les bulletins suivant le dernier connu."""
+    last = state.get("last_bulletin_num", 24)
+    entries = []
+    # Sonde les 3 prochains numeros possibles
+    for num in range(last + 1, last + 4):
+        print(f"[detect] sonde bulletin #{num:03d}...")
+        result = probe_bulletin(num)
+        if result is None:
+            print(f"[detect] bulletin #{num:03d} pas encore disponible.")
+            break  # si le num+1 n'existe pas, inutile de tester num+2
+        # Parse le HTML
+        soup = BeautifulSoup(result["html_response"].text, "html.parser")
+        body = soup.select_one("article, .article-template, .rte, .article__body, main") or soup
         title_tag = soup.find("h1")
         time_tag = soup.find("time")
-        if title_tag:
-            entry["title"] = title_tag.get_text(strip=True)
-        if time_tag:
-            entry["date"] = (time_tag.get("datetime", "")[:10] or entry["date"])
-        return str(body)
-    except Exception as exc:
-        print(f"  [article] erreur {entry['url']}: {exc}")
-        return ""
+        title = title_tag.get_text(strip=True) if title_tag else f"Blox Bulletin #{num:03d}"
+        date = (time_tag.get("datetime", "")[:10] if time_tag else "")
+        entries.append({
+            "num": num,
+            "title": title,
+            "url": result["url"],
+            "date": date,
+            "html": str(body),
+        })
+    return entries
 
 
-def is_relevant(entry: dict) -> bool:
-    if not KEYWORDS:
-        return True
-    hay = (entry["title"] + " " + entry["url"]).lower()
-    return any(k in hay for k in KEYWORDS)
-
-
+# ---------------------------------------------------------------------------
+# TRAITEMENT
+# ---------------------------------------------------------------------------
 def extract_images(html: str, base_url: str) -> list[str]:
     soup = BeautifulSoup(html, "html.parser")
     images = []
@@ -421,48 +399,32 @@ def main() -> int:
         return 1
 
     state = load_state()
-    print(f"[state] {len(state['seen'])} URLs deja vues.")
+    last = state.get("last_bulletin_num", 24)
+    print(f"[state] dernier bulletin connu: #{last:03d}, {len(state.get('seen', []))} URLs vues.")
 
-    entries = fetch_entries()
+    entries = fetch_entries(state)
     if not entries:
-        print("No entries fetched.")
+        print("Aucun nouveau bulletin detecte.")
         return 0
 
-    if "--init" in sys.argv:
-        state["seen"] = sorted({*state["seen"], *(e["url"] for e in entries)})
-        save_state(state)
-        print(f"{len(entries)} entries marked as seen.")
-        return 0
+    for entry in entries[:MAX_NEW]:
+        folder_num = f"{next_folder_number():03d}"
+        print(f"-> New bulletin {folder_num}: {entry['title']}")
 
-    new = [e for e in entries if e["url"] not in state["seen"] and is_relevant(e)]
-    print(f"[filter] {len(new)} nouveaux bulletins non vus.")
-    if not new:
-        print("No new bulletin.")
-        return 0
-
-    for entry in list(reversed(new))[:MAX_NEW]:
-        number = f"{next_number():03d}"
-        print(f"-> Chargement article: {entry['url']}")
-        entry["html"] = fetch_article_html(entry)
-        if not entry["html"]:
-            print(f"  HTML vide, skip.")
-            state["seen"].append(entry["url"])
-            save_state(state)
-            continue
-
-        print(f"-> New bulletin {number}: {entry['title']}")
-        folder = REPO_ROOT / number
+        folder = REPO_ROOT / folder_num
         saved_images = download_images(extract_images(entry["html"], entry["url"]), folder / "img")
 
         title_fr, subtitle_fr, date_fr, content = translate_content(entry, saved_images)
-        page = build_page(number, title_fr, subtitle_fr, date_fr, saved_images, content)
-        (folder / f"bulletin-{number}.html").write_text(page, encoding="utf-8")
+        page = build_page(folder_num, title_fr, subtitle_fr, date_fr, saved_images, content)
+        (folder / f"bulletin-{folder_num}.html").write_text(page, encoding="utf-8")
 
-        update_index(number, entry["date"], saved_images)
+        update_index(folder_num, entry["date"], saved_images)
 
-        state["seen"].append(entry["url"])
+        # Met a jour le state
+        state.setdefault("seen", []).append(entry["url"])
+        state["last_bulletin_num"] = entry["num"]
         save_state(state)
-        print(f"  OK {folder.name}/bulletin-{number}.html ({len(saved_images)} images)")
+        print(f"  OK {folder.name}/bulletin-{folder_num}.html ({len(saved_images)} images)")
 
     return 0
 
