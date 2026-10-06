@@ -23,10 +23,22 @@ jobs:
           cache: pip
       - name: Install dependencies
         run: pip install requests beautifulsoup4
+      - name: List available Gemini models
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          curl -s "https://generativelanguage.googleapis.com/v1beta/models?key=$GEMINI_API_KEY" \
+            | python3 -c "
+import json,sys
+data=json.load(sys.stdin)
+for m in data.get('models',[]):
+    if 'generateContent' in m.get('supportedGenerationMethods',[]):
+        print(m['name'])
+" || echo 'impossible de lister les modeles'
       - name: Run script
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          GEMINI_MODEL: gemini-3.5-flash
+          GEMINI_MODEL: gemini-1.5-flash-latest
         run: python fetch_bulletin.py
       - name: Commit & push if changes
         run: |
