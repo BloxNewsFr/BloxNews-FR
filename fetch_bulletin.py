@@ -36,8 +36,8 @@ REPO_ROOT = Path(__file__).resolve().parent
 STATE     = REPO_ROOT / "sources.json"
 HEADERS   = {"User-Agent": "Mozilla/5.0 (compatible; BloxBulletinBot/1.0)"}
 TIMEOUT   = 30
-# Filtre : seuls les articles contenant ces mots sont traités
-KEYWORDS  = ["blox fruits", "blox fruit", "blox bulletin"]
+# Filtre désactivé : on publie TOUT ce qui sort sur GamerRobot (bulletins, patches, events...)
+KEYWORDS: list[str] = []
 
 # ─────────────────────────────────────────────────────────────────────────────
 # PROMPT ANTHROPIC
@@ -162,10 +162,8 @@ HTML_TEMPLATE = '''<!DOCTYPE html>
         .mobile-nav-backdrop {{ position: fixed; inset: 0; z-index: 9990; background: rgba(0,0,0,0.5); backdrop-filter: blur(6px); display: none; opacity: 0; transition: opacity 0.35s; }}
         .mobile-nav-backdrop.is-open {{ display: block; opacity: 1; }}
 
-        /* ── MAIN ── */
         .main-content {{ flex: 1; display: flex; flex-direction: column; align-items: center; }}
 
-        /* ── COUNTDOWN ── */
         .countdown-wrapper {{ width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 24px; text-align: center;
             background: radial-gradient(ellipse at 50% 0%, rgba(255,218,0,0.06) 0%, transparent 50%);
         }}
@@ -182,7 +180,6 @@ HTML_TEMPLATE = '''<!DOCTYPE html>
         .cta-back:hover {{ transform: translateY(-3px); box-shadow: 0 8px 30px rgba(255,218,0,0.5); }}
         #countdown-section.hidden {{ opacity: 0; pointer-events: none; transition: opacity 0.6s; }}
 
-        /* ── BULLETIN CONTENT ── */
         #bulletin-content {{ display: none; width: 100%; }}
         #bulletin-content.visible {{ display: block; animation: fadeInUp 0.8s ease forwards; }}
         @keyframes fadeInUp {{ from{{opacity:0;transform:translateY(20px)}} to{{opacity:1;transform:translateY(0)}} }}
@@ -202,15 +199,12 @@ HTML_TEMPLATE = '''<!DOCTYPE html>
         .journal-meta {{ font-weight: bold; font-size: 14px; color: #111; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }}
         .dashed-line {{ border-top: 1px dashed #ccc; margin: 20px 0 35px; }}
 
-        /* sections */
         .bulletin-section {{ margin-bottom: 40px; }}
         .bulletin-section h2 {{ border-bottom: 2px solid #111; padding-bottom: 5px; font-size: 22px; font-weight: 900; margin: 0 0 8px; color: #111; }}
         .bulletin-section .byline {{ font-style: italic; font-size: 13px; color: #666; display: block; margin-bottom: 16px; }}
         .bulletin-section p {{ font-size: 14.5px; line-height: 1.6; margin: 0 0 12px; }}
         .bulletin-section ul {{ padding-left: 20px; margin: 0 0 12px; }}
         .bulletin-section li {{ font-size: 14.5px; line-height: 1.6; margin-bottom: 6px; }}
-
-        /* images dans les sections */
         .bulletin-section img {{
             width: 100%; height: auto; border-radius: 14px;
             margin: 16px 0; box-shadow: 0 4px 20px rgba(0,0,0,0.1);
@@ -219,11 +213,9 @@ HTML_TEMPLATE = '''<!DOCTYPE html>
         .img-grid {{ display: grid; grid-template-columns: repeat(auto-fit,minmax(260px,1fr)); gap: 12px; margin: 16px 0; }}
         .img-grid img {{ margin: 0; }}
 
-        /* résumé */
         .summary {{ background: rgba(88,101,242,0.09); border-left: 4px solid #5865f2; padding: 12px 16px; margin-top: 15px; font-size: 13.5px; font-style: italic; color: #2c3e50; border-radius: 0 6px 6px 0; }}
         .summary b {{ color: #5865f2; text-transform: uppercase; font-size: 11px; font-style: normal; display: block; margin-bottom: 4px; letter-spacing: 0.5px; }}
 
-        /* social + bouton */
         .social-share {{ display: flex; justify-content: center; gap: 12px; margin: 30px 0; width: 100%; flex-wrap: wrap; }}
         .social-share a {{ display: inline-flex; align-items: center; gap: 6px; padding: 10px 18px; border-radius: 100px; font-size: 13px; font-weight: 900; text-decoration: none; text-transform: uppercase; transition: all 0.25s ease; }}
         .social-share a:hover {{ transform: translateY(-3px); }}
@@ -235,7 +227,6 @@ HTML_TEMPLATE = '''<!DOCTYPE html>
         .back-button {{ background: linear-gradient(135deg,#ffda00,#ffc200); color: #000; text-decoration: none; font-weight: 900; padding: 11px 24px; border-radius: 100px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; transition: transform 0.1s; box-shadow: 0 4px 15px rgba(255,218,0,0.4); border: 2px solid rgba(0,0,0,0.08); display: inline-block; }}
         .back-button:hover {{ transform: scale(1.05); }}
 
-        /* search */
         .search-overlay {{ position: fixed; inset: 0; background: linear-gradient(135deg,rgba(5,5,20,0.93),rgba(10,8,25,0.88)); backdrop-filter: blur(24px); z-index: 99999; display: flex; flex-direction: column; align-items: center; padding-top: 120px; opacity: 0; pointer-events: none; transition: opacity 0.35s; }}
         .search-overlay.is-active {{ opacity: 1; pointer-events: auto; }}
         .search-container {{ width: 92%; max-width: 640px; transform: translateY(-24px) scale(0.94); transition: transform 0.45s cubic-bezier(0.34,1.56,0.64,1); }}
@@ -250,7 +241,6 @@ HTML_TEMPLATE = '''<!DOCTYPE html>
         mark.search-hl {{ background: linear-gradient(135deg,#fce83a,#ffd700); color: #000; border-radius: 3px; padding: 1px 4px; }}
         mark.search-hl.active {{ background: linear-gradient(135deg,#ff6b35,#ff4500); color: #fff; }}
 
-        /* discord */
         .discord-login-btn {{ display: flex; align-items: center; gap: 8px; padding: 7px 14px; border-radius: 20px; border: none; cursor: pointer; background: #5865F2; color: #fff; font-size: 13px; font-weight: 700; font-family: \'Inter\'; transition: all 0.22s; box-shadow: 0 2px 12px rgba(88,101,242,0.35); white-space: nowrap; }}
         .discord-login-btn:hover {{ background: #4752c4; transform: translateY(-1px); }}
         .discord-user-pill {{ display: none; align-items: center; gap: 8px; padding: 4px 12px 4px 4px; border-radius: 20px; cursor: pointer; background: rgba(88,101,242,0.12); border: 1px solid rgba(88,101,242,0.25); transition: all 0.2s; user-select: none; position: relative; }}
@@ -272,7 +262,6 @@ HTML_TEMPLATE = '''<!DOCTYPE html>
         .discord-skeleton.is-visible {{ display: block; }}
         @keyframes skeletonShimmer {{ 0%{{background-position:200% 0}} 100%{{background-position:-200% 0}} }}
 
-        /* dark mode */
         body.dark-mode {{ background: #0b0b12; color: #ddd; }}
         body.dark-mode .site-header {{ background: rgba(10,10,18,0.75); }}
         body.dark-mode .site-nav a {{ color: #ccc; }}
@@ -347,7 +336,6 @@ HTML_TEMPLATE = '''<!DOCTYPE html>
 
     <main class="main-content">
 
-        <!-- COMPTE A REBOURS -->
         <div id="countdown-section" class="countdown-wrapper">
             <div class="soon-badge">&#9679; Bientôt</div>
             <h1 class="soon-title">Bulletin #{NUMBER}</h1>
@@ -364,7 +352,6 @@ HTML_TEMPLATE = '''<!DOCTYPE html>
             <a href="../index.html" class="cta-back"><span class="material-symbols-outlined" style="font-size:18px">arrow_back</span> Retour aux bulletins</a>
         </div>
 
-        <!-- BULLETIN -->
         <div id="bulletin-content" class="bulletin-container">
 
             <div class="blue-banner">The Blox Bulletin #{NUMBER}</div>
@@ -401,7 +388,6 @@ HTML_TEMPLATE = '''<!DOCTYPE html>
     </main>
 
     <script>
-        // ── COUNTDOWN
         const TARGET = new Date(\'{RELEASE_TS}\');
         function pad(n){{return String(n).padStart(2,\'0\')}}
         let revealed = false;
@@ -424,14 +410,13 @@ HTML_TEMPLATE = '''<!DOCTYPE html>
         updateCountdown();
         const iv=setInterval(()=>{{updateCountdown();if(revealed)clearInterval(iv)}},1000);
 
-        // ── MOBILE NAV
         (function(){{
             const btn=document.getElementById(\'menuToggle\');
             const nav=document.getElementById(\'mobileNav\');
             const bd=document.getElementById(\'mobileNavBackdrop\');
             const cl=document.getElementById(\'mobileNavClose\');
             function open(){{nav.classList.add(\'is-open\');bd.classList.add(\'is-open\');btn.textContent=\'close\';document.body.style.overflow=\'hidden\';}}
-            function close(){{nav.classList.remove(\'is-open\');bd.classList.remove(\'is-open\');btn.textContent=\'menu\';document.body.style.overflow=\'\';}} 
+            function close(){{nav.classList.remove(\'is-open\');bd.classList.remove(\'is-open\');btn.textContent=\'menu\';document.body.style.overflow=\'\';}}
             btn.addEventListener(\'click\',()=>nav.classList.contains(\'is-open\')?close():open());
             bd.addEventListener(\'click\',close);cl.addEventListener(\'click\',close);
             document.addEventListener(\'keydown\',e=>{{if(e.key===\'Escape\')close()}});
@@ -469,7 +454,7 @@ HTML_TEMPLATE = '''<!DOCTYPE html>
         }}
         function nextMatch(){{if(!searchMatches.length)return;searchMatches[searchCurrent]?.classList.remove(\'active\');searchCurrent=(searchCurrent+1)%searchMatches.length;searchMatches[searchCurrent].classList.add(\'active\');searchMatches[searchCurrent].scrollIntoView({{behavior:\'smooth\',block:\'center\'}});document.getElementById(\'searchStats\').textContent=(searchCurrent+1)+\'/\'+searchMatches.length;}}
         function prevMatch(){{if(!searchMatches.length)return;searchMatches[searchCurrent]?.classList.remove(\'active\');searchCurrent=(searchCurrent-1+searchMatches.length)%searchMatches.length;searchMatches[searchCurrent].classList.add(\'active\');searchMatches[searchCurrent].scrollIntoView({{behavior:\'smooth\',block:\'center\'}});document.getElementById(\'searchStats\').textContent=(searchCurrent+1)+\'/\'+searchMatches.length;}}
-        function toggleDarkMode(){{document.body.classList.toggle(\'dark-mode\');localStorage.setItem(\'blox_dark_mode\',document.body.classList.contains(\'dark-mode\'));document.getElementById(\'darkModeToggle\').textContent=document.body.classList.contains(\'dark-mode\')?\' light_mode\':\'dark_mode\';}}
+        function toggleDarkMode(){{document.body.classList.toggle(\'dark-mode\');localStorage.setItem(\'blox_dark_mode\',document.body.classList.contains(\'dark-mode\'));document.getElementById(\'darkModeToggle\').textContent=document.body.classList.contains(\'dark-mode\')?\'light_mode\':\'dark_mode\';}}
         (function(){{if(localStorage.getItem(\'blox_dark_mode\')=== \'true\'){{document.body.classList.add(\'dark-mode\');const el=document.getElementById(\'darkModeToggle\');if(el)el.textContent=\'light_mode\';}}}})();
         const DISCORD_CLIENT_ID=\'1517793695573999646\';
         const DISCORD_REDIRECT_URI=window.location.href.split(\'#\')[0].split(\'?\')[0];
@@ -480,11 +465,10 @@ HTML_TEMPLATE = '''<!DOCTYPE html>
         async function _discordFetchUser(t){{const r=await fetch(\'https://discord.com/api/users/@me\',{{headers:{{Authorization:\'Bearer \'+t}}}});if(!r.ok)throw new Error(\'Token invalide\');return r.json();}}
         function _discordAvatarUrl(u){{if(u.avatar)return\'https://cdn.discordapp.com/avatars/\'+u.id+\'/\'+u.avatar+\'.webp?size=80\';const i=u.discriminator!==\'0\'?parseInt(u.discriminator)%5:(parseInt(u.id)>>22)%6;return\'https://cdn.discordapp.com/embed/avatars/\'+i+\'.png\';}}
         function _discordShowUser(u){{const av=_discordAvatarUrl(u),dn=u.global_name||u.username;document.getElementById(\'discordLoginBtn\').style.display=\'none\';document.getElementById(\'discordSkeleton\').classList.remove(\'is-visible\');const pill=document.getElementById(\'discordUserPill\');document.getElementById(\'discordAvatar\').src=av;document.getElementById(\'discordUsername\').textContent=dn;pill.classList.add(\'is-visible\');document.getElementById(\'discordDropdownAvatar\').src=av;document.getElementById(\'discordDropdownName\').textContent=dn;document.getElementById(\'discordDropdownTag\').textContent=\'@\'+u.username;pill.onclick=e=>{{e.stopPropagation();pill.classList.toggle(\'dropdown-open\')}};document.addEventListener(\'click\',()=>pill.classList.remove(\'dropdown-open\'));}}
-        function _discordLogout(){{localStorage.removeItem(DISCORD_TOKEN_KEY);localStorage.removeItem(DISCORD_USER_KEY);document.getElementById(\'discordUserPill\').classList.remove(\'is-visible\',\'dropdown-open\');document.getElementById(\'discordLoginBtn\').style.display=\'\';} }
+        function _discordLogout(){{localStorage.removeItem(DISCORD_TOKEN_KEY);localStorage.removeItem(DISCORD_USER_KEY);document.getElementById(\'discordUserPill\').classList.remove(\'is-visible\',\'dropdown-open\');document.getElementById(\'discordLoginBtn\').style.display=\'\';}}
         (async function(){{const sk=document.getElementById(\'discordSkeleton\'),lb=document.getElementById(\'discordLoginBtn\');const hash=window.location.hash;if(hash.includes(\'access_token=\')){{const p=new URLSearchParams(hash.slice(1)),t=p.get(\'access_token\'),ei=parseInt(p.get(\'expires_in\')||604800);history.replaceState(null,\'\',window.location.pathname+window.location.search);if(t){{sk.classList.add(\'is-visible\');try{{const u=await _discordFetchUser(t);localStorage.setItem(DISCORD_TOKEN_KEY,JSON.stringify({{token:t,expiresAt:Date.now()+ei*1000}}));localStorage.setItem(DISCORD_USER_KEY,JSON.stringify(u));_discordShowUser(u);}}catch(e){{sk.classList.remove(\'is-visible\');lb.style.display=\'\';}}return;}}}}
         try{{const s=JSON.parse(localStorage.getItem(DISCORD_TOKEN_KEY)||null),cu=JSON.parse(localStorage.getItem(DISCORD_USER_KEY)||null);if(cu){{_discordShowUser(cu);if(s&&s.expiresAt>Date.now()){{try{{const fu=await _discordFetchUser(s.token);localStorage.setItem(DISCORD_USER_KEY,JSON.stringify(fu));_discordShowUser(fu);}}catch(e){{}}}}return;}}}}catch(e){{}}
-        lb.style.display=\'\';}})()
-    </script>
+        lb.style.display=\'\';}})()\n    </script>
     <script src="../shared/bulletin-lightbox.js"></script>
 </body>
 </html>'''
@@ -568,6 +552,7 @@ def _from_html() -> list[dict]:
 
 
 def is_relevant(entry: dict) -> bool:
+    # Filtre désactivé : on prend tout
     if not KEYWORDS:
         return True
     hay = (entry["title"] + " " + BeautifulSoup(entry["html"], "html.parser").get_text()).lower()
@@ -609,27 +594,19 @@ def download_images(urls: list[str], img_dir: Path) -> list[str]:
 
 
 def translate_content(entry: dict, image_names: list[str]) -> tuple[str, str, str, str]:
-    """
-    Envoie le HTML brut du bulletin à Claude et retourne
-    (titre_fr, sous_titre_fr, date_fr, contenu_html_fr)
-    """
-    # Préparer un mapping images pour que Claude puisse les référencer
     img_info = ""
     if image_names:
         img_info = "\n\nImages disponibles dans le dossier img/ (utilise ces noms dans les balises <img>) :\n"
         img_info += "\n".join(f"  - img/{n}" for n in image_names)
         img_info += "\nLa première image (image-01.*) est le hero banner."
-        img_info += "\nPour chaque image que tu insères, ajoute: class=\"bulletin-section\" sur la div parente."
         img_info += "\nPour regrouper plusieurs images côte à côte, entoure-les d'un <div class=\"img-grid\">."
 
     soup = BeautifulSoup(entry["html"], "html.parser")
-    # Remplacer les URLs des images dans le HTML par les noms locaux
     imgs = soup.find_all("img")
     for i, img in enumerate(imgs):
         if i < len(image_names):
             img["src"] = f"img/{image_names[i]}"
 
-    # Nettoyer le HTML pour le prompt
     for tag in soup(["script", "style", "nav", "footer", "header"]):
         tag.decompose()
     clean_html = str(soup)
@@ -653,7 +630,6 @@ def translate_content(entry: dict, image_names: list[str]) -> tuple[str, str, st
     raw = "".join(b.text for b in msg.content if b.type == "text").strip()
     raw = re.sub(r"^```(?:html)?\s*|\s*```$", "", raw, flags=re.MULTILINE).strip()
 
-    # Parser les métadonnées
     title_fr = entry["title"]
     subtitle_fr = ""
     date_fr = entry["date"]
@@ -673,7 +649,6 @@ def translate_content(entry: dict, image_names: list[str]) -> tuple[str, str, st
         date_fr = m.group(1).strip()
         raw = raw[m.end():].strip()
 
-    # Envelopper les sections h2 dans des divs .bulletin-section
     content = re.sub(
         r"(<h2[^>]*>.*?</h2>)",
         r'</div><div class="bulletin-section">\1',
@@ -701,7 +676,6 @@ def build_page(
     hero_img = images[0] if images else "image-01.jpg"
     og_image = hero_img
 
-    # Timestamp de release : on prend la date ISO du bulletin + 10h UTC (midi FR)
     try:
         dt = datetime.strptime(date_iso, "%Y-%m-%d")
         release_ts = dt.strftime("%Y-%m-%dT10:00:00Z")
@@ -743,26 +717,21 @@ def main() -> int:
         print("No new bulletin.")
         return 0
 
-    # Chronological order (oldest first), limited
     new = list(reversed(new))[:MAX_NEW]
 
     for entry in new:
         number = f"{next_number():03d}"
         print(f"→ New bulletin {number}: {entry['title']}")
 
-        # 1. Download images first
         folder = REPO_ROOT / number
         image_urls = extract_images(entry)
         saved_images = download_images(image_urls, folder / "img")
 
-        # 2. Translate with image names so Claude can reference them
         title_fr, subtitle_fr, date_fr, content = translate_content(entry, saved_images)
 
-        # 3. Build HTML page
         page = build_page(number, title_fr, subtitle_fr, date_fr, entry["date"], saved_images, content)
         (folder / f"bulletin-{number}.html").write_text(page, encoding="utf-8")
 
-        # 4. Save state
         state["seen"].append(entry["url"])
         save_state(state)
         print(f"  ✔ {folder.name}/bulletin-{number}.html ({len(saved_images)} images)")
