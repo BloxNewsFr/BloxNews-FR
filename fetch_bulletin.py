@@ -7,13 +7,19 @@ import requests
 from bs4 import BeautifulSoup
 
 BLOG_BASE      = "https://gamerrobot.com/blogs/news/"
-GEMINI_MODEL   = os.getenv("GEMINI_MODEL", "gemini-2.0-flash")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 MAX_NEW        = int(os.getenv("MAX_NEW_PER_RUN", "3"))
 REPO_ROOT      = Path(__file__).resolve().parent
 STATE          = REPO_ROOT / "sources.json"
 INDEX          = REPO_ROOT / "index.html"
 TIMEOUT        = 30
+
+# Modeles par ordre de preference
+GEMINI_MODELS = [
+    os.getenv("GEMINI_MODEL", "gemini-3.8-flash"),
+    "gemini-2.5-flash-lite",
+    "gemini-1.5-flash",
+]
 
 BULLETIN_PATTERNS = [
     "the-blox-bulletin-{num:03d}",
@@ -77,7 +83,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         .social-share {{ display:flex; justify-content:center; gap:12px; margin:30px 0; }}
         .social-share a {{ padding:10px 18px; border-radius:100px; font-size:13px; font-weight:900; text-decoration:none; color:#fff; text-transform:uppercase; }}
         .td {{ background:#5865F2; }} .tt {{ background:linear-gradient(135deg,#1d56f2,#f21de4); }} .ty {{ background:#ec1717; }}
-        .back-button {{ background:linear-gradient(135deg,#ffda00,#ffc200); color:#000; text-decoration:none; font-weight:900; padding:11px 24px; border-radius:100px; font-size:13px; text-transform:uppercase; display:inline-block; margin:40px auto; display:block; text-align:center; width:fit-content; }}
+        .back-button {{ background:linear-gradient(135deg,#ffda00,#ffc200); color:#000; text-decoration:none; font-weight:900; padding:11px 24px; border-radius:100px; font-size:13px; text-transform:uppercase; display:block; text-align:center; width:fit-content; margin:40px auto; }}
         @media(max-width:768px) {{ .blue-banner {{ font-size:24px; padding:12px 30px; }} .site-nav {{ display:none; }} }}
     </style>
 </head>
@@ -200,18 +206,27 @@ def download_images(urls, img_dir):
 
 
 def call_gemini(prompt):
-    # Essaie v1 puis v1beta
-    for api_version in ["v1", "v1beta"]:
-        url = f"https://generativelanguage.googleapis.com/{api_version}/models/{GEMINI_MODEL}:generateContent?key={GEMINI_API_KEY}"
-        payload = {
-            "contents": [{"parts": [{"text": SYSTEM_PROMPT + "\n\n" + prompt}]}],
-            "generationConfig": {"maxOutputTokens": 8192, "temperature": 0.3},
-        }
-        r = requests.post(url, json=payload, timeout=120)
-        if r.status_code == 200:
-            return r.json()["candidates"][0]["content"]["parts"][0]["text"].strip()
-        print(f"  [gemini] {api_version} -> {r.status_code}: {r.text[:200]}")
-    r.raise_for_status()
+    """Essaie chaque modele avec retry sur 503."""
+    for model in GEMINI_MODELS:
+        for api_ver in ["v1beta", "v1"]:
+            url = f"https://generativelanguage.googleapis.com/{api_ver}/models/{model}:generateContent?key={GEMINI_API_KEY}"
+            payload = {
+                "contents": [{"parts": [{"text": SYSTEM_PROMPT + "\n\n" + prompt}]}],
+                "generationConfig": {"maxOutputTokens": 8192, "temperature": 0.3},
+            }
+            for attempt in range(3):
+                r = requests.post(url, json=payload, timeout=120)
+                if r.status_code == 200:
+                    print(f"  [gemini] OK avec {model} ({api_ver})")
+                    return r.json()["candidates"][0]["content"]["parts"][0]["text"].strip()
+                elif r.status_code == 503:
+                    wait = 10 * (attempt + 1)
+                    print(f"  [gemini] {model} {api_ver} -> 503, retry dans {wait}s...")
+                    time.sleep(wait)
+                else:
+                    print(f"  [gemini] {model} {api_ver} -> {r.status_code}: {r.text[:100]}")
+                    break  # pas la peine de retry sur 404/400
+    raise RuntimeError("Tous les modeles Gemini ont echoue.")
 
 
 def translate_content(entry, image_names):
@@ -222,64 +237,49 @@ def translate_content(entry, image_names):
     for tag in soup(["script", "style", "nav", "footer", "header"]):
         tag.decompose()
 
-    img_info = ""
-    if image_names:
-        img_info = f"\nImages : {', '.join('img/'+n for n in image_names)}. La premiere est le hero."
-
+    img_info = f"\nImages : {', '.join('img/'+n for n in image_names)}. La premiere est le hero." if image_names else ""
     prompt = f"Titre: {entry['title']}\nDate: {entry['date']}{img_info}\n\nHTML:\n{str(soup)}"
+
     raw = call_gemini(prompt)
     raw = re.sub(r"^```(?:html)?\s*|\s*```$", "", raw, flags=re.MULTILINE).strip()
 
-    title_fr = entry["title"]
-    subtitle_fr = ""
-    date_fr = entry["date"]
-
+    title_fr, subtitle_fr, date_fr = entry["title"], "", entry["date"]
     m = re.match(r"TITRE:\s*(.+)", raw)
     if m:
-        title_fr = m.group(1).strip()
-        raw = raw[m.end():].strip()
+        title_fr = m.group(1).strip(); raw = raw[m.end():].strip()
     m = re.match(r"SOUS_TITRE:\s*(.+)", raw)
     if m:
-        subtitle_fr = m.group(1).strip()
-        raw = raw[m.end():].strip()
+        subtitle_fr = m.group(1).strip(); raw = raw[m.end():].strip()
     m = re.match(r"DATE_FR:\s*(.+)", raw)
     if m:
-        date_fr = m.group(1).strip()
-        raw = raw[m.end():].strip()
+        date_fr = m.group(1).strip(); raw = raw[m.end():].strip()
 
     content = re.sub(r"(<h2[^>]*>.*?</h2>)", r'</div><div class="bulletin-section">\1', raw, flags=re.DOTALL)
     content = re.sub(r"^</div>", "", content.strip())
-    if not content.endswith("</div>"):
-        content += "</div>"
-    if not content.startswith('<div class="bulletin-section">'):
-        content = '<div class="bulletin-section">' + content
+    if not content.endswith("</div>"): content += "</div>"
+    if not content.startswith('<div class="bulletin-section">'): content = '<div class="bulletin-section">' + content
 
     return title_fr, subtitle_fr, date_fr, content
 
 
 def update_index(number, date_iso, images):
-    if not INDEX.exists():
-        return
+    if not INDEX.exists(): return
     hero_img = images[0] if images else "image-01.jpg"
     new_line = f'            {{ num: "{number}", img: "./{number}/img/{hero_img}", href: "./{number}/bulletin-{number}.html", date: "{date_iso}" }},'
     html = INDEX.read_text(encoding="utf-8")
-    if f'./{number}/bulletin-{number}.html' in html:
-        return
+    if f'./{number}/bulletin-{number}.html' in html: return
     pattern = r'(\{ num: "[^"]+", img: "[^"]+", href: "[^"]+", date: "[^"]+" \},?\s*\n)(\s*\];)'
     matches = list(re.finditer(pattern, html))
     if not matches:
-        print("  index.html: tableau non trouve")
-        return
+        print("  index.html: tableau non trouve"); return
     pos = matches[-1].end(1)
-    html = html[:pos] + new_line + "\n" + html[pos:]
-    INDEX.write_text(html, encoding="utf-8")
+    INDEX.write_text(html[:pos] + new_line + "\n" + html[pos:], encoding="utf-8")
     print(f"  OK index.html mis a jour")
 
 
 def main():
     if not GEMINI_API_KEY:
-        print("GEMINI_API_KEY manquante.")
-        return 1
+        print("GEMINI_API_KEY manquante."); return 1
 
     state = load_state()
     last = state.get("last_bulletin_num", 24)
@@ -287,17 +287,14 @@ def main():
 
     entries = fetch_entries(state)
     if not entries:
-        print("Aucun nouveau bulletin detecte.")
-        return 0
+        print("Aucun nouveau bulletin detecte."); return 0
 
     for entry in entries[:MAX_NEW]:
         folder_num = f"{next_folder_number():03d}"
         print(f"-> New bulletin {folder_num}: {entry['title']}")
-
         folder = REPO_ROOT / folder_num
         saved_images = download_images(extract_images(entry["html"], entry["url"]), folder / "img")
         title_fr, subtitle_fr, date_fr, content = translate_content(entry, saved_images)
-
         hero = saved_images[0] if saved_images else "image-01.jpg"
         page = HTML_TEMPLATE.format(
             NUMBER=folder_num, TITLE=escape(title_fr), SUBTITLE=escape(subtitle_fr),
@@ -305,7 +302,6 @@ def main():
         )
         (folder / f"bulletin-{folder_num}.html").write_text(page, encoding="utf-8")
         update_index(folder_num, entry["date"], saved_images)
-
         state.setdefault("seen", []).append(entry["url"])
         state["last_bulletin_num"] = entry["num"]
         save_state(state)
