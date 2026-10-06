@@ -9,7 +9,7 @@ import os
 import re
 import sys
 import time
-from datetime import datetime
+import xml.etree.ElementTree as ET
 from html import escape
 from pathlib import Path
 from urllib.parse import urljoin, urlparse
@@ -21,7 +21,7 @@ from bs4 import BeautifulSoup
 # CONFIGURATION
 # ---------------------------------------------------------------------------
 BLOG_URL       = "https://gamerrobot.com/blogs/news"
-FEED_URL       = BLOG_URL + ".atom"
+SITEMAP_INDEX  = "https://gamerrobot.com/sitemap.xml"
 GEMINI_MODEL   = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 MAX_NEW        = int(os.getenv("MAX_NEW_PER_RUN", "3"))
@@ -30,9 +30,6 @@ STATE          = REPO_ROOT / "sources.json"
 INDEX          = REPO_ROOT / "index.html"
 TIMEOUT        = 30
 KEYWORDS: list[str] = []
-
-# Proxy RSS gratuit pour contourner le blocage IP de GitHub Actions
-RSS2JSON_URL = "https://api.rss2json.com/v1/api.json"
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36",
@@ -186,134 +183,107 @@ def next_number() -> int:
 
 
 def fetch_entries() -> list[dict]:
-    entries = _from_rss2json()
+    """Recupere les URLs du blog via le sitemap Shopify (toujours accessible)."""
+    entries = _from_sitemap()
     if entries:
-        print(f"[rss2json] {len(entries)} entrees recuperees.")
-        print("[rss2json] URLs trouvees :")
+        print(f"[sitemap] {len(entries)} entrees recuperees.")
+        print("[sitemap] URLs trouvees :")
         for e in entries:
             print(f"  - {e['url']}")
         return entries
-    print("[rss2json] echec, essai Atom direct...")
-    entries = _from_atom_direct()
-    if entries:
-        print(f"[atom] {len(entries)} entrees recuperees.")
-        for e in entries:
-            print(f"  - {e['url']}")
-        return entries
-    print("[atom] echec, essai scraping HTML...")
-    return _from_html()
+    print("[sitemap] echec.")
+    return []
 
 
-def _from_rss2json() -> list[dict]:
+def _from_sitemap() -> list[dict]:
+    """Parse le sitemap Shopify pour lister les articles du blog.
+    Le sitemap est du XML statique servi par Shopify CDN, pas bloque par GamerRobot.
+    """
     try:
-        r = requests.get(
-            RSS2JSON_URL,
-            params={"rss_url": FEED_URL, "count": 20},
-            timeout=TIMEOUT,
-        )
+        # D'abord le sitemap index
+        r = requests.get(SITEMAP_INDEX, headers=HEADERS, timeout=TIMEOUT)
         r.raise_for_status()
-        data = r.json()
-        if data.get("status") != "ok":
-            print(f"[rss2json] status={data.get('status')}: {data.get('message', '')}")
-            return []
-        out = []
-        for item in data.get("items", []):
-            url = item.get("link") or item.get("guid") or ""
-            pub = (item.get("pubDate") or "")[:10]
-            out.append({
-                "title": (item.get("title") or "").strip(),
-                "url":   url,
-                "date":  pub,
-                "html":  item.get("content") or item.get("description") or "",
-            })
-        return [x for x in out if x["url"]]
-    except Exception as exc:
-        print(f"[rss2json] {exc}")
-        return []
-
-
-def _from_atom_direct() -> list[dict]:
-    import xml.etree.ElementTree as ET
-    try:
-        r = requests.get(FEED_URL, headers=HEADERS, timeout=TIMEOUT)
-        r.raise_for_status()
-        content_type = r.headers.get("content-type", "")
-        if "html" in content_type and "xml" not in content_type:
-            print(f"[atom] reponse HTML (pas XML), content-type={content_type}")
-            return []
-        ns = {"a": "http://www.w3.org/2005/Atom"}
         root = ET.fromstring(r.content)
+        ns = {"sm": "http://www.sitemaps.org/schemas/sitemap/0.9"}
+
+        # Cherche le sitemap des articles de blog
+        blog_sitemap_url = None
+        for loc in root.findall(".//sm:loc", ns):
+            url = loc.text or ""
+            if "blog" in url or "news" in url or "article" in url:
+                blog_sitemap_url = url
+                print(f"[sitemap] sitemap blog trouve: {url}")
+                break
+
+        if not blog_sitemap_url:
+            # Essaie directement sitemap_blogs_1.xml
+            blog_sitemap_url = "https://gamerrobot.com/sitemap_blogs_1.xml"
+            print(f"[sitemap] essai direct: {blog_sitemap_url}")
+
+        r2 = requests.get(blog_sitemap_url, headers=HEADERS, timeout=TIMEOUT)
+        r2.raise_for_status()
+        root2 = ET.fromstring(r2.content)
+
         out = []
-        for e in root.findall("a:entry", ns):
-            link = next((l.get("href") for l in e.findall("a:link", ns)
-                         if l.get("rel", "alternate") == "alternate"), None)
-            content = (e.findtext("a:content", default="", namespaces=ns) or
-                       e.findtext("a:summary", default="", namespaces=ns))
+        for url_el in root2.findall(".//sm:url", ns):
+            loc = url_el.findtext("sm:loc", namespaces=ns) or ""
+            lastmod = (url_el.findtext("sm:lastmod", namespaces=ns) or "")[:10]
+            # Filtre uniquement les articles du blog news
+            if "/blogs/news/" not in loc:
+                continue
+            # Exclut la page principale du blog
+            if loc.rstrip("/") == BLOG_URL.rstrip("/"):
+                continue
             out.append({
-                "title": (e.findtext("a:title", default="", namespaces=ns) or "").strip(),
-                "url":   link,
-                "date":  (e.findtext("a:published", default="", namespaces=ns) or "")[:10],
-                "html":  content or "",
+                "title": loc.split("/")[-1].replace("-", " ").title(),
+                "url":   loc,
+                "date":  lastmod,
+                "html":  "",  # sera charge plus tard si necessaire
             })
-        return [x for x in out if x["url"]]
+
+        # Trie du plus recent au plus ancien
+        out.sort(key=lambda x: x["date"], reverse=True)
+        return out
+
     except Exception as exc:
-        print(f"[atom] {exc}")
+        print(f"[sitemap] {exc}")
         return []
 
 
-def _from_html() -> list[dict]:
+def fetch_article_html(entry: dict) -> str:
+    """Charge le HTML d'un article specifique."""
     try:
-        r = requests.get(BLOG_URL, headers=HEADERS, timeout=TIMEOUT)
+        r = requests.get(entry["url"], headers=HEADERS, timeout=TIMEOUT)
         r.raise_for_status()
+        soup = BeautifulSoup(r.text, "html.parser")
+        body = soup.select_one("article, .article-template, .rte, main") or soup
+        title_tag = soup.find("h1")
+        time_tag = soup.find("time")
+        if title_tag:
+            entry["title"] = title_tag.get_text(strip=True)
+        if time_tag:
+            entry["date"] = (time_tag.get("datetime", "")[:10] or entry["date"])
+        return str(body)
     except Exception as exc:
-        print(f"[html] page principale inaccessible: {exc}")
-        return []
-    soup = BeautifulSoup(r.text, "html.parser")
-    seen, links = set(), []
-    for a in soup.select("a[href*='/blogs/news/']"):
-        href = urljoin(BLOG_URL, a["href"]).split("?")[0]
-        if href.rstrip("/") == BLOG_URL.rstrip("/") or href in seen:
-            continue
-        seen.add(href)
-        links.append(href)
-    out = []
-    for url in links:
-        time.sleep(1)
-        try:
-            pr = requests.get(url, headers=HEADERS, timeout=TIMEOUT)
-            pr.raise_for_status()
-        except Exception as exc:
-            print(f"  [html] skip {url}: {exc}")
-            continue
-        ps = BeautifulSoup(pr.text, "html.parser")
-        body = ps.select_one("article, .article-template, .rte, main") or ps
-        title_tag = ps.find("h1")
-        time_tag = ps.find("time")
-        out.append({
-            "title": title_tag.get_text(strip=True) if title_tag else url,
-            "url":   url,
-            "date":  (time_tag.get("datetime", "")[:10] if time_tag else ""),
-            "html":  str(body),
-        })
-    return out
+        print(f"  [article] erreur {entry['url']}: {exc}")
+        return ""
 
 
 def is_relevant(entry: dict) -> bool:
     if not KEYWORDS:
         return True
-    hay = (entry["title"] + " " +
-           BeautifulSoup(entry["html"], "html.parser").get_text()).lower()
+    hay = (entry["title"] + " " + entry["url"]).lower()
     return any(k in hay for k in KEYWORDS)
 
 
-def extract_images(entry: dict) -> list[str]:
-    soup = BeautifulSoup(entry["html"], "html.parser")
+def extract_images(html: str, base_url: str) -> list[str]:
+    soup = BeautifulSoup(html, "html.parser")
     images = []
     for img in soup.find_all("img"):
         src = img.get("src") or img.get("data-src") or ""
         if not src:
             continue
-        full = urljoin(entry["url"], src)
+        full = urljoin(base_url, src)
         if full.startswith("//"):
             full = "https:" + full
         if full not in images:
@@ -455,7 +425,7 @@ def main() -> int:
 
     entries = fetch_entries()
     if not entries:
-        print("No entries fetched (toutes les sources ont echoue).")
+        print("No entries fetched.")
         return 0
 
     if "--init" in sys.argv:
@@ -472,10 +442,17 @@ def main() -> int:
 
     for entry in list(reversed(new))[:MAX_NEW]:
         number = f"{next_number():03d}"
-        print(f"-> New bulletin {number}: {entry['title']}")
+        print(f"-> Chargement article: {entry['url']}")
+        entry["html"] = fetch_article_html(entry)
+        if not entry["html"]:
+            print(f"  HTML vide, skip.")
+            state["seen"].append(entry["url"])
+            save_state(state)
+            continue
 
+        print(f"-> New bulletin {number}: {entry['title']}")
         folder = REPO_ROOT / number
-        saved_images = download_images(extract_images(entry), folder / "img")
+        saved_images = download_images(extract_images(entry["html"], entry["url"]), folder / "img")
 
         title_fr, subtitle_fr, date_fr, content = translate_content(entry, saved_images)
         page = build_page(number, title_fr, subtitle_fr, date_fr, saved_images, content)
