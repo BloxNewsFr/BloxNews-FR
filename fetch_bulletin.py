@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
 """
-fetch_bulletin.py
-Détecte les nouveaux bulletins Blox Fruits sur GamerRobot, les traduit en français
-via l'API Google Gemini (gratuite), télécharge les images, génère NNN/bulletin-NNN.html
-et met à jour index.html automatiquement.
+fetch_bulletin.py - Blox Fruits FR auto-bulletin
+Utilise Google Gemini (gratuit) pour traduire les bulletins.
 """
 
 import json
@@ -33,6 +31,8 @@ INDEX          = REPO_ROOT / "index.html"
 HEADERS        = {"User-Agent": "Mozilla/5.0 (compatible; BloxBulletinBot/1.0)"}
 TIMEOUT        = 30
 KEYWORDS: list[str] = []
+
+GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1/models/{model}:generateContent?key={key}"
 
 # ─────────────────────────────────────────────────────────────────────────────
 # PROMPT
@@ -92,7 +92,6 @@ HTML_TEMPLATE = '''<!DOCTYPE html>
         .site-nav a:hover {{ background: var(--color-primary); color: #000; }}
         .site-header__icons {{ display: flex; gap: 12px; color: rgba(0,0,0,0.85); cursor: pointer; align-items: center; position: absolute; right: 55px; }}
         .site-header__icons span {{ padding: 8px; border-radius: 10px; transition: background 0.2s; }}
-        .site-header__icons span:hover {{ background: rgba(0,0,0,0.08); }}
         .mobile-menu-btn {{ display: none; }}
         .mobile-nav-dropdown, .mobile-nav-backdrop {{ display: none; }}
         @media (max-width: 768px) {{
@@ -226,7 +225,7 @@ HTML_TEMPLATE = '''<!DOCTYPE html>
             <div class="dashed-line"></div>
             {CONTENT}
             <div style="text-align:center;font-style:italic;background:#f8f8f8;border:1px solid #ddd;border-radius:12px;padding:24px;margin-bottom:30px">
-                <p style="margin:0;font-size:15px"><em>Ceci conclut le Blox Bulletin #{NUMBER}. Restez connect\u00e9s via notre Discord et nos r\u00e9seaux sociaux !</em></p>
+                <p style="margin:0;font-size:15px"><em>Ceci conclut le Blox Bulletin #{NUMBER}. Restez connect\u00e9s !</em></p>
             </div>
             <div class="social-share">
                 <a href="https://discord.gg/a6S6eugPn" class="td"><img src="../shared/discord.png" alt="Discord"> Discord</a>
@@ -373,15 +372,27 @@ def download_images(urls: list[str], img_dir: Path) -> list[str]:
 
 
 def call_gemini(prompt: str) -> str:
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}:generateContent?key={GEMINI_API_KEY}"
-    payload = {
-        "contents": [{"parts": [{"text": SYSTEM_PROMPT + "\n\n" + prompt}]}],
-        "generationConfig": {"maxOutputTokens": 8192, "temperature": 0.3}
-    }
-    r = requests.post(url, json=payload, timeout=120)
-    r.raise_for_status()
-    data = r.json()
-    return data["candidates"][0]["content"]["parts"][0]["text"].strip()
+    """Appelle l'API Gemini et retourne le texte généré."""
+    # On essaie d'abord v1, puis v1beta en fallback
+    for version in ["v1", "v1beta"]:
+        url = f"https://generativelanguage.googleapis.com/{version}/models/{GEMINI_MODEL}:generateContent?key={GEMINI_API_KEY}"
+        payload = {
+            "contents": [{"parts": [{"text": SYSTEM_PROMPT + "\n\n" + prompt}]}],
+            "generationConfig": {"maxOutputTokens": 8192, "temperature": 0.3}
+        }
+        try:
+            r = requests.post(url, json=payload, timeout=120)
+            if r.status_code == 404 and version == "v1":
+                print(f"  [gemini] v1 introuvable, essai v1beta...")
+                continue
+            r.raise_for_status()
+            data = r.json()
+            return data["candidates"][0]["content"]["parts"][0]["text"].strip()
+        except requests.exceptions.HTTPError as e:
+            if version == "v1beta":
+                raise
+            print(f"  [gemini] {e}, essai version suivante...")
+    raise RuntimeError("Gemini API inaccessible sur v1 et v1beta")
 
 
 def translate_content(entry: dict, image_names: list[str]) -> tuple[str, str, str, str]:
