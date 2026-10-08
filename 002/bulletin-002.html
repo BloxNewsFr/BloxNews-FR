@@ -63,6 +63,7 @@
             .site-header__logo { left: 28px; }
             .site-header__logo img { height: 36px; }
             .site-header__icons { right: 28px; gap: 10px; }
+            .site-header__icons:hover {transform: scale(1.05)}
             .site-nav a { font-size: 15px; padding: 6px 14px; }
             .bulletin-container { padding: 0 20px; margin: 28px auto; }
             .blue-banner { font-size: 28px; padding: 12px 36px; }
@@ -146,12 +147,45 @@
 
 
         .site-header__logo img { height: 42px; width: auto; display: block; }
-        .site-nav { display: flex; gap: 8px; padding: 0; margin: 0; list-style: none; font-weight: 900;}
-        .site-nav a { color: var(--color-text); text-decoration: none; font-weight: 900; font-size: 17px; text-transform: uppercase; font-family: 'LuckiestGuy Regular', cursive; padding: 8px 16px; border-radius: 10px; transition: background 0.2s, color 0.2s; }
-        .site-nav a:hover { background: var(--color-primary); color: #000; }
+.site-nav { display: flex; gap: 6px; padding: 0; margin: 0; list-style: none; font-weight: 900; position: relative; z-index: 1; }
+        .site-nav li { opacity: 0; animation: navFadeIn 0.4s ease forwards; }
+        .site-nav li:nth-child(1) { animation-delay: 0.05s; }
+        .site-nav li:nth-child(2) { animation-delay: 0.10s; }
+        .site-nav li:nth-child(3) { animation-delay: 0.15s; }
+        .site-nav li:nth-child(4) { animation-delay: 0.20s; }
+        @keyframes navFadeIn {
+            from { opacity: 0; transform: translateY(-6px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .site-nav a, .site-header__icons {
+            color: var(--color-text);
+            transition: color 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .site-header.nav-light-text .site-nav a,
+        .site-header.nav-light-text .site-header__icons {
+            color: #fff;
+            -webkit-text-stroke: 1.2px rgba(0,0,0,0.7);
+            text-shadow: 0 2px 8px rgba(0,0,0,0.35);
+        }
+
+        .site-nav a {
+    text-decoration: none; font-weight: 900; font-size: 17px;
+    text-transform: uppercase; font-family: 'LuckiestGuy Regular', cursive;
+    padding: 4px 15px; border-radius: 10px;
+    transition: background 0.2s, color 0.2s, transform 0.2s;
+    position: relative; display: inline-block;
+}
+.site-nav a:hover { background: var(--color-primary); color: #000; transform: scale(1.05); }
+.site-nav a:active { transform: scale(0.95); }
+        .site-nav a.-active {
+            background: var(--color-primary); color: #000;
+            box-shadow: 0 2px 8px rgba(255,218,0,0.35);
+        }
         .site-header__icons { display: flex; gap: 12px; color: var(--color-text); cursor: pointer; align-items: center; position: absolute; right: 55px; }
-        .site-header__icons span { padding: 8px; border-radius: 10px; transition: background 0.2s; }
-        .site-header__icons span:hover { background: rgba(0,0,0,0.06); }
+        
+        .site-header__icons span { padding: 8px; border-radius: 10px; transition: background 0.2s; transition: 0.2s;}
+        .site-header__icons span:hover { background: rgba(0,0,0,0.06); transform: scale(1.15) }
         .mobile-menu-btn { display: none; }
         .mobile-nav-dropdown { display: none; }
 .mobile-nav-backdrop {
@@ -444,6 +478,11 @@
             justify-content: center; transition: all 0.2s;
             flex-shrink: 0;
         }
+        .search-nav-btn img {
+    width: 18px;
+    height: auto;
+    display: block;
+}
         .search-nav-btn:hover { background: rgba(255,255,255,0.12); color: #fff; }
         .search-nav-btn:disabled { opacity: 0.2; cursor: default; }
         .search-close-btn {
@@ -452,6 +491,7 @@
             font-size: 20px; display: flex; align-items: center;
             justify-content: center; transition: all 0.2s;
             flex-shrink: 0;
+            margin-right: 13px;
         }
         .search-close-btn:hover { background: rgba(255,50,50,0.15); color: #ff6b6b; }
         .search-stats {
@@ -1121,8 +1161,12 @@
             <span class="material-symbols-outlined search-icon" style="font-size:22px;color:#999;flex-shrink:0">search</span>
             <input id="searchInput" type="text" placeholder="Rechercher&#8230;" autofocus onkeydown="if(event.key==='Escape')closeSearch();if(event.key==='Enter'){event.preventDefault();executeSearch()}">
             <button class="search-go-btn" onclick="executeSearch()">Chercher</button>
-            <button class="search-nav-btn" onclick="prevMatch()" id="searchPrevBtn">&#9650;</button>
-            <button class="search-nav-btn" onclick="nextMatch()" id="searchNextBtn">&#9660;</button>
+<button class="search-nav-btn" onclick="prevMatch()" id="searchPrevBtn">
+    <img src="../shared/icons/arrowshape.up.png" alt="Précédent">
+</button>
+<button class="search-nav-btn" onclick="nextMatch()" id="searchNextBtn">
+    <img src="../shared/icons/arrowshape.down.png" alt="Suivant">
+</button>
             <button class="search-close-btn" onclick="closeSearch()">&#10005;</button>
         </div>
         <div id="searchStats" class="search-stats"></div>
