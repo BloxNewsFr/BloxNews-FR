@@ -56,8 +56,8 @@
 
         }
         .site-header__icons { display: flex; gap: 12px; color: rgba(0,0,0,0.85); cursor: pointer; align-items: center; position: absolute; right: 55px; }
-        .site-header__icons span { padding: 8px; border-radius: 10px; transition: background 0.2s; }
-        .site-header__icons span:hover { background: rgba(0,0,0,0.08); }
+        .site-header__icons span { padding: 8px; border-radius: 10px; transition: background 0.2s; transition: 0.2s; }
+        .site-header__icons span:hover { background: rgba(0,0,0,0.06); transform: scale(1.15) }
         .mobile-menu-btn { display: none; }
         .mobile-nav-dropdown, .mobile-nav-backdrop { display: none; }
 
