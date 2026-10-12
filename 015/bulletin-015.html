@@ -18,6 +18,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
     <link rel="stylesheet" href="./bulletin-015.css">
     <link rel="stylesheet" href="../shared/bulletin-lightbox.css">
+    <link rel="stylesheet" href="../astuces/astuces.css">
 </head>
 <body>
 
@@ -346,8 +347,8 @@
             <span class="material-symbols-outlined search-icon" style="font-size:22px;color:#999;flex-shrink:0">search</span>
             <input id="searchInput" type="text" placeholder="Rechercher&#8230;" autofocus onkeydown="if(event.key==='Escape')closeSearch();if(event.key==='Enter'){event.preventDefault();executeSearch()}">
             <button class="search-go-btn" onclick="executeSearch()">Chercher</button>
-            <button class="search-nav-btn" onclick="prevMatch()" id="searchPrevBtn">&#9650;</button>
-            <button class="search-nav-btn" onclick="nextMatch()" id="searchNextBtn">&#9660;</button>
+<!--          <button class="search-nav-btn" onclick="prevMatch()" id="searchPrevBtn">&#9650;</button>
+            <button class="search-nav-btn" onclick="nextMatch()" id="searchNextBtn">&#9660;</button> -->  
             <button class="search-close-btn" onclick="closeSearch()">&#10005;</button>
         </div>
         <div id="searchStats" class="search-stats"></div>
@@ -444,5 +445,6 @@
     })();
     </script>
     <script src="../shared/bulletin-lightbox.js"></script>
+    <script src="../astuces/astuces.js"></script>
 </body>
 </html>
