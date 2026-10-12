@@ -194,7 +194,8 @@
         /* ── IMAGE HERO ── */
         .hero-image-wrapper { width: 100%; margin-bottom: 15px; }
         .fade-in { animation: fadeInUp 0.5s ease both; }
-        .hero-image { width: 100%; height: auto; display: block; border-radius: 20px; box-shadow: 0 8px 30px rgba(0,0,0,0.1); }
+        .hero-image {
+    cursor: zoom-in; width: 100%; height: auto; display: block; border-radius: 20px; box-shadow: 0 8px 30px rgba(0,0,0,0.1); cursor: zoom-in; }
         .publish-date { font-size: 15px; font-weight: bold; color: #222222; margin-bottom: 25px; }
 
         /* ── EN-TÊTE JOURNAL ── */
@@ -231,6 +232,7 @@
             border: 3px solid #000000;
             border-radius: 12px;
             margin-bottom: 20px;
+            cursor: pointer;
         }
         .alert-text p { margin: 0 0 15px 0; font-size: 14.5px; }
 

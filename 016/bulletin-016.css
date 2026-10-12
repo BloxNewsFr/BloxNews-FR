@@ -103,7 +103,8 @@
         }
 
         .hero-image-wrapper { width: 100%; margin-bottom: 15px; }
-        .hero-image { width: 100%; height: auto; display: block; border-radius: 20px; box-shadow: 0 8px 30px rgba(0,0,0,0.1); }
+        .hero-image {
+    cursor: zoom-in; width: 100%; height: auto; display: block; border-radius: 20px; box-shadow: 0 8px 30px rgba(0,0,0,0.1); }
 
         .journal-header { text-align: center; margin-top: 30px; }
         .journal-title { font-family: 'LuckiestGuy Regular', cursive; font-size: 38px; font-weight: bold; color: #111111; margin: 0 0 10px 0; letter-spacing: -1px; }

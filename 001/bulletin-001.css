@@ -193,7 +193,8 @@
         /* HERO */
         .hero-image-wrapper { width: 100%; margin-bottom: 15px; }
         .fade-in { animation: fadeInUp 0.5s ease both; }
-        .hero-image { width: 100%; height: auto; display: block; border-radius: 20px; box-shadow: 0 8px 30px rgba(0,0,0,0.1); }
+        .hero-image {
+    cursor: zoom-in; width: 100%; height: auto; display: block; border-radius: 20px; box-shadow: 0 8px 30px rgba(0,0,0,0.1); }
 
         /* EN-TÊTE JOURNAL */
         .journal-header { text-align: center; margin-top: 30px; }

@@ -708,8 +708,10 @@
             box-shadow: 0 12px 40px rgba(var(--cat-rgb), 0.2), 0 4px 12px rgba(0,0,0,0.1), 0 0 0 2px rgba(var(--cat-rgb), 0.3); 
         }
         .news-card__image-wrapper { width: 100%; padding-top: 58%; position: relative; overflow: hidden; background: #1a1a3e; }
-        .news-card__image { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; will-change: transform; }
-        .news-card:hover .news-card__image { transform: scale(1.06); }
+        .news-card__image {
+            cursor: zoom-in; position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; will-change: transform; }
+        .news-card:hover .news-card__image {
+            cursor: zoom-in; transform: scale(1.06); }
         .news-card__image-wrapper::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 30%, rgba(0,0,0,0.15) 60%, rgba(0,0,0,0.5) 100%); pointer-events: none; transition: opacity 0.3s ease; z-index: 1; }
         .news-card:hover .news-card__image-wrapper::after { opacity: 0.8; }
         
@@ -2435,10 +2437,14 @@
         .group-card__image-wrapper {
             position: relative; aspect-ratio: 16/10; overflow: hidden;
             background: #0d0d18;
-        }
-        html[data-theme="dark"] .group-card__image-wrapper { background: #0d0d18; }
+        
+            cursor: zoom-in;}
+        html[data-theme="dark"] .group-card__image-wrapper { background: #0d0d18; 
+            cursor: zoom-in;}
         .group-card__image {
             width: 100%; height: 100%; object-fit: cover;
+            cursor: zoom-in;
+            
             transition: transform 0.45s ease; will-change: transform;
         }
         .group-card:hover .group-card__image { transform: scale(1.06); }
@@ -5494,7 +5500,8 @@
             .group-card__content { padding: 10px 12px 10px; }
             .group-card__title { font-size: 14px; }
             .group-card__open-btn { padding: 6px 14px; font-size: 10px; }
-            .group-card__image-wrapper { aspect-ratio: 16/9; }
+            .group-card__image-wrapper { aspect-ratio: 16/9; 
+            cursor: zoom-in;}
             .group-drawer__grid { grid-template-columns: 1fr 1fr; gap: 6px; padding: 8px; }
             .category-title { font-size: 16px !important; gap: 6px !important; margin-bottom: 12px !important; }
             .secret-bulletin { border-radius: 10px; margin-bottom: 14px; }
