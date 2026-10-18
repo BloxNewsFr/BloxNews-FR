@@ -1,4 +1,4 @@
-        @font-face { font-family: 'LuckiestGuy Regular'; src: url('../fonts/LuckiestGuy-Regular.ttf') format('truetype'); }
+@font-face { font-family: 'LuckiestGuy Regular'; src: url('../fonts/LuckiestGuy-Regular.ttf') format('truetype'); }
         :root {
             --orange: #ff6a00;
             --dark-orange: #cc5500;
@@ -711,3 +711,38 @@
             border-color: rgba(255,255,255,0.07);
             border-top-color: rgba(255,255,255,0.16);
         }
+
+/* ── AURA SOMBRE — dernier article ── */
+.doom-zone { position: relative; isolation: isolate; --aura: 0; margin-bottom: 35px; }
+.doom-zone .front-box { margin-bottom: 0; }
+.doom-zone::before {
+    content: '';
+    position: absolute;
+    inset: -170px -130px;
+    z-index: -1;
+    pointer-events: none;
+    background: radial-gradient(ellipse at center,
+        rgba(0, 0, 0, 0.95) 0%,
+        rgba(10, 0, 16, 0.75) 38%,
+        rgba(10, 0, 16, 0.3) 62%,
+        transparent 78%);
+    filter: blur(24px);
+    opacity: var(--aura);
+}
+.doom-zone .front-box--doom {
+    box-shadow:
+        0 0 calc(var(--aura) * 60px) calc(var(--aura) * 10px) rgba(0, 0, 0, 0.9),
+        0 0 calc(var(--aura) * 120px) rgba(60, 0, 0, calc(var(--aura) * 0.6));
+    border-color: rgba(255, 106, 0, calc(0.2 + var(--aura) * 0.25));
+}
+.aura-vignette {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    pointer-events: none;
+    opacity: 0;
+    background: radial-gradient(ellipse at center, transparent 35%, rgba(0, 0, 0, 0.8) 100%);
+}
+.doom-bold {
+    color: #e6853b;
+}
