@@ -1,1 +1,642 @@
-PLACEHOLDER_CSS
+/* ══════════════════════════════════════════════════════════
+   BULLETIN 025 — HALLOWEEN SPÉCIAL
+   Thème : citrouilles, ombres, portes maudites
+   ══════════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Luckiest+Guy&family=Creepster&display=swap');
+
+:root {
+  --color-text:       #1a1a2e;
+  --color-border:     #e0d0ff;
+  --color-primary:    #ff6b00;
+  --color-bg:         #f9f5ff;
+  --color-card:       #ffffff;
+  --halloween-orange: #ff6b00;
+  --halloween-purple: #4a0e8f;
+  --halloween-dark:   #1a0a2e;
+  --halloween-green:  #00cc44;
+}
+
+/* ── Dark mode ────────────────────────────────────────────── */
+body.dark-mode,
+html[data-theme="dark"] body {
+  --color-text:   #e8d5ff;
+  --color-border: #3a1a5e;
+  --color-bg:     #0d0520;
+  --color-card:   #160a2e;
+}
+
+/* ── Base ─────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--color-bg);
+  color: var(--color-text);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ── HALLOWEEN BANNER ─────────────────────────────────────── */
+.blue-banner {
+  background: linear-gradient(135deg, #1a0a2e 0%, #4a0e8f 40%, #8b1a1a 70%, #1a0a2e 100%);
+  color: #fff;
+  text-align: center;
+  padding: 18px 24px;
+  font-family: 'Luckiest Guy', cursive;
+  font-size: 28px;
+  letter-spacing: 2px;
+  text-shadow: 0 0 20px rgba(255,107,0,0.8), 0 2px 4px rgba(0,0,0,0.8);
+  position: relative;
+  overflow: hidden;
+  border-bottom: 3px solid var(--halloween-orange);
+}
+
+.blue-banner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,107,0,0.15) 50%, transparent 100%);
+  animation: halloweenShimmer 3s ease-in-out infinite;
+}
+
+@keyframes halloweenShimmer {
+  0%, 100% { opacity: 0; transform: translateX(-100%); }
+  50%       { opacity: 1; transform: translateX(100%);  }
+}
+
+/* ── HERO IMAGE ───────────────────────────────────────────── */
+.hero-image-wrapper {
+  width: 100%;
+  max-height: 480px;
+  overflow: hidden;
+  position: relative;
+}
+
+.hero-image-wrapper img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+}
+
+.hero-image-wrapper::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0; right: 0;
+  height: 120px;
+  background: linear-gradient(to bottom, transparent, var(--color-bg));
+}
+
+/* ── JOURNAL HEADER ───────────────────────────────────────── */
+.journal-header {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 40px 24px 24px;
+  text-align: center;
+}
+
+.journal-header h1 {
+  font-family: 'Luckiest Guy', cursive;
+  font-size: clamp(28px, 5vw, 48px);
+  color: var(--halloween-orange);
+  text-shadow: 2px 2px 0 var(--halloween-dark), 0 0 30px rgba(255,107,0,0.4);
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+
+.journal-header .edition-tag {
+  display: inline-block;
+  background: linear-gradient(135deg, #4a0e8f, #8b1a1a);
+  color: #fff;
+  padding: 4px 16px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
+.journal-header .date-line {
+  font-size: 13px;
+  color: #888;
+  font-style: italic;
+}
+
+/* ── DIVIDER ──────────────────────────────────────────────── */
+.section-divider {
+  border: none;
+  border-top: 2px solid var(--color-border);
+  margin: 32px auto;
+  max-width: 880px;
+}
+
+html[data-theme="dark"] .section-divider { border-color: #3a1a5e; }
+
+/* ══════════════════════════════════════════════════════════
+   ARTICLE 1 — WANTED BOX (portes Halloween)
+   ══════════════════════════════════════════════════════════ */
+.wanted-box {
+  max-width: 880px;
+  margin: 0 auto 40px;
+  padding: 0 24px;
+}
+
+.wanted-box__inner {
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-left: 4px solid var(--halloween-orange);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(255,107,0,0.08);
+}
+
+.wanted-box__header {
+  background: linear-gradient(135deg, #1a0a2e, #2d0a52);
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.wanted-box__eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--halloween-orange);
+}
+
+.wanted-box__title {
+  font-family: 'Luckiest Guy', cursive;
+  font-size: 24px;
+  color: #fff;
+  text-shadow: 0 0 15px rgba(255,107,0,0.6);
+  line-height: 1.2;
+}
+
+.wanted-box__body {
+  padding: 24px;
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.wanted-box__body img {
+  width: 280px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  border: 2px solid var(--halloween-orange);
+}
+
+.wanted-box__text { flex: 1; }
+
+.wanted-box__byline {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--halloween-orange);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 12px;
+}
+
+.wanted-box__text p {
+  font-size: 15px;
+  line-height: 1.7;
+  margin-bottom: 12px;
+  color: var(--color-text);
+}
+
+/* Résumé box */
+.summary {
+  background: rgba(74,14,143,0.08);
+  border-left: 4px solid #4a0e8f;
+  border-radius: 0 8px 8px 0;
+  padding: 14px 18px;
+  margin-top: 16px;
+  font-size: 14px;
+  color: var(--color-text);
+}
+
+.summary strong { color: #4a0e8f; display: block; margin-bottom: 4px; }
+
+html[data-theme="dark"] .summary {
+  background: rgba(74,14,143,0.18);
+  border-color: #9b59b6;
+}
+html[data-theme="dark"] .summary strong { color: #c39bd3; }
+
+/* ── Responsive article 1 ─────────────────────────────────── */
+@media (max-width: 680px) {
+  .wanted-box__body { flex-direction: column; }
+  .wanted-box__body img { width: 100%; }
+}
+
+/* ══════════════════════════════════════════════════════════
+   ARTICLE 2 — COLUMNS (mini-jeux)
+   ══════════════════════════════════════════════════════════ */
+.content-columns {
+  max-width: 880px;
+  margin: 0 auto 40px;
+  padding: 0 24px;
+}
+
+.content-columns__inner {
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.content-columns__header {
+  background: linear-gradient(135deg, #3d1a00, #8b1a1a);
+  padding: 16px 24px;
+}
+
+.content-columns__eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #ffaa44;
+  margin-bottom: 4px;
+}
+
+.content-columns__title {
+  font-family: 'Luckiest Guy', cursive;
+  font-size: 22px;
+  color: #fff;
+  line-height: 1.2;
+  text-shadow: 0 0 15px rgba(255,165,0,0.5);
+}
+
+.content-columns__body {
+  display: flex;
+  gap: 0;
+}
+
+.left-col {
+  flex: 1.9;
+  padding: 24px;
+  border-right: 1px solid var(--color-border);
+}
+
+.right-col {
+  flex: 1.1;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.right-col img {
+  width: 100%;
+  border-radius: 10px;
+  border: 2px solid #ff6b00;
+  margin-bottom: 12px;
+}
+
+.col-byline {
+  font-size: 12px;
+  font-weight: 600;
+  color: #ff6b00;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+}
+
+.left-col p, .right-col p {
+  font-size: 15px;
+  line-height: 1.7;
+  margin-bottom: 12px;
+  color: var(--color-text);
+}
+
+/* Mini-game tags */
+.minigame-tag {
+  display: inline-block;
+  background: linear-gradient(135deg, rgba(255,107,0,0.12), rgba(139,26,26,0.12));
+  border: 1px solid rgba(255,107,0,0.3);
+  color: var(--halloween-orange);
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  margin: 2px 2px 8px 0;
+}
+
+@media (max-width: 680px) {
+  .content-columns__body { flex-direction: column; }
+  .left-col { border-right: none; border-bottom: 1px solid var(--color-border); }
+}
+
+/* ══════════════════════════════════════════════════════════
+   ARTICLE 3 — SORCIÈRE DES POTIONS (dragon-section style)
+   ══════════════════════════════════════════════════════════ */
+.dragon-section {
+  max-width: 880px;
+  margin: 0 auto 40px;
+  padding: 0 24px;
+}
+
+.dragon-section__inner {
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.dragon-section__header {
+  background: linear-gradient(135deg, #0a2e0a, #0e4a1a);
+  padding: 16px 24px;
+}
+
+.dragon-section__eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #44ff88;
+  margin-bottom: 4px;
+}
+
+.dragon-section__title {
+  font-family: 'Luckiest Guy', cursive;
+  font-size: 22px;
+  color: #fff;
+  line-height: 1.2;
+  text-shadow: 0 0 15px rgba(0,204,68,0.5);
+}
+
+.dragon-section__body {
+  display: flex;
+  gap: 24px;
+  padding: 24px;
+  align-items: flex-start;
+}
+
+.dragon-section__body img {
+  width: 240px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  border: 2px solid #00cc44;
+}
+
+.dragon-section__text { flex: 1; }
+
+.dragon-section__byline {
+  font-size: 12px;
+  font-weight: 600;
+  color: #00cc44;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+}
+
+.dragon-section__text p {
+  font-size: 15px;
+  line-height: 1.7;
+  margin-bottom: 12px;
+  color: var(--color-text);
+}
+
+/* Potion/reward tags */
+.potion-tag {
+  display: inline-block;
+  background: rgba(0,204,68,0.1);
+  border: 1px solid rgba(0,204,68,0.3);
+  color: #007a1e;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  margin: 2px 2px 8px 0;
+}
+
+html[data-theme="dark"] .potion-tag { color: #44ff88; }
+
+@media (max-width: 680px) {
+  .dragon-section__body { flex-direction: column; }
+  .dragon-section__body img { width: 100%; }
+}
+
+/* ══════════════════════════════════════════════════════════
+   ARTICLE 4 — HELLFIRE DOOR (yellow-box style, red warning)
+   ══════════════════════════════════════════════════════════ */
+.hellfire-box {
+  max-width: 880px;
+  margin: 0 auto 40px;
+  padding: 0 24px;
+}
+
+.hellfire-box__inner {
+  background: linear-gradient(135deg, #1a0505, #2e0a0a);
+  border: 2px solid #cc0000;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 0 30px rgba(204,0,0,0.2), inset 0 0 50px rgba(255,40,0,0.05);
+}
+
+.hellfire-box__header {
+  background: linear-gradient(135deg, #cc0000, #880000);
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.hellfire-box__warning {
+  font-size: 20px;
+}
+
+.hellfire-box__eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(255,200,200,0.9);
+  margin-bottom: 2px;
+}
+
+.hellfire-box__title {
+  font-family: 'Luckiest Guy', cursive;
+  font-size: 22px;
+  color: #fff;
+  text-shadow: 0 0 15px rgba(255,100,0,0.8);
+}
+
+.hellfire-box__body {
+  padding: 24px;
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.hellfire-box__body img {
+  width: 260px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  border: 2px solid #cc2200;
+}
+
+.hellfire-box__text { flex: 1; }
+
+.hellfire-box__byline {
+  font-size: 12px;
+  font-weight: 600;
+  color: #ff6644;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 12px;
+}
+
+.hellfire-box__text p {
+  font-size: 15px;
+  line-height: 1.7;
+  margin-bottom: 12px;
+  color: #f0c0b0;
+}
+
+.hellfire-box__text p strong {
+  color: #ff8866;
+}
+
+@media (max-width: 680px) {
+  .hellfire-box__body { flex-direction: column; }
+  .hellfire-box__body img { width: 100%; }
+}
+
+/* ══════════════════════════════════════════════════════════
+   YELLOW BOX / FOOTER NOTE
+   ══════════════════════════════════════════════════════════ */
+.yellow-box {
+  max-width: 880px;
+  margin: 0 auto 32px;
+  padding: 0 24px;
+}
+
+.yellow-box__inner {
+  background: linear-gradient(135deg, rgba(255,107,0,0.08), rgba(74,14,143,0.08));
+  border: 1px solid rgba(255,107,0,0.25);
+  border-radius: 12px;
+  padding: 20px 24px;
+  text-align: center;
+  font-size: 15px;
+  color: var(--color-text);
+  font-style: italic;
+}
+
+.yellow-box__inner strong {
+  color: var(--halloween-orange);
+  font-style: normal;
+}
+
+/* ══════════════════════════════════════════════════════════
+   SOCIAL SHARE
+   ══════════════════════════════════════════════════════════ */
+.social-share {
+  max-width: 880px;
+  margin: 0 auto 32px;
+  padding: 0 24px;
+  text-align: center;
+}
+
+.social-share h3 {
+  font-size: 14px;
+  font-weight: 700;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 16px;
+}
+
+.social-share__links {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.social-share__links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 40px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.social-share__links a:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+}
+
+.social-share__links .discord { background: #5865f2; color: #fff; }
+.social-share__links .tiktok  { background: #000; color: #fff; }
+.social-share__links .youtube  { background: #ff0000; color: #fff; }
+
+/* ══════════════════════════════════════════════════════════
+   BACK BUTTON
+   ══════════════════════════════════════════════════════════ */
+.back-button-container {
+  max-width: 880px;
+  margin: 0 auto 48px;
+  padding: 0 24px;
+  display: flex;
+  justify-content: center;
+}
+
+.back-button-container a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 28px;
+  background: linear-gradient(135deg, #4a0e8f, #2d0a52);
+  color: #fff;
+  text-decoration: none;
+  border-radius: 40px;
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.5px;
+  transition: transform 0.15s, box-shadow 0.15s;
+  box-shadow: 0 4px 16px rgba(74,14,143,0.3);
+}
+
+.back-button-container a:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(74,14,143,0.4);
+}
+
+/* ══════════════════════════════════════════════════════════
+   DARK MODE OVERRIDES
+   ══════════════════════════════════════════════════════════ */
+html[data-theme="dark"] .wanted-box__inner,
+html[data-theme="dark"] .content-columns__inner,
+html[data-theme="dark"] .dragon-section__inner {
+  background: #160a2e;
+  border-color: #3a1a5e;
+}
+
+html[data-theme="dark"] .left-col,
+html[data-theme="dark"] .right-col { border-color: #3a1a5e; }
+
+html[data-theme="dark"] .wanted-box__text p,
+html[data-theme="dark"] .left-col p,
+html[data-theme="dark"] .right-col p,
+html[data-theme="dark"] .dragon-section__text p {
+  color: #e0c8ff;
+}
+
+html[data-theme="dark"] .yellow-box__inner {
+  background: linear-gradient(135deg, rgba(255,107,0,0.12), rgba(74,14,143,0.12));
+  border-color: rgba(255,107,0,0.35);
+  color: #e0c8ff;
+}
+
+html[data-theme="dark"] .section-divider { border-color: #3a1a5e; }
