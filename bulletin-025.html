@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blox Bulletin #025 — Halloween 2026 | BloxNews FR</title>
+  <meta name="description" content="Le Bulletin #025 est là ! Portes mystérieuses, mini-jeux d'Halloween, la Sorcière des Potions est de retour, et une menace bien plus sinistre rôde dans les flammes..." />
+
+  <!-- OG / Social -->
+  <meta property="og:title"       content="Blox Bulletin #025 — Halloween 2026" />
+  <meta property="og:description" content="Des portes maudites apparaissent en ville, la Harvest Moon est de retour, et quelque chose de bien plus sombre se cache derrière les flammes..." />
+  <meta property="og:image"       content="https://bloxnewsfr.github.io/BloxNews-FR/025/img/HalloweenBanner.png" />
+  <meta property="og:type"        content="article" />
+  <meta name="twitter:card"       content="summary_large_image" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Luckiest+Guy&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="./bulletin-025.css" />
+  <link rel="stylesheet" href="../shared/bulletin-lightbox.css" />
+
+  <style>
+    :root { color-scheme: light dark; }
+
+    /* ── COUNTDOWN OVERLAY ── */
+    #countdown-overlay {
+      position: fixed; inset: 0; z-index: 9999;
+      background: radial-gradient(ellipse at center, #1a0a2e 0%, #0d0520 60%, #000 100%);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      color: #fff; text-align: center;
+      font-family: 'Inter', sans-serif;
+      transition: opacity 0.6s ease;
+    }
+    #countdown-overlay.hidden { opacity: 0; pointer-events: none; }
+
+    .countdown-pumpkin {
+      font-size: 72px; margin-bottom: 16px;
+      animation: floatPumpkin 3s ease-in-out infinite;
+    }
+    @keyframes floatPumpkin {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(-12px); }
+    }
+
+    .countdown-label {
+      font-family: 'Luckiest Guy', cursive;
+      font-size: clamp(20px, 4vw, 32px);
+      color: #ff6b00;
+      text-shadow: 0 0 20px rgba(255,107,0,0.8);
+      letter-spacing: 2px; margin-bottom: 8px;
+    }
+    .countdown-subtitle {
+      font-size: 14px; color: rgba(255,200,150,0.7);
+      margin-bottom: 32px; letter-spacing: 1px;
+    }
+    #countdown-timer { display: flex; gap: 16px; align-items: center; }
+    .countdown-unit { display: flex; flex-direction: column; align-items: center; }
+    .countdown-unit__value {
+      font-family: 'Luckiest Guy', cursive;
+      font-size: clamp(36px, 8vw, 72px); line-height: 1; color: #fff;
+      text-shadow: 0 0 30px rgba(255,107,0,0.6);
+      min-width: 2ch; text-align: center;
+    }
+    .countdown-unit__label {
+      font-size: 11px; color: rgba(255,200,150,0.6);
+      letter-spacing: 2px; text-transform: uppercase; margin-top: 6px;
+    }
+    .countdown-sep {
+      font-family: 'Luckiest Guy', cursive; font-size: 48px;
+      color: rgba(255,107,0,0.5); margin-bottom: 20px;
+    }
+    .countdown-reveal-btn {
+      display: none; margin-top: 20px; padding: 14px 36px;
+      background: linear-gradient(135deg, #ff6b00, #cc4400);
+      color: #fff; border: none; border-radius: 40px;
+      font-family: 'Luckiest Guy', cursive; font-size: 20px;
+      letter-spacing: 1px; cursor: pointer;
+      box-shadow: 0 0 30px rgba(255,107,0,0.5);
+      animation: pulseOrange 2s ease-in-out infinite;
+    }
+    .countdown-reveal-btn:hover { transform: scale(1.05); }
+    @keyframes pulseOrange {
+      0%, 100% { box-shadow: 0 0 20px rgba(255,107,0,0.4); }
+      50%       { box-shadow: 0 0 40px rgba(255,107,0,0.9); }
+    }
+
+    #main-content { display: none; }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(26,10,46,0.96);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,107,0,0.2);
+      display: flex; align-items: center;
+      padding: 0 24px; height: 60px; gap: 16px;
+    }
+    .nav-logo {
+      font-family: 'Luckiest Guy', cursive; font-size: 20px;
+      color: #ff6b00; text-decoration: none; letter-spacing: 1px;
+    }
+    .nav-spacer { flex: 1; }
+    .nav-links { display: flex; gap: 8px; list-style: none; }
+    .nav-links a {
+      color: rgba(255,200,150,0.85); text-decoration: none;
+      font-size: 14px; font-weight: 500; padding: 6px 12px;
+      border-radius: 6px; transition: background 0.15s, color 0.15s;
+    }
+    .nav-links a:hover { background: rgba(255,107,0,0.12); color: #ff6b00; }
+    .nav-icon-btn {
+      background: none; border: none; cursor: pointer;
+      color: rgba(255,200,150,0.8); display: flex; align-items: center;
+      padding: 6px; border-radius: 8px; transition: background 0.15s, color 0.15s;
+    }
+    .nav-icon-btn:hover { background: rgba(255,107,0,0.12); color: #ff6b00; }
+    .nav-icon-btn .material-symbols-outlined { font-size: 22px; }
+    .mobile-nav-toggle {
+      display: none; background: none; border: none; cursor: pointer;
+      color: rgba(255,200,150,0.8); padding: 6px; border-radius: 8px;
+    }
+    .mobile-nav-toggle .material-symbols-outlined { font-size: 26px; }
+    @media (max-width: 720px) {
+      .nav-links { display: none; }
+      .mobile-nav-toggle { display: flex; align-items: center; }
+    }
+    .mobile-nav-dropdown {
+      position: fixed; top: 60px; left: 0; right: 0; bottom: 0;
+      background: rgba(13,5,32,0.97); z-index: 99;
+      display: none; flex-direction: column; overflow-y: auto;
+    }
+    .mobile-nav-dropdown.open { display: flex; }
+    .mnav-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 24px; border-bottom: 1px solid rgba(255,107,0,0.15);
+    }
+    .mnav-header__title { font-family: 'Luckiest Guy', cursive; font-size: 18px; color: #ff6b00; }
+    .mnav-close {
+      background: rgba(255,107,0,0.1); border: none; cursor: pointer;
+      color: rgba(255,200,150,0.8); border-radius: 8px; padding: 6px;
+      display: flex; align-items: center;
+    }
+    .mnav-links { padding: 12px 0; }
+    a.mnav-link {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 24px; color: rgba(255,200,150,0.85);
+      text-decoration: none; font-size: 15px; font-weight: 500;
+      transition: background 0.15s;
+    }
+    a.mnav-link:hover { background: rgba(255,107,0,0.08); }
+    .mnav-link__icon { color: rgba(255,107,0,0.6); font-size: 20px; }
+
+    /* ── SEARCH ── */
+    .search-overlay {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(0,0,0,0.8); backdrop-filter: blur(8px);
+      display: none; align-items: flex-start; justify-content: center;
+      padding-top: 80px;
+    }
+    .search-overlay.open { display: flex; }
+    .search-box {
+      background: #160a2e; border: 1px solid rgba(255,107,0,0.3);
+      border-radius: 16px; padding: 24px; width: min(600px, 90vw);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    }
+    .search-input-row { display: flex; gap: 8px; margin-bottom: 16px; }
+    .search-input {
+      flex: 1; background: rgba(255,107,0,0.05);
+      border: 1px solid rgba(255,107,0,0.2);
+      color: #e8d5ff; border-radius: 10px; padding: 12px 16px;
+      font-size: 15px; outline: none;
+    }
+    .search-input::placeholder { color: rgba(255,200,150,0.4); }
+    .search-input:focus { border-color: rgba(255,107,0,0.5); }
+    .search-close-btn {
+      background: rgba(255,107,0,0.1); border: 1px solid rgba(255,107,0,0.2);
+      color: rgba(255,200,150,0.8); border-radius: 10px; padding: 12px;
+      cursor: pointer; display: flex; align-items: center;
+    }
+    #search-results { max-height: 300px; overflow-y: auto; }
+    .search-result-item {
+      padding: 10px 12px; border-radius: 8px; cursor: pointer;
+      color: rgba(255,200,150,0.7); font-size: 14px; transition: background 0.1s;
+    }
+    .search-result-item:hover { background: rgba(255,107,0,0.1); }
+    .search-result-item mark { background: rgba(255,107,0,0.3); color: #ff9944; border-radius: 2px; }
+
+    #particles-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+
+    /* ── DISCORD BAR ── */
+    .discord-bar {
+      background: linear-gradient(135deg, #1a0a2e, #2d0a52);
+      border-bottom: 1px solid rgba(255,107,0,0.15);
+      padding: 10px 24px;
+      display: flex; align-items: center; justify-content: center; gap: 12px;
+      font-size: 13px; color: rgba(255,200,150,0.7);
+    }
+    .discord-login-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: #5865f2; color: #fff; padding: 6px 16px;
+      border-radius: 20px; font-size: 13px; font-weight: 600;
+      text-decoration: none; border: none; cursor: pointer;
+      transition: background 0.15s;
+    }
+    .discord-login-btn:hover { background: #4752c4; }
+    .discord-login-btn svg { width: 16px; height: 16px; }
+    .discord-user-info { display: none; align-items: center; gap: 8px; }
+    .discord-user-info img { width: 24px; height: 24px; border-radius: 50%; }
+    .discord-logout-btn {
+      background: none; border: 1px solid rgba(255,200,150,0.2);
+      color: rgba(255,200,150,0.5); padding: 4px 10px;
+      border-radius: 12px; cursor: pointer; font-size: 12px;
+    }
+    .content-wrapper { position: relative; z-index: 1; }
+  </style>
+
+  <script>
+    (function() {
+      try {
+        var t = localStorage.getItem('blox_dark_mode') || localStorage.getItem('bloxsite_theme');
+        if (t === 'dark' || t === '1' || t === 'true') {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      } catch(e) {}
+    })();
+  </script>
+</head>
+<body>
+
+<div id="countdown-overlay">
+  
+  <div class="countdown-label">BULLETIN #025</div>
+  <div class="countdown-subtitle">HALLOWEEN 2026 — RÉVÉLATION EN...</div>
+  <div id="countdown-timer">
+    <div class="countdown-unit">
+      <span class="countdown-unit__value" id="cd-days">00</span>
+      <span class="countdown-unit__label">Jours</span>
+    </div>
+    <span class="countdown-sep">:</span>
+    <div class="countdown-unit">
+      <span class="countdown-unit__value" id="cd-hours">00</span>
+      <span class="countdown-unit__label">Heures</span>
+    </div>
+    <span class="countdown-sep">:</span>
+    <div class="countdown-unit">
+      <span class="countdown-unit__value" id="cd-mins">00</span>
+      <span class="countdown-unit__label">Minutes</span>
+    </div>
+    <span class="countdown-sep">:</span>
+    <div class="countdown-unit">
+      <span class="countdown-unit__value" id="cd-secs">00</span>
+      <span class="countdown-unit__label">Secondes</span>
+    </div>
+  </div>
+  <button class="countdown-reveal-btn" id="reveal-btn" onclick="revealContent()">
+    OUVRIR LA PORTE
+  </button>
+</div>
+
+<div id="main-content">
+  <canvas id="particles-canvas"></canvas>
+
+  <nav>
+    <a class="nav-logo" href="../index.html">BloxNews FR</a>
+    <span class="nav-spacer"></span>
+    <ul class="nav-links">
+      <li><a href="../index.html">Accueil</a></li>
+      <li><a href="../archives.html">Archives</a></li>
+      <li><a href="../astuces/astuces.html">Astuces</a></li>
+    </ul>
+    <button class="nav-icon-btn" id="searchToggleBtn" aria-label="Rechercher" onclick="openSearch()">
+      <span class="material-symbols-outlined">search</span>
+    </button>
+    <button class="nav-icon-btn" id="themeToggle" aria-label="Changer le thème" onclick="toggleTheme()">
+      <span class="material-symbols-outlined">dark_mode</span>
+    </button>
+    <button class="mobile-nav-toggle" id="mobileNavBtn" aria-label="Menu" onclick="openMobileNav()">
+      <span class="material-symbols-outlined">menu</span>
+    </button>
+  </nav>
+
+  <div class="mobile-nav-dropdown" id="mobileNavDropdown">
+    <div class="mnav-header">
+      <span class="mnav-header__title">Menu</span>
+      <button class="mnav-close" onclick="closeMobileNav()">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+    <div class="mnav-links">
+      <a href="../index.html" class="mnav-link">
+        <span class="material-symbols-outlined mnav-link__icon">home</span>Accueil
+      </a>
+      <a href="../archives.html" class="mnav-link">
+        <span class="material-symbols-outlined mnav-link__icon">archive</span>Archives
+      </a>
+      <a href="../astuces/astuces.html" class="mnav-link">
+        <span class="material-symbols-outlined mnav-link__icon">lightbulb</span>Astuces
+      </a>
+    </div>
+  </div>
+
+  <div class="search-overlay" id="searchOverlay">
+    <div class="search-box">
+      <div class="search-input-row">
+        <input class="search-input" id="searchInput" type="text"
+               placeholder="Rechercher dans le bulletin..."
+               oninput="doSearch(this.value)" />
+        <button class="search-close-btn" onclick="closeSearch()">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <div id="search-results"></div>
+    </div>
+  </div>
+
+  <div class="discord-bar">
+    <span>Connecte-toi pour soutenir BloxNews FR</span>
+    <button class="discord-login-btn" id="discordLoginBtn" onclick="discordLogin()">
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.002.022.015.043.032.054a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/>
+      </svg>
+      Discord
+    </button>
+    <div class="discord-user-info" id="discordUserInfo">
+      <img id="discordAvatar" src="" alt="Avatar" />
+      <span id="discordUsername">Joueur</span>
+      <button class="discord-logout-btn" onclick="discordLogout()">Déconnexion</button>
+    </div>
+  </div>
+
+  <div class="content-wrapper">
+
+    <div class="blue-banner">
+      THE BLOX BULLETIN — ÉDITION #025 · HALLOWEEN 2026
+    </div>
+
+    <div class="hero-image-wrapper">
+      <img src="./img/HalloweenBanner.png" alt="Bannière Halloween Blox Fruits 2026"
+           onerror="this.style.display='none'" />
+    </div>
+
+    <header class="journal-header">
+      <div class="edition-tag">Édition Halloween</div>
+      <h1>C'est encore cette époque de l'année...</h1>
+      <p class="date-line">Bulletin #025 · Octobre 2026 · BloxNews FR</p>
+    </header>
+
+    <hr class="section-divider" />
+
+    <!-- ARTICLE 1 — PORTES HALLOWEEN -->
+    <section class="wanted-box" id="article-1">
+      <div class="wanted-box__inner">
+        <div class="wanted-box__header">
+          <div>
+            <div class="wanted-box__eyebrow">Événement Principal</div>
+            <div class="wanted-box__title">Toc Toc... C'est encore cette époque !</div>
+          </div>
+        </div>
+        <div class="wanted-box__body">
+          <img src="./img/Halloween25_Doors.png" alt="Portes mystérieuses d'Halloween"
+               onerror="this.style.display='none'" />
+          <div class="wanted-box__text">
+            <div class="wanted-box__byline">Par Jack O' Scarie</div>
+            <p>L'Halloween est de retour dans Blox Fruits ! Des <strong>portes mystérieuses</strong> font leur apparition un peu partout en ville, et il y a encore plus de rencontres étranges que les années précédentes.</p>
+            <p>La <strong>Harvest Moon (Lune des Moissons)</strong> est de nouveau visible dans le ciel, signalant le retour de la saison des bonbons ou des tours. Prépare-toi à faire du trick-or-treating et à explorer tout ce que cette édition Halloween a à offrir !</p>
+            <p>Cette année, les développeurs ont promis encore plus de surprises et de rencontres inattendues que jamais. Garde l'œil ouvert et explore chaque recoin des îles.</p>
+            <div class="summary">
+              <strong>📌 Résumé :</strong>
+              L'événement Halloween est lancé — portes mystérieuses en ville, Harvest Moon de retour, et encore plus de contenu que les années précédentes.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="section-divider" />
+
+    <!-- ARTICLE 2 — MINI-JEUX -->
+    <section class="content-columns" id="article-2">
+      <div class="content-columns__inner">
+        <div class="content-columns__header">
+          <div class="content-columns__eyebrow">Mini-Jeux</div>
+          <div class="content-columns__title">Plus de Tours que de Bonbons ?</div>
+        </div>
+        <div class="content-columns__body">
+          <div class="left-col">
+            <div class="col-byline">Par Claire Duney</div>
+            <p>Cette année, l'événement Halloween ne se limite pas aux traditionnelles activités ! Trois nouveaux mini-jeux ont été ajoutés pour pimenter l'expérience :</p>
+            <p><span class="minigame-tag">Créatures dans les couloirs</span><br/>Des créatures d'outre-tombe hantent les ruelles des villes. Esquive-les ou affronte-les pour récolter des récompenses spéciales.</p>
+            <p><span class="minigame-tag">Cartes de Tarot Mystérieuses</span><br/>Des cartes de Tarot énigmatiques sont apparues un peu partout. Collecte-les pour découvrir leur pouvoir caché — certaines octroient des bonus temporaires, d'autres réservent des surprises...</p>
+            <p><span class="minigame-tag">Jack-O'-Lanterns Vivantes</span><br/>Attention, ces citrouilles ne sont pas ordinaires ! Elles bougent, réagissent et peuvent t'offrir des récompenses exclusives si tu interagis avec elles correctement.</p>
+            <div class="summary">
+              <strong>📌 Résumé :</strong>
+              Trois nouveaux mini-jeux disponibles : créatures dans les couloirs, cartes de Tarot mystérieuses, et des Jack-O'-Lanterns bien vivantes.
+            </div>
+          </div>
+          <div class="right-col">
+            <img src="./img/Halloween25_PumpkinField.png" alt="Champ de citrouilles Halloween"
+                 onerror="this.style.display='none'" />
+            <p style="font-size: 13px; color: #999; text-align: center; font-style: italic;">Le champ de citrouilles cache bien des secrets cette année...</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="section-divider" />
+
+    <!-- ARTICLE 3 — SORCIÈRE DES POTIONS -->
+    <section class="dragon-section" id="article-3">
+      <div class="dragon-section__inner">
+        <div class="dragon-section__header">
+          <div class="dragon-section__eyebrow">Récompenses Exclusives</div>
+          <div class="dragon-section__title">Double, Double... Ennuis de Potions !</div>
+        </div>
+        <div class="dragon-section__body">
+          <img src="./img/Halloween25_PotionWitch.png" alt="La Sorcière des Potions Halloween"
+               onerror="this.style.display='none'" />
+          <div class="dragon-section__text">
+            <div class="dragon-section__byline">Par Marnie Spellsolot</div>
+            <p>La <strong>Sorcière des Potions</strong> fait son grand retour pour Halloween ! Et cette fois, elle arrive avec <strong>2 nouvelles potions inédites</strong> que les joueurs pourront débloquer en participant à l'événement.</p>
+            <p>Mais ce n'est pas tout — <strong>Zioles</strong> a ouvert son fameux <strong>Spooky Gacha</strong> ! En échangeant tes <em>Spooky Tokens</em> (Jetons Spooky), tu peux obtenir :</p>
+            <p>
+              <span class="potion-tag">Potions gratuites</span>
+              <span class="potion-tag">Accessoires exclusifs</span>
+              <span class="potion-tag">Arrière-plans uniques</span>
+              <span class="potion-tag">Grand Prix mystère</span>
+            </p>
+            <p>Le grand prix reste pour l'instant un mystère... mais les rumeurs parlent d'une récompense sans précédent. Collecte tes Spooky Tokens au plus vite !</p>
+            <div class="summary">
+              <strong>📌 Résumé :</strong>
+              La Sorcière des Potions est de retour avec 2 nouvelles potions. Zioles propose le Spooky Gacha : échange des Spooky Tokens contre des potions, accessoires, arrière-plans et un grand prix mystérieux.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="section-divider" />
+
+    <!-- ARTICLE 4 — HELLFIRE DOOR -->
+    <section class="hellfire-box" id="article-4">
+      <div class="hellfire-box__inner">
+        <div class="hellfire-box__header">
+          
+          <div>
+            <div class="hellfire-box__eyebrow">Alerte Danger</div>
+            <div class="hellfire-box__title">Quelque Chose de Sinistre se Cache Derrière les Portes...</div>
+          </div>
+        </div>
+        <div class="hellfire-box__body">
+          <img src="./img/Halloween25_HellfireDoor.png" alt="Porte de feu de l'enfer"
+               onerror="this.style.display='none'" />
+          <div class="hellfire-box__text">
+            <div class="hellfire-box__byline">Par Mina Fenn</div>
+            <p>Des résidents <strong>disparaissent sans laisser de traces</strong>. Les témoins rapportent avoir vu des portes entourées d'une <strong>flamme surnaturelle</strong>, d'une couleur que personne n'avait jamais vue auparavant.</p>
+            <p>Ceux qui ont osé approcher ces portes maudites décrivent avoir aperçu, à travers les flammes, <strong>une créature colossale enveloppée de feu</strong>, dont la simple présence provoque une peur profonde et inexplicable.</p>
+            <p>L'an dernier, c'était le <strong>Loup-Garou</strong>. Cette année, les signes indiquent que ce qui se cache derrière ces portes est <strong>bien pire</strong>. Les autorités conseillent formellement d'<strong>éviter toute porte entourée de flammes étranges</strong>.</p>
+            <p><strong>Reste à l'écart... ou prépare-toi à affronter ta peur.</strong></p>
+            <div class="summary" style="background: rgba(204,0,0,0.08); border-color: #cc2200;">
+              <strong style="color: #ff6644;">📌 Résumé :</strong>
+              <span style="color: #f0c0b0;">Des résidents disparaissent près de portes entourées de flammes surnaturelles. Une créature colossale rôde à l'intérieur — plus dangereuse que le Loup-Garou de l'an dernier. Évite les portes aux flammes étranges.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="section-divider" />
+
+    <section class="yellow-box">
+      <div class="yellow-box__inner">
+        <strong>Joyeux Halloween !</strong> Reste prudent là-dehors, surtout avec cette nouvelle menace qui rôde dans les ombres enflammées...
+      </div>
+    </section>
+
+    <section class="social-share">
+      <h3>Rejoins la communauté</h3>
+      <div class="social-share__links">
+        <a href="https://discord.gg/a6S6eugPn" target="_blank" rel="noopener" class="discord">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.002.022.015.043.032.054a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/>
+          </svg>
+          Discord
+        </a>
+        <a href="https://www.tiktok.com/@dc_neolixx" target="_blank" rel="noopener" class="tiktok">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.22 6.22 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.25 8.25 0 004.84 1.56V6.82a4.85 4.85 0 01-1.07-.13z"/>
+          </svg>
+          TikTok
+        </a>
+        <a href="https://www.youtube.com/@Dc_neolixx" target="_blank" rel="noopener" class="youtube">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+          </svg>
+          YouTube
+        </a>
+      </div>
+    </section>
+
+    <div class="back-button-container">
+      <a href="../index.html#bulletin-025">← Retour à l'accueil</a>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const TARGET = new Date(Date.UTC(2026, 9, 17, 8, 0, 0));
+function pad(n) { return String(n).padStart(2, '0'); }
+function updateCountdown() {
+  const diff = TARGET - Date.now();
+  if (diff <= 0) {
+    document.getElementById('countdown-timer').style.display = 'none';
+    document.querySelector('.countdown-subtitle').textContent = 'LE BULLETIN EST DISPONIBLE !';
+    document.getElementById('reveal-btn').style.display = 'inline-flex';
+    return;
+  }
+  const d = Math.floor(diff / 86400000);
+  const h = Math.floor((diff % 86400000) / 3600000);
+  const m = Math.floor((diff % 3600000) / 60000);
+  const s = Math.floor((diff % 60000) / 1000);
+  document.getElementById('cd-days').textContent  = pad(d);
+  document.getElementById('cd-hours').textContent = pad(h);
+  document.getElementById('cd-mins').textContent  = pad(m);
+  document.getElementById('cd-secs').textContent  = pad(s);
+}
+updateCountdown();
+const cdInterval = setInterval(updateCountdown, 1000);
+if (Date.now() >= TARGET) {
+  document.getElementById('countdown-timer').style.display = 'none';
+  document.querySelector('.countdown-subtitle').textContent = 'LE BULLETIN EST DISPONIBLE !';
+  document.getElementById('reveal-btn').style.display = 'inline-flex';
+}
+function revealContent() {
+  clearInterval(cdInterval);
+  const overlay = document.getElementById('countdown-overlay');
+  overlay.classList.add('hidden');
+  setTimeout(() => {
+    overlay.style.display = 'none';
+    document.getElementById('main-content').style.display = 'block';
+    initParticles();
+    checkDiscordSession();
+    updateThemeIcon();
+  }, 650);
+}
+function toggleTheme() {
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  const next = isDark ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  try { localStorage.setItem('blox_dark_mode', next === 'dark' ? '1' : '0'); localStorage.setItem('bloxsite_theme', next); } catch(e) {}
+  updateThemeIcon();
+}
+function updateThemeIcon() {
+  const btn = document.getElementById('themeToggle');
+  if (!btn) return;
+  const icon = btn.querySelector('.material-symbols-outlined');
+  const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+  if (icon) icon.textContent = dark ? 'light_mode' : 'dark_mode';
+}
+function openMobileNav()  { document.getElementById('mobileNavDropdown').classList.add('open');  document.body.style.overflow = 'hidden'; }
+function closeMobileNav() { document.getElementById('mobileNavDropdown').classList.remove('open'); document.body.style.overflow = ''; }
+const SEARCH_SECTIONS = [
+  { id: 'article-1', title: 'Portes mystérieuses - Halloween est de retour' },
+  { id: 'article-2', title: 'Mini-jeux - Créatures, Tarot, Citrouilles vivantes' },
+  { id: 'article-3', title: 'Sorcière des Potions - Spooky Gacha et nouveautés' },
+  { id: 'article-4', title: "Porte de Feu de l'Enfer - Menace sinistre" },
+];
+function openSearch() { document.getElementById('searchOverlay').classList.add('open'); document.getElementById('searchInput').focus(); }
+function closeSearch() { document.getElementById('searchOverlay').classList.remove('open'); document.getElementById('searchInput').value = ''; document.getElementById('search-results').innerHTML = ''; }
+function doSearch(q) {
+  const r = document.getElementById('search-results');
+  if (!q.trim()) { r.innerHTML = ''; return; }
+  const hits = SEARCH_SECTIONS.filter(s => s.title.toLowerCase().includes(q.toLowerCase()));
+  if (!hits.length) { r.innerHTML = '<div class="search-result-item">Aucun résultat</div>'; return; }
+  r.innerHTML = hits.map(s => `<div class="search-result-item" onclick="goTo('${s.id}')">${s.title.replace(new RegExp('('+q+')', 'gi'), '<mark>$1</mark>')}</div>`).join('');
+}
+function goTo(id) { closeSearch(); const el = document.getElementById(id); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSearch(); if ((e.ctrlKey || e.metaKey) && e.key === 'k') { e.preventDefault(); openSearch(); } });
+function initParticles() {
+  const canvas = document.getElementById('particles-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+  window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
+  const particles = Array.from({ length: 30 }, () => ({
+    x: Math.random() * canvas.width, y: Math.random() * canvas.height,
+    r: Math.random() * 2 + 1, vx: (Math.random() - 0.5) * 0.4, vy: (Math.random() - 0.5) * 0.4,
+    hue: [30, 270, 120][Math.floor(Math.random() * 3)], a: Math.random() * 0.3 + 0.1,
+  }));
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach(p => {
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = `hsla(${p.hue}, 80%, 60%, ${p.a})`; ctx.fill();
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+      if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+}
+const DISCORD_CLIENT_ID = '1517793695573999646';
+const DISCORD_REDIRECT_URI = encodeURIComponent(window.location.href.split('?')[0]);
+const DISCORD_SCOPE = 'identify';
+function discordLogin() {
+  const state = Math.random().toString(36).slice(2);
+  try { sessionStorage.setItem('discord_state', state); } catch(e) {}
+  window.location.href = `https://discord.com/oauth2/authorize?client_id=${DISCORD_CLIENT_ID}&redirect_uri=${DISCORD_REDIRECT_URI}&response_type=token&scope=${DISCORD_SCOPE}&state=${state}`;
+}
+function discordLogout() {
+  try { localStorage.removeItem('discord_token'); localStorage.removeItem('discord_user'); } catch(e) {}
+  document.getElementById('discordLoginBtn').style.display = 'inline-flex';
+  document.getElementById('discordUserInfo').style.display = 'none';
+}
+async function checkDiscordSession() {
+  const hash = window.location.hash.slice(1);
+  const params = new URLSearchParams(hash);
+  const token = params.get('access_token');
+  if (token) {
+    try { localStorage.setItem('discord_token', token); } catch(e) {}
+    history.replaceState(null, '', window.location.pathname);
+    await fetchDiscordUser(token); return;
+  }
+  try { const saved = localStorage.getItem('discord_token'); if (saved) await fetchDiscordUser(saved); } catch(e) {}
+}
+async function fetchDiscordUser(token) {
+  try {
+    const res = await fetch('https://discord.com/api/users/@me', { headers: { Authorization: `Bearer ${token}` } });
+    if (!res.ok) throw new Error('invalid token');
+    const user = await res.json();
+    const avatarUrl = user.avatar ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png?size=64` : `https://cdn.discordapp.com/embed/avatars/${parseInt(user.discriminator || '0') % 5}.png`;
+    document.getElementById('discordAvatar').src = avatarUrl;
+    document.getElementById('discordUsername').textContent = user.global_name || user.username;
+    document.getElementById('discordLoginBtn').style.display = 'none';
+    document.getElementById('discordUserInfo').style.display = 'flex';
+  } catch(e) { try { localStorage.removeItem('discord_token'); } catch(_) {} }
+}
+</script>
+
+</body>
+</html>
