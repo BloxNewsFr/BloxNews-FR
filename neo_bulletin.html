@@ -35,7 +35,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Inter:wght@300;400;500;600;700;900&family=Bebas+Neue&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
     <style>
         @font-face { font-family: 'LuckiestGuy Regular'; src: url('./fonts/LuckiestGuy-Regular.ttf') format('truetype'); }
@@ -8322,7 +8321,6 @@
         appId: "1:774633429491:web:d1f534a0df346fbea79a86",
         measurementId: "G-DKKQK7N4DQ"
     });
-    var FB_AUTH = firebase.auth();
     var FB_DB  = firebase.database();
     const FB_REF = FB_DB.ref('comments');
 
@@ -10481,11 +10479,13 @@
         const updModalFields = { updModalTitle:'title', updModalVersion:'version', updModalDate:'date', updModalDesc:'fullDesc' };
         if (_editEl.id && updModalFields[_editEl.id] && typeof _updModalCurrent !== 'undefined' && _updModalCurrent && typeof FB_UPDATES_REF !== 'undefined' && FB_UPDATES_REF) {
             const field = updModalFields[_editEl.id];
-            FB_UPDATES_REF.child(_updModalCurrent).child(field).set(newText)
-                .then(() => editLog('ok', `Sauvegardé dans blox_updates/${_updModalCurrent}/${field}`))
-                .catch(err => editLog('err', 'Erreur Firebase : ' + (err?.message||err)));
-            const upd = UPDATES_DATA.find(u => u.id === _updModalCurrent);
-            if (upd) upd[field] = newText;
+            callUpdateRelay('editField', { updateId: _updModalCurrent, field, value: newText })
+                .then(() => {
+                    const upd = UPDATES_DATA.find(u => u.id === _updModalCurrent);
+                    if (upd) upd[field] = newText;
+                    editLog('ok', `Update sauvegardée : ${field}`);
+                })
+                .catch(err => editLog('err', 'Erreur de sauvegarde : ' + (err?.message || err)));
         }
 
         saveEdits(edits).then(savedToFirebase => {
@@ -11327,7 +11327,7 @@
             if (createButton) { createButton.disabled = true; createButton.textContent = 'Enregistrement…'; }
             if (footerInfo) { footerInfo.textContent = 'Enregistrement de l’update dans Firebase…'; footerInfo.style.color = ''; }
             try {
-                await FB_DB.ref('updates/' + updateId).set(newUpdate);
+                await callUpdateRelay('create', { update: newUpdate });
                 if (!UPDATES_DATA.some(update => update.id === updateId)) UPDATES_DATA.push(newUpdate);
                 _renderUpdateCard(newUpdate);
                 document.getElementById('newCardModal')?.classList.remove('is-open');
@@ -11337,9 +11337,7 @@
             } catch (error) {
                 console.error('[Firebase update save]', error);
                 if (createButton) { createButton.disabled = false; createButton.textContent = originalButtonText; }
-                const message = error?.code === 'PERMISSION_DENIED'
-                    ? 'Firebase a refusé l’enregistrement (PERMISSION_DENIED). La connexion Discord du site n’authentifie pas Firebase : les règles actuelles n’autorisent pas cette écriture.'
-                    : `Échec de l’enregistrement Firebase${error?.message ? ` : ${error.message}` : '.'}`;
+                const message = `Échec de l’enregistrement${error?.message ? ` : ${error.message}` : '.'}`;
                 if (footerInfo) { footerInfo.textContent = message; footerInfo.style.color = '#ff7777'; }
                 editLog('err', message);
             }
@@ -12108,7 +12106,7 @@
         const zone = document.getElementById('dcm-confirm-' + uid);
         if (zone) { zone.classList.remove('is-open'); const p = document.getElementById('dcm-pwd-' + uid); if(p) p.value=''; }
     }
-    function _cmdDeleteConfirm(uid, ccId, staticId, updateId) {
+    async function _cmdDeleteConfirm(uid, ccId, staticId, updateId) {
         const pwd = document.getElementById('dcm-pwd-' + uid)?.value || '';
         if (pwd !== 'N30l!x€') {
             editLog('err', 'Mot de passe incorrect.');
@@ -12119,29 +12117,16 @@
 
         // ── GESTION SPÉCIFIQUE POUR LES UPDATES ──
         if (updateId) {
+            try {
+                await callUpdateRelay('delete', { updateId });
+            } catch (error) {
+                editLog('err', 'Suppression refusée : ' + (error?.message || error));
+                return;
+            }
             // Supprimer de UPDATES_DATA
             const idx = UPDATES_DATA.findIndex(u => u.id === updateId);
             if (idx !== -1) {
                 UPDATES_DATA.splice(idx, 1);
-            }
-
-            // Supprimer de Firebase
-            if (typeof FB_DB !== 'undefined' && FB_DB) {
-                FB_DB.ref('updates/' + updateId).remove().catch(err => {
-                    console.error('[Firebase update delete]', err);
-                });
-                FB_DB.ref('update_comments/' + updateId).remove().catch(err => {
-                    console.error('[Firebase update comments delete]', err);
-                });
-            }
-
-            // Persister la suppression pour qu'elle survive au reload
-            if (typeof FB_DELETED_REF !== 'undefined' && FB_DELETED_REF) {
-                FB_DELETED_REF.transaction(current => {
-                    const ids = Array.isArray(current) ? current : Object.values(current || {});
-                    if (!ids.includes(updateId)) ids.push(updateId);
-                    return ids;
-                });
             }
 
             // Supprimer l'élément DOM
@@ -12338,38 +12323,25 @@
     const DISCORD_USER_KEY     = 'bloxbulletin_discord_user';
     const DISCORD_PENDING_KEY  = 'bloxbulletin_oauth_pending_page';
     const ADMIN_DISCORD_IDS = ['1503444854410317984', '775096691240992798'];
-    const FIREBASE_ADMIN_TOKEN_ENDPOINT = 'https://europe-west1-blox-bulletin-comments.cloudfunctions.net/discordAdminToken';
+    // URL du Worker Cloudflare gratuit, à renseigner après son déploiement.
+    const UPDATE_RELAY_ENDPOINT = 'https://blox-update-relay.c9yz5m8pw6.workers.dev';
     function _isDiscordEditor(user = _getDiscordUser()) {
         return !!user && ADMIN_DISCORD_IDS.includes(String(user.id));
     }
-    function _isFirebaseDiscordAdmin(user = _getDiscordUser()) {
-        return _isDiscordEditor(user) && FB_AUTH.currentUser?.uid === String(user.id);
-    }
-
-    async function _firebaseSignInAsDiscordAdmin(discordUser, discordAccessToken) {
-        if (!discordUser || !ADMIN_DISCORD_IDS.includes(String(discordUser.id))) {
-            if (FB_AUTH.currentUser) await FB_AUTH.signOut();
-            return false;
+    async function callUpdateRelay(action, payload = {}) {
+        if (UPDATE_RELAY_ENDPOINT.includes('YOUR-WORKER')) {
+            throw new Error('Le relais Cloudflare n’est pas encore configuré dans le site.');
         }
-        if (!discordAccessToken) throw new Error('Reconnecte-toi avec Discord pour autoriser les publications.');
-
-        await FB_AUTH.setPersistence(firebase.auth.Auth.Persistence.SESSION);
-        const response = await fetch(FIREBASE_ADMIN_TOKEN_ENDPOINT, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ discordAccessToken })
+        const session = JSON.parse(localStorage.getItem(DISCORD_TOKEN_KEY) || 'null');
+        const token = typeof session === 'string' ? session : session?.token;
+        if (!token) throw new Error('Reconnecte-toi avec Discord avant de publier.');
+        const response = await fetch(UPDATE_RELAY_ENDPOINT, {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action, discordAccessToken: token, ...payload })
         });
         const result = await response.json().catch(() => ({}));
-        if (!response.ok || !result.firebaseCustomToken) {
-            throw new Error(result.error || 'Le serveur n’a pas pu vérifier ton compte Discord admin.');
-        }
-
-        const credential = await FB_AUTH.signInWithCustomToken(result.firebaseCustomToken);
-        if (credential.user.uid !== String(discordUser.id)) {
-            await FB_AUTH.signOut();
-            throw new Error('Le compte Firebase ne correspond pas au compte Discord connecté.');
-        }
-        return true;
+        if (!response.ok) throw new Error(result.error || `Relais indisponible (${response.status}).`);
+        return result;
     }
 
     function _updateEditModeVisibility() {
@@ -12462,7 +12434,6 @@
     function _discordLogout() {
         localStorage.removeItem(DISCORD_TOKEN_KEY);
         localStorage.removeItem(DISCORD_USER_KEY);
-        FB_AUTH.signOut().catch(error => console.warn('[Firebase sign out]', error));
         window.discordCurrentUser = null;
         document.getElementById('discordUserPill').classList.remove('is-visible', 'dropdown-open');
         document.getElementById('discordLoginBtn').style.display = '';
@@ -12529,11 +12500,6 @@
                         const user = await _discordFetchUser(token);
                         localStorage.setItem(DISCORD_TOKEN_KEY, JSON.stringify({ token, expiresAt }));
                         localStorage.setItem(DISCORD_USER_KEY, JSON.stringify(user));
-                        try {
-                            await _firebaseSignInAsDiscordAdmin(user, token);
-                        } catch (authError) {
-                            console.error('[Firebase admin authentication]', authError);
-                        }
                         showUserInNavbar(user);
                         window.currentUser = { username: user.username, avatar: _discordAvatarUrl(user) };
                         if (typeof discordLogin === 'function') discordLogin(window.currentUser);
@@ -12566,17 +12532,11 @@
                     try {
                         const freshUser = await _discordFetchUser(stored.token);
                         localStorage.setItem(DISCORD_USER_KEY, JSON.stringify(freshUser));
-                        await _firebaseSignInAsDiscordAdmin(freshUser, stored.token).catch(error => {
-                            console.error('[Firebase admin authentication]', error);
-                        });
                         showUserInNavbar(freshUser);
                     } catch(e) {
                         // Token invalide → déconnexion silencieuse, mais on garde l'affichage
                         console.warn('Discord token expired, using cached user');
-                        await FB_AUTH.signOut().catch(() => {});
                     }
-                } else if (FB_AUTH.currentUser) {
-                    await FB_AUTH.signOut().catch(() => {});
                 }
                 // Sync comment system
                 console.log('Navbar sync: calling discordLogin with cached user', cachedUser.username);
@@ -12597,7 +12557,6 @@
 
         // 4. Vraiment pas connecté
         console.log('Navbar init: no user found, showing login button');
-        await FB_AUTH.signOut().catch(() => {});
         loginBtn.style.display = '';
         _updateEditModeVisibility();
     })();
