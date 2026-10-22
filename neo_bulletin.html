@@ -12491,7 +12491,7 @@
               </section>
               <section class="stats-section" id="statsDiscord" role="tabpanel" hidden>
                 <h2 class="stats-section-title">Communauté Discord</h2>
-                <div class="stats-discord-card"><strong>La communauté BloxNews-FR sur Discord</strong><p>Les statistiques de membres et d'activité Discord ne sont pas encore reliées à ce tableau de bord.</p><a class="stats-discord-link" href="https://discord.gg/a6S6eugPn" target="_blank" rel="noopener">Ouvrir le serveur Discord ↗</a></div>
+                <div class="stats-discord-card"><strong>Profils Discord enregistrés</strong><p>Comptes Discord identifiés lors de leur visite sur le site.</p><div class="stats-visitors-count" id="statsDiscordProfilesCount">0 profil</div><div class="stats-visitors-list" id="statsDiscordProfiles"><div class="stats-visitors-empty">Chargement des profils…</div></div></div>
               </section>
                 <div class="stats-refresh">↻ Mise à jour automatique</div>
             </div>
@@ -12633,11 +12633,13 @@
             _statsRefreshDaily();
             _statsRefreshCardRanking();
             _statsRefreshVisitors();
+            _statsRefreshDiscordProfiles();
             _statsRenderOnline();
             STORE.timers.push(setInterval(_statsRefreshCounters, 5000));
             STORE.timers.push(setInterval(_statsRefreshAggregates, 5000));
             STORE.timers.push(setInterval(_statsRefreshDaily, 15000));
             STORE.timers.push(setInterval(_statsRefreshCardRanking, 15000));
+            STORE.timers.push(setInterval(_statsRefreshDiscordProfiles, 60000));
             STORE.timers.push(setInterval(() => { if (STORE.popupOpen && _statsVisitorsOpen()) _statsRefreshVisitors(); }, 10000));
         }
         window.openStats = openStats;
@@ -12759,6 +12761,30 @@
                     }).join('')
                     : '<div class="stats-visitors-empty">Aucun visiteur enregistré aujourd&#39;hui</div>';
             });
+        }
+
+        function _statsRefreshDiscordProfiles() {
+            const listEl = document.getElementById('statsDiscordProfiles');
+            if (!listEl) return;
+            FB_DB.ref('site_stats/visitors_log').once('value', snap => {
+                const profiles = new Map();
+                snap.forEach(day => day.forEach(child => {
+                    const key = child.key || '';
+                    const profile = child.val() || {};
+                    if (!key.startsWith('d:') || !profile.u) return;
+                    const previous = profiles.get(key);
+                    if (!previous || (profile.t || 0) > (previous.t || 0)) profiles.set(key, profile);
+                }));
+                const items = [...profiles.values()].sort((a, b) => (b.t || 0) - (a.t || 0));
+                const countEl = document.getElementById('statsDiscordProfilesCount');
+                if (countEl) countEl.textContent = items.length.toLocaleString('fr-FR') + (items.length > 1 ? ' profils' : ' profil');
+                listEl.innerHTML = items.length ? items.map(profile => {
+                    const avatar = profile.a
+                        ? `<img class="stats-visitor-avatar" src="${_statsEsc(profile.a)}" alt="" onerror="this.remove()">`
+                        : `<span class="stats-visitor-avatar stats-visitor-avatar--empty">${_statsEsc(profile.u.charAt(0).toUpperCase())}</span>`;
+                    return `<div class="stats-visitor-item">${avatar}<span class="stats-visitor-name">${_statsEsc(profile.u)}</span><span class="stats-visitor-time">${_statsEsc(_statsTime(profile.t))}</span></div>`;
+                }).join('') : '<div class="stats-visitors-empty">Aucun profil Discord enregistré</div>';
+            }, () => { listEl.innerHTML = '<div class="stats-visitors-empty">Impossible de charger les profils</div>'; });
         }
 
         /* ─── Vues des cards (leaks) ─────────────────────────── */
