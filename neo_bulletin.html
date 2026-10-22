@@ -3801,6 +3801,109 @@
             display: flex; align-items: center; justify-content: center; color: rgba(255,100,100,0.7); font-size: 11px;
         }
 
+        /* Aperçu de création Actus — reprend la nouvelle carte éditoriale */
+        #ncmPreviewActus .ncm-actus-preview {
+            border: 0;
+            border-radius: 10px;
+            background: #f4f0e9;
+            box-shadow: 0 18px 50px rgba(0,0,0,.18);
+        }
+        #ncmPreviewActus .ncm-actus-preview::before,
+        #ncmPreviewActus .ncm-actus-preview::after { display: none; }
+        #ncmPreviewActus .ncm-actus-topbar {
+            min-height: 38px;
+            padding: 0 20px;
+            background: #c9171e;
+            border: 0;
+            color: #fff;
+            font: 800 9px/1 Inter, sans-serif;
+            letter-spacing: .16em;
+        }
+        #ncmPreviewActus .ncm-actus-topbar-dot { background: rgba(255,255,255,.55); }
+        #ncmPreviewActus .ncm-actus-inner {
+            display: grid;
+            grid-template-columns: minmax(160px, .72fr) minmax(0, 1.8fr);
+            column-gap: clamp(18px, 4vw, 42px);
+            align-items: start;
+            padding: 25px 28px 20px;
+        }
+        #ncmPreviewActus .ncm-actus-header {
+            grid-column: 1;
+            grid-row: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 13px;
+            padding: 0 0 17px;
+            margin: 0;
+            border: 0;
+            border-bottom: 3px solid #c9171e;
+        }
+        #ncmPreviewActus .ncm-actus-header::before {
+            content: "DOSSIER / ACTUS";
+            color: #c9171e;
+            font: 900 8px/1 Inter, sans-serif;
+            letter-spacing: .18em;
+        }
+        #ncmPreviewActus .ncm-actus-h2 {
+            padding: 1px 0;
+            border: 0;
+            border-radius: 0;
+            color: #171719;
+            font: 400 clamp(32px, 4vw, 48px)/.9 'Bebas Neue', sans-serif;
+            letter-spacing: .02em;
+            text-shadow: none;
+            overflow-wrap: anywhere;
+        }
+        #ncmPreviewActus .ncm-actus-h2:hover,
+        #ncmPreviewActus .ncm-actus-h2:focus { background: transparent; box-shadow: inset 0 -2px #c9171e; }
+        #ncmPreviewActus .ncm-actus-meta {
+            padding: 9px 0 0;
+            border: 0;
+            border-top: 1px solid rgba(25,22,20,.16);
+            border-radius: 0;
+            background: transparent;
+            color: #77716a;
+            text-align: left;
+            font-size: 8px;
+        }
+        #ncmPreviewActus .ncm-actus-text {
+            grid-column: 2;
+            grid-row: 1;
+            min-height: 75px;
+            padding: 2px 0 8px;
+            border: 0;
+            border-radius: 0;
+            color: #363431;
+            font: 450 12px/1.85 Inter, sans-serif;
+        }
+        #ncmPreviewActus .ncm-actus-text:hover,
+        #ncmPreviewActus .ncm-actus-text:focus { background: transparent; box-shadow: inset 0 0 0 1px rgba(201,23,30,.22); }
+        #ncmPreviewActus .ncm-actus-text mark { padding: 0 3px !important; border-radius: 3px !important; }
+        #ncmPreviewActus .ncm-actus-comments {
+            grid-column: 1 / -1;
+            grid-row: 2;
+            margin: 17px -28px -20px;
+            padding: 13px 28px;
+            border: 0;
+            border-top: 1px solid rgba(25,22,20,.12);
+            border-radius: 0;
+            background: rgba(255,255,255,.4);
+            color: #69625b;
+            font: 700 10px/1.4 Inter, sans-serif;
+            letter-spacing: .02em;
+        }
+        #ncmPreviewActus .ncm-actus-comments-icon {
+            width: 28px; height: 28px; border-radius: 8px;
+            background: #c9171e; color: #fff;
+        }
+        @media (max-width: 640px) {
+            #ncmPreviewActus .ncm-actus-inner { grid-template-columns: 1fr; gap: 17px; padding: 20px 18px 16px; }
+            #ncmPreviewActus .ncm-actus-header { grid-column: 1; grid-row: 1; }
+            #ncmPreviewActus .ncm-actus-h2 { font-size: 42px; }
+            #ncmPreviewActus .ncm-actus-text { grid-column: 1; grid-row: 2; }
+            #ncmPreviewActus .ncm-actus-comments { grid-column: 1; grid-row: 3; margin: 0 -18px -16px; padding-inline: 18px; }
+        }
+
         /* Formulaire colonne */
         #newCardModal .ncm-form-col {
             padding: 20px 28px 24px;
