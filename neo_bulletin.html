@@ -14309,7 +14309,11 @@
             boxEl.appendChild(fi);
             st.fi = fi;
             if (ta) {
-                ta.style.paddingLeft = '44px';
+            // Keep the placeholder aligned with the text; reserve a dedicated
+            // bottom action row for the attachment button instead of indenting
+            // the whole textarea by the button width.
+            ta.style.paddingLeft = '14px';
+            ta.style.paddingBottom = '44px';
                 ta.addEventListener('paste', e => {
                     const files = [...(e.clipboardData?.files || [])].filter(f => f.type && f.type.startsWith('image/'));
                     if (files.length) { e.preventDefault(); _addFiles(st, files); }
