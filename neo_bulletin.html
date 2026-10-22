@@ -14157,13 +14157,19 @@
     <style>
         .card-comment-write { flex-wrap: wrap; }
         .cc-attach-btn {
-            position: absolute; left: 6px; bottom: 6px; width: 30px; height: 30px;
-            border: 1px dashed rgba(128,128,128,.55); background: transparent; color: inherit;
-            border-radius: 9px; font-size: 14px; line-height: 1; cursor: pointer;
+            position: absolute; left: 8px; bottom: 8px; width: 32px; height: 32px;
+            border: 1px solid rgba(45,42,38,.14); background: #fff; color: #6e665e;
+            border-radius: 9px; line-height: 1; cursor: pointer;
             display: flex; align-items: center; justify-content: center; padding: 0;
-            opacity: .6; transition: opacity .15s, background .15s, border-color .15s;
+            box-shadow: 0 1px 3px rgba(35,25,15,.07);
+            transition: color .18s, background .18s, border-color .18s, transform .18s, box-shadow .18s;
         }
-        .cc-attach-btn:hover { opacity: 1; background: rgba(226,0,0,.08); border-color: rgba(226,0,0,.4); }
+        .cc-attach-btn svg { width: 16px; height: 16px; display: block; }
+        .cc-attach-btn:hover {
+            color: #c9171e; background: #fff7f6; border-color: rgba(201,23,30,.42);
+            transform: translateY(-1px); box-shadow: 0 3px 9px rgba(120,20,20,.12);
+        }
+        .cc-attach-btn:focus-visible { outline: 3px solid rgba(201,23,30,.24); outline-offset: 2px; }
         .cc-preview { flex: 1 1 100%; order: -1; display: flex; flex-wrap: wrap; gap: 8px; width: 100%; }
         .cc-preview__item { position: relative; width: 62px; height: 62px; border-radius: 10px; overflow: hidden; border: 1px solid rgba(128,128,128,.25); }
         .cc-preview__item img { width: 100%; height: 100%; object-fit: cover; display: block; }
@@ -14294,7 +14300,8 @@
                 btn.type = 'button';
                 btn.className = 'cc-attach-btn';
                 btn.title = 'Ajouter une image (max 4)';
-                btn.textContent = '🖼';
+                btn.setAttribute('aria-label', 'Ajouter une image');
+                btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="15" rx="3" stroke="currentColor" stroke-width="1.7"/><circle cx="9" cy="9.5" r="1.6" fill="currentColor"/><path d="m5 17 4.4-4.2a1.5 1.5 0 0 1 2.1 0l1.4 1.3 1.2-1.1a1.5 1.5 0 0 1 2.1 0l2.8 2.7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>';
                 btn.addEventListener('click', e => { e.stopPropagation(); e.preventDefault(); fi.click(); });
                 const wrap = boxEl.querySelector('.card-comment-input-wrap');
                 (wrap || boxEl).appendChild(btn);
