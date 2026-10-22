@@ -5374,6 +5374,17 @@
             background: rgba(255,218,0,0.08); color: #cc9e00;
             border-color: rgba(255,218,0,0.15);
         }
+        .update-card__linked-add {
+            display: none; align-items: center; justify-content: center;
+            width: 22px; height: 22px; padding: 0; flex: 0 0 22px;
+            border: 1px solid rgba(255,190,0,.42); border-radius: 50%;
+            background: rgba(255,190,0,.12); color: #bd8500;
+            font: 700 16px/1 'Inter',sans-serif; cursor: pointer;
+            transition: transform .16s, background .16s;
+        }
+        .update-card__linked-add:hover { transform: scale(1.1); background: rgba(255,190,0,.24); }
+        html[data-theme="dark"] .update-card__linked-add { color: #ffda00; }
+        body.edit-mode .update-card__linked-add { display: inline-flex; }
 
         /* Footer : commentaires + bouton */
         .update-card__footer {
@@ -5482,6 +5493,72 @@
             grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
             gap: 10px; margin-bottom: 24px;
         }
+        .update-modal__linked-heading {
+            display: flex; align-items: center; justify-content: space-between; gap: 12px;
+        }
+        .update-modal__linked-add {
+            display: none; align-items: center; justify-content: center;
+            width: 30px; height: 30px; flex: 0 0 30px;
+            border: 1px solid rgba(255,190,0,.42); border-radius: 50%;
+            background: rgba(255,190,0,.13); color: #bd8500;
+            font: 700 21px/1 'Inter', sans-serif; cursor: pointer;
+            transition: transform .18s, background .18s, box-shadow .18s;
+        }
+        .update-modal__linked-add:hover {
+            transform: scale(1.08); background: rgba(255,190,0,.24);
+            box-shadow: 0 0 0 4px rgba(255,190,0,.09);
+        }
+        html[data-theme="dark"] .update-modal__linked-add { color: #ffda00; }
+        body.edit-mode .update-modal__linked-add { display: inline-flex; }
+        .update-linked-picker-overlay {
+            position: fixed; inset: 0; z-index: 8300; display: flex;
+            align-items: center; justify-content: center; padding: 18px;
+            background: rgba(5,7,13,.72); backdrop-filter: blur(10px);
+            opacity: 0; pointer-events: none; transition: opacity .2s;
+        }
+        .update-linked-picker-overlay.is-open { opacity: 1; pointer-events: auto; }
+        .update-linked-picker {
+            width: min(760px, 100%); max-height: min(82vh, 760px);
+            display: flex; flex-direction: column; overflow: hidden;
+            border: 1px solid rgba(255,255,255,.12); border-radius: 22px;
+            background: rgba(248,249,252,.96); color: #20222b;
+            box-shadow: 0 24px 80px rgba(0,0,0,.38);
+        }
+        html[data-theme="dark"] .update-linked-picker {
+            background: rgba(24,26,38,.97); color: #f2f3fa;
+            border-color: rgba(255,255,255,.1);
+        }
+        .update-linked-picker__header, .update-linked-picker__footer {
+            display: flex; align-items: center; justify-content: space-between; gap: 12px;
+            padding: 16px 20px; border-bottom: 1px solid rgba(0,0,0,.07);
+        }
+        html[data-theme="dark"] .update-linked-picker__header,
+        html[data-theme="dark"] .update-linked-picker__footer { border-color: rgba(255,255,255,.08); }
+        .update-linked-picker__header h3 { margin: 0; font: 700 16px 'Inter',sans-serif; }
+        .update-linked-picker__sub { margin: 4px 0 0; color: #858895; font: 12px 'Inter',sans-serif; }
+        .update-linked-picker__close {
+            width: 32px; height: 32px; border: 0; border-radius: 50%;
+            background: rgba(0,0,0,.06); color: inherit; font-size: 18px; cursor: pointer;
+        }
+        html[data-theme="dark"] .update-linked-picker__close { background: rgba(255,255,255,.08); }
+        .update-linked-picker__content { padding: 16px 20px; overflow: auto; }
+        .update-linked-picker__content .ncm-filter-btn { color: #373946 !important; background: rgba(0,0,0,.035) !important; border-color: rgba(0,0,0,.1) !important; }
+        .update-linked-picker__content .ncm-filter-btn.active { background: rgba(255,218,0,.28) !important; border-color: rgba(205,158,0,.45) !important; }
+        html[data-theme="dark"] .update-linked-picker__content .ncm-filter-btn { color: #eee !important; background: rgba(255,255,255,.05) !important; border-color: rgba(255,255,255,.1) !important; }
+        html[data-theme="dark"] .update-linked-picker__content .ncm-filter-btn.active { background: rgba(255,218,0,.2) !important; border-color: rgba(255,218,0,.5) !important; }
+        .update-linked-picker__content .ncm-linked-card-item { background: rgba(0,0,0,.035) !important; border-color: rgba(0,0,0,.09) !important; }
+        html[data-theme="dark"] .update-linked-picker__content .ncm-linked-card-item { background: rgba(255,255,255,.04) !important; border-color: rgba(255,255,255,.08) !important; }
+        .update-linked-picker__content .ncm-linked-card-item > div:last-child > div:first-child { color: #242632 !important; }
+        html[data-theme="dark"] .update-linked-picker__content .ncm-linked-card-item > div:last-child > div:first-child { color: #fff !important; }
+        .update-linked-picker__footer { border-top: 1px solid rgba(0,0,0,.07); border-bottom: 0; }
+        .update-linked-picker__status { margin-right: auto; color: #858895; font: 12px 'Inter',sans-serif; }
+        .update-linked-picker__actions { display: flex; gap: 8px; }
+        .update-linked-picker__action {
+            border: 1px solid rgba(0,0,0,.09); border-radius: 999px; padding: 9px 15px;
+            background: rgba(0,0,0,.045); color: inherit; font: 700 12px 'Inter',sans-serif; cursor: pointer;
+        }
+        .update-linked-picker__action--save { border-color: #efbd00; background: #ffda00; color: #171717; }
+        .update-linked-picker__action:disabled { opacity: .55; cursor: wait; }
         .update-modal__linked-card {
             border-radius: 12px; overflow: hidden;
             border: 1.5px solid rgba(0,0,0,0.07);
@@ -5491,6 +5568,12 @@
         .update-modal__linked-card:hover {
             transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.1);
         }
+        .update-modal__linked-empty {
+            grid-column: 1 / -1; padding: 18px; border: 1px dashed rgba(0,0,0,.14);
+            border-radius: 12px; color: #9295a0; text-align: center;
+            font: 12px 'Inter',sans-serif;
+        }
+        html[data-theme="dark"] .update-modal__linked-empty { border-color: rgba(255,255,255,.12); color: #777b8b; }
         html[data-theme="dark"] .update-modal__linked-card {
             background: #1e2133; border-color: rgba(255,255,255,0.07);
         }
@@ -10396,6 +10479,7 @@
         }
         _editMode = !_editMode;
         document.body.classList.toggle('edit-mode', _editMode);
+        if (!_editMode && typeof closeUpdateLinkedPicker === 'function') closeUpdateLinkedPicker(null);
         const btn = document.getElementById('editModeToggle');
         if (btn) {
             btn.textContent = _editMode ? 'save' : 'edit';
@@ -10741,14 +10825,12 @@
         if (document.querySelector(`.update-card[onclick="openUpdateModal('${update.id}')"]`)) return;
 
         const e = _ccEsc;
-        const linkedChips = update.linkedCards && update.linkedCards.length > 0
-            ? update.linkedCards.map(c => `<span class="update-card__chip">${e(c.label)}</span>`).join('')
-            : '';
+        const linkedChips = _updateLinkedChipMarkup(update);
 
         // Utiliser shortDesc pour la card extérieure, avec fallback sur desc pour compatibilité
         const displayDesc = update.shortDesc || update.desc || '';
 
-        const html = `<article class="update-card" onclick="openUpdateModal('${update.id}')">
+        const html = `<article class="update-card" onclick="openUpdateModal('${e(update.id)}')">
             <div class="update-card__stripe"></div>
             <div class="update-card__body">
                 <div class="update-card__meta">
@@ -10759,6 +10841,8 @@
                 <p class="update-card__desc">${e(displayDesc)}</p>
                 <div class="update-card__linked">
                     ${linkedChips}
+                    <button type="button" class="update-card__linked-add" data-update-id="${e(update.id)}"
+                        onclick="openUpdateLinkedPicker(event,this.dataset.updateId)" aria-label="Ajouter des cards liées" title="Lier d’autres cards">+</button>
                 </div>
                 <div class="update-card__footer">
                     <span class="update-card__comments-pill">
@@ -13289,7 +13373,11 @@
                 <div class="update-modal__desc" id="updModalDesc">—</div>
 
                 <!-- Cards liées -->
-                <div class="update-modal__section-title">🔗 Cards liées</div>
+                <div class="update-modal__linked-heading">
+                    <div class="update-modal__section-title" style="margin-bottom:12px">🔗 Cards liées</div>
+                    <button type="button" class="update-modal__linked-add" id="updModalLinkedAdd"
+                        onclick="openUpdateLinkedPicker(event)" aria-label="Lier d’autres cards" title="Ajouter des cards liées">+</button>
+                </div>
                 <div class="update-modal__linked-grid" id="updModalLinkedGrid"></div>
 
                 <!-- Commentaires -->
@@ -13299,6 +13387,28 @@
                 </div>
             </div>
         </div>
+    </div>
+
+    <div class="update-linked-picker-overlay" id="updLinkedPickerOverlay" onclick="closeUpdateLinkedPicker(event)" aria-hidden="true">
+        <section class="update-linked-picker" role="dialog" aria-modal="true" aria-labelledby="updLinkedPickerTitle" onclick="event.stopPropagation()">
+            <header class="update-linked-picker__header">
+                <div>
+                    <h3 id="updLinkedPickerTitle">Lier des cards à cette update</h3>
+                    <p class="update-linked-picker__sub">Sélectionne les cards qui apparaîtront dans la mise à jour.</p>
+                </div>
+                <button type="button" class="update-linked-picker__close" onclick="closeUpdateLinkedPicker(null)" aria-label="Fermer">×</button>
+            </header>
+            <div class="update-linked-picker__content" id="updLinkedPickerContent">
+                <div class="ncm-field-info" style="text-align:center;padding:24px">Chargement des cards…</div>
+            </div>
+            <footer class="update-linked-picker__footer">
+                <span class="update-linked-picker__status" id="updLinkedPickerStatus">—</span>
+                <div class="update-linked-picker__actions">
+                    <button type="button" class="update-linked-picker__action" onclick="closeUpdateLinkedPicker(null)">Annuler</button>
+                    <button type="button" class="update-linked-picker__action update-linked-picker__action--save" id="updLinkedPickerSave" onclick="saveUpdateLinkedCards()">Enregistrer</button>
+                </div>
+            </footer>
+        </section>
     </div>
 
     <script>
@@ -13427,6 +13537,182 @@
         return html;
     }
 
+    function _updateLinkedChipMarkup(update) {
+        const e = _ccEsc;
+        return (Array.isArray(update?.linkedCards) ? update.linkedCards : [])
+            .map(card => `<span class="update-card__chip">${e(card.label || 'Card')}</span>`).join('');
+    }
+
+    function _renderUpdateLinkedGrid(update) {
+        const grid = document.getElementById('updModalLinkedGrid');
+        if (!grid) return;
+        grid.replaceChildren();
+        const linkedCards = Array.isArray(update?.linkedCards) ? update.linkedCards : [];
+        linkedCards.forEach(card => {
+            const item = document.createElement('div');
+            item.className = 'update-modal__linked-card';
+            item.style.setProperty('--cat-hex', card.catColor || '#ffda00');
+            const hasMedia = typeof card.src === 'string' && !!card.src;
+            if (hasMedia) {
+                item.addEventListener('click', () => {
+                    closeUpdateModal(null);
+                    setTimeout(() => _openCardModalDirect({
+                        type: card.type || 'image', src: card.src, cardId: card.cardId || '',
+                        badge: card.badge || 'LEAK', title: card.label || 'Card',
+                        section: card.section || 'Blox Leaks'
+                    }), 300);
+                });
+            } else {
+                item.style.cursor = 'default';
+                item.style.opacity = '0.65';
+            }
+
+            if (card.imgSrc) {
+                const img = document.createElement('img');
+                img.src = card.imgSrc;
+                img.alt = card.label || '';
+                img.loading = 'lazy';
+                img.className = 'update-modal__linked-img';
+                item.appendChild(img);
+            } else {
+                const placeholder = document.createElement('div');
+                placeholder.className = 'update-modal__linked-img--placeholder';
+                placeholder.textContent = card.emoji || '📄';
+                item.appendChild(placeholder);
+            }
+
+            const info = document.createElement('div');
+            info.className = 'update-modal__linked-info';
+            const badge = document.createElement('div');
+            badge.className = 'update-modal__linked-badge';
+            badge.textContent = card.category || 'Card liée';
+            const title = document.createElement('div');
+            title.className = 'update-modal__linked-title';
+            title.textContent = card.label || 'Card sans titre';
+            info.append(badge, title);
+            if (hasMedia) {
+                const hint = document.createElement('div');
+                hint.style.cssText = 'font-size:10px;color:#888;margin-top:2px';
+                hint.textContent = 'Cliquer pour ouvrir →';
+                info.appendChild(hint);
+            }
+            item.appendChild(info);
+            grid.appendChild(item);
+        });
+        if (!linkedCards.length) {
+            const empty = document.createElement('div');
+            empty.className = 'update-modal__linked-empty';
+            empty.textContent = 'Aucune card liée pour le moment.';
+            grid.appendChild(empty);
+        }
+    }
+
+    function _linkedPickerMatch(a, b) {
+        if (a.cardId && b.cardId) return String(a.cardId) === String(b.cardId);
+        if (a.src && b.src) return String(a.src) === String(b.src);
+        return String(a.label || '') === String(b.label || '');
+    }
+
+    let _updLinkedPickerUpdateId = null;
+    async function openUpdateLinkedPicker(event, targetUpdateId = _updModalCurrent) {
+        event?.preventDefault();
+        event?.stopPropagation();
+        if (!_editMode || !_isDiscordEditor() || !targetUpdateId) return;
+        const overlay = document.getElementById('updLinkedPickerOverlay');
+        const content = document.getElementById('updLinkedPickerContent');
+        const status = document.getElementById('updLinkedPickerStatus');
+        const update = UPDATES_DATA.find(item => item.id === targetUpdateId);
+        if (!overlay || !content || !update) return;
+
+        _updLinkedPickerUpdateId = targetUpdateId;
+        overlay.classList.add('is-open');
+        overlay.setAttribute('aria-hidden', 'false');
+        const subtitle = overlay.querySelector('.update-linked-picker__sub');
+        if (subtitle) subtitle.textContent = `Pour « ${update.title || 'cette update'} » — sélectionne les cards à afficher.`;
+        content.innerHTML = '<div style="text-align:center;padding:24px;color:#858895">Chargement des cards…</div>';
+        status.textContent = 'Tu peux sélectionner plusieurs cards.';
+        const source = document.getElementById('ncmLinkedCardsSelector');
+        if (source) source.innerHTML = '';
+        _ncmLinkedCache = null;
+        _ncmLinkedCacheTs = 0;
+        _ncmLoadLinkedCardsSelector();
+
+        const startedAt = Date.now();
+        while (source && !source.querySelector('.ncm-linked-card-checkbox') && Date.now() - startedAt < 6000) {
+            await new Promise(resolve => setTimeout(resolve, 100));
+        }
+        if (!source || !source.querySelector('.ncm-linked-card-checkbox')) {
+            content.innerHTML = '<div style="text-align:center;padding:24px;color:#858895">Aucune card disponible pour le moment.</div>';
+            status.textContent = 'Réessaie dans quelques instants.';
+            return;
+        }
+
+        content.innerHTML = source.innerHTML;
+        const checkboxes = [...content.querySelectorAll('.ncm-linked-card-checkbox')];
+        checkboxes.forEach(input => {
+            input.checked = false;
+            try {
+                const candidate = JSON.parse(input.dataset.cardData || '{}');
+                input.checked = (update.linkedCards || []).some(current => _linkedPickerMatch(current, candidate));
+            } catch (_) {}
+        });
+        if (typeof _ncmBindLinkedFilters === 'function') _ncmBindLinkedFilters(content);
+    }
+
+    function closeUpdateLinkedPicker(event) {
+        event?.preventDefault();
+        event?.stopPropagation();
+        const overlay = document.getElementById('updLinkedPickerOverlay');
+        overlay?.classList.remove('is-open');
+        overlay?.setAttribute('aria-hidden', 'true');
+        _updLinkedPickerUpdateId = null;
+    }
+
+    document.addEventListener('keydown', event => {
+        if (event.key !== 'Escape' || !document.getElementById('updLinkedPickerOverlay')?.classList.contains('is-open')) return;
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        closeUpdateLinkedPicker(null);
+    }, true);
+
+    async function saveUpdateLinkedCards() {
+        const updateId = _updLinkedPickerUpdateId || _updModalCurrent;
+        const update = UPDATES_DATA.find(item => item.id === updateId);
+        const content = document.getElementById('updLinkedPickerContent');
+        const status = document.getElementById('updLinkedPickerStatus');
+        const saveButton = document.getElementById('updLinkedPickerSave');
+        if (!_editMode || !_isDiscordEditor() || !updateId || !update || !content || !saveButton) return;
+        const linkedCards = [];
+        content.querySelectorAll('.ncm-linked-card-checkbox:checked').forEach(input => {
+            try { linkedCards.push(JSON.parse(input.dataset.cardData || '{}')); } catch (_) {}
+        });
+
+        saveButton.disabled = true;
+        status.textContent = 'Enregistrement…';
+        try {
+            let latestUpdate = update;
+            if (typeof FB_DB !== 'undefined' && FB_DB) {
+                const snapshot = await FB_DB.ref(`updates/${updateId}`).once('value');
+                latestUpdate = snapshot.val() || update;
+            }
+            const updatedRecord = { ...latestUpdate, id: updateId, linkedCards };
+            await callUpdateRelay('create', { update: updatedRecord });
+            Object.assign(update, updatedRecord);
+            if (_updModalCurrent === updateId) _renderUpdateLinkedGrid(update);
+            const outerCard = [...document.querySelectorAll('#updatesGrid .update-card')]
+                .find(card => card.getAttribute('onclick') === `openUpdateModal('${updateId}')`);
+            const outerLinks = outerCard?.querySelector('.update-card__linked');
+            if (outerLinks) outerLinks.innerHTML = _updateLinkedChipMarkup(update);
+            editLog('ok', `Cards liées mises à jour pour « ${update.title} ».`);
+            closeUpdateLinkedPicker(null);
+        } catch (error) {
+            status.textContent = error?.message || 'Échec de l’enregistrement. Réessaie.';
+            editLog('err', 'Impossible de modifier les cards liées : ' + (error?.message || error));
+        } finally {
+            saveButton.disabled = false;
+        }
+    }
+
     // ── Ouvrir le modal ──────────────────────────────────────────
     function openUpdateModal(updId) {
         const upd = UPDATES_DATA.find(u => u.id === updId);
@@ -13442,27 +13728,7 @@
         const renderedDesc = _renderMarkdown(descContent);
         document.getElementById('updModalDesc').innerHTML = renderedDesc;
 
-        // Grille de vraies cards liées
-        const grid = document.getElementById('updModalLinkedGrid');
-        grid.innerHTML = upd.linkedCards.map(c => {
-            const hasMedia = !!c.src;
-            const img = c.imgSrc
-                ? `<img src="${c.imgSrc}" class="update-modal__linked-img" alt="${c.label}" loading="lazy">`
-                : `<div class="update-modal__linked-img--placeholder">${c.emoji}</div>`;
-            const clickHandler = hasMedia
-                ? `onclick="event.preventDefault();closeUpdateModal(null);setTimeout(()=>_openCardModalDirect({type:'${c.type}',src:'${c.src}',cardId:'${c.cardId||''}',badge:'${c.badge||'LEAK'}',title:'${c.label}',section:'${c.section||'Blox Leaks'}'}),300)"`
-                : `onclick="event.preventDefault()"`;
-            const cursor = hasMedia ? '' : 'style="cursor:default;opacity:0.6"';
-            return `<div class="update-modal__linked-card" ${clickHandler} ${cursor}
-                        style="--cat-hex:${c.catColor||'#ffda00'}">
-                        ${img}
-                        <div class="update-modal__linked-info">
-                            <div class="update-modal__linked-badge">${c.category}</div>
-                            <div class="update-modal__linked-title">${c.label}</div>
-                            ${hasMedia ? `<div style="font-size:10px;color:#888;margin-top:2px">Cliquer pour ouvrir →</div>` : ''}
-                        </div>
-                    </div>`;
-        }).join('');
+        _renderUpdateLinkedGrid(upd);
 
         // Commentaires — init Firebase une seule fois par update
         _updEnsureFirebase(updId);
