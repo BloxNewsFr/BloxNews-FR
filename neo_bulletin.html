@@ -4993,7 +4993,7 @@
 
         /* Panel */
         .stats-panel {
-            width: 100%; max-width: 580px; max-height: 90dvh;
+            width: min(920px, calc(100vw - 32px)); max-width: 920px; max-height: 92dvh;
             overflow-y: auto; overflow-x: hidden;
             border-radius: 28px;
             background: #0b0c1a;
@@ -5055,6 +5055,20 @@
 
         /* Body */
         .stats-body { padding: 20px 22px 28px; display: flex; flex-direction: column; gap: 20px; }
+        .stats-nav { display:flex; gap:8px; padding:14px 22px 0; overflow-x:auto; }
+        .stats-nav button { border:1px solid rgba(255,218,0,.16); background:rgba(255,255,255,.035); color:#d8d9e4; border-radius:11px; padding:10px 15px; font:700 12px 'Inter',sans-serif; white-space:nowrap; cursor:pointer; transition:background .18s,color .18s; }
+        .stats-nav button[aria-selected="true"] { background:#ffda00; border-color:#ffda00; color:#171827; }
+        html:not([data-theme="dark"]) .stats-nav button { color:#42475a; background:rgba(0,0,0,.025); }
+        html:not([data-theme="dark"]) .stats-nav button[aria-selected="true"] { color:#171827; background:#ffda00; }
+        .stats-section[hidden] { display:none; }
+        .stats-section { display:flex; flex-direction:column; gap:16px; }
+        .stats-section-title { margin:0; color:#ffda00; font:700 18px 'Inter',sans-serif; }
+        html:not([data-theme="dark"]) .stats-section-title { color:#175ec2; }
+        .stats-discord-card { padding:24px; border-radius:18px; background:linear-gradient(135deg,rgba(88,101,242,.17),rgba(88,101,242,.045)); border:1px solid rgba(88,101,242,.24); color:#f2f3ff; }
+        .stats-discord-card p { color:#a7a9bb; line-height:1.65; margin:8px 0 18px; }
+        html:not([data-theme="dark"]) .stats-discord-card { color:#282c44; }
+        html:not([data-theme="dark"]) .stats-discord-card p { color:#676b7d; }
+        .stats-discord-link { display:inline-flex; padding:10px 16px; border-radius:10px; background:#5865f2; color:#fff; text-decoration:none; font:700 13px 'Inter',sans-serif; }
 
         /* Bloc présence temps réel */
         .stats-online {
@@ -12425,28 +12439,33 @@
                 <button class="stats-close" onclick="closeStats(null)">✕</button>
             </div>
 
+            <nav class="stats-nav" aria-label="Sections des statistiques" role="tablist">
+                <button role="tab" aria-selected="true" aria-controls="statsAudience" onclick="showStatsSection('audience',this)">Audience</button>
+                <button role="tab" aria-selected="false" aria-controls="statsPresence" onclick="showStatsSection('presence',this)">Présence</button>
+                <button role="tab" aria-selected="false" aria-controls="statsPublications" onclick="showStatsSection('publications',this)">Publications</button>
+                <button role="tab" aria-selected="false" aria-controls="statsDiscord" onclick="showStatsSection('discord',this)">Discord</button>
+            </nav>
             <div class="stats-body">
-
-                <!-- ── Présence temps réel ── -->
+              <section class="stats-section" id="statsAudience" role="tabpanel">
+                <h2 class="stats-section-title">Audience</h2>
+                <div class="stats-grid">
+                    <div class="stats-tile stats-tile--accent stats-tile--clickable" onclick="toggleStatsVisitors(event)" title="Voir la liste des visiteurs"><div class="stats-tile-icon">👥</div><div class="stats-tile-value" id="statsVisitorsToday">—</div><div class="stats-tile-label">Visiteurs uniques · détails</div></div>
+                    <div class="stats-tile"><div class="stats-tile-icon">👁️</div><div class="stats-tile-value" id="statsPageviews">—</div><div class="stats-tile-label">Pages vues</div></div>
+                </div>
+                <div class="stats-daily"><div class="stats-section-label">Audience · 7 derniers jours</div><div class="stats-daily-bars" id="statsDaily"></div></div>
+                <div class="stats-visitors" id="statsVisitors"><div class="stats-visitors-header"><span>Visiteurs du jour</span><span class="stats-visitors-count" id="statsVisitorsCount">0</span></div><div class="stats-visitors-list" id="statsVisitorsList"></div></div>
+              </section>
+              <section class="stats-section" id="statsPresence" role="tabpanel" hidden>
+                <h2 class="stats-section-title">Présence en direct</h2>
                 <div class="stats-online">
                     <div class="stats-online-count" id="statsOnlineCount">—</div>
-                    <div class="stats-online-label">visiteur(s) en ce moment</div>
+                    <div class="stats-online-label" id="statsOnlineLabel">visiteur(s) en ce moment</div>
                     <div class="stats-online-users" id="statsOnlineUsers"></div>
                 </div>
-
-                <!-- ── Aujourd'hui ── -->
-                <div class="stats-section-label">Aujourd'hui</div>
+              </section>
+              <section class="stats-section" id="statsPublications" role="tabpanel" hidden>
+                <h2 class="stats-section-title">Publications & interactions</h2>
                 <div class="stats-grid">
-                    <div class="stats-tile stats-tile--accent stats-tile--clickable" onclick="toggleStatsVisitors(event)" title="Voir la liste des visiteurs">
-                        <div class="stats-tile-icon">👥</div>
-                        <div class="stats-tile-value" id="statsVisitorsToday">—</div>
-                        <div class="stats-tile-label">Visiteurs uniques</div>
-                    </div>
-                    <div class="stats-tile">
-                        <div class="stats-tile-icon">👁️</div>
-                        <div class="stats-tile-value" id="statsPageviews">—</div>
-                        <div class="stats-tile-label">Pages vues</div>
-                    </div>
                     <div class="stats-tile">
                         <div class="stats-tile-icon">🃏</div>
                         <div class="stats-tile-value" id="statsCards">—</div>
@@ -12458,8 +12477,6 @@
                         <div class="stats-tile-label">Commentaires</div>
                     </div>
                 </div>
-
-                <!-- ── Likes total ── -->
                 <div class="stats-grid" style="grid-template-columns:1fr">
                     <div class="stats-tile" style="flex-direction:row;align-items:center;gap:14px;padding:14px 18px">
                         <div class="stats-tile-icon" style="font-size:26px;margin-bottom:0">❤️</div>
@@ -12469,24 +12486,13 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- ── Liste visiteurs dépliable ── -->
-                <div class="stats-visitors" id="statsVisitors">
-                    <div class="stats-visitors-header">
-                        <span>Visiteurs du jour</span>
-                        <span class="stats-visitors-count" id="statsVisitorsCount">0</span>
-                    </div>
-                    <div class="stats-visitors-list" id="statsVisitorsList"></div>
-                </div>
-
-                <!-- ── Top cards ── -->
-                <div class="stats-section-label">🔥 Cards les plus vues</div>
+                <div class="stats-section-label">🔥 Publications les plus vues</div>
                 <div class="stats-ranking-list" id="statsCardRanking"></div>
-
-                <!-- ── 7 derniers jours ── -->
-                <div class="stats-section-label">Visiteurs — 7 derniers jours</div>
-                <div class="stats-daily-bars" id="statsDaily"></div>
-
+              </section>
+              <section class="stats-section" id="statsDiscord" role="tabpanel" hidden>
+                <h2 class="stats-section-title">Communauté Discord</h2>
+                <div class="stats-discord-card"><strong>La communauté BloxNews-FR sur Discord</strong><p>Les statistiques de membres et d'activité Discord ne sont pas encore reliées à ce tableau de bord.</p><a class="stats-discord-link" href="https://discord.gg/a6S6eugPn" target="_blank" rel="noopener">Ouvrir le serveur Discord ↗</a></div>
+              </section>
                 <div class="stats-refresh">↻ Mise à jour automatique</div>
             </div>
         </div>
@@ -12635,6 +12641,12 @@
             STORE.timers.push(setInterval(() => { if (STORE.popupOpen && _statsVisitorsOpen()) _statsRefreshVisitors(); }, 10000));
         }
         window.openStats = openStats;
+
+        window.showStatsSection = function(name, button) {
+            const activeId = 'stats' + name[0].toUpperCase() + name.slice(1);
+            document.querySelectorAll('#statsOverlay .stats-section').forEach(section => { section.hidden = section.id !== activeId; });
+            document.querySelectorAll('#statsOverlay .stats-nav [role="tab"]').forEach(tab => tab.setAttribute('aria-selected', tab === button ? 'true' : 'false'));
+        };
 
         function closeStats(e) {
             const ov = document.getElementById('statsOverlay');
