@@ -11544,11 +11544,6 @@
             return;
         }
 
-        if (typeof FB_CC_REF === 'undefined' || !FB_CC_REF) {
-            selector.innerHTML = '<div class="ncm-field-info" style="text-align:center;padding:20px;">Firebase non disponible</div>';
-            return;
-        }
-
         // Map tout format de section vers un filtre normalisé
         const _ncmSectionFilter = (raw) => {
             const s = (raw || '').toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -11562,13 +11557,52 @@
             return 'autre';
         };
 
-        FB_CC_REF.once('value', snap => {
-            const raw = snap.val();
-            const cards = raw
-                ? (Array.isArray(raw) ? raw : Object.values(raw))
-                : [];
+        const buildSelector = firebaseCards => {
+            const cards = [...(firebaseCards || [])].filter(card => card && typeof card === 'object');
 
-            if (cards.length === 0) {
+            // Les cards déjà présentes dans les sections sont souvent statiques
+            // et ne figurent donc pas dans /custom_cards. Les proposer aussi.
+            const categoryLabels = {
+                'cat-fruit':'Fruits & Reworks', 'cat-vfx':'VFX', 'cat-gameplay':'Gameplay',
+                'cat-map':'Map', 'cat-gui':'GUI', 'cat-messages':'Messages cryptés',
+                'cat-actus':'Actus'
+            };
+            document.querySelectorAll('#cat-fruit .news-card, #cat-fruit .group-card, #cat-vfx .news-card, #cat-vfx .group-card, #cat-gameplay .news-card, #cat-gameplay .group-card, #cat-map .news-card, #cat-map .group-card, #cat-gui .news-card, #cat-gui .group-card, #cat-messages .news-card, #cat-messages .group-card, #cat-messages .msg-card, #cat-actus .secret-bulletin, #cat-actus .news-card, #cat-actus .group-card').forEach((element, index) => {
+                const sectionId = element.closest('[id^="cat-"]')?.id || '';
+                const title = element.querySelector('.news-card__title, .group-card__title, .bulletin-header h2, .msg-card__title, h2')?.textContent?.trim();
+                if (!title) return;
+                const trigger = element.querySelector('.open-modal-btn[data-src], .news-card__button[data-src], [data-card-id][data-src]');
+                const media = element.querySelector('.news-card__image, .group-card__image, .msg-card__image');
+                const src = trigger?.dataset.src || media?.currentSrc || media?.src || '';
+                const cardId = element.dataset.ccId || trigger?.dataset.cardId || element.dataset.staticId || `${sectionId}-${index}`;
+                if (cards.some(card => String(card.id || card.cardId || '') === String(cardId))) return;
+                const section = categoryLabels[sectionId] || element.closest('[id^="cat-"]')?.querySelector('.category-title')?.textContent?.trim() || 'Blox Leaks';
+                const badge = element.querySelector('.news-card__badge, .group-card__badge, .bulletin-topbar__label')?.textContent?.trim() || (sectionId === 'cat-actus' ? 'ACTUS' : 'LEAK');
+                cards.push({
+                    id: cardId,
+                    title,
+                    label: title,
+                    category: section,
+                    section,
+                    sectionId,
+                    catColor: getComputedStyle(element).getPropertyValue('--cat-hex').trim() || '#cc0000',
+                    imgSrc: media?.tagName === 'IMG' ? (media.currentSrc || media.src) : '',
+                    src,
+                    type: trigger?.dataset.type || (media?.tagName === 'VIDEO' ? 'video' : 'image'),
+                    cardId: trigger?.dataset.cardId || cardId,
+                    badge
+                });
+            });
+
+            // N'afficher que les données de card valides et dédupliquer par ID.
+            const unique = new Map();
+            cards.filter(Boolean).forEach((card, index) => {
+                const id = String(card.id || card.cardId || `card-${index}`);
+                if (!unique.has(id)) unique.set(id, { ...card, id });
+            });
+            const allCards = [...unique.values()];
+
+            if (allCards.length === 0) {
                 selector.innerHTML = '<div class="ncm-field-info" style="text-align:center;padding:20px;">Aucune card disponible</div>';
                 return;
             }
@@ -11579,15 +11613,15 @@
                 'map':'Map','gui':'GUI','actus':'Actus','messages':'Messages'
             };
 
-            const cardItems = cards.map(card => {
+            const cardItems = allCards.map(card => {
                 const cardData = {
                     label: card.title || card.label || 'Sans titre',
                     category: card.category || card.section || 'Leak',
-                    catColor: card.catColor || '#ffda00',
+                    catColor: /^#[0-9a-f]{6}$/i.test(card.catColor || '') ? card.catColor : '#ffda00',
                     imgSrc: card.imgSrc || card.src || '',
                     type: card.type || 'image',
                     src: card.src || '',
-                    cardId: card.id || '',
+                    cardId: card.cardId || card.id || '',
                     badge: card.badge || card.kind || 'LEAK',
                     section: card.section || card.sectionId || 'Blox Leaks'
                 };
@@ -11595,18 +11629,18 @@
                 const img = cardData.imgSrc
                     ? (cardData.imgSrc.indexOf('data:') === 0
                         ? `<div style="width:100%;height:80px;background:${cardData.catColor}20;display:flex;align-items:center;justify-content:center;border-radius:6px 6px 0 0;font-size:24px;">🖼️</div>`
-                        : `<img src="${cardData.imgSrc}" loading="lazy" decoding="async" style="width:100%;height:80px;object-fit:cover;border-radius:6px 6px 0 0;">`)
+                        : `<img src="${_ccEsc(cardData.imgSrc)}" loading="lazy" decoding="async" style="width:100%;height:80px;object-fit:cover;border-radius:6px 6px 0 0;">`)
                     : `<div style="width:100%;height:80px;background:${cardData.catColor}20;display:flex;align-items:center;justify-content:center;border-radius:6px 6px 0 0;font-size:24px;">📄</div>`;
 
                 return {
                     secFilter,
                     html: `
                         <label class="ncm-linked-card-item" data-filter="${secFilter}" style="display:block;cursor:pointer;position:relative;border-radius:8px;overflow:hidden;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);transition:all 0.2s;">
-                            <input type="checkbox" class="ncm-linked-card-checkbox" data-card-data='${JSON.stringify(cardData).replace(/'/g, "&#39;")}' style="position:absolute;top:6px;right:6px;width:18px;height:18px;cursor:pointer;z-index:2;">
+                            <input type="checkbox" class="ncm-linked-card-checkbox" data-card-data='${_ccEsc(JSON.stringify(cardData)).replace(/'/g, '&#39;')}' style="position:absolute;top:6px;right:6px;width:18px;height:18px;cursor:pointer;z-index:2;">
                             ${img}
                             <div style="padding:8px;">
-                                <div style="font-weight:600;font-size:12px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4px;">${cardData.label}</div>
-                                <div style="font-size:10px;color:rgba(255,255,255,0.5);">${cardData.badge}</div>
+                                <div style="font-weight:600;font-size:12px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4px;">${_ccEsc(cardData.label)}</div>
+                                <div style="font-size:10px;color:rgba(255,255,255,0.5);">${_ccEsc(cardData.badge)}</div>
                             </div>
                         </label>`
                 };
@@ -11643,6 +11677,19 @@
             }
 
             _ncmBindLinkedFilters(selector);
+        };
+
+        if (typeof FB_CC_REF === 'undefined' || !FB_CC_REF) {
+            buildSelector([]);
+            return;
+        }
+        FB_CC_REF.once('value', snap => {
+            const raw = snap.val();
+            const firebaseCards = raw ? (Array.isArray(raw) ? raw : Object.values(raw)) : [];
+            buildSelector(firebaseCards);
+        }, error => {
+            console.warn('[new-card] Impossible de charger custom_cards ; affichage des cards de la page.', error);
+            buildSelector([]);
         });
     }
 
