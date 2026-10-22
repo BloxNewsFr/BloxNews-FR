@@ -8,7 +8,6 @@ initializeApp();
 const ADMIN_DISCORD_IDS = new Set([
   '1503444854410317984', // fn_n0klip
   '775096691240992798',  // neolixx
-  '965365062334308412',  // bryanbg
 ]);
 
 exports.discordAdminToken = onRequest({

@@ -12337,7 +12337,7 @@
     const DISCORD_TOKEN_KEY    = 'bloxbulletin_discord_token';
     const DISCORD_USER_KEY     = 'bloxbulletin_discord_user';
     const DISCORD_PENDING_KEY  = 'bloxbulletin_oauth_pending_page';
-    const ADMIN_DISCORD_IDS = ['1503444854410317984', '775096691240992798', '965365062334308412'];
+    const ADMIN_DISCORD_IDS = ['1503444854410317984', '775096691240992798'];
     const FIREBASE_ADMIN_TOKEN_ENDPOINT = 'https://europe-west1-blox-bulletin-comments.cloudfunctions.net/discordAdminToken';
     function _isFirebaseDiscordAdmin(user = _getDiscordUser()) {
         return !!user && ADMIN_DISCORD_IDS.includes(String(user.id))
