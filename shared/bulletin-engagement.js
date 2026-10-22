@@ -56,6 +56,13 @@
     const list = commentsRoot.querySelector('.bulletin-comments__list');
     let database = null;
     const commentsPath = `card_comments/bulletin-${bulletin}`;
+    const moderators = new Set(['fn_n0klip', 'neolixx', 'bryanbg']);
+    const reactionEmojis = ['❤️', '😂', '😮', '🔥', '👍', '💀'];
+    let commentItems = [];
+    let sortMode = 'top';
+    const localStateKey = `bulletin-comment-state-${bulletin}`;
+    let localState = {};
+    try { localState = JSON.parse(localStorage.getItem(localStateKey) || '{}') || {}; } catch (_) {}
 
     function currentUser() {
         if (window.currentUser && window.currentUser.username) return window.currentUser;
@@ -186,72 +193,188 @@
         return new Date(timestamp || Date.now()).toLocaleString('fr-FR', { dateStyle: 'medium', timeStyle: 'short' });
     }
 
+    function userIsModerator(user = currentUser()) {
+        return !!(user && moderators.has(String(user.username || '').toLowerCase()));
+    }
+
+    function userOwns(item, user = currentUser()) {
+        if (!user || !item) return false;
+        return (!!user.id && String(user.id) === String(item.userId || '')) ||
+            String(user.username || '').toLowerCase() === String(item.username || '').toLowerCase();
+    }
+
+    function timestamp(item) {
+        const value = item.createdAt || item.time || item.timestamp || 0;
+        const parsed = typeof value === 'number' ? value : Date.parse(value);
+        return Number.isFinite(parsed) ? parsed : 0;
+    }
+
+    function persistLocalState() {
+        try { localStorage.setItem(localStateKey, JSON.stringify(localState)); } catch (_) {}
+    }
+
+    function saveComments() {
+        if (!database) return Promise.reject(new Error('Firebase unavailable'));
+        const clean = commentItems.map(comment => {
+            const item = { ...comment };
+            delete item.key; delete item.likedByMe; delete item.myReactions;
+            item.replies = (item.replies || []).map(reply => {
+                const copy = { ...reply };
+                delete copy.likedByMe; delete copy.myReactions;
+                return copy;
+            });
+            return item;
+        });
+        return database.ref(commentsPath).set(clean);
+    }
+
+    function button(label, className, action, disabled = false) {
+        const el = document.createElement('button');
+        el.type = 'button'; el.className = className; el.textContent = label; el.disabled = disabled;
+        el.addEventListener('click', action);
+        return el;
+    }
+
+    function askDelete(message) { return window.confirm(message); }
+
+    async function saveAfterChange() {
+        try { await saveComments(); }
+        catch (error) {
+            console.error('[bulletin comments] Firebase update failed', error);
+            setStatus(error && error.code === 'PERMISSION_DENIED'
+                ? 'Firebase refuse cette action. Vérifie les règles de la base.'
+                : 'Impossible d’enregistrer cette action. Réessaie.');
+        }
+    }
+
+    function renderReply(reply, comment) {
+        const row = document.createElement('div'); row.className = 'bulletin-comment__reply';
+        const avatar = document.createElement('img'); avatar.className = 'bulletin-comments__avatar bulletin-comments__avatar--reply';
+        avatar.src = reply.avatar || ''; avatar.alt = ''; avatar.onerror = () => avatar.classList.add('bulletin-comments__avatar--empty');
+        const body = document.createElement('div'); body.className = 'bulletin-comment__reply-content';
+        const meta = document.createElement('div'); meta.className = 'bulletin-comment__meta';
+        const name = document.createElement('span'); name.className = 'bulletin-comment__name'; name.textContent = reply.username || 'Membre';
+        const date = document.createElement('time'); date.className = 'bulletin-comment__date';
+        date.dateTime = new Date(timestamp(reply) || Date.now()).toISOString(); date.textContent = dateLabel(timestamp(reply));
+        meta.append(name, date);
+        const text = document.createElement('div'); text.className = 'bulletin-comment__text'; text.textContent = reply.text || '';
+        const actions = document.createElement('div'); actions.className = 'bulletin-comment__actions';
+        const id = `${comment.id || comment.key}_r${reply.id}`;
+        const liked = !!localState[id];
+        actions.append(button(`${liked ? '❤️' : '🤍'} ${Number(reply.likes) || 0}`, `bulletin-comment__action${liked ? ' is-liked' : ''}`, async () => {
+            if (!currentUser()) return;
+            localState[id] = !liked; persistLocalState();
+            reply.likes = Math.max(0, (Number(reply.likes) || 0) + (liked ? -1 : 1)); reply.likedByMe = !liked;
+            renderComments({ val: () => commentItems }); await saveAfterChange();
+        }, !currentUser()));
+        if (userOwns(reply) || userIsModerator()) actions.append(button('Supprimer', 'bulletin-comment__action bulletin-comment__action--delete', async () => {
+            if (!askDelete('Supprimer cette réponse ?')) return;
+            comment.replies = (comment.replies || []).filter(item => String(item.id) !== String(reply.id));
+            await saveAfterChange();
+        }));
+        body.append(meta, text, actions); row.append(avatar, body); return row;
+    }
+
+    function renderComment(item, index, items) {
+        const row = document.createElement('article'); row.className = 'bulletin-comment';
+        if (item.pinned) row.classList.add('is-pinned');
+        const avatar = document.createElement('img'); avatar.className = 'bulletin-comments__avatar';
+        avatar.src = item.avatar || ''; avatar.alt = ''; avatar.onerror = () => avatar.classList.add('bulletin-comments__avatar--empty');
+        const content = document.createElement('div'); content.className = 'bulletin-comment__content';
+        const meta = document.createElement('div'); meta.className = 'bulletin-comment__meta';
+        const username = document.createElement('span'); username.className = 'bulletin-comment__name'; username.textContent = item.username || 'Membre';
+        const date = document.createElement('time'); date.className = 'bulletin-comment__date';
+        date.dateTime = new Date(timestamp(item) || Date.now()).toISOString(); date.textContent = dateLabel(timestamp(item));
+        meta.append(username);
+        if (userIsModerator({ username: item.username })) { const tag = document.createElement('span'); tag.className = 'bulletin-comment__badge'; tag.textContent = 'ADMIN'; meta.append(tag); }
+        if (item.pinned) { const tag = document.createElement('span'); tag.className = 'bulletin-comment__badge bulletin-comment__badge--pinned'; tag.textContent = 'ÉPINGLÉ'; meta.append(tag); }
+        if (index === 0 && !item.pinned) { const tag = document.createElement('span'); tag.className = 'bulletin-comment__badge bulletin-comment__badge--first'; tag.textContent = 'À LA UNE'; meta.append(tag); }
+        meta.append(date);
+        const text = document.createElement('div'); text.className = 'bulletin-comment__text'; text.textContent = item.text;
+        content.append(meta, text);
+        const actions = document.createElement('div'); actions.className = 'bulletin-comment__actions';
+        const id = String(item.id || item.key || ''); const liked = !!localState[id];
+        actions.append(button(`${liked ? '❤️' : '🤍'} ${Number(item.likes) || 0}`, `bulletin-comment__action${liked ? ' is-liked' : ''}`, async () => {
+            if (!currentUser()) return;
+            localState[id] = !liked; persistLocalState(); item.likes = Math.max(0, (Number(item.likes) || 0) + (liked ? -1 : 1)); item.likedByMe = !liked;
+            renderComments({ val: () => commentItems }); await saveAfterChange();
+        }, !currentUser()));
+        const replyButton = button('Répondre', 'bulletin-comment__action', () => {
+            const form = content.querySelector('.bulletin-comment__reply-form');
+            if (form) { form.hidden = !form.hidden; form.querySelector('textarea').focus(); }
+        }, !currentUser());
+        if (!currentUser()) replyButton.title = 'Connecte-toi pour répondre';
+        actions.append(replyButton);
+        if (userOwns(item) || userIsModerator()) actions.append(button('Supprimer', 'bulletin-comment__action bulletin-comment__action--delete', async () => {
+            if (!askDelete('Supprimer ce commentaire ?')) return;
+            commentItems = commentItems.filter(comment => String(comment.id || comment.key) !== id); await saveAfterChange(); renderComments({ val: () => commentItems });
+        }));
+        if (userIsModerator()) actions.append(button(item.pinned ? 'Désépingler' : 'Épingler', 'bulletin-comment__action bulletin-comment__action--admin', async () => {
+            item.pinned = !item.pinned; await saveAfterChange(); renderComments({ val: () => commentItems });
+        }));
+
+        const picker = document.createElement('div'); picker.className = 'bulletin-comment__reactions';
+        reactionEmojis.forEach(emoji => {
+            const count = Number((item.reactions || {})[emoji]) || 0;
+            const selected = !!((item.myReactions || {})[emoji]);
+            if (!count && !selected) return;
+            picker.append(button(`${emoji} ${count}`, `bulletin-comment__reaction${selected ? ' is-selected' : ''}`, async () => toggleReaction(item, emoji)));
+        });
+        const reactionMenu = document.createElement('details'); reactionMenu.className = 'bulletin-comment__reaction-menu';
+        const summary = document.createElement('summary'); summary.textContent = '＋ Réaction'; reactionMenu.append(summary);
+        const options = document.createElement('div'); options.className = 'bulletin-comment__reaction-options';
+        reactionEmojis.forEach(emoji => options.append(button(emoji, 'bulletin-comment__emoji', async () => { await toggleReaction(item, emoji); })));
+        reactionMenu.append(options); picker.append(reactionMenu);
+        content.append(actions, picker);
+
+        const form = document.createElement('form'); form.className = 'bulletin-comment__reply-form'; form.hidden = true;
+        const textarea = document.createElement('textarea'); textarea.maxLength = 600; textarea.rows = 2; textarea.placeholder = 'Écris une réponse…'; textarea.setAttribute('aria-label', 'Votre réponse');
+        const submit = button('Répondre', 'bulletin-comments__button', async () => {
+            const textValue = textarea.value.trim(); const user = currentUser(); if (!textValue || !user) return;
+            submit.disabled = true;
+            item.replies = item.replies || [];
+            item.replies.push({ id: `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 7)}`, userId: user.id || null, username: user.username, avatar: avatarUrl(user), text: textValue, time: new Date().toISOString(), likes: 0 });
+            await saveAfterChange(); renderComments({ val: () => commentItems });
+        });
+        form.addEventListener('submit', event => { event.preventDefault(); submit.click(); }); form.append(textarea, submit); content.append(form);
+        const replies = Array.isArray(item.replies) ? item.replies : [];
+        if (replies.length) { const replyList = document.createElement('div'); replyList.className = 'bulletin-comment__replies'; replies.forEach(reply => replyList.append(renderReply(reply, item))); content.append(replyList); }
+        row.append(avatar, content); return row;
+    }
+
+    async function toggleReaction(item, emoji) {
+        if (!currentUser()) return;
+        item.reactions = item.reactions || {}; item.myReactions = item.myReactions || {};
+        if (item.myReactions[emoji]) { item.reactions[emoji] = Math.max(0, (Number(item.reactions[emoji]) || 0) - 1); delete item.myReactions[emoji]; }
+        else { item.reactions[emoji] = (Number(item.reactions[emoji]) || 0) + 1; item.myReactions[emoji] = true; }
+        renderComments({ val: () => commentItems }); await saveAfterChange();
+    }
+
     function renderComments(snapshot) {
-        const value = snapshot.val();
+        const value = typeof snapshot.val === 'function' ? snapshot.val() : snapshot;
         const comments = Array.isArray(value) ? value.filter(Boolean)
             : value && typeof value === 'object' ? Object.keys(value).sort((a,b) => Number(a)-Number(b)).map(key => value[key]).filter(Boolean)
             : [];
-        const items = comments.filter(comment => typeof comment.text === 'string')
-            .map(comment => ({ ...comment, key: comment.id || '' }));
-        const timestamp = item => {
-            const value = item.createdAt || item.time || item.timestamp || 0;
-            const parsed = typeof value === 'number' ? value : Date.parse(value);
-            return Number.isFinite(parsed) ? parsed : 0;
-        };
-        items.sort((a, b) => timestamp(b) - timestamp(a));
+        const prior = new Map(commentItems.map(comment => [String(comment.id || comment.key), comment]));
+        commentItems = comments.filter(comment => comment && typeof comment.text === 'string').map(comment => {
+            const item = { ...comment, key: comment.id || '' }; const old = prior.get(String(item.id || item.key));
+            item.likedByMe = !!localState[String(item.id || item.key)];
+            item.myReactions = old && old.myReactions || item.myReactions || {};
+            item.replies = (item.replies || []).map(reply => ({ ...reply, likedByMe: !!localState[`${item.id || item.key}_r${reply.id}`] }));
+            return item;
+        });
+        const items = [...commentItems].sort((a, b) => Number(!!b.pinned) - Number(!!a.pinned) ||
+            (sortMode === 'top' ? (Number(b.likes) || 0) - (Number(a.likes) || 0) || timestamp(b) - timestamp(a) : timestamp(b) - timestamp(a)));
         countNode.textContent = items.length.toLocaleString('fr-FR');
         const countLabel = countNode.parentElement.lastChild;
         if (countLabel && countLabel.nodeType === Node.TEXT_NODE) countLabel.data = ` commentaire${items.length > 1 ? 's' : ''}`;
         if (!items.length) { setStatus('Aucun commentaire pour le moment. Lance la conversation !', 'bulletin-comments__empty'); return; }
         list.replaceChildren();
-        items.forEach(item => {
-            const row = document.createElement('article');
-            row.className = 'bulletin-comment';
-            const avatar = document.createElement('img');
-            avatar.className = 'bulletin-comments__avatar';
-            avatar.src = item.avatar || '';
-            avatar.alt = '';
-            avatar.onerror = () => { avatar.removeAttribute('src'); avatar.classList.add('bulletin-comments__avatar--empty'); };
-            const content = document.createElement('div');
-            content.className = 'bulletin-comment__content';
-            const meta = document.createElement('div');
-            meta.className = 'bulletin-comment__meta';
-            const username = document.createElement('span');
-            username.className = 'bulletin-comment__name';
-            username.textContent = item.username || 'Membre';
-            const date = document.createElement('time');
-            date.className = 'bulletin-comment__date';
-            const createdAt = timestamp(item);
-            date.dateTime = new Date(createdAt || Date.now()).toISOString();
-            date.textContent = dateLabel(createdAt);
-            meta.append(username, date);
-            const text = document.createElement('div');
-            text.className = 'bulletin-comment__text';
-            text.textContent = item.text;
-            content.append(meta, text);
-            const user = currentUser();
-            if (user && (user.id === item.userId || user.username === item.username || ['fn_n0klip', 'neolixx', 'bryanbg'].includes(user.username))) {
-                const remove = document.createElement('button');
-                remove.type = 'button';
-                remove.className = 'bulletin-comment__delete';
-                remove.textContent = 'Supprimer';
-                remove.addEventListener('click', async () => {
-                    if (!window.confirm('Supprimer ce commentaire ?')) return;
-                    try {
-                        await database.ref(commentsPath).transaction(value => {
-                            const comments = Array.isArray(value) ? value.filter(Boolean)
-                                : value && typeof value === 'object' ? Object.keys(value).sort((a,b) => Number(a)-Number(b)).map(key => value[key]).filter(Boolean)
-                                : [];
-                            return comments.filter(comment => comment && comment.id !== item.key);
-                        });
-                    }
-                    catch (error) { console.error('[bulletin comments] Firebase delete failed', error); }
-                });
-                content.append(remove);
-            }
-            row.append(avatar, content);
-            list.append(row);
-        });
+        const toolbar = document.createElement('div'); toolbar.className = 'bulletin-comments__toolbar';
+        const sortLabel = document.createElement('span'); sortLabel.textContent = 'Trier par'; toolbar.append(sortLabel);
+        [['top', 'Top'], ['recent', 'Récents']].forEach(([mode, label]) => toolbar.append(button(label, `bulletin-comments__sort${sortMode === mode ? ' is-active' : ''}`, () => { sortMode = mode; renderComments({ val: () => commentItems }); })));
+        list.append(toolbar);
+        items.forEach((item, index) => list.append(renderComment(item, index, items)));
     }
 
     function loadFirebase() {
