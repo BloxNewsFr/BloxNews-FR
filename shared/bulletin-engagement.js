@@ -39,11 +39,13 @@
     const compose = commentsRoot.querySelector('.bulletin-comments__compose');
     const list = commentsRoot.querySelector('.bulletin-comments__list');
     let database = null;
+    const commentsPath = `card_comments/bulletin-${bulletin}`;
 
     function currentUser() {
+        if (window.currentUser && window.currentUser.username) return window.currentUser;
         try {
             const user = JSON.parse(localStorage.getItem('bloxbulletin_discord_user') || 'null');
-            return user && user.id && user.username ? user : null;
+            return user && user.username ? user : null;
         } catch (_) { return null; }
     }
 
@@ -64,10 +66,11 @@
     }
 
     function renderCompose() {
-        if (compose.dataset.ready === 'true') return;
-        compose.dataset.ready = 'true';
-        compose.replaceChildren();
         const user = currentUser();
+        const userState = user ? `user:${user.id || user.username}` : 'guest';
+        if (compose.dataset.userState === userState) return;
+        compose.dataset.userState = userState;
+        compose.replaceChildren();
         if (!user) {
             const box = document.createElement('div');
             box.className = 'bulletin-comments__login';
@@ -110,15 +113,38 @@
         submit.textContent = 'Publier le commentaire';
         submit.addEventListener('click', async () => {
             const text = textarea.value.trim();
-            if (!text || !database) return;
+            if (!text) return;
+            if (!database) {
+                hint.textContent = 'La connexion aux commentaires n’est pas prête. Recharge la page puis réessaie.';
+                return;
+            }
             submit.disabled = true;
             submit.textContent = 'Publication…';
             const latestUser = currentUser();
             if (!latestUser) { submit.disabled = false; submit.textContent = 'Publier le commentaire'; renderComposeAgain(); return; }
             try {
-                const ref = database.ref(`update_comments/bulletin-${bulletin}`).push();
-                await ref.set({ id: ref.key, userId: latestUser.id, username: latestUser.global_name || latestUser.username,
-                    avatar: avatarUrl(latestUser), text, createdAt: Date.now() });
+                const comment = {
+                    id: `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}`,
+                    userId: latestUser.id || null,
+                    username: latestUser.username,
+                    avatar: avatarUrl(latestUser),
+                    text,
+                    time: new Date().toISOString(),
+                    likes: 0,
+                    pinned: false,
+                    replies: [],
+                    reactions: {},
+                    images: []
+                };
+                const ref = database.ref(commentsPath);
+                const result = await ref.transaction(value => {
+                    const comments = Array.isArray(value) ? value.filter(Boolean)
+                        : value && typeof value === 'object' ? Object.keys(value).sort((a,b) => Number(a)-Number(b)).map(key => value[key]).filter(Boolean)
+                        : [];
+                    comments.unshift(comment);
+                    return comments;
+                });
+                if (!result.committed) throw new Error('Firebase transaction was not committed');
                 textarea.value = '';
                 submit.textContent = 'Publié ✓';
                 setTimeout(() => { submit.disabled = false; submit.textContent = 'Publier le commentaire'; }, 1200);
@@ -134,7 +160,6 @@
     }
 
     function renderComposeAgain() {
-        compose.dataset.ready = '';
         renderCompose();
     }
 
@@ -143,14 +168,21 @@
     }
 
     function renderComments(snapshot) {
-        const items = [];
-        snapshot.forEach(child => {
-            const value = child.val();
-            if (value && typeof value.text === 'string') items.push({ key: child.key, ...value });
-        });
-        items.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+        const value = snapshot.val();
+        const comments = Array.isArray(value) ? value.filter(Boolean)
+            : value && typeof value === 'object' ? Object.keys(value).sort((a,b) => Number(a)-Number(b)).map(key => value[key]).filter(Boolean)
+            : [];
+        const items = comments.filter(comment => typeof comment.text === 'string')
+            .map(comment => ({ ...comment, key: comment.id || '' }));
+        const timestamp = item => {
+            const value = item.createdAt || item.time || item.timestamp || 0;
+            const parsed = typeof value === 'number' ? value : Date.parse(value);
+            return Number.isFinite(parsed) ? parsed : 0;
+        };
+        items.sort((a, b) => timestamp(b) - timestamp(a));
         countNode.textContent = items.length.toLocaleString('fr-FR');
-        countNode.parentElement.textContent = `${items.length.toLocaleString('fr-FR')} commentaire${items.length > 1 ? 's' : ''}`;
+        const countLabel = countNode.parentElement.lastChild;
+        if (countLabel && countLabel.nodeType === Node.TEXT_NODE) countLabel.data = ` commentaire${items.length > 1 ? 's' : ''}`;
         if (!items.length) { setStatus('Aucun commentaire pour le moment. Lance la conversation !', 'bulletin-comments__empty'); return; }
         list.replaceChildren();
         items.forEach(item => {
@@ -170,22 +202,30 @@
             username.textContent = item.username || 'Membre';
             const date = document.createElement('time');
             date.className = 'bulletin-comment__date';
-            date.dateTime = new Date(item.createdAt || 0).toISOString();
-            date.textContent = dateLabel(item.createdAt);
+            const createdAt = timestamp(item);
+            date.dateTime = new Date(createdAt || Date.now()).toISOString();
+            date.textContent = dateLabel(createdAt);
             meta.append(username, date);
             const text = document.createElement('div');
             text.className = 'bulletin-comment__text';
             text.textContent = item.text;
             content.append(meta, text);
             const user = currentUser();
-            if (user && (user.id === item.userId || ['fn_n0klip', 'neolixx', 'bryanbg'].includes(user.username))) {
+            if (user && (user.id === item.userId || user.username === item.username || ['fn_n0klip', 'neolixx', 'bryanbg'].includes(user.username))) {
                 const remove = document.createElement('button');
                 remove.type = 'button';
                 remove.className = 'bulletin-comment__delete';
                 remove.textContent = 'Supprimer';
                 remove.addEventListener('click', async () => {
                     if (!window.confirm('Supprimer ce commentaire ?')) return;
-                    try { await database.ref(`update_comments/bulletin-${bulletin}/${item.key}`).remove(); }
+                    try {
+                        await database.ref(commentsPath).transaction(value => {
+                            const comments = Array.isArray(value) ? value.filter(Boolean)
+                                : value && typeof value === 'object' ? Object.keys(value).sort((a,b) => Number(a)-Number(b)).map(key => value[key]).filter(Boolean)
+                                : [];
+                            return comments.filter(comment => comment && comment.id !== item.key);
+                        });
+                    }
                     catch (error) { console.error('[bulletin comments] Firebase delete failed', error); }
                 });
                 content.append(remove);
@@ -231,7 +271,7 @@
         };
         if (!window.firebase.apps.length) window.firebase.initializeApp(config);
         database = window.firebase.database();
-        database.ref(`update_comments/bulletin-${bulletin}`).on('value', renderComments, error => {
+        database.ref(commentsPath).on('value', renderComments, error => {
             console.error('[bulletin comments] Firebase read failed', error);
             setStatus('Les commentaires ne sont pas disponibles pour le moment.');
         });
