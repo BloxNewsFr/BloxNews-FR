@@ -35,6 +35,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Inter:wght@300;400;500;600;700;900&family=Bebas+Neue&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
     <style>
         @font-face { font-family: 'LuckiestGuy Regular'; src: url('./fonts/LuckiestGuy-Regular.ttf') format('truetype'); }
@@ -8321,6 +8322,7 @@
         appId: "1:774633429491:web:d1f534a0df346fbea79a86",
         measurementId: "G-DKKQK7N4DQ"
     });
+    var FB_AUTH = firebase.auth();
     var FB_DB  = firebase.database();
     const FB_REF = FB_DB.ref('comments');
 
@@ -10384,7 +10386,7 @@
 
     function toggleEditMode() {
         const user = _getDiscordUser();
-        if (!user || !ADMIN_DISCORD_USERS.includes(user.username)) {
+        if (!_isFirebaseDiscordAdmin(user)) {
             if (_editMode) {
                 _editMode = false;
                 document.body.classList.remove('edit-mode');
@@ -12303,7 +12305,7 @@
             // Délai pour laisser le script OAuth initialiser _getDiscordUser
             setTimeout(() => {
                 const _toastUser = typeof _getDiscordUser === 'function' ? _getDiscordUser() : null;
-                if (_toastUser && typeof ADMIN_DISCORD_USERS !== 'undefined' && ADMIN_DISCORD_USERS.includes(_toastUser.username)) {
+                if (_isFirebaseDiscordAdmin(_toastUser)) {
                     toast.classList.add('is-visible');
                     setTimeout(() => { toast.classList.remove('is-visible'); }, 3500);
                 }
@@ -12335,11 +12337,42 @@
     const DISCORD_TOKEN_KEY    = 'bloxbulletin_discord_token';
     const DISCORD_USER_KEY     = 'bloxbulletin_discord_user';
     const DISCORD_PENDING_KEY  = 'bloxbulletin_oauth_pending_page';
-    const ADMIN_DISCORD_USERS = ['fn_n0klip', 'neolixx'];
+    const ADMIN_DISCORD_IDS = ['1503444854410317984', '775096691240992798', '965365062334308412'];
+    const FIREBASE_ADMIN_TOKEN_ENDPOINT = 'https://europe-west1-blox-bulletin-comments.cloudfunctions.net/discordAdminToken';
+    function _isFirebaseDiscordAdmin(user = _getDiscordUser()) {
+        return !!user && ADMIN_DISCORD_IDS.includes(String(user.id))
+            && FB_AUTH.currentUser?.uid === String(user.id);
+    }
+
+    async function _firebaseSignInAsDiscordAdmin(discordUser, discordAccessToken) {
+        if (!discordUser || !ADMIN_DISCORD_IDS.includes(String(discordUser.id))) {
+            if (FB_AUTH.currentUser) await FB_AUTH.signOut();
+            return false;
+        }
+        if (!discordAccessToken) throw new Error('Reconnecte-toi avec Discord pour autoriser les publications.');
+
+        await FB_AUTH.setPersistence(firebase.auth.Auth.Persistence.SESSION);
+        const response = await fetch(FIREBASE_ADMIN_TOKEN_ENDPOINT, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ discordAccessToken })
+        });
+        const result = await response.json().catch(() => ({}));
+        if (!response.ok || !result.firebaseCustomToken) {
+            throw new Error(result.error || 'Le serveur n’a pas pu vérifier ton compte Discord admin.');
+        }
+
+        const credential = await FB_AUTH.signInWithCustomToken(result.firebaseCustomToken);
+        if (credential.user.uid !== String(discordUser.id)) {
+            await FB_AUTH.signOut();
+            throw new Error('Le compte Firebase ne correspond pas au compte Discord connecté.');
+        }
+        return true;
+    }
 
     function _updateEditModeVisibility() {
         const user = _getDiscordUser();
-        const isAdmin = user && ADMIN_DISCORD_USERS.includes(user.username);
+        const isAdmin = _isFirebaseDiscordAdmin(user);
         const btn = document.getElementById('editModeToggle');
         if (btn) btn.style.display = isAdmin ? '' : 'none';
         // Si le mode édition est actif et l'utilisateur n'est plus admin → désactiver
@@ -12427,6 +12460,7 @@
     function _discordLogout() {
         localStorage.removeItem(DISCORD_TOKEN_KEY);
         localStorage.removeItem(DISCORD_USER_KEY);
+        FB_AUTH.signOut().catch(error => console.warn('[Firebase sign out]', error));
         window.discordCurrentUser = null;
         document.getElementById('discordUserPill').classList.remove('is-visible', 'dropdown-open');
         document.getElementById('discordLoginBtn').style.display = '';
@@ -12493,6 +12527,11 @@
                         const user = await _discordFetchUser(token);
                         localStorage.setItem(DISCORD_TOKEN_KEY, JSON.stringify({ token, expiresAt }));
                         localStorage.setItem(DISCORD_USER_KEY, JSON.stringify(user));
+                        try {
+                            await _firebaseSignInAsDiscordAdmin(user, token);
+                        } catch (authError) {
+                            console.error('[Firebase admin authentication]', authError);
+                        }
                         showUserInNavbar(user);
                         window.currentUser = { username: user.username, avatar: _discordAvatarUrl(user) };
                         if (typeof discordLogin === 'function') discordLogin(window.currentUser);
@@ -12525,11 +12564,17 @@
                     try {
                         const freshUser = await _discordFetchUser(stored.token);
                         localStorage.setItem(DISCORD_USER_KEY, JSON.stringify(freshUser));
+                        await _firebaseSignInAsDiscordAdmin(freshUser, stored.token).catch(error => {
+                            console.error('[Firebase admin authentication]', error);
+                        });
                         showUserInNavbar(freshUser);
                     } catch(e) {
                         // Token invalide → déconnexion silencieuse, mais on garde l'affichage
                         console.warn('Discord token expired, using cached user');
+                        await FB_AUTH.signOut().catch(() => {});
                     }
+                } else if (FB_AUTH.currentUser) {
+                    await FB_AUTH.signOut().catch(() => {});
                 }
                 // Sync comment system
                 console.log('Navbar sync: calling discordLogin with cached user', cachedUser.username);
@@ -12550,6 +12595,7 @@
 
         // 4. Vraiment pas connecté
         console.log('Navbar init: no user found, showing login button');
+        await FB_AUTH.signOut().catch(() => {});
         loginBtn.style.display = '';
         _updateEditModeVisibility();
     })();
