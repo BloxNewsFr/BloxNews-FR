@@ -38,14 +38,11 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
     <style>
         @font-face { font-family: 'LuckiestGuy Regular'; src: url('./fonts/LuckiestGuy-Regular.ttf') format('truetype'); }
-        :root { --color-text: #1a1a2e; --color-border: #e8e8f0; --color-primary: #ffda00; --color-accent: #175ec2; }
+        :root { --color-text: #1a1a2e; --color-border: #e8e8f0; --color-primary: #ffda00; --color-accent: #175ec2; --color-muted: #888; }
 
         /* ── MODE SOMBRE ── */
-        html[data-theme="dark"] { --color-text: #eef0fa; --color-border: #2a2d45; }
-        html[data-theme="dark"] body { background-color: #0d0e1a; }
-        html[data-theme="dark"] body::before {
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.6' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
-        }
+        html[data-theme="dark"] { --color-text: #eef0fa; --color-border: #2a2d45; --color-accent: #5b9bd5; --color-muted: #7a7a8a; }
+        html[data-theme="dark"] body { background-color: #0e0f1c; }
         html[data-theme="dark"] .site-background { opacity: 0.35; }
         html[data-theme="dark"] .leaks-tab { background: #171827; color: #dcdff2; border-color: #2a2d45; }
         /* secret-bulletin : toujours dark, overrides thème supprimés */
@@ -97,32 +94,11 @@
             }
         }
 
-        /* ── 3D LAYERED DEPTH SYSTEM ── */
-        [data-depth] {
-            will-change: translate, filter, opacity;
-            transition: filter 0.8s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.8s ease;
-        }
-        [data-depth="3"] { filter: brightness(1.08); }
-        [data-depth="2"] { filter: brightness(1.04); }
-        [data-depth="1"] { filter: brightness(1.01); }
-        [data-depth="0"] { filter: brightness(0.97); opacity: 0.94; }
-        [data-depth="-1"] { filter: blur(1.5px) brightness(0.92); opacity: 0.75; }
-        [data-depth="-2"] { filter: blur(0.8px) brightness(0.96); opacity: 0.95; }
-        body.scrolling [data-depth] { transition: filter 0s, opacity 0s; }
-        body.scrolling [data-depth="-2"] { filter: blur(2px) brightness(0.9); opacity: 0.8; }
-        body.scrolling [data-depth="-1"] { filter: blur(3px) brightness(0.85); opacity: 0.65; }
-        body.scrolling [data-depth="0"]  { filter: blur(1px) brightness(0.94); opacity: 0.88; }
+        /* ── DEPTH SYSTEM (disabled) ── */
         
         body { 
             font-family: 'Inter', sans-serif; color: var(--color-text); 
-            background: #f5f6f8; min-height: 100vh; overflow-x: hidden;
-            position: relative;
-        }
-        /* ── Subtle noise texture for light mode depth ── */
-        body::before {
-            content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.015'/%3E%3C/svg%3E");
-            background-size: 256px 256px;
+            background-color: #f0f2f8; min-height: 100vh; overflow-x: hidden;
         }
 
         /* ── FOND DU SITE ── */
