@@ -12119,8 +12119,12 @@
         const hash = window.location.hash;
         if (hash.includes('access_token=')) {
             const pendingPage = sessionStorage.getItem(DISCORD_PENDING_KEY);
+            const oauthParams = new URLSearchParams(hash.slice(1));
+            const statePage = oauthParams.get('state');
             const isOwnCallback = !pendingPage || pendingPage === window.location.pathname;
-            const bulletinReturn = pendingPage && pendingPage.match(/^\/BloxNews-FR\/(\d{3})\/bulletin-\1\.html$/);
+            const isValidBulletinPath = path => path && /^\/BloxNews-FR\/(\d{3})\/bulletin-\1\.html$/.test(path);
+            const bulletinReturn = isValidBulletinPath(pendingPage) ? pendingPage
+                : isValidBulletinPath(statePage) ? statePage : null;
 
             // Nettoyer l'URL immédiatement (push pour ne pas casser le bouton retour)
             history.pushState(null, '', window.location.pathname + window.location.search);
@@ -12130,9 +12134,8 @@
                 // Token d'une autre page (ex : arrivée depuis index.html#access_token=…)
                 // On l'ignore et on affiche juste l'état depuis le cache
             } else {
-                const params    = new URLSearchParams(hash.slice(1));
-                const token     = params.get('access_token');
-                const expiresIn = parseInt(params.get('expires_in') || '604800');
+                const token     = oauthParams.get('access_token');
+                const expiresIn = parseInt(oauthParams.get('expires_in') || '604800');
                 const expiresAt = Date.now() + expiresIn * 1000;
                 if (token) {
                     skeleton.classList.add('is-visible');

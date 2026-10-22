@@ -17,7 +17,8 @@
             client_id: '1517793695573999646',
             redirect_uri: discordRedirectUri,
             response_type: 'token',
-            scope: 'identify'
+            scope: 'identify',
+            state: `/BloxNews-FR/${bulletin}/bulletin-${bulletin}.html`
         });
         window.location.href = 'https://discord.com/api/oauth2/authorize?' + params.toString();
     };
@@ -166,7 +167,9 @@
                 setTimeout(() => { submit.disabled = false; submit.textContent = 'Publier le commentaire'; }, 1200);
             } catch (error) {
                 console.error('[bulletin comments] Firebase write failed', error);
-                hint.textContent = 'Impossible de publier. Vérifie ta connexion et réessaie.';
+                hint.textContent = error && error.code === 'PERMISSION_DENIED'
+                    ? 'Firebase refuse l’écriture des commentaires. Vérifie les règles de la base.'
+                    : 'Échec de connexion à Firebase. Vérifie ta connexion puis réessaie.';
                 submit.disabled = false;
                 submit.textContent = 'Réessayer';
             }
