@@ -4111,7 +4111,7 @@
             flex-shrink: 0;
         }
         #newCardModal .ncm-footer-info {
-            flex: 1; font-size: 11px; color: rgba(255,255,255,0.2);
+            flex: 1; min-width: 0; font-size: 11px; line-height: 1.4; color: rgba(255,255,255,0.2);
         }
         #newCardModal .ncm-btn-back {
             padding: 9px 16px; border-radius: 10px; border: none;
@@ -11274,7 +11274,7 @@
         document.getElementById('newCardModal')?.classList.add('is-open');
     }
 
-    function _cmdNewSubmit() {
+    async function _cmdNewSubmit() {
         const kind      = document.querySelector('#newCardModal input[name="ncmKind"]:checked')?.value || 'standard';
         const isActus   = kind === 'actus';
         const isMessage = kind === 'message';
@@ -11310,25 +11310,37 @@
                 createdAt: Date.now()
             };
 
-            // Fermer le modal
-            document.getElementById('newCardModal')?.classList.remove('is-open');
-
-            // Ajouter à UPDATES_DATA
-            UPDATES_DATA.push(newUpdate);
-
-            // Rendu immédiat de la card
-            _renderUpdateCard(newUpdate);
-
-            // Sauvegarder dans Firebase
-            if (typeof FB_DB !== 'undefined' && FB_DB) {
-                FB_DB.ref('updates/' + updateId).set(newUpdate).catch(err => {
-                    console.error('[Firebase update save]', err);
-                    editLog('err', 'Erreur lors de la sauvegarde Firebase.');
-                });
+            const createButton = document.getElementById('ncmBtnCreate');
+            const footerInfo = document.getElementById('ncmFooterInfo');
+            const originalButtonText = createButton?.textContent || 'Publier';
+            if (!FB_DB) {
+                if (footerInfo) {
+                    footerInfo.textContent = 'Firebase est indisponible : l’update n’a pas été enregistrée.';
+                    footerInfo.style.color = '#ff7777';
+                }
+                editLog('err', 'Firebase indisponible : update non enregistrée.');
+                return;
             }
 
-            // Toast de confirmation
-            _ncmShowToast('UPDATE', title);
+            if (createButton) { createButton.disabled = true; createButton.textContent = 'Enregistrement…'; }
+            if (footerInfo) { footerInfo.textContent = 'Enregistrement de l’update dans Firebase…'; footerInfo.style.color = ''; }
+            try {
+                await FB_DB.ref('updates/' + updateId).set(newUpdate);
+                if (!UPDATES_DATA.some(update => update.id === updateId)) UPDATES_DATA.push(newUpdate);
+                _renderUpdateCard(newUpdate);
+                document.getElementById('newCardModal')?.classList.remove('is-open');
+                if (footerInfo) footerInfo.style.color = '';
+                _ncmShowToast('UPDATE', title);
+                editLog('ok', `Update « ${title} » enregistrée dans Firebase.`);
+            } catch (error) {
+                console.error('[Firebase update save]', error);
+                if (createButton) { createButton.disabled = false; createButton.textContent = originalButtonText; }
+                const message = error?.code === 'PERMISSION_DENIED'
+                    ? 'Firebase a refusé l’enregistrement (PERMISSION_DENIED). La connexion Discord du site n’authentifie pas Firebase : les règles actuelles n’autorisent pas cette écriture.'
+                    : `Échec de l’enregistrement Firebase${error?.message ? ` : ${error.message}` : '.'}`;
+                if (footerInfo) { footerInfo.textContent = message; footerInfo.style.color = '#ff7777'; }
+                editLog('err', message);
+            }
 
             return;
         }
