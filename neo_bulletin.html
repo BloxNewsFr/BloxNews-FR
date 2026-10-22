@@ -10386,7 +10386,7 @@
 
     function toggleEditMode() {
         const user = _getDiscordUser();
-        if (!_isFirebaseDiscordAdmin(user)) {
+        if (!_isDiscordEditor(user)) {
             if (_editMode) {
                 _editMode = false;
                 document.body.classList.remove('edit-mode');
@@ -12305,7 +12305,7 @@
             // Délai pour laisser le script OAuth initialiser _getDiscordUser
             setTimeout(() => {
                 const _toastUser = typeof _getDiscordUser === 'function' ? _getDiscordUser() : null;
-                if (_isFirebaseDiscordAdmin(_toastUser)) {
+                if (_isDiscordEditor(_toastUser)) {
                     toast.classList.add('is-visible');
                     setTimeout(() => { toast.classList.remove('is-visible'); }, 3500);
                 }
@@ -12339,9 +12339,11 @@
     const DISCORD_PENDING_KEY  = 'bloxbulletin_oauth_pending_page';
     const ADMIN_DISCORD_IDS = ['1503444854410317984', '775096691240992798'];
     const FIREBASE_ADMIN_TOKEN_ENDPOINT = 'https://europe-west1-blox-bulletin-comments.cloudfunctions.net/discordAdminToken';
+    function _isDiscordEditor(user = _getDiscordUser()) {
+        return !!user && ADMIN_DISCORD_IDS.includes(String(user.id));
+    }
     function _isFirebaseDiscordAdmin(user = _getDiscordUser()) {
-        return !!user && ADMIN_DISCORD_IDS.includes(String(user.id))
-            && FB_AUTH.currentUser?.uid === String(user.id);
+        return _isDiscordEditor(user) && FB_AUTH.currentUser?.uid === String(user.id);
     }
 
     async function _firebaseSignInAsDiscordAdmin(discordUser, discordAccessToken) {
@@ -12372,7 +12374,7 @@
 
     function _updateEditModeVisibility() {
         const user = _getDiscordUser();
-        const isAdmin = _isFirebaseDiscordAdmin(user);
+        const isAdmin = _isDiscordEditor(user);
         const btn = document.getElementById('editModeToggle');
         if (btn) btn.style.display = isAdmin ? '' : 'none';
         // Si le mode édition est actif et l'utilisateur n'est plus admin → désactiver
