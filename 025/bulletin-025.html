@@ -18,6 +18,7 @@
     <link rel="stylesheet" href="./bulletin-025.css">
     <link rel="stylesheet" href="../shared/bulletin-lightbox.css">
     <link rel="stylesheet" href="../astuces/astuces.css">
+    <link rel="stylesheet" href="../shared/bulletin-engagement.css">
 </head>
 <body>
 
@@ -170,9 +171,21 @@
 
 </div>
 
-    <div class="back-button-container">
+<div class="back-button-container">
         <a href="../index.html#bulletin-017" class="back-button">← Retour aux Actualités</a>
     </div>
+
+        <section class="bulletin-engagement" id="bulletinEngagement" aria-label="Navigation et commentaires du bulletin 025">
+            <nav class="bulletin-pagination" aria-label="Bulletins précédent et suivant"></nav>
+            <section class="bulletin-comments" aria-labelledby="bulletinCommentsTitle">
+                <div class="bulletin-comments__heading">
+                    <h2 class="bulletin-comments__title" id="bulletinCommentsTitle">La discussion</h2>
+                    <span class="bulletin-comments__count"><span data-comments-count>0</span> commentaire(s)</span>
+                </div>
+                <div class="bulletin-comments__compose"></div>
+                <div class="bulletin-comments__list" aria-live="polite"></div>
+            </section>
+        </section>
 
     
 </main>
@@ -536,5 +549,6 @@ animate();
 </script>
     <script src="../shared/bulletin-lightbox.js"></script>
     <script src="../astuces/astuces.js"></script>
+    <script src="../shared/bulletin-engagement.js"></script>
 </body>
 </html>
