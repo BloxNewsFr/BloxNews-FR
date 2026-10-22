@@ -12118,15 +12118,15 @@
         // 1. Vérifier si on revient du flux OAuth (token dans le hash)
         const hash = window.location.hash;
         if (hash.includes('access_token=')) {
-            // Ne traiter le token que si LE FLUX a été lancé depuis CETTE page
             const pendingPage = sessionStorage.getItem(DISCORD_PENDING_KEY);
             const isOwnCallback = !pendingPage || pendingPage === window.location.pathname;
+            const bulletinReturn = pendingPage && pendingPage.match(/^\/BloxNews-FR\/(\d{3})\/bulletin-\1\.html$/);
 
             // Nettoyer l'URL immédiatement (push pour ne pas casser le bouton retour)
             history.pushState(null, '', window.location.pathname + window.location.search);
             sessionStorage.removeItem(DISCORD_PENDING_KEY);
 
-            if (!isOwnCallback) {
+            if (!isOwnCallback && !bulletinReturn) {
                 // Token d'une autre page (ex : arrivée depuis index.html#access_token=…)
                 // On l'ignore et on affiche juste l'état depuis le cache
             } else {
@@ -12143,6 +12143,10 @@
                         showUserInNavbar(user);
                         window.currentUser = { username: user.username, avatar: _discordAvatarUrl(user) };
                         if (typeof discordLogin === 'function') discordLogin(window.currentUser);
+                        if (bulletinReturn) {
+                            window.location.replace(pendingPage);
+                            return;
+                        }
                     } catch(e) {
                         skeleton.classList.remove('is-visible');
                         loginBtn.style.display = '';

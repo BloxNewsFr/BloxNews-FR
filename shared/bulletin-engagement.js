@@ -6,6 +6,21 @@
     const bulletin = match[1];
     const root = document.getElementById('bulletinEngagement');
     if (!root) return;
+    const discordRedirectUri = 'https://bloxnewsfr.github.io/BloxNews-FR/neo_bulletin.html';
+    const pendingPageKey = 'bloxbulletin_oauth_pending_page';
+
+    // Les pages de bulletin réutilisent l'URL OAuth déjà enregistrée du site,
+    // puis neo_bulletin renvoie l'utilisateur à la page d'origine.
+    window._discordLogin = function () {
+        try { sessionStorage.setItem(pendingPageKey, window.location.pathname); } catch (_) {}
+        const params = new URLSearchParams({
+            client_id: '1517793695573999646',
+            redirect_uri: discordRedirectUri,
+            response_type: 'token',
+            scope: 'identify'
+        });
+        window.location.href = 'https://discord.com/api/oauth2/authorize?' + params.toString();
+    };
     const specialThemes = { '012': 'matrix', '017': 'halloween', '019': 'rose', '023': 'matrix', '024': 'rebuild', '025': 'halloween' };
     if (specialThemes[bulletin]) root.classList.add(`bulletin-theme--${specialThemes[bulletin]}`);
 
@@ -136,15 +151,16 @@
                     reactions: {},
                     images: []
                 };
+                // Même format et même écriture que les commentaires d'Actus dans
+                // neo_bulletin : un tableau sous card_comments/<id>.
                 const ref = database.ref(commentsPath);
-                const result = await ref.transaction(value => {
-                    const comments = Array.isArray(value) ? value.filter(Boolean)
-                        : value && typeof value === 'object' ? Object.keys(value).sort((a,b) => Number(a)-Number(b)).map(key => value[key]).filter(Boolean)
-                        : [];
-                    comments.unshift(comment);
-                    return comments;
-                });
-                if (!result.committed) throw new Error('Firebase transaction was not committed');
+                const snapshot = await ref.once('value');
+                const value = snapshot.val();
+                const comments = Array.isArray(value) ? value.filter(Boolean)
+                    : value && typeof value === 'object' ? Object.keys(value).sort((a,b) => Number(a)-Number(b)).map(key => value[key]).filter(Boolean)
+                    : [];
+                comments.unshift(comment);
+                await ref.set(comments);
                 textarea.value = '';
                 submit.textContent = 'Publié ✓';
                 setTimeout(() => { submit.disabled = false; submit.textContent = 'Publier le commentaire'; }, 1200);
