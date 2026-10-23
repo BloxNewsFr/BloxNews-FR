@@ -12790,6 +12790,45 @@
         _settingsSetToggle('settingsIdsToggle', next);
     }
 
+    // ── Raccourcis admin (raccourcis vers les outils existants) ──
+    function _settingsFeedback(btn, label) {
+        if (!btn) return;
+        if (!btn._label) btn._label = btn.textContent;
+        btn.textContent = label;
+        btn.disabled = true;
+        clearTimeout(btn._resetTimer);
+        btn._resetTimer = setTimeout(() => {
+            btn.textContent = btn._label;
+            btn.disabled = false;
+        }, 1800);
+    }
+
+    function _settingsOpenEditMode() {
+        if (typeof toggleEditMode !== 'function') return;
+        closeSettings(null);
+        setTimeout(() => { if (!_editMode) toggleEditMode(); }, 250);
+    }
+
+    function _settingsOpenNewCard() {
+        if (typeof _cmdNew !== 'function') return;
+        closeSettings(null);
+        setTimeout(() => _cmdNew(), 250);
+    }
+
+    function _settingsResetEdits(btn) {
+        if (typeof callUpdateRelay !== 'function') return;
+        _settingsFeedback(btn, '…');
+        callUpdateRelay('resetContentEdits').then(() => {
+            try { localStorage.removeItem(EDIT_KEY); } catch(e) {}
+            if (typeof applyStoredEdits === 'function') applyStoredEdits();
+            _settingsFeedback(btn, '✓ Réinitialisé');
+            if (typeof _ncmShowToast === 'function') _ncmShowToast('✓ Modifications', 'Toutes les modifications ont été réinitialisées.');
+        }).catch(err => {
+            _settingsFeedback(btn, '⚠ Refusé');
+            if (typeof _ncmShowToast === 'function') _ncmShowToast('⚠️ Refusé', (err && err.message) || 'Le relais a refusé la requête.');
+        });
+    }
+
     // ── Appliquer les préférences sauvegardées au chargement ─────
     (function _settingsApplyOnLoad() {
         if (localStorage.getItem(SETTINGS_MOTION_KEY) === '1') {

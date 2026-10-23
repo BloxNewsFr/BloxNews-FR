@@ -3578,6 +3578,38 @@
         renderPage();
     }
 
+    // ── Raccourcis admin (réglages locaux, aucune donnée serveur) ─
+    function _settingsFeedback(btn, label) {
+        if (!btn) return;
+        if (!btn._label) btn._label = btn.textContent;
+        btn.textContent = label;
+        btn.disabled = true;
+        clearTimeout(btn._resetTimer);
+        btn._resetTimer = setTimeout(() => {
+            btn.textContent = btn._label;
+            btn.disabled = false;
+        }, 1600);
+    }
+
+    function _settingsStatsRefresh(btn) {
+        if (typeof statsRefreshNow !== 'function') return;
+        statsRefreshNow();
+        _settingsFeedback(btn, '✓ Fait');
+    }
+
+    function _settingsResetLocal(btn) {
+        [SETTINGS_MOTION_KEY, SETTINGS_PER_PAGE_KEY, SETTINGS_NEW_DAYS_KEY, 'bloxnews_sort_newest']
+            .forEach(key => localStorage.removeItem(key));
+        document.body.classList.remove('force-reduce-motion');
+        PER_PAGE = 6;
+        NEW_DAYS = 7;
+        _sortNewest = true;
+        currentPage = 1;
+        _settingsRefreshToggles();
+        renderPage();
+        _settingsFeedback(btn, '✓ Fait');
+    }
+
     // ── Appliquer les préférences sauvegardées au chargement ─────
     (function _settingsApplyOnLoad() {
         if (localStorage.getItem(SETTINGS_MOTION_KEY) === '1') {
@@ -3700,6 +3732,26 @@
                     </div>
                     <button class="settings-btn settings-btn--secondary" onclick="closeSettings(null);setTimeout(openStats,250)">
                         Ouvrir
+                    </button>
+                </div>
+
+                <div class="settings-row">
+                    <div class="settings-row-info">
+                        <div class="settings-row-label">Actualiser les statistiques</div>
+                        <div class="settings-row-sub">Recharge les compteurs, la présence et le classement</div>
+                    </div>
+                    <button class="settings-btn settings-btn--secondary" onclick="_settingsStatsRefresh(this)">
+                        Rafraîchir
+                    </button>
+                </div>
+
+                <div class="settings-row">
+                    <div class="settings-row-info">
+                        <div class="settings-row-label">Réinitialiser les réglages locaux</div>
+                        <div class="settings-row-sub">Efface vos préférences d'affichage sur cet appareil</div>
+                    </div>
+                    <button class="settings-btn settings-btn--secondary" onclick="_settingsResetLocal(this)">
+                        Réinitialiser
                     </button>
                 </div>
             </div>
