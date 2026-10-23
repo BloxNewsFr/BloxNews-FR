@@ -54,71 +54,137 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Neo Bulletin #{NUMBER} - {TITLE}</title>
-    <meta property="og:title" content="Neo Bulletin #{NUMBER} - {TITLE}">
+    <title>Le Bulletin Blox #{NUMBER} – Blox Fruits</title>
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="Blox Fruits News">
+    <meta property="og:title" content="Le Bulletin Blox #{NUMBER} – Blox Fruits">
+    <meta property="og:description" content="Bulletin #{NUMBER} – Toute l'actualité Blox Fruits : mises à jour, événements et news officielles du jeu Roblox Blox Fruits.">
     <meta property="og:image" content="https://bloxnewsfr.github.io/BloxNews-FR/{NUMBER}/img/{OG_IMAGE}">
     <meta property="og:url" content="https://bloxnewsfr.github.io/BloxNews-FR/{NUMBER}/bulletin-{NUMBER}.html">
-    <link rel="icon" type="image/png" href="../shared/bf_logo.png">
+    <meta property="og:locale" content="fr_FR">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" type="image/png" href="../shared/favicon.png">
+    <link rel="shortcut icon" href="../shared/bf_logo.png" type="image/png">
     <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
-    <style>
-        :root {{ --primary: #ffda00; }}
-        * {{ box-sizing: border-box; }}
-        body {{ margin:0; font-family:'Inter',sans-serif; color:#333; background:#fff; }}
-        .site-header {{ display:flex; align-items:center; justify-content:center; padding:0 55px; position:sticky; top:0; z-index:1000; height:72px; background:rgba(255,255,255,0.9); backdrop-filter:blur(50px); border-bottom:1px solid rgba(0,0,0,0.1); }}
-        .site-header__logo {{ position:absolute; left:55px; }}
-        .site-header__logo img {{ height:42px; }}
-        .site-nav {{ display:flex; gap:8px; list-style:none; margin:0; padding:0; }}
-        .site-nav a {{ color:rgba(0,0,0,0.85); text-decoration:none; font-weight:900; font-size:17px; text-transform:uppercase; padding:8px 16px; border-radius:10px; }}
-        .site-nav a:hover {{ background:var(--primary); }}
-        .bulletin-container {{ max-width:1100px; margin:40px auto; padding:0 24px; }}
-        .blue-banner {{ display:block; text-align:center; background:linear-gradient(135deg,#175ec2,#2980d4); color:#fff; padding:16px 60px; font-size:36px; text-transform:uppercase; letter-spacing:3px; border-radius:100px; font-weight:900; margin-bottom:20px; }}
-        .hero-image {{ width:100%; height:auto; border-radius:20px; margin-bottom:6px; }}
-        .publish-date {{ font-size:12px; color:rgba(0,0,0,0.4); margin-bottom:18px; }}
-        .journal-title {{ font-size:38px; font-weight:bold; text-align:center; margin:30px 0 10px; }}
-        .journal-subtitle {{ font-style:italic; font-size:18px; color:#555; text-align:center; }}
-        .dashed-line {{ border-top:1px dashed #ccc; margin:20px 0 35px; }}
-        .bulletin-section {{ margin-bottom:40px; }}
-        .bulletin-section h2 {{ border-bottom:2px solid #111; padding-bottom:5px; font-size:22px; font-weight:900; }}
-        .bulletin-section p,.bulletin-section li {{ font-size:14.5px; line-height:1.6; }}
-        .bulletin-section img {{ width:100%; border-radius:14px; margin:16px 0; }}
-        .summary {{ background:rgba(88,101,242,0.09); border-left:4px solid #5865f2; padding:12px 16px; margin-top:15px; font-size:13.5px; font-style:italic; border-radius:0 6px 6px 0; }}
-        .social-share {{ display:flex; justify-content:center; gap:12px; margin:30px 0; }}
-        .social-share a {{ padding:10px 18px; border-radius:100px; font-size:13px; font-weight:900; text-decoration:none; color:#fff; text-transform:uppercase; }}
-        .td {{ background:#5865F2; }} .tt {{ background:linear-gradient(135deg,#1d56f2,#f21de4); }} .ty {{ background:#ec1717; }}
-        .back-button {{ background:linear-gradient(135deg,#ffda00,#ffc200); color:#000; text-decoration:none; font-weight:900; padding:11px 24px; border-radius:100px; font-size:13px; text-transform:uppercase; display:block; text-align:center; width:fit-content; margin:40px auto; }}
-        @media(max-width:768px) {{ .blue-banner {{ font-size:24px; padding:12px 30px; }} .site-nav {{ display:none; }} }}
-    </style>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
+    <link rel="stylesheet" href="../shared/bulletin-default.css">
+    <link rel="stylesheet" href="../shared/bulletin-lightbox.css">
+    <link rel="stylesheet" href="../astuces/astuces.css">
+    <link rel="stylesheet" href="../shared/bulletin-engagement.css">
 </head>
 <body>
+
     <header class="site-header">
-        <div class="site-header__logo"><img src="../BF_news.png" alt="Blox Fruits"></div>
-        <nav><ul class="site-nav">
-            <li><a href="https://www.roblox.com/fr/games/2753915549/Blox-Fruits">Game</a></li>
-            <li><a href="../index.html">News</a></li>
-            <li><a href="../neo_bulletin.html">Leaks</a></li>
-            <li><a href="../archives.html">Archives</a></li>
-        </ul></nav>
+        <div class="site-header__logo">
+            <img class="logo" src="../BF_news.png" alt="Blox Fruits">
+        </div>
+        <nav>
+            <ul class="site-nav">
+                <li><a href="https://www.roblox.com/fr/games/2753915549/Blox-Fruits">Game</a></li>
+                <li><a href="../index.html" class="nav-news">News</a></li>
+                <li><a href="../neo_bulletin.html" class="nav-leaks">Leaks</a></li>
+                <li><a href="../archives.html">Archives</a></li>
+            </ul>
+        </nav>
+        <div class="site-header__icons">
+            <span class="material-symbols-outlined" onclick="openSearch()">search</span>
+            <span class="material-symbols-outlined dark-mode-toggle" id="darkModeToggle" onclick="toggleDarkMode()" title="Dark Mode">dark_mode</span>
+            <span class="material-symbols-outlined mobile-menu-btn" id="menuToggle">menu</span>
+        </div>
     </header>
-    <main>
-        <div class="bulletin-container">
-            <div class="blue-banner">The Blox Bulletin #{NUMBER}</div>
+
+    <div class="mobile-nav-backdrop" id="mobileNavBackdrop"></div>
+    <nav class="mobile-nav-dropdown" id="mobileNav" aria-hidden="true">
+        <div class="mnav-header">
+            <span class="mnav-header__title">Menu</span>
+            <button class="mnav-close" id="mobileNavClose" aria-label="Fermer le menu"><span class="material-symbols-outlined">close</span></button>
+        </div>
+        <div class="mnav-links">
+            <a href="https://www.roblox.com/fr/games/2753915549/Blox-Fruits" class="mnav-link"><span class="material-symbols-outlined mnav-link__icon">sports_esports</span> Jouer</a>
+            <a href="../index.html" class="mnav-link nav-news active"><span class="material-symbols-outlined mnav-link__icon">newspaper</span> News</a>
+            <a href="../neo_bulletin.html" class="mnav-link nav-leaks"><span class="material-symbols-outlined mnav-link__icon">key</span> Leaks</a>
+            <a href="../archives.html" class="mnav-link"><span class="material-symbols-outlined mnav-link__icon">inventory_2</span> Archive</a>
+        </div>
+    </nav>
+
+    <main class="bulletin-container">
+        <div class="blue-banner">The Blox Bulletin #{NUMBER}</div>
+        <div class="hero-image-wrapper">
             <img src="img/{HERO_IMG}" class="hero-image" alt="Bulletin {NUMBER}">
-            <div class="publish-date">{DATE_FR}</div>
-            <h1 class="journal-title">{TITLE}</h1>
+        </div>
+        <div class="journal-header">
+            <h1 class="journal-title">The Blox Bulletin</h1>
             <p class="journal-subtitle">{SUBTITLE}</p>
-            <div class="dashed-line"></div>
-            {CONTENT}
-            <div style="text-align:center;font-style:italic;background:#f8f8f8;border:1px solid #ddd;border-radius:12px;padding:24px;margin-bottom:30px">
-                <p><em>Ceci conclut le Blox Bulletin #{NUMBER}. Restez connectes !</em></p>
-            </div>
-            <div class="social-share">
-                <a href="https://discord.gg/a6S6eugPn" class="td">Discord</a>
-                <a href="https://tiktok.com/@dc_neolixx" class="tt">TikTok</a>
-                <a href="https://www.youtube.com/@Dc_neolixx" class="ty">Youtube</a>
-            </div>
-            <a href="../index.html#bulletin-{NUMBER}" class="back-button">&larr; Retour aux Actualites</a>
+            <div class="journal-meta">Numéro : {NUMBER} | {DATE_FR}</div>
+        </div>
+        <div class="dashed-line"></div>
+        {CONTENT}
+        <div class="social-share">
+            <a href="https://discord.gg/a6S6eugPn" class="td"><img src="../shared/discord.png" class="discord-icon" alt="Discord"> Discord</a>
+            <a href="https://tiktok.com/@dc_neolixx" class="tt"><img src="../shared/tiktok.png" class="tiktok-icon" alt="TikTok"> TikTok</a>
+            <a href="https://www.youtube.com/@Dc_neolixx" class="ty"><img src="../shared/youtube.png" class="youtube-icon" alt="Youtube"> Youtube</a>
+        </div>
+        <section class="bulletin-engagement" id="bulletinEngagement" aria-label="Navigation et commentaires du bulletin {NUMBER}" data-max="{NUMBER}">
+            <nav class="bulletin-pagination" aria-label="Bulletin précédent et suivant"></nav>
+            <section class="bulletin-comments" aria-labelledby="bulletinCommentsTitle">
+                <div class="bulletin-comments__heading">
+                    <h2 class="bulletin-comments__title" id="bulletinCommentsTitle">La discussion</h2>
+                    <span class="bulletin-comments__count"><span data-comments-count>0</span> commentaire(s)</span>
+                </div>
+                <div class="bulletin-comments__compose"></div>
+                <div class="bulletin-comments__list" aria-live="polite"></div>
+            </section>
+        </section>
+        <div class="back-button-container">
+            <a href="../index.html#bulletin-{NUMBER}" class="back-button">← Retour aux Actualités</a>
         </div>
     </main>
+
+<script>
+    const menuBtn = document.getElementById('menuToggle');
+    const mobileNav = document.getElementById('mobileNav');
+    const mobileNavBackdrop = document.getElementById('mobileNavBackdrop');
+    const mobileNavClose = document.getElementById('mobileNavClose');
+    function openMobileNav() {{
+        mobileNav.classList.add('is-open');
+        mobileNavBackdrop?.classList.add('is-open');
+        menuBtn.textContent = 'close';
+        document.body.style.overflow = 'hidden';
+    }}
+    function closeMobileNav() {{
+        mobileNav.classList.remove('is-open');
+        mobileNavBackdrop?.classList.remove('is-open');
+        menuBtn.textContent = 'menu';
+        document.body.style.overflow = '';
+    }}
+    if (menuBtn && mobileNav) {{
+        menuBtn.addEventListener('click', () => mobileNav.classList.contains('is-open') ? closeMobileNav() : openMobileNav());
+        mobileNavBackdrop?.addEventListener('click', closeMobileNav);
+        mobileNavClose?.addEventListener('click', closeMobileNav);
+        document.addEventListener('keydown', e => {{ if (e.key === 'Escape') closeMobileNav(); }});
+        mobileNav.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMobileNav));
+    }}
+    function toggleDarkMode() {{
+        document.body.classList.toggle('dark-mode');
+        const isDark = document.body.classList.contains('dark-mode');
+        document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+        localStorage.setItem('blox_dark_mode', isDark);
+        document.getElementById('darkModeToggle').textContent = isDark ? 'light_mode' : 'dark_mode';
+    }}
+    (function() {{
+        const dark = localStorage.getItem('blox_dark_mode') === 'true' || localStorage.getItem('blox_theme') === 'dark';
+        if (dark) {{
+            document.body.classList.add('dark-mode');
+            document.documentElement.setAttribute('data-theme', 'dark');
+            const el = document.getElementById('darkModeToggle');
+            if (el) el.textContent = 'light_mode';
+        }}
+    }})();
+</script>
+    <script src="../shared/bulletin-lightbox.js"></script>
+    <script src="../astuces/astuces.js"></script>
+    <script src="../shared/bulletin-engagement.js"></script>
+    <script src="../shared/bulletin-editor.js"></script>
 </body>
 </html>"""
 
@@ -279,6 +345,47 @@ def update_index(number, date_iso, images):
     print(f"  OK index.html mis a jour")
 
 
+def update_archives(number, images):
+    if not ARCHIVES.exists(): return
+    hero_img = images[0] if images else "image-01.jpg"
+    new_line = f'            {{ num: "{number}", img: "./{number}/img/{hero_img}", href: "./{number}/bulletin-{number}.html" }},'
+    html = ARCHIVES.read_text(encoding="utf-8")
+    if f'./{number}/bulletin-{number}.html' in html: return
+    pattern = r'(\{ num: "[^"]+", img: "[^"]+", href: "[^"]+" \},?\s*\n)(\s*\];)'
+    matches = list(re.finditer(pattern, html))
+    if not matches:
+        print("  archives.html: tableau non trouve"); return
+    pos = matches[-1].end(1)
+    ARCHIVES.write_text(html[:pos] + new_line + "\n" + html[pos:], encoding="utf-8")
+    print(f"  OK archives.html mis a jour")
+
+
+def patch_previous_pagination(number):
+    """Pose data-max sur le bulletin precedent pour la pagination."""
+    try:
+        n = int(number)
+    except ValueError:
+        return
+    if n <= 1:
+        return
+    prev = f"{n - 1:03d}"
+    path = REPO_ROOT / prev / f"bulletin-{prev}.html"
+    if not path.exists():
+        return
+    html = path.read_text(encoding="utf-8")
+    if re.search(rf'bulletinEngagement[^>]*data-max="{number}"', html):
+        return
+    new_html, count = re.subn(
+        r'(<section class="bulletin-engagement"[^>]*?)(\s*data-max="\d+")?(\s*id="bulletinEngagement")',
+        rf'\1 data-max="{number}"\3',
+        html,
+        count=1,
+    )
+    if count:
+        path.write_text(new_html, encoding="utf-8")
+        print(f"  OK pagination {prev} -> data-max={number}")
+
+
 def main():
     if not GEMINI_API_KEY:
         print("GEMINI_API_KEY manquante."); return 1
@@ -304,6 +411,8 @@ def main():
         )
         (folder / f"bulletin-{folder_num}.html").write_text(page, encoding="utf-8")
         update_index(folder_num, entry["date"], saved_images)
+        update_archives(folder_num, saved_images)
+        patch_previous_pagination(folder_num)
         state.setdefault("seen", []).append(entry["url"])
         state["last_bulletin_num"] = entry["num"]
         save_state(state)
