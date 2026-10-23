@@ -1298,17 +1298,31 @@ ${body}
                 btn.disabled = true;
                 const payload = await buildPayload(form);
 
-                // Envoi fractionné : gitBase → gitBlob×N → gitCommit
+                // Envoi fractionné : gitBase → gitBlob (ou chunked) → gitCommit
                 // (contourne la limite 100 Ko du plan free Cloudflare)
                 setStatus('Récupération de la base Git…');
                 const base = await callUpdateRelay('gitBase', {});
                 const entries = [];
                 let i = 0;
+                const CHUNK_LIMIT = 80000;
                 for (const file of payload.files) {
                     i++;
                     setStatus(`Envoi ${i}/${payload.files.length} : ${file.path}…`);
-                    const res = await callUpdateRelay('gitBlob', { file });
-                    entries.push({ path: file.path, sha: res.sha });
+                    if (file.content.length <= CHUNK_LIMIT) {
+                        // Petit fichier : un seul appel
+                        const res = await callUpdateRelay('gitBlob', { file });
+                        entries.push({ path: file.path, sha: res.sha });
+                    } else {
+                        // Gros fichier : upload chunked
+                        const start = await callUpdateRelay('gitBlobStart', { path: file.path, encoding: file.encoding });
+                        const content = file.content;
+                        for (let off = 0; off < content.length; off += CHUNK_LIMIT) {
+                            const chunk = content.slice(off, off + CHUNK_LIMIT);
+                            await callUpdateRelay('gitBlobChunk', { uploadId: start.uploadId, chunk });
+                        }
+                        const fin = await callUpdateRelay('gitBlobFinish', { uploadId: start.uploadId });
+                        entries.push({ path: file.path, sha: fin.sha });
+                    }
                 }
                 setStatus('Création du commit…');
                 const result = await callUpdateRelay('gitCommit', {
