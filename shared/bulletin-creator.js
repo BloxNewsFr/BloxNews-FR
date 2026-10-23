@@ -693,7 +693,15 @@ ${body}
 
     function removeArchivesBulletin(src, num) {
         const n = fmtNum(num);
-        return src.replace(new RegExp(`[ \\t]*\\{\\s*num:\\s*"${n}"[\\s\\S]*?\\},[ \\t]*\\n?`, 'g'), '');
+        let out = src.replace(new RegExp(`[ \\t]*\\{\\s*num:\\s*"${n}"[\\s\\S]*?\\},[ \\t]*\\n?`, 'g'), '');
+        // retire la date du mapping
+        out = out.replace(new RegExp(`\\s*,?"${n}"\\s*:\\s*"[^"]*"`, 'g'), '');
+        // retire des éditions spéciales
+        out = out.replace(new RegExp(`(const\\s+specialNums\\s*=\\s*new Set\\(\\[)([^\\]]*)(\\]\\))`), (m, a, list, c) => {
+            const items = list.split(',').map(x => x.trim()).filter(x => x && x !== `"${n}"`);
+            return a + items.join(',') + c;
+        });
+        return out;
     }
 
     /* ── Publication via le Worker ── */
