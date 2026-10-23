@@ -1130,8 +1130,6 @@ ${body}
 
     function collectForm() {
         const num = parseInt(document.getElementById('bcNum').value, 10);
-        const themeEl = document.querySelector('input[name="bcTheme"]:checked');
-        const theme = themeEl ? themeEl.value : null;
         const heroFile = document.getElementById('bcHero').files[0] || null;
         const heroPreview = heroFile ? URL.createObjectURL(heroFile) : null;
         const articles = [...document.querySelectorAll('.bcx-article')].map(row => {
@@ -1155,7 +1153,7 @@ ${body}
             journalTitle: document.getElementById('bcJournal').value.trim(),
             subtitle: document.getElementById('bcSubtitle').value.trim(),
             author: document.getElementById('bcAuthor').value.trim(),
-            theme,
+            theme: _bcState.theme || null,
             heroFile,
             heroPreview,
             heroImg: heroPreview,

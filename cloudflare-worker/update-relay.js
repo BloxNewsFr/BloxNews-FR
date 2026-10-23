@@ -223,6 +223,44 @@ async function createBulletinOnGitHub(env, payload) {
   return { commit: commit.sha, tree: tree.sha };
 }
 
+async function deleteBulletinOnGitHub(env, num) {
+  const branch = env.GITHUB_BRANCH || 'main';
+  const repo = env.GITHUB_REPO;
+  if (!repo || !/^[\w.-]+\/[\w.-]+$/.test(repo)) throw new Error('GITHUB_REPO manquant ou invalide.');
+  if (!env.GITHUB_TOKEN) throw new Error('GITHUB_TOKEN manquant.');
+
+  const ref = await githubApi(env, `/repos/${repo}/git/ref/heads/${encodeURIComponent(branch)}`);
+  const baseCommitSha = ref.object.sha;
+  const baseCommit = await githubApi(env, `/repos/${repo}/git/commits/${baseCommitSha}`);
+  const baseTreeSha = baseCommit.tree.sha;
+
+  // Liste le contenu du dossier NNN/
+  const listing = await githubApi(env, `/repos/${repo}/contents/${num}?ref=${encodeURIComponent(branch)}`);
+  if (!Array.isArray(listing)) throw new Error('Dossier du bulletin introuvable.');
+
+  // Crée un arbre avec sha: null pour supprimer chaque fichier
+  const treeEntries = listing.map(item => ({ path: item.path, mode: '100644', type: 'blob', sha: null }));
+  const tree = await githubApi(env, `/repos/${repo}/git/trees`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ base_tree: baseTreeSha, tree: treeEntries }),
+  });
+
+  const commit = await githubApi(env, `/repos/${repo}/git/commits`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ message: `bulletin: supprime #${num}`, tree: tree.sha, parents: [baseCommitSha] }),
+  });
+
+  await githubApi(env, `/repos/${repo}/git/refs`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ sha: commit.sha, force: false }),
+  });
+
+  return { commit: commit.sha };
+}
+
 export default {
   async fetch(request, env) {
     if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: corsHeaders });
@@ -258,7 +296,7 @@ export default {
 
       const updateActions = new Set(['create', 'editField', 'delete']);
       const adminActions = new Set(['saveContentEdits', 'resetContentEdits', 'createCard', 'deleteCard', 'deleteStaticCard']);
-      const gitActions = new Set(['createBulletin']);
+      const gitActions = new Set(['createBulletin', 'deleteBulletin']);
       if (!updateActions.has(input.action) && !adminActions.has(input.action) && !gitActions.has(input.action)) {
         return json({ error: 'Action inconnue.' }, 400);
       }
@@ -272,6 +310,17 @@ export default {
           const payload = validateBulletinFiles(input);
           const result = await createBulletinOnGitHub(env, payload);
           return json({ ok: true, commit: result.commit, num: payload.num });
+        }
+        if (input.action === 'deleteBulletin') {
+          if (!env.DELETE_PASSWORD || input.password !== env.DELETE_PASSWORD) {
+            return json({ error: 'Mot de passe incorrect.' }, 403);
+          }
+          const num = input.num;
+          if (typeof num !== 'string' || !/^\d{3}$/.test(num) || num === '000') {
+            return json({ error: 'Numéro de bulletin invalide.' }, 400);
+          }
+          const result = await deleteBulletinOnGitHub(env, num);
+          return json({ ok: true, commit: result.commit, num });
         }
         return json({ error: 'Action Git inconnue.' }, 400);
       }

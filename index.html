@@ -3610,6 +3610,37 @@
         _settingsFeedback(btn, '✓ Fait');
     }
 
+    async function _deleteBulletinPrompt(btn) {
+        const num = prompt('Numéro du bulletin à supprimer (ex: 025) :');
+        if (!num) return;
+        const padded = String(num).padStart(3, '0');
+        if (!/^\d{3}$/.test(padded) || padded === '000') { alert('Numéro invalide.'); return; }
+        const password = prompt('Mot de passe de suppression :');
+        if (!password) return;
+        if (!confirm(`Supprimer définitivement le bulletin #${padded} ?`)) return;
+
+        try {
+            let token = null;
+            try { token = JSON.parse(localStorage.getItem('bloxbulletin_discord_token') || 'null')?.token; } catch {}
+            if (!token) { alert('Reconnecte-toi avec Discord.'); return; }
+
+            const res = await fetch('https://blox-update-relay.c9yz5m8pw6.workers.dev', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'deleteBulletin', discordAccessToken: token, num: padded, password })
+            });
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok || data.ok === false) {
+                alert('Erreur : ' + (data.error || ('HTTP ' + res.status)));
+                return;
+            }
+            alert('✅ Bulletin #' + padded + ' supprimé !');
+            _settingsFeedback(btn, '✓ Supprimé');
+        } catch (e) {
+            alert('Erreur : ' + e.message);
+        }
+    }
+
     // ── Appliquer les préférences sauvegardées au chargement ─────
     (function _settingsApplyOnLoad() {
         if (localStorage.getItem(SETTINGS_MOTION_KEY) === '1') {
@@ -3762,6 +3793,16 @@
                     </div>
                     <button class="settings-btn settings-btn--secondary" onclick="closeSettings(null);setTimeout(function(){window.BulletinCreator&&window.BulletinCreator.open()},200)">
                         Ouvrir le créateur
+                    </button>
+                </div>
+
+                <div class="settings-row">
+                    <div class="settings-row-info">
+                        <div class="settings-row-label">Supprimer un bulletin</div>
+                        <div class="settings-row-sub">Supprime définitivement un bulletin du dépôt (mot de passe requis)</div>
+                    </div>
+                    <button class="settings-btn settings-btn--secondary" onclick="_deleteBulletinPrompt(this)">
+                        Supprimer…
                     </button>
                 </div>
             </div>
