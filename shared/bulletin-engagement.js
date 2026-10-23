@@ -235,6 +235,28 @@
         return el;
     }
 
+    function heartIcon(filled = false) {
+        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.setAttribute('class', 'bulletin-comment__action-icon');
+        svg.setAttribute('viewBox', '0 0 24 24');
+        svg.setAttribute('aria-hidden', 'true');
+        svg.setAttribute('focusable', 'false');
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        path.setAttribute('d', 'M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z');
+        if (filled) { path.setAttribute('fill', 'currentColor'); path.setAttribute('stroke', 'none'); }
+        svg.append(path);
+        return svg;
+    }
+
+    function likeButton(count, liked, action, disabled = false) {
+        const el = button('', `bulletin-comment__action bulletin-comment__like${liked ? ' is-liked' : ''}`, action, disabled);
+        const value = document.createElement('span');
+        value.className = 'bulletin-comment__action-count';
+        value.textContent = String(count);
+        el.append(heartIcon(liked), value);
+        return el;
+    }
+
     function askDelete(message) { return window.confirm(message); }
 
     async function saveAfterChange() {
@@ -261,7 +283,7 @@
         const actions = document.createElement('div'); actions.className = 'bulletin-comment__actions';
         const id = `${comment.id || comment.key}_r${reply.id}`;
         const liked = !!localState[id];
-        actions.append(button(`${liked ? '❤️' : '🤍'} ${Number(reply.likes) || 0}`, `bulletin-comment__action${liked ? ' is-liked' : ''}`, async () => {
+        actions.append(likeButton(Number(reply.likes) || 0, liked, async () => {
             if (!currentUser()) return;
             localState[id] = !liked; persistLocalState();
             reply.likes = Math.max(0, (Number(reply.likes) || 0) + (liked ? -1 : 1)); reply.likedByMe = !liked;
@@ -294,7 +316,7 @@
         content.append(meta, text);
         const actions = document.createElement('div'); actions.className = 'bulletin-comment__actions';
         const id = String(item.id || item.key || ''); const liked = !!localState[id];
-        actions.append(button(`${liked ? '❤️' : '🤍'} ${Number(item.likes) || 0}`, `bulletin-comment__action${liked ? ' is-liked' : ''}`, async () => {
+        actions.append(likeButton(Number(item.likes) || 0, liked, async () => {
             if (!currentUser()) return;
             localState[id] = !liked; persistLocalState(); item.likes = Math.max(0, (Number(item.likes) || 0) + (liked ? -1 : 1)); item.likedByMe = !liked;
             renderComments({ val: () => commentItems }); await saveAfterChange();

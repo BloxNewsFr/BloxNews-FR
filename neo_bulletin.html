@@ -1390,6 +1390,12 @@
             border-bottom: 1px solid rgba(0,0,0,0.04);
         }
         .card-comment-login__sub { color: rgba(0,0,0,0.3); font-size: 12px; }
+        .comment-login-icon {
+            width: 32px; height: 32px; flex: 0 0 32px; display: inline-flex;
+            align-items: center; justify-content: center; border-radius: 10px;
+            color: #5865F2; background: rgba(88,101,242,0.08);
+        }
+        .comment-login-icon .comment-icon { width: 18px; height: 18px; flex-basis: 18px; }
         .card-comment-login__btn,
         .card-comment-login button {
             padding: 8px 18px; border-radius: 100px; border: none;
@@ -5407,6 +5413,11 @@
             display: flex; align-items: center; gap: 5px;
             font-size: 12px; color: #999; font-family: 'Inter', sans-serif;
         }
+        .update-card__comment-icon {
+            width: 15px; height: 15px; flex: 0 0 15px;
+            fill: none; stroke: currentColor; stroke-width: 1.8;
+            stroke-linecap: round; stroke-linejoin: round; vertical-align: middle;
+        }
         .update-card__open-btn {
             font-size: 12px; font-weight: 700; color: #175ec2;
             font-family: 'Inter', sans-serif; cursor: pointer;
@@ -5984,6 +5995,7 @@
 
 </style>
     <link rel="stylesheet" href="./shared/neo-theme.css">
+    <link rel="stylesheet" href="./shared/site-experience.css">
 </head>
 <body>
 
@@ -6154,7 +6166,7 @@
                 <div class="card-comments-body" id="commentBody">
 
                     <div class="card-comment-login" id="discordBanner">
-                        <span style="font-size:16px">🎮</span>
+                        <span class="comment-login-icon"><svg class="comment-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9h12a4 4 0 0 1 3.8 5.2l-1 3a2 2 0 0 1-3.3.8L14 14H10l-3.5 4a2 2 0 0 1-3.3-.8l-1-3A4 4 0 0 1 6 9Z"/><path d="M7 11v4m-2-2h4m8-1h.01M18 14h.01"/></svg></span>
                         <div style="flex:1;min-width:0">
                             <div style="font-weight:600;font-size:13px">Connecte-toi pour commenter</div>
                             <div class="card-comment-login__sub">Ton pseudo et ton avatar Discord seront utilisés</div>
@@ -6553,7 +6565,7 @@
                     <div class="card-comments-body" id="cardCommentsBody">
                         <!-- Login banner -->
                         <div class="card-comment-login" id="cardCommentLoginBanner">
-                            <span>🎮</span>
+                            <span class="comment-login-icon"><svg class="comment-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9h12a4 4 0 0 1 3.8 5.2l-1 3a2 2 0 0 1-3.3.8L14 14H10l-3.5 4a2 2 0 0 1-3.3-.8l-1-3A4 4 0 0 1 6 9Z"/><path d="M7 11v4m-2-2h4m8-1h.01M18 14h.01"/></svg></span>
                             <span>Connecte-toi via Discord pour commenter</span>
                             <button onclick="_discordLogin()">Se connecter</button>
                         </div>
@@ -6608,7 +6620,7 @@
                     </div>
                     <div class="card-comments-body" id="decryptCommentsBody">
                         <div class="card-comment-login" id="decryptCommentLoginBanner">
-                            <span>🎮</span>
+                            <span class="comment-login-icon"><svg class="comment-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9h12a4 4 0 0 1 3.8 5.2l-1 3a2 2 0 0 1-3.3.8L14 14H10l-3.5 4a2 2 0 0 1-3.3-.8l-1-3A4 4 0 0 1 6 9Z"/><path d="M7 11v4m-2-2h4m8-1h.01M18 14h.01"/></svg></span>
                             <span>Connecte-toi via Discord pour commenter</span>
                             <button onclick="_discordLogin()">Se connecter</button>
                         </div>
@@ -9280,6 +9292,7 @@
             plus: '<path d="M12 5v14M5 12h14"/>',
             clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
             trend: '<path d="m3 17 6-6 4 4 8-9"/><path d="M15 6h6v6"/>',
+            gamepad: '<path d="M6 9h12a4 4 0 0 1 3.8 5.2l-1 3a2 2 0 0 1-3.3.8L14 14H10l-3.5 4a2 2 0 0 1-3.3-.8l-1-3A4 4 0 0 1 6 9Z"/><path d="M7 11v4m-2-2h4m8-1h.01M18 14h.01"/>',
             chat: '<path d="M20 11.5a7.5 7.5 0 0 1-8 7.5 8.7 8.7 0 0 1-3.5-.7L4 20l1.4-3.5A7.2 7.2 0 0 1 4 12c0-4.1 3.6-7.5 8-7.5s8 3.1 8 7Z"/>'
         };
         return `<svg class="comment-icon comment-icon--${name}" viewBox="0 0 24 24" aria-hidden="true" focusable="false">${paths[name]||paths.chat}</svg>`;
@@ -10873,7 +10886,7 @@
                 </div>
                 <div class="update-card__footer">
                     <span class="update-card__comments-pill">
-                        <span>💬</span>
+                        <svg class="update-card__comment-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20 11.5a7.5 7.5 0 0 1-8 7.5 8.7 8.7 0 0 1-3.5-.7L4 20l1.4-3.5A7.2 7.2 0 0 1 4 12c0-4.1 3.6-7.5 8-7.5s8 3.1 8 7Z"/></svg>
                         <span class="upd-comment-count" data-upd-id="${update.id}">—</span>
                     </span>
                     <span class="update-card__open-btn">Lire le résumé →</span>
@@ -10970,7 +10983,7 @@
                     </div>
                     <div class="card-comments-body">
                         <div class="card-comment-login actus-cc-login" data-actus-id="${e(card.id)}">
-                            <span style="font-size:16px">🎮</span>
+                            <span class="comment-login-icon"><svg class="comment-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9h12a4 4 0 0 1 3.8 5.2l-1 3a2 2 0 0 1-3.3.8L14 14H10l-3.5 4a2 2 0 0 1-3.3-.8l-1-3A4 4 0 0 1 6 9Z"/><path d="M7 11v4m-2-2h4m8-1h.01M18 14h.01"/></svg></span>
                             <div style="flex:1;min-width:0">
                                 <div style="font-weight:600;font-size:13px">Connecte-toi pour commenter</div>
                                 <div class="card-comment-login__sub">Ton pseudo et ton avatar Discord seront utilisés</div>
@@ -14443,5 +14456,6 @@
     })();
     </script>
 
+    <script src="./shared/site-experience.js"></script>
 </body>
 </html>

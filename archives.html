@@ -219,12 +219,14 @@
             box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.06);
             backdrop-filter: blur(20px);
         }
-        .archive-toolbar span.material-symbols-outlined { color: rgba(255,255,255,0.4); font-size: 20px; flex-shrink: 0; }
+        .archive-toolbar span.material-symbols-outlined { color: rgba(20,25,45,0.48); font-size: 20px; flex-shrink: 0; }
+        html[data-theme="dark"] .archive-toolbar span.material-symbols-outlined { color: rgba(255,255,255,0.4); }
         #archiveJump {
             flex: 1; border: none; outline: none; font-size: 15px; font-family: 'Inter', sans-serif;
-            background: transparent; padding: 10px 0; color: #fff;
+            background: transparent; padding: 10px 0; color: var(--color-text); min-width:180px;
         }
-        #archiveJump::placeholder { color: rgba(255,255,255,0.3); }
+        #archiveJump::placeholder { color: rgba(20,25,45,0.38); }
+        html[data-theme="dark"] #archiveJump::placeholder { color: rgba(255,255,255,0.3); }
         .archive-count {
             font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.5);
             background: rgba(23,94,194,0.1); border-radius: 100px;
@@ -235,6 +237,22 @@
             display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
             gap: 18px;
         }
+        .archive-year { grid-column:1/-1; display:grid; grid-template-columns:1fr; gap:14px; margin:10px 0 20px; }
+        .archive-year__heading { display:flex; align-items:center; gap:12px; color:var(--color-text); font:900 20px 'LuckiestGuy Regular',cursive; letter-spacing:.6px; }
+        .archive-year__heading::after { content:''; height:1px; flex:1; background:linear-gradient(90deg,rgba(23,94,194,.4),transparent); }
+        .archive-year__grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:18px; }
+        .archive-toolbar { max-width:980px; flex-wrap:wrap; }
+        .archive-toolbar select { border:1px solid rgba(23,94,194,.18); border-radius:12px; padding:9px 12px; color:var(--color-text); background:rgba(255,255,255,.72); font:600 12px Inter,sans-serif; outline:none; }
+        html[data-theme="dark"] .archive-toolbar select { color:#eef0fa; background:rgba(22,24,39,.9); }
+        .archive-card__meta { display:flex; justify-content:space-between; align-items:center; gap:6px; padding:0 12px 12px; }
+        .archive-card__year { color:rgba(60,65,90,.62); font:600 10px Inter,sans-serif; }
+        .archive-card__type { border-radius:999px; padding:4px 7px; color:#175ec2; background:rgba(23,94,194,.08); font:800 9px Inter,sans-serif; text-transform:uppercase; }
+        .site-header__icons .site-notification__trigger { padding:0; }
+        .site-header__icons .site-notification__trigger .material-symbols-outlined { padding:0; }
+        .site-header__icons .site-notification__badge { padding:0 4px; }
+        html[data-theme="dark"] .archive-year__heading { color:#eef0fa; }
+        html[data-theme="dark"] .archive-card__year { color:rgba(230,232,250,.55); }
+        html[data-theme="dark"] .archive-card__type { color:#aac7ff; background:rgba(23,94,194,.18); }
         .archive-card {
             display: block; text-decoration: none; color: inherit;
             background: #fff; border-radius: 18px; overflow: hidden;
@@ -351,6 +369,7 @@
         }
 
     </style>
+    <link rel="stylesheet" href="./shared/site-experience.css">
 </head>
 <body>
 
@@ -409,7 +428,9 @@
 
         <div class="archive-toolbar">
             <span class="material-symbols-outlined">search</span>
-            <input id="archiveJump" type="text" placeholder="Aller au numéro… (ex : 015)" inputmode="numeric">
+            <input id="archiveJump" type="search" placeholder="Rechercher un numéro ou une année…" aria-label="Rechercher dans les archives">
+            <select id="archiveYearFilter" aria-label="Filtrer par année"><option value="">Toutes les années</option></select>
+            <select id="archiveTypeFilter" aria-label="Filtrer par type"><option value="">Tous les types</option><option value="bulletin">Bulletins</option><option value="special">Éditions spéciales</option><option value="pvp">PvP</option></select>
             <span class="archive-count" id="archiveCount"></span>
         </div>
 
@@ -451,6 +472,11 @@
             { num: "025", img: "./025/img/HalloweenBanner.png",   href: "./025/bulletin-025.html" },
             { num: "PVP 1", img: "./pvp1/img/PvpChanges.png",     href: "./pvp1/bulletin-pvp1.html" },
         ];
+        const bulletinDates = {
+            "001":"2025-03-20","002":"2025-03-27","003":"2025-04-03","004":"2025-04-10","005":"2025-05-09","006":"2025-05-15","007":"2025-05-23","008":"2025-05-30","009":"2025-06-05","010":"2025-06-13","011":"2025-06-20","012":"2025-06-20","013":"2025-07-04","014":"2025-07-11","015":"2025-07-19","016":"2025-07-25","017":"2025-10-16","018":"2025-12-01","019":"2026-02-08","020":"2026-07-02","021":"2026-07-09","022":"2026-07-17","023":"2026-07-23","024":"2026-07-31","025":"2026-10-18","PVP 1":"2026-08-07"
+        };
+        const specialNums = new Set(["012","017","019","023","025"]);
+        bulletins.forEach(b => { b.date = bulletinDates[b.num]; b.year = b.date.slice(0,4); b.type = b.num === 'PVP 1' ? 'pvp' : specialNums.has(b.num) ? 'special' : 'bulletin'; });
 
             // ── SCROLL GLOW NAVBAR ──
             (function initNavbarScroll() {
@@ -480,6 +506,8 @@
 
         const grid  = document.getElementById('archiveGrid');
         const count = document.getElementById('archiveCount');
+        const yearFilter = document.getElementById('archiveYearFilter');
+        [...new Set(bulletins.map(b => b.year))].sort((a,b) => b.localeCompare(a)).forEach(year => yearFilter.insertAdjacentHTML('beforeend', `<option value="${year}">${year}</option>`));
 
         function render(list) {
             count.textContent = `${list.length} numéro${list.length !== 1 ? 's' : ''}`;
@@ -487,25 +515,29 @@
                 grid.innerHTML = `<div class="archive-no-results">Aucun numéro ne correspond à cette recherche.</div>`;
                 return;
             }
-            // Plus récent en premier
-            const ordered = [...list].reverse();
-            grid.innerHTML = ordered.map(b => `
-                <a class="archive-card" href="${b.href}">
-                    <div class="archive-card__img-wrap">
-                        <img src="${b.img}" alt="Bulletin #${b.num}" loading="lazy" decoding="async">
-                    </div>
-                    <div class="archive-card__num">#${b.num}</div>
-                </a>
-            `).join('');
+            const years = [...new Set(list.map(b => b.year))].sort((a,b) => b.localeCompare(a));
+            grid.innerHTML = years.map(year => {
+                const entries = list.filter(b => b.year === year).sort((a,b) => b.date.localeCompare(a.date));
+                return `<section class="archive-year"><h2 class="archive-year__heading">${year}<span style="font:600 11px Inter,sans-serif;opacity:.55">${entries.length} édition${entries.length !== 1 ? 's' : ''}</span></h2><div class="archive-year__grid">${entries.map(b => `
+                    <a class="archive-card" href="${b.href}" data-search="${b.num.toLowerCase()} ${b.year} ${b.type}">
+                        <div class="archive-card__img-wrap"><img src="${b.img}" alt="Bulletin #${b.num}" loading="lazy" decoding="async"></div>
+                        <div class="archive-card__num">#${b.num}</div>
+                        <div class="archive-card__meta"><span class="archive-card__year">${new Date(`${b.date}T12:00:00`).toLocaleDateString('fr-FR',{day:'numeric',month:'short'})}</span><span class="archive-card__type">${b.type === 'pvp' ? 'PvP' : b.type === 'special' ? 'Spécial' : 'Bulletin'}</span></div>
+                    </a>`).join('')}</div></section>`;
+            }).join('');
         }
 
-        render(bulletins);
-
-        document.getElementById('archiveJump').addEventListener('input', e => {
-            const q = e.target.value.trim().toLowerCase();
-            if (!q) { render(bulletins); return; }
-            render(bulletins.filter(b => b.num.includes(q)));
-        });
+        function filterArchives() {
+            const q = document.getElementById('archiveJump').value.trim().toLowerCase();
+            const year = yearFilter.value, type = document.getElementById('archiveTypeFilter').value;
+            render(bulletins.filter(b => (!q || `${b.num} ${b.year} ${b.type}`.toLowerCase().includes(q)) && (!year || b.year === year) && (!type || b.type === type)));
+        }
+        document.getElementById('archiveJump').addEventListener('input', filterArchives);
+        yearFilter.addEventListener('change', filterArchives);
+        document.getElementById('archiveTypeFilter').addEventListener('change', filterArchives);
+        const initialQuery = new URLSearchParams(location.search).get('q');
+        if (initialQuery) document.getElementById('archiveJump').value = initialQuery;
+        render(bulletins); if (initialQuery) filterArchives();
 
         // Mode sombre
         const themeToggle = document.getElementById('themeToggle');
@@ -569,5 +601,6 @@
             mobileNav.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMobileNav));
         }
     </script>
+    <script src="./shared/site-experience.js"></script>
 </body>
 </html>

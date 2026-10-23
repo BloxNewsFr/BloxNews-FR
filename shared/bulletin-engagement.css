@@ -55,8 +55,11 @@
 .bulletin-comment__badge--first { background:#fff3d5; color:#a96900; }
 .bulletin-comment__badge--pinned { background:#e9f4ff; color:#3474aa; }
 .bulletin-comment__actions { display:flex; flex-wrap:wrap; align-items:center; gap:7px; margin-top:9px; }
-.bulletin-comment__action { padding:5px 9px; }
-.bulletin-comment__action.is-liked { color:#d84762; border-color:rgba(216,71,98,.25); background:rgba(216,71,98,.08); }
+.bulletin-comment__action { display:inline-flex; align-items:center; gap:5px; padding:5px 9px; }
+.bulletin-comment__action-icon { display:block; width:15px; height:15px; flex:0 0 15px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; transition:transform .18s ease; }
+.bulletin-comment__action.is-liked { color:var(--engagement-accent); border-color:color-mix(in srgb,var(--engagement-accent) 28%,transparent); background:color-mix(in srgb,var(--engagement-accent) 9%,transparent); }
+.bulletin-comment__action.is-liked .bulletin-comment__action-icon { transform:scale(1.05); }
+.bulletin-comment__action-count { min-width:1ch; text-align:center; }
 .bulletin-comment__action--delete { color:#ad4d4d; }
 .bulletin-comment__action--admin { color:var(--engagement-accent); }
 .bulletin-comment__action:disabled { opacity:.5; cursor:not-allowed; transform:none; }
@@ -179,6 +182,7 @@ html[data-theme="dark"] .bulletin-comment__reply-form textarea, body.dark-mode .
 .bulletin-theme--rebuild .bulletin-comments__sort.is-active { background:#175ec2; color:#fff; }
 .bulletin-theme--rebuild .bulletin-comment__reaction-options { border-color:rgba(23,94,194,.16); background:#fff; }
 .bulletin-theme--rebuild .bulletin-comment__reply-form textarea { border-color:rgba(23,94,194,.18); background:#fff; color:#202b40; }
+.bulletin-engagement .bulletin-comment__action.is-liked { color:var(--engagement-accent); border-color:color-mix(in srgb,var(--engagement-accent) 28%,transparent); background:color-mix(in srgb,var(--engagement-accent) 9%,transparent); }
 @media (max-width:600px) {
     .bulletin-engagement { width:calc(100% - 28px); margin:30px auto 22px; }
     .bulletin-pagination { gap:9px; }
