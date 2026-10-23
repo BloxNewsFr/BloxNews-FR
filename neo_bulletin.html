@@ -10383,12 +10383,14 @@
         ]));
     }
     function saveEdits(obj) {
-        try { localStorage.setItem(EDIT_KEY, JSON.stringify(obj)); } catch {}
-        if (FB_EDITS_REF) {
-            return FB_EDITS_REF.set(encodeEditsForFirebase(obj)).then(() => true).catch(err => {
+        if (FB_EDITS_REF && typeof callUpdateRelay === 'function') {
+            return callUpdateRelay('saveContentEdits', { edits: encodeEditsForFirebase(obj) }).then(() => {
+                try { localStorage.setItem(EDIT_KEY, JSON.stringify(obj)); } catch {}
+                return true;
+            }).catch(err => {
                 const reason = err?.message || 'erreur inconnue';
                 console.error('[content_edits] échec de sauvegarde Firebase :', err);
-                editLog('err', 'Firebase a refusé la sauvegarde du texte : ' + reason);
+                editLog('err', 'Modification refusée par le relais sécurisé : ' + reason);
                 return false;
             });
         }
@@ -11516,13 +11518,13 @@
         } catch(e) { console.warn('[sort]', e); }
 
         // Sauvegarde Firebase — la carte affichée doit refléter la vraie sauvegarde
-        if (FB_CC_REF) {
-            FB_CC_REF.push(newCard).then(() => {
+        if (FB_CC_REF && typeof callUpdateRelay === 'function') {
+            callUpdateRelay('createCard', { card: newCard }).then(() => {
                 editLog('ok', `Carte "${kind}" créée dans ${sectionId} : ${title}`);
                 _ncmShowToast(badge || kind, title);
             }).catch(err => {
                 const reason = err?.message || 'erreur inconnue';
-                editLog('err', 'Firebase a refusé la sauvegarde : ' + reason);
+                editLog('err', 'Création refusée par le relais sécurisé : ' + reason);
                 console.error('[custom_cards] échec de sauvegarde :', err, newCard);
                 // La carte ne sera pas là au rechargement : on le dit clairement
                 // et on la retire pour ne pas laisser croire qu'elle est sauvegardée.
@@ -11531,9 +11533,10 @@
                 _ncmShowToast('⚠️ Non sauvegardée', 'Échec Firebase : ' + reason);
             });
         } else {
-            _ccAdd(newCard);
-            editLog('ok', `Carte "${kind}" créée dans ${sectionId} : ${title} (stockage local uniquement)`);
-            _ncmShowToast(badge || kind, title);
+            const el = document.querySelector(`[data-cc-id="${cardId}"]`);
+            if (el) el.remove();
+            editLog('err', 'Relais sécurisé indisponible : la carte n’a pas été enregistrée.');
+            _ncmShowToast('⚠️ Non sauvegardée', 'Relais sécurisé indisponible.');
         }
     }
 
@@ -12224,18 +12227,11 @@
 
         // ── GESTION STANDARD (actus, message, leak) ──
         if (ccId) {
-            if (FB_CC_REF) {
-                FB_CC_REF.once('value', snap => {
-                    const raw = snap.val();
-                    if (!raw) return;
-                    if (Array.isArray(raw)) {
-                        FB_CC_REF.transaction(c => Array.isArray(c) ? c.filter(x => x.id !== ccId) : []);
-                    } else {
-                        Object.entries(raw).forEach(([fbKey, card]) => {
-                            if (card.id === ccId) FB_CC_REF.child(fbKey).remove();
-                        });
-                    }
-                });
+            try {
+                await callUpdateRelay('deleteCard', { cardId: ccId });
+            } catch (error) {
+                editLog('err', 'Suppression refusée par le relais sécurisé : ' + (error?.message || error));
+                return;
             }
             _ccRemove(ccId);
             // Retirer des groupes si la carte était dedans
@@ -12253,15 +12249,14 @@
             if (el) el.remove();
         } else {
             // Chercher dans tous les types : news-card, group-card, secret-bulletin
+            try {
+                await callUpdateRelay('deleteStaticCard', { staticId });
+            } catch (error) {
+                editLog('err', 'Suppression refusée par le relais sécurisé : ' + (error?.message || error));
+                return;
+            }
             const el = document.querySelector(`[data-static-id="${staticId}"]`);
             if (el) el.remove();
-            if (FB_DELETED_REF) {
-                FB_DELETED_REF.transaction(current => {
-                    const ids = Array.isArray(current) ? current : [];
-                    if (!ids.includes(staticId)) ids.push(staticId);
-                    return ids;
-                });
-            }
         }
         document.querySelectorAll('.category-section:not(#cat-actus)').forEach(s => {
             _originalOrder.set(s.id, [...s.querySelectorAll('.news-card')]);
@@ -12285,9 +12280,10 @@
         const args = raw.slice(cmd.length).trim();
 
         if (cmd === '/reset') {
-            localStorage.removeItem(EDIT_KEY);
-            if (FB_EDITS_REF) FB_EDITS_REF.remove();
-            editLog('ok', 'Toutes les modifications ont été réinitialisées. Rechargez la page.');
+            callUpdateRelay('resetContentEdits').then(() => {
+                localStorage.removeItem(EDIT_KEY);
+                editLog('ok', 'Toutes les modifications ont été réinitialisées. Rechargez la page.');
+            }).catch(err => editLog('err', 'Réinitialisation refusée par le relais sécurisé : ' + (err?.message || err)));
         } else if (cmd === '/list') {
             const edits = loadEdits();
             const keys  = Object.keys(edits);
