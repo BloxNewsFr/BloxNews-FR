@@ -1567,12 +1567,14 @@
             text-transform: uppercase; letter-spacing: 0.8px; flex-shrink: 0;
         }
         .card-comment-sort-btn {
+            display: inline-flex; align-items: center; justify-content: center; gap: 6px;
             padding: 5px 14px; border-radius: 100px;
             border: 1.5px solid rgba(0,0,0,0.1);
             font-size: 11px; font-weight: 700; cursor: pointer; background: none;
             color: rgba(0,0,0,0.45);
             font-family: 'Inter', sans-serif; transition: all 0.18s;
         }
+        .card-comment-sort-btn .comment-icon { width: 13px; height: 13px; flex-basis: 13px; }
         .card-comment-sort-btn.active {
             background: linear-gradient(135deg, #e20000, #b30000);
             border-color: #e20000; color: #fff;
@@ -1754,6 +1756,7 @@
             font-family: 'Inter', sans-serif; transition: all 0.15s;
         }
         .card-comments-section .reaction-add-btn:hover { border-color: rgba(0,0,0,0.2); color: rgba(0,0,0,0.4); }
+        .card-comments-section .reaction-add-btn .comment-icon { width: 14px; height: 14px; flex-basis: 14px; }
         .card-comments-section .comment-item .comment-avatar,
         .card-comments-section .comment-item .comment-avatar--placeholder {
             width: 32px !important; height: 32px !important; font-size: 13px !important;
@@ -2690,6 +2693,14 @@
             font-size: 12px; font-weight: 600; color: #999;
             transition: all 0.18s ease; font-family: 'Inter', sans-serif;
         }
+        .comment-icon {
+            width: 14px; height: 14px; flex: 0 0 14px; display: inline-block;
+            fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round;
+            stroke-linejoin: round; vertical-align: -2px;
+        }
+        .comment-btn .comment-icon { width: 15px; height: 15px; flex-basis: 15px; }
+        .comment-btn--liked .comment-icon { transform: scale(1.04); }
+        .comment-pin-badge .comment-icon { width: 12px; height: 12px; flex-basis: 12px; }
         .comment-btn:hover { background: rgba(255,26,26,0.07); color: #ff1a1a; border-color: rgba(255,26,26,0.15); }
         .comment-btn--liked { color: #ff1a1a; background: rgba(255,26,26,0.08); border-color: rgba(255,26,26,0.2); }
         .comment-btn--delete { color: #ddd; }
@@ -6134,11 +6145,7 @@
                 <div class="card-comments-section" id="commentSection" style="margin-top:20px">
 
                 <div class="card-comments-toggle" id="commentToggle" onclick="toggleComments()">
-                    <div class="card-comments-toggle__icon">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block">
-                            <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.002.022.015.043.033.055a19.91 19.91 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z" fill="currentColor"/>
-                        </svg>
-                    </div>
+                    <div class="card-comments-toggle__icon"><svg class="comment-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.5a7.5 7.5 0 0 1-8 7.5 8.7 8.7 0 0 1-3.5-.7L4 20l1.4-3.5A7.2 7.2 0 0 1 4 12c0-4.1 3.6-7.5 8-7.5s8 3.1 8 7Z"/></svg></div>
                     <span class="card-comments-toggle__label">Commentaires</span>
                     <span class="card-comments-toggle__count" id="commentCountBadge">0</span>
                     <span class="card-comments-toggle__arrow">▾</span>
@@ -6168,8 +6175,8 @@
 
                     <div class="card-comment-sort-bar">
                         <span class="card-comment-sort-label">Trier :</span>
-                        <button class="card-comment-sort-btn active" id="sortTop" onclick="setSort('top')">⭐ Top</button>
-                        <button class="card-comment-sort-btn" id="sortNew" onclick="setSort('new')">🕐 Récents</button>
+                        <button class="card-comment-sort-btn active" id="sortTop" onclick="setSort('top')"><svg class="comment-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 17 6-6 4 4 8-9M15 6h6v6"/></svg> Top</button>
+                        <button class="card-comment-sort-btn" id="sortNew" onclick="setSort('new')"><svg class="comment-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> Récents</button>
                     </div>
                     <div class="card-comment-divider">Commentaires</div>
 
@@ -6538,7 +6545,7 @@
                 <!-- ── COMMENTAIRES PAR CARD ── -->
                 <div class="card-comments-section" id="cardCommentsSection">
                     <div class="card-comments-toggle" id="cardCommentsToggle" onclick="toggleCardComments()">
-                        <span class="card-comments-toggle__icon">💬</span>
+                        <span class="card-comments-toggle__icon"><svg class="comment-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.5a7.5 7.5 0 0 1-8 7.5 8.7 8.7 0 0 1-3.5-.7L4 20l1.4-3.5A7.2 7.2 0 0 1 4 12c0-4.1 3.6-7.5 8-7.5s8 3.1 8 7Z"/></svg></span>
                         <span class="card-comments-toggle__label">Commentaires</span>
                         <span class="card-comments-toggle__count" id="cardCommentCountBadge">0</span>
                         <span class="card-comments-toggle__arrow" id="cardCommentsArrow">▾</span>
@@ -6594,7 +6601,7 @@
                 <!-- Commentaires par card -->
                 <div class="card-comments-section" id="decryptCommentsSection">
                     <div class="card-comments-toggle" id="decryptCommentsToggle" onclick="toggleDecryptComments()">
-                        <span class="card-comments-toggle__icon">💬</span>
+                        <span class="card-comments-toggle__icon"><svg class="comment-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.5a7.5 7.5 0 0 1-8 7.5 8.7 8.7 0 0 1-3.5-.7L4 20l1.4-3.5A7.2 7.2 0 0 1 4 12c0-4.1 3.6-7.5 8-7.5s8 3.1 8 7Z"/></svg></span>
                         <span class="card-comments-toggle__label">Commentaires</span>
                         <span class="card-comments-toggle__count" id="decryptCommentCountBadge">0</span>
                         <span class="card-comments-toggle__arrow" id="decryptCommentsArrow">▾</span>
@@ -8038,9 +8045,9 @@
                     <div class="comment-item__actions" style="margin-top:7px">
                         <button class="comment-btn ${r.likedByMe?'comment-btn--liked':''}"
                             onclick="_dcLikeReply('${c.id}','${r.id}',this)">
-                            ${r.likedByMe?'❤️':'🤍'} <span class="comment-btn__like-count">${r.likes||0}</span>
+                            ${commentIcon('heart',r.likedByMe)} <span class="comment-btn__like-count">${r.likes||0}</span>
                         </button>
-                        ${canDelR?`<button class="comment-btn comment-btn--delete" onclick="_dcDeleteReply('${c.id}','${r.id}')">🗑 Suppr.</button>`:''}
+                        ${canDelR?`<button class="comment-btn comment-btn--delete" onclick="_dcDeleteReply('${c.id}','${r.id}')">${commentIcon('trash')} Supprimer</button>`:''}
                     </div>
                 </div>
             </div>`;
@@ -8054,7 +8061,7 @@
                 ${em} <span class="reaction-btn__count">${reacts[em]||0}</span></button>`).join('');
         const reactBar = `<div class="comment-reactions" id="${pfx}reacts-${c.id}">
             ${pills}
-            <button class="reaction-add-btn" onclick="_dcOpenEmoji(event,'${c.id}')" title="Ajouter une réaction">+</button>
+            <button class="reaction-add-btn" onclick="_dcOpenEmoji(event,'${c.id}')" title="Ajouter une réaction">${commentIcon('plus')}</button>
         </div>`;
         return `<div class="comment-item${isPinned?' comment-item--pinned':''}" id="${pfx}comment-${c.id}">
             ${avatarHTML(c, 38)}
@@ -8063,7 +8070,7 @@
                     ${discordTag()}
                     <span class="comment-item__username">${c.username}</span>
                     ${isFirst?`<span class="comment-first-badge">Premier 🎉</span>`:''}
-                    ${isPinned?`<span class="comment-pin-badge">📌 Épinglé</span>`:''}
+                    ${isPinned?`<span class="comment-pin-badge">${commentIcon('pin')} Épinglé</span>`:''}
                     <span class="comment-item__time" title="${c.time}">${relativeTime(c.time)}</span>
                 </div>
                 <div class="comment-item__text">${c.text}</div>
@@ -8072,12 +8079,12 @@
                 <div class="comment-item__actions">
                     <button class="comment-btn ${c.likedByMe?'comment-btn--liked':''}"
                         onclick="_dcLikeComment('${c.id}',this)">
-                        ${c.likedByMe?'❤️':'🤍'} <span class="comment-btn__like-count">${c.likes||0}</span>
+                        ${commentIcon('heart',c.likedByMe)} <span class="comment-btn__like-count">${c.likes||0}</span>
                     </button>
-                    ${window.currentUser?`<button class="comment-btn" onclick="_ccToggleReplyBox('${pfx}rw-${c.id}')">↩ Répondre</button>`:''}
-                    ${_canDel?`<button class="comment-btn comment-btn--delete" onclick="_dcDelete('${c.id}')">🗑 Suppr.</button>`:''}
-                    ${_isMod&&!isPinned?`<button class="comment-btn comment-btn--pin" onclick="_dcPinComment('${c.id}')" title="Épingler">📌</button>`:''}
-                    ${_isMod&&isPinned?`<button class="comment-btn comment-btn--pin is-pinned" onclick="_dcUnpinComment('${c.id}')" title="Désépingler">📌</button>`:''}
+                    ${window.currentUser?`<button class="comment-btn" onclick="_ccToggleReplyBox('${pfx}rw-${c.id}')">${commentIcon('reply')} Répondre</button>`:''}
+                    ${_canDel?`<button class="comment-btn comment-btn--delete" onclick="_dcDelete('${c.id}')">${commentIcon('trash')} Supprimer</button>`:''}
+                    ${_isMod&&!isPinned?`<button class="comment-btn comment-btn--pin" onclick="_dcPinComment('${c.id}')" title="Épingler">${commentIcon('pin')}</button>`:''}
+                    ${_isMod&&isPinned?`<button class="comment-btn comment-btn--pin is-pinned" onclick="_dcUnpinComment('${c.id}')" title="Désépingler">${commentIcon('pin')}</button>`:''}
                 </div>
                 ${replies?`<div class="comment-replies">${replies}</div>`:''}
                 <div class="comment-reply-write" id="${pfx}rw-${c.id}">
@@ -8096,7 +8103,7 @@
         c.likes = Math.max(0, (c.likes||0) + (c.likedByMe ? 1 : -1));
         if (c.likedByMe) { spawnLikeParticles(btn); animateLikeBtn(btn); }
         btn.className = 'comment-btn' + (c.likedByMe?' comment-btn--liked':'');
-        btn.innerHTML = (c.likedByMe?'❤️':'🤍') + ' <span class="comment-btn__like-count">' + c.likes + '</span>';
+        btn.innerHTML = commentIcon('heart',c.likedByMe) + ' <span class="comment-btn__like-count">' + c.likes + '</span>';
         _dcSave();
     }
 
@@ -8137,7 +8144,7 @@
         r.likes = Math.max(0, (r.likes||0) + (r.likedByMe ? 1 : -1));
         if (r.likedByMe) { spawnLikeParticles(btn); animateLikeBtn(btn); }
         btn.className = 'comment-btn' + (r.likedByMe?' comment-btn--liked':'');
-        btn.innerHTML = (r.likedByMe?'❤️':'🤍') + ' <span class="comment-btn__like-count">' + r.likes + '</span>';
+        btn.innerHTML = commentIcon('heart',r.likedByMe) + ' <span class="comment-btn__like-count">' + r.likes + '</span>';
         _dcSave();
     }
 
@@ -8350,7 +8357,7 @@
         <div class="comments-modal">
             <div class="comments-modal__header">
                 <div class="comments-modal__title">
-                    💬 Tous les commentaires
+                    <svg class="comment-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.5a7.5 7.5 0 0 1-8 7.5 8.7 8.7 0 0 1-3.5-.7L4 20l1.4-3.5A7.2 7.2 0 0 1 4 12c0-4.1 3.6-7.5 8-7.5s8 3.1 8 7Z"/></svg> Tous les commentaires
                     <span class="comment-toggle-bar__count" id="modalCountBadge">6</span>
                 </div>
                 <button class="comments-modal__close" onclick="closeAllComments()">✕</button>
@@ -8363,7 +8370,7 @@
     <div id="actusAllCommentsModal" onclick="_actusCloseAllComments(event)">
         <div class="actus-comments-modal">
             <div class="actus-comments-modal__header">
-                <div class="actus-comments-modal__title">💬 Tous les commentaires</div>
+                <div class="actus-comments-modal__title">${chat} Tous les commentaires</div>
                 <button class="actus-comments-modal__close" onclick="_actusCloseAllComments()">✕</button>
             </div>
             <div class="actus-comments-modal__body"></div>
@@ -8577,7 +8584,7 @@
         badge.textContent = sorted.length;
         const shown = sorted.slice(0, _ccShown);
         if (shown.length === 0) {
-            list.innerHTML = `<div class="card-comments-empty">💬 Sois le premier à commenter ce leak !</div>`;
+            list.innerHTML = `<div class="card-comments-empty">${commentIcon('chat')} Sois le premier à commenter ce leak !</div>`;
         } else {
             list.innerHTML = shown.map(c => _ccRenderItem(c)).join('');
             _imgHydrate(list);
@@ -8607,9 +8614,9 @@
                     <div class="comment-item__actions" style="margin-top:7px">
                         <button class="comment-btn ${r.likedByMe?'comment-btn--liked':''}"
                             onclick="_ccLikeReply('${c.id}','${r.id}',this)">
-                            ${r.likedByMe?'❤️':'🤍'} <span class="comment-btn__like-count">${r.likes||0}</span>
+                            ${commentIcon('heart',r.likedByMe)} <span class="comment-btn__like-count">${r.likes||0}</span>
                         </button>
-                        ${canDelR?`<button class="comment-btn comment-btn--delete" onclick="_ccDeleteReply('${c.id}','${r.id}')">🗑 Suppr.</button>`:''}
+                        ${canDelR?`<button class="comment-btn comment-btn--delete" onclick="_ccDeleteReply('${c.id}','${r.id}')">${commentIcon('trash')} Supprimer</button>`:''}
                     </div>
                 </div>
             </div>`;
@@ -8624,7 +8631,7 @@
                 ${em} <span class="reaction-btn__count">${reacts[em]||0}</span></button>`).join('');
         const reactBar = `<div class="comment-reactions" id="${pfx}reacts-${c.id}">
             ${pills}
-            <button class="reaction-add-btn" onclick="_ccOpenEmoji(event,'${c.id}')" title="Ajouter une réaction">+</button>
+            <button class="reaction-add-btn" onclick="_ccOpenEmoji(event,'${c.id}')" title="Ajouter une réaction">${commentIcon('plus')}</button>
         </div>`;
         return `<div class="comment-item${isPinned?' comment-item--pinned':''}" id="cc-${c.id}">
             ${avatarHTML(c, 28)}
@@ -8633,7 +8640,7 @@
                     ${discordTag()}
                     <span class="comment-item__username">${c.username}</span>
                     ${isFirst?`<span class="comment-first-badge">Premier 🎉</span>`:''}
-                    ${isPinned?`<span class="comment-pin-badge">📌 Épinglé</span>`:''}
+                    ${isPinned?`<span class="comment-pin-badge">${commentIcon('pin')} Épinglé</span>`:''}
                     <span class="comment-item__time" title="${c.time}">${relativeTime(c.time)}</span>
                 </div>
                 <div class="comment-item__text">${c.text}</div>
@@ -8642,12 +8649,12 @@
                 <div class="comment-item__actions">
                     <button class="comment-btn ${c.likedByMe?'comment-btn--liked':''}"
                         onclick="_ccLikeComment('${c.id}',this)">
-                        ${c.likedByMe?'❤️':'🤍'} <span class="comment-btn__like-count">${c.likes||0}</span>
+                        ${commentIcon('heart',c.likedByMe)} <span class="comment-btn__like-count">${c.likes||0}</span>
                     </button>
-                    ${window.currentUser?`<button class="comment-btn" onclick="_ccToggleReplyBox('${pfx}rw-${c.id}')">↩ Répondre</button>`:''}
-                    ${_canDel?`<button class="comment-btn comment-btn--delete" onclick="_ccDelete('${c.id}')">🗑 Suppr.</button>`:''}
-                    ${_isMod&&!isPinned?`<button class="comment-btn comment-btn--pin" onclick="_ccPinComment('${c.id}')" title="Épingler">📌</button>`:''}
-                    ${_isMod&&isPinned?`<button class="comment-btn comment-btn--pin is-pinned" onclick="_ccUnpinComment('${c.id}')" title="Désépingler">📌</button>`:''}
+                    ${window.currentUser?`<button class="comment-btn" onclick="_ccToggleReplyBox('${pfx}rw-${c.id}')">${commentIcon('reply')} Répondre</button>`:''}
+                    ${_canDel?`<button class="comment-btn comment-btn--delete" onclick="_ccDelete('${c.id}')">${commentIcon('trash')} Supprimer</button>`:''}
+                    ${_isMod&&!isPinned?`<button class="comment-btn comment-btn--pin" onclick="_ccPinComment('${c.id}')" title="Épingler">${commentIcon('pin')}</button>`:''}
+                    ${_isMod&&isPinned?`<button class="comment-btn comment-btn--pin is-pinned" onclick="_ccUnpinComment('${c.id}')" title="Désépingler">${commentIcon('pin')}</button>`:''}
                 </div>
                 ${replies?`<div class="comment-replies">${replies}</div>`:''}
                 <div class="comment-reply-write" id="${pfx}rw-${c.id}">
@@ -8686,7 +8693,7 @@
         c.likedByMe = !c.likedByMe;
         c.likes = Math.max(0, (c.likes||0) + (c.likedByMe ? 1 : -1));
         btn.className = 'comment-btn' + (c.likedByMe?' comment-btn--liked':'');
-        btn.innerHTML = (c.likedByMe?'❤️':'🤍') + ' <span class="comment-btn__like-count">' + c.likes + '</span>';
+        btn.innerHTML = commentIcon('heart',c.likedByMe) + ' <span class="comment-btn__like-count">' + c.likes + '</span>';
         _ccRef.set(_ccDB.map(x => { const n={...x}; delete n.likedByMe; delete n.myReactions; return n; }))
             .catch(e => console.error('[card-comments] like error:', e));
     }
@@ -8739,7 +8746,7 @@
         r.likedByMe = !r.likedByMe;
         r.likes = Math.max(0, (r.likes||0) + (r.likedByMe ? 1 : -1));
         btn.className = 'comment-btn' + (r.likedByMe?' comment-btn--liked':'');
-        btn.innerHTML = (r.likedByMe?'❤️':'🤍') + ' <span class="comment-btn__like-count">' + r.likes + '</span>';
+        btn.innerHTML = commentIcon('heart',r.likedByMe) + ' <span class="comment-btn__like-count">' + r.likes + '</span>';
         _ccRef.set(_ccDB.map(x => { const n={...x}; delete n.likedByMe; delete n.myReactions; return n; }))
             .catch(e => console.error('[card-comments] reply-like error:', e));
     }
@@ -8898,7 +8905,7 @@
         if (badge) badge.textContent = sorted.length;
         const shown = sorted.slice(0, _actusShown[cardId] || ACTUS_CC_MAX);
         if (shown.length === 0) {
-            list.innerHTML = `<div class="card-comments-empty">💬 Sois le premier à commenter ce dossier !</div>`;
+            list.innerHTML = `<div class="card-comments-empty">${commentIcon('chat')} Sois le premier à commenter ce dossier !</div>`;
         } else {
             list.innerHTML = shown.map(c => _actusRenderItem(c, cardId)).join('');
             _imgHydrate(list);
@@ -8929,9 +8936,9 @@
                     <div class="comment-item__actions" style="margin-top:7px">
                         <button class="comment-btn ${r.likedByMe?'comment-btn--liked':''}"
                             onclick="_actusLikeReply('${cardId}','${c.id}','${r.id}',this)">
-                            ${r.likedByMe?'❤️':'🤍'} <span class="comment-btn__like-count">${r.likes||0}</span>
+                            ${commentIcon('heart',r.likedByMe)} <span class="comment-btn__like-count">${r.likes||0}</span>
                         </button>
-                        ${canDelR?`<button class="comment-btn comment-btn--delete" onclick="_actusDeleteReply('${cardId}','${c.id}','${r.id}')">🗑 Suppr.</button>`:''}
+                        ${canDelR?`<button class="comment-btn comment-btn--delete" onclick="_actusDeleteReply('${cardId}','${c.id}','${r.id}')">${commentIcon('trash')} Supprimer</button>`:''}
                     </div>
                 </div>
             </div>`;
@@ -8947,7 +8954,7 @@
                 ${em} <span class="reaction-btn__count">${reacts[em]||0}</span></button>`).join('');
         const reactBar = `<div class="comment-reactions" id="${pfx}reacts-${c.id}">
             ${pills}
-            <button class="reaction-add-btn" onclick="_actusOpenEmoji(event,'${cardId}','${c.id}')" title="Ajouter une réaction">+</button>
+            <button class="reaction-add-btn" onclick="_actusOpenEmoji(event,'${cardId}','${c.id}')" title="Ajouter une réaction">${commentIcon('plus')}</button>
         </div>`;
 
         return `<div class="comment-item${isPinned?' comment-item--pinned':''}" id="${pfx}comment-${c.id}">
@@ -8957,7 +8964,7 @@
                     ${discordTag()}
                     <span class="comment-item__username">${c.username}</span>
                     ${isFirst?`<span class="comment-first-badge">Premier 🎉</span>`:''}
-                    ${isPinned?`<span class="comment-pin-badge">📌 Épinglé</span>`:''}
+                    ${isPinned?`<span class="comment-pin-badge">${commentIcon('pin')} Épinglé</span>`:''}
                     <span class="comment-item__time" title="${c.time}">${relativeTime(c.time)}</span>
                 </div>
                 <div class="comment-item__text">${c.text}</div>
@@ -8966,12 +8973,12 @@
                 <div class="comment-item__actions">
                     <button class="comment-btn ${c.likedByMe?'comment-btn--liked':''}"
                         onclick="_actusLikeComment('${c.id}',this)">
-                        ${c.likedByMe?'❤️':'🤍'} <span class="comment-btn__like-count">${c.likes||0}</span>
+                        ${commentIcon('heart',c.likedByMe)} <span class="comment-btn__like-count">${c.likes||0}</span>
                     </button>
-                    ${window.currentUser?`<button class="comment-btn" onclick="_actusToggleReplyBox('${pfx}rw-${c.id}')">↩ Répondre</button>`:''}
-                    ${_canDel?`<button class="comment-btn comment-btn--delete" onclick="_actusDeleteComment('${c.id}')">🗑 Suppr.</button>`:''}
-                    ${_isMod&&!isPinned?`<button class="comment-btn" onclick="_actusPinComment('${cardId}','${c.id}')" title="Épingler">📌</button>`:''}
-                    ${_isMod&&isPinned?`<button class="comment-btn comment-btn is-pinned" onclick="_actusUnpinComment('${cardId}','${c.id}')" title="Désépingler">📌</button>`:''}
+                    ${window.currentUser?`<button class="comment-btn" onclick="_actusToggleReplyBox('${pfx}rw-${c.id}')">${commentIcon('reply')} Répondre</button>`:''}
+                    ${_canDel?`<button class="comment-btn comment-btn--delete" onclick="_actusDeleteComment('${c.id}')">${commentIcon('trash')} Supprimer</button>`:''}
+                    ${_isMod&&!isPinned?`<button class="comment-btn" onclick="_actusPinComment('${cardId}','${c.id}')" title="Épingler">${commentIcon('pin')}</button>`:''}
+                    ${_isMod&&isPinned?`<button class="comment-btn comment-btn is-pinned" onclick="_actusUnpinComment('${cardId}','${c.id}')" title="Désépingler">${commentIcon('pin')}</button>`:''}
                 </div>
                 ${replies?`<div class="comment-replies">${replies}</div>`:''}
                 <div class="comment-reply-write" id="${pfx}rw-${c.id}">
@@ -9098,7 +9105,7 @@
         r.likes = Math.max(0, (r.likes||0) + (r.likedByMe?1:-1));
         if (r.likedByMe && btn) { spawnLikeParticles(btn); animateLikeBtn(btn); }
         if (btn) { btn.className = 'comment-btn'+(r.likedByMe?' comment-btn--liked':'');
-            btn.innerHTML = `${r.likedByMe?'❤️':'🤍'} <span class="comment-btn__like-count">${r.likes}</span>`; }
+            btn.innerHTML = `${commentIcon('heart',r.likedByMe)} <span class="comment-btn__like-count">${r.likes}</span>`; }
         _actusFirebaseSave(cardId);
     };
     window._actusDeleteReply = function(cardId, cid, rid) {
@@ -9168,7 +9175,7 @@
         found.likes = Math.max(0, (found.likes||0) + (found.likedByMe ? 1 : -1));
         if (found.likedByMe) { spawnLikeParticles(btn); animateLikeBtn(btn); }
         btn.className = 'comment-btn' + (found.likedByMe?' comment-btn--liked':'');
-        btn.innerHTML = `${found.likedByMe?'❤️':'🤍'} <span class="comment-btn__like-count">${found.likes}</span>`;
+        btn.innerHTML = `${commentIcon('heart',found.likedByMe)} <span class="comment-btn__like-count">${found.likes}</span>`;
         _actusFirebaseSave(cardId);
     }
 
@@ -9211,11 +9218,11 @@
         if (!modal) return;
         const title = modal.querySelector('.actus-comments-modal__title');
         const list  = modal.querySelector('.actus-comments-modal__body');
-        if (title) title.innerHTML = `💬 Tous les commentaires <span class="card-comments-toggle__count">${(_actusCommentsDB[cardId]||[]).length}</span>`;
+        if (title) title.innerHTML = `${commentIcon('chat')} Tous les commentaires <span class="card-comments-toggle__count">${(_actusCommentsDB[cardId]||[]).length}</span>`;
         if (list) {
             const sorted = _actusGetSorted(cardId);
             if (sorted.length === 0) {
-                list.innerHTML = `<div style="text-align:center;padding:30px 0;color:rgba(255,255,255,0.25);font-size:14px">💬 Aucun commentaire pour ce dossier.</div>`;
+                list.innerHTML = `<div style="text-align:center;padding:30px 0;color:rgba(255,255,255,0.25);font-size:14px">${commentIcon('chat')} Aucun commentaire pour ce dossier.</div>`;
             } else {
                 list.innerHTML = sorted.map(c => _actusRenderItem(c, cardId)).join('');
                 _imgHydrate(list);
@@ -9260,6 +9267,24 @@
     const DISCORD_ICON = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 127.14 96.36" style="width:11px;height:11px;vertical-align:middle"><path fill="#5865F2" d="M107.7 8.07A105.15 105.15 0 0081.47 0a72.06 72.06 0 00-3.36 6.83 97.68 97.68 0 00-29.11 0A72.37 72.37 0 0045.64 0a105.89 105.89 0 00-26.25 8.09C2.79 32.65-1.71 56.6.54 80.21a105.73 105.73 0 0032.17 16.15 77.7 77.7 0 006.89-11.11 68.42 68.42 0 01-10.85-5.18c.91-.66 1.8-1.34 2.66-2a75.57 75.57 0 0064.32 0c.87.71 1.76 1.39 2.66 2a68.68 68.68 0 01-10.87 5.19 77 77 0 006.89 11.1 105.25 105.25 0 0032.19-16.14c2.64-27.38-4.51-51.11-18.9-72.15zM42.45 65.69C36.18 65.69 31 60 31 53s5-12.74 11.43-12.74S54 46 53.89 53s-5.1 12.69-11.44 12.69zm42.24 0C78.41 65.69 73.25 60 73.25 53s5-12.74 11.44-12.74S96.23 46 96.12 53s-5.12 12.69-11.43 12.69z"/></svg>`;
     function discordTag() { return `<span class="comment-item__discord-tag">${DISCORD_ICON} Discord</span>`; }
 
+    // Icônes communes aux actions de commentaires, dessinées en SVG pour garder
+    // le même poids visuel sur toutes les sections et sur les deux thèmes.
+    function commentIcon(name, active=false) {
+        const paths = {
+            heart: active
+                ? '<path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z" fill="currentColor" stroke="none"/>'
+                : '<path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"/>',
+            reply: '<path d="M9 17 4 12l5-5"/><path d="M20 19v-2a5 5 0 0 0-5-5H4"/>',
+            trash: '<path d="M3 6h18"/><path d="M8 6V4h8v2m3 0-1 14H6L5 6"/><path d="M10 11v5m4-5v5"/>',
+            pin: '<path d="m16 3 5 5-4 1-4 4-1 5-2-2-4 4-1-1 4-4-2-2 5-1 4-4 1-5Z"/>',
+            plus: '<path d="M12 5v14M5 12h14"/>',
+            clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+            trend: '<path d="m3 17 6-6 4 4 8-9"/><path d="M15 6h6v6"/>',
+            chat: '<path d="M20 11.5a7.5 7.5 0 0 1-8 7.5 8.7 8.7 0 0 1-3.5-.7L4 20l1.4-3.5A7.2 7.2 0 0 1 4 12c0-4.1 3.6-7.5 8-7.5s8 3.1 8 7Z"/>'
+        };
+        return `<svg class="comment-icon comment-icon--${name}" viewBox="0 0 24 24" aria-hidden="true" focusable="false">${paths[name]||paths.chat}</svg>`;
+    }
+
     function autoResize(el) {
         el.style.height = '';
         el.style.height = Math.min(el.scrollHeight, 120) + 'px';
@@ -9279,7 +9304,7 @@
             </button>`).join('');
         return `<div class="comment-reactions" id="${pfx}reacts-${c.id}">
             ${pills}
-            <button class="reaction-add-btn" onclick="openEmojiPicker(event,'${c.id}','${pfx}')" title="Ajouter une réaction">+</button>
+            <button class="reaction-add-btn" onclick="openEmojiPicker(event,'${c.id}','${pfx}')" title="Ajouter une réaction">${commentIcon('plus')}</button>
         </div>`;
     }
 
@@ -9337,9 +9362,9 @@
                 <div class="comment-reply__text">${r.text}</div>
                 <div class="comment-item__actions" style="margin-top:7px">
                     <button class="comment-btn ${r.likedByMe?"comment-btn--liked":""}" onclick="likeReply('${cid}','${r.id}',this)">
-                        ${r.likedByMe?"❤️":"🤍"} <span class="comment-btn__like-count">${r.likes}</span>
+                        ${commentIcon('heart',r.likedByMe)} <span class="comment-btn__like-count">${r.likes}</span>
                     </button>
-                    ${canDeleteReply(r)?`<button class="comment-btn comment-btn--delete" onclick="deleteReply('${cid}','${r.id}')">🗑 Suppr.</button>`:""}
+                    ${canDeleteReply(r)?`<button class="comment-btn comment-btn--delete" onclick="deleteReply('${cid}','${r.id}')">${commentIcon('trash')} Supprimer</button>`:""}
                 </div>
             </div>
         </div>`;
@@ -9358,7 +9383,7 @@
                     ${discordTag()}
                     <span class="comment-item__username">${c.username}</span>
                     ${isFirstEver?`<span class="comment-first-badge">Premier 🎉</span>`:""}
-                    ${isPinned?`<span class="comment-pin-badge">📌 Épinglé</span>`:""}
+                    ${isPinned?`<span class="comment-pin-badge">${commentIcon('pin')} Épinglé</span>`:""}
                     <span class="comment-item__time" title="${c.time}">${relativeTime(c.time)}</span>
                 </div>
                 <div class="comment-item__text">${c.text}</div>
@@ -9366,12 +9391,12 @@
                 ${renderReactions(c, pfx)}
                 <div class="comment-item__actions">
                     <button class="comment-btn ${c.likedByMe?"comment-btn--liked":""}" onclick="likeComment('${c.id}',this)">
-                        ${c.likedByMe?"❤️":"🤍"} <span class="comment-btn__like-count">${c.likes}</span>
+                        ${commentIcon('heart',c.likedByMe)} <span class="comment-btn__like-count">${c.likes}</span>
                     </button>
-                    ${window.currentUser?`<button class="comment-btn" onclick="toggleReplyBox('${pfx}rw-${c.id}')">↩ Répondre</button>`:""}
-                    ${canDelete(c)?`<button class="comment-btn comment-btn--delete" onclick="deleteComment('${c.id}')">🗑 Suppr.</button>`:""}
-                    ${isMod()&&!isPinned?`<button class="comment-btn" onclick="pinComment('${c.id}')" title="Épingler">📌</button>`:""}
-                    ${isMod()&&isPinned?`<button class="comment-btn" onclick="unpinComment('${c.id}')" title="Désépingler">📌</button>`:""}
+                    ${window.currentUser?`<button class="comment-btn" onclick="toggleReplyBox('${pfx}rw-${c.id}')">${commentIcon('reply')} Répondre</button>`:""}
+                    ${canDelete(c)?`<button class="comment-btn comment-btn--delete" onclick="deleteComment('${c.id}')">${commentIcon('trash')} Supprimer</button>`:""}
+                    ${isMod()&&!isPinned?`<button class="comment-btn" onclick="pinComment('${c.id}')" title="Épingler">${commentIcon('pin')}</button>`:""}
+                    ${isMod()&&isPinned?`<button class="comment-btn" onclick="unpinComment('${c.id}')" title="Désépingler">${commentIcon('pin')}</button>`:""}
                 </div>
                 ${replies?`<div class="comment-replies">${replies}</div>`:""}
                 <div class="comment-reply-write" id="${pfx}rw-${c.id}">
@@ -9399,7 +9424,7 @@
         const list = document.getElementById("commentList");
         if (!list) return;
         list.innerHTML = top.length === 0
-            ? `<div style="text-align:center;padding:32px 0;color:#ccc;font-size:14px;font-weight:600;"><div style="font-size:36px;margin-bottom:10px">💬</div>Soyez le premier à commenter !</div>`
+            ? `<div style="text-align:center;padding:32px 0;color:#ccc;font-size:14px;font-weight:600;"><div style="font-size:36px;margin-bottom:10px"><svg class="comment-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.5a7.5 7.5 0 0 1-8 7.5 8.7 8.7 0 0 1-3.5-.7L4 20l1.4-3.5A7.2 7.2 0 0 1 4 12c0-4.1 3.6-7.5 8-7.5s8 3.1 8 7Z"/></svg></div>Soyez le premier à commenter !</div>`
             : top.map(c => renderComment(c,"")).join("");
         _imgHydrate(list);
         const n = COMMENTS_DB.length;
@@ -9509,7 +9534,7 @@
             const lb = el.querySelector(".comment-btn__like-count"); if (lb) lb.textContent = c.likes;
             const hb = el.querySelector(".comment-btn"); if (hb) {
                 hb.classList.toggle("comment-btn--liked", c.likedByMe);
-                const em = hb.childNodes[0]; if (em&&em.nodeType===3) em.textContent=(c.likedByMe?"❤️":"🤍")+" ";
+                hb.innerHTML = commentIcon('heart',c.likedByMe) + ' <span class="comment-btn__like-count">' + c.likes + '</span>';
             }
         });
         saveDB();
@@ -9520,7 +9545,7 @@
         r.likedByMe = !r.likedByMe; r.likes += r.likedByMe ? 1 : -1;
         if (r.likedByMe) { spawnLikeParticles(btn); animateLikeBtn(btn); }
         btn.classList.toggle("comment-btn--liked", r.likedByMe);
-        btn.innerHTML=`${r.likedByMe?"❤️":"🤍"} <span class="comment-btn__like-count">${r.likes}</span>`;
+        btn.innerHTML=`${commentIcon('heart',r.likedByMe)} <span class="comment-btn__like-count">${r.likes}</span>`;
         saveDB();
     }
 
@@ -10938,11 +10963,7 @@
                 </div>
                 <div class="card-comments-section" data-actus-comment-section="${e(card.id)}">
                     <div class="card-comments-toggle" onclick="this.classList.toggle('is-open');this.nextElementSibling.classList.toggle('is-open')">
-                        <div class="card-comments-toggle__icon">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block">
-                                <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.002.022.015.043.033.055a19.91 19.91 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z" fill="currentColor"/>
-                            </svg>
-                        </div>
+                        <div class="card-comments-toggle__icon"><svg class="comment-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.5a7.5 7.5 0 0 1-8 7.5 8.7 8.7 0 0 1-3.5-.7L4 20l1.4-3.5A7.2 7.2 0 0 1 4 12c0-4.1 3.6-7.5 8-7.5s8 3.1 8 7Z"/></svg></div>
                         <span class="card-comments-toggle__label">Commentaires</span>
                         <span class="card-comments-toggle__count actus-cc-count" data-actus-id="${e(card.id)}">0</span>
                         <span class="card-comments-toggle__arrow">▾</span>
@@ -10968,8 +10989,8 @@
                         </div>
                         <div class="card-comment-sort-bar" data-actus-sort-bar="${e(card.id)}">
                             <span class="card-comment-sort-label">Trier :</span>
-                            <button class="card-comment-sort-btn active" data-actus-sort="top-${e(card.id)}" onclick="_actusSetSort('${e(card.id)}','top')">⭐ Top</button>
-                            <button class="card-comment-sort-btn" data-actus-sort="new-${e(card.id)}" onclick="_actusSetSort('${e(card.id)}','new')">🕐 Récents</button>
+                            <button class="card-comment-sort-btn active" data-actus-sort="top-${e(card.id)}" onclick="_actusSetSort('${e(card.id)}','top')">${commentIcon('trend')} Top</button>
+                            <button class="card-comment-sort-btn" data-actus-sort="new-${e(card.id)}" onclick="_actusSetSort('${e(card.id)}','new')">${commentIcon('clock')} Récents</button>
                         </div>
                         <div class="card-comment-divider">Commentaires</div>
                         <div class="card-comment-list actus-cc-list" data-actus-id="${e(card.id)}"></div>
@@ -13832,9 +13853,9 @@
             <div class="card-comment-sort-bar">
                 <span class="card-comment-sort-label">Trier :</span>
                 <button class="card-comment-sort-btn ${(_updSortMode[updId]||'new')==='top'?'active':''}"
-                    onclick="_updSetSort('${updId}','top')">⭐ Top</button>
+                    onclick="_updSetSort('${updId}','top')">${commentIcon('trend')} Top</button>
                 <button class="card-comment-sort-btn ${(_updSortMode[updId]||'new')==='new'?'active':''}"
-                    onclick="_updSetSort('${updId}','new')">🕐 Récents</button>
+                    onclick="_updSetSort('${updId}','new')">${commentIcon('clock')} Récents</button>
             </div>
             <div class="card-comment-divider">Commentaires</div>
             <div class="card-comment-list upd-cc-list" data-upd-id="${updId}"></div>
@@ -13861,7 +13882,7 @@
         const shown  = sorted.slice(0, _updShown[updId] || UPD_CC_MAX);
 
         list.innerHTML = shown.length === 0
-            ? `<div class="card-comments-empty">💬 Sois le premier à commenter cette update !</div>`
+            ? `<div class="card-comments-empty">${commentIcon('chat')} Sois le premier à commenter cette update !</div>`
             : shown.map(c => _updRenderItem(c, updId)).join('');
         _imgHydrate(list);
 
@@ -13892,9 +13913,9 @@
                     <div class="comment-item__actions" style="margin-top:7px">
                         <button class="comment-btn ${r.likedByMe?'comment-btn--liked':''}"
                             onclick="_updLikeReply('${updId}','${c.id}','${r.id}',this)">
-                            ${r.likedByMe?'❤️':'🤍'} <span class="comment-btn__like-count">${r.likes||0}</span>
+                            ${commentIcon('heart',r.likedByMe)} <span class="comment-btn__like-count">${r.likes||0}</span>
                         </button>
-                        ${canDelR?`<button class="comment-btn comment-btn--delete" onclick="_updDeleteReply('${updId}','${c.id}','${r.id}')">🗑 Suppr.</button>`:''}
+                        ${canDelR?`<button class="comment-btn comment-btn--delete" onclick="_updDeleteReply('${updId}','${c.id}','${r.id}')">${commentIcon('trash')} Supprimer</button>`:''}
                     </div>
                 </div>
             </div>`;
@@ -13910,7 +13931,7 @@
                 ${em} <span class="reaction-btn__count">${reacts[em]||0}</span></button>`).join('');
         const reactBar = `<div class="comment-reactions" id="${pfx}reacts-${c.id}">
             ${pills}
-            <button class="reaction-add-btn" onclick="_updOpenEmoji(event,'${updId}','${c.id}')" title="Ajouter une réaction">+</button>
+            <button class="reaction-add-btn" onclick="_updOpenEmoji(event,'${updId}','${c.id}')" title="Ajouter une réaction">${commentIcon('plus')}</button>
         </div>`;
 
         return `<div class="comment-item${isPinned?' comment-item--pinned':''}" id="${pfx}comment-${c.id}">
@@ -13920,7 +13941,7 @@
                     ${discordTag()}
                     <span class="comment-item__username">${c.username}</span>
                     ${isFirst?`<span class="comment-first-badge">Premier 🎉</span>`:''}
-                    ${isPinned?`<span class="comment-pin-badge">📌 Épinglé</span>`:''}
+                    ${isPinned?`<span class="comment-pin-badge">${commentIcon('pin')} Épinglé</span>`:''}
                     <span class="comment-item__time" title="${c.time}">${relativeTime(c.time)}</span>
                 </div>
                 <div class="comment-item__text">${c.text}</div>
@@ -13929,12 +13950,12 @@
                 <div class="comment-item__actions">
                     <button class="comment-btn ${c.likedByMe?'comment-btn--liked':''}"
                         onclick="_updLikeComment('${c.id}','${updId}',this)">
-                        ${c.likedByMe?'❤️':'🤍'} <span class="comment-btn__like-count">${c.likes||0}</span>
+                        ${commentIcon('heart',c.likedByMe)} <span class="comment-btn__like-count">${c.likes||0}</span>
                     </button>
-                    ${window.currentUser?`<button class="comment-btn" onclick="_actusToggleReplyBox('${pfx}rw-${c.id}')">↩ Répondre</button>`:''}
-                    ${_canDel?`<button class="comment-btn comment-btn--delete" onclick="_updDeleteComment('${c.id}','${updId}')">🗑 Suppr.</button>`:''}
-                    ${_isMod&&!isPinned?`<button class="comment-btn" onclick="_updPinComment('${updId}','${c.id}')" title="Épingler">📌</button>`:''}
-                    ${_isMod&&isPinned?`<button class="comment-btn is-pinned" onclick="_updUnpinComment('${updId}','${c.id}')" title="Désépingler">📌</button>`:''}
+                    ${window.currentUser?`<button class="comment-btn" onclick="_actusToggleReplyBox('${pfx}rw-${c.id}')">${commentIcon('reply')} Répondre</button>`:''}
+                    ${_canDel?`<button class="comment-btn comment-btn--delete" onclick="_updDeleteComment('${c.id}','${updId}')">${commentIcon('trash')} Supprimer</button>`:''}
+                    ${_isMod&&!isPinned?`<button class="comment-btn" onclick="_updPinComment('${updId}','${c.id}')" title="Épingler">${commentIcon('pin')}</button>`:''}
+                    ${_isMod&&isPinned?`<button class="comment-btn is-pinned" onclick="_updUnpinComment('${updId}','${c.id}')" title="Désépingler">${commentIcon('pin')}</button>`:''}
                 </div>
                 ${replies?`<div class="comment-replies">${replies}</div>`:''}
                 <div class="comment-reply-write" id="${pfx}rw-${c.id}">
