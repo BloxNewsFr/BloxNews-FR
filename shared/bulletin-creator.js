@@ -65,7 +65,8 @@
     }
 
     /* ── Compression image ── */
-    function compressImage(file, maxDim, quality) {
+    function compressImage(file, maxDim, quality, maxChars) {
+        maxChars = maxChars || 130000; // ~95 Ko JPEG en base64
         return new Promise((resolve, reject) => {
             if (!file) return reject(new Error('Fichier manquant'));
             if (!/^image\//.test(file.type)) return reject(new Error('Type invalide : ' + file.type));
@@ -75,21 +76,39 @@
                 const img = new Image();
                 img.onerror = () => reject(new Error('Image invalide'));
                 img.onload = () => {
-                    let { width: w, height: h } = img;
-                    if (w > maxDim || h > maxDim) {
-                        const r = Math.min(maxDim / w, maxDim / h);
-                        w = Math.round(w * r); h = Math.round(h * r);
-                    }
-                    const canvas = document.createElement('canvas');
-                    canvas.width = w; canvas.height = h;
-                    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-                    let out = canvas.toDataURL('image/jpeg', quality);
+                    let w0 = img.width, h0 = img.height;
+                    let dim = Math.min(maxDim, Math.max(w0, h0));
                     let q = quality;
-                    while (out.length > 400000 && q > 0.4) {
-                        q -= 0.1;
-                        out = canvas.toDataURL('image/jpeg', q);
+                    let out = '';
+                    const draw = (size) => {
+                        let w = w0, h = h0;
+                        if (Math.max(w, h) > size) {
+                            const r = size / Math.max(w, h);
+                            w = Math.round(w * r); h = Math.round(h * r);
+                        }
+                        const canvas = document.createElement('canvas');
+                        canvas.width = w; canvas.height = h;
+                        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                        return canvas.toDataURL('image/jpeg', q);
+                    };
+                    out = draw(dim);
+                    let guard = 0;
+                    while (out.length > maxChars && guard++ < 12) {
+                        if (q > 0.35) {
+                            q = Math.max(0.35, q - 0.1);
+                        } else if (dim > 480) {
+                            dim = Math.round(dim * 0.72);
+                        } else {
+                            break;
+                        }
+                        out = draw(dim);
                     }
-                    resolve({ dataUrl: out, width: w, height: h, bytes: Math.round(out.length * 0.75) });
+                    if (out.length > maxChars * 1.35) {
+                        reject(new Error('Image trop lourde même compressée — essaie une image plus petite.'));
+                        return;
+                    }
+                    const w = parseInt(out.match(/,(\d+)x(\d+);/)?.[1] || '0', 10);
+                    resolve({ dataUrl: out, bytes: Math.round(out.length * 0.75) });
                 };
                 img.src = reader.result;
             };
