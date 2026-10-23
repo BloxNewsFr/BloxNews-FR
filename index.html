@@ -3926,13 +3926,7 @@
             ov.setAttribute('aria-hidden', 'false');
             ov.classList.add('is-open');
             document.body.style.overflow = 'hidden';
-            _statsRefreshCounters();
-            _statsRefreshAggregates();
-            _statsRefreshDaily();
-            _statsRefreshRanking();
-            _statsRefreshVisitors();
-            _statsRefreshDiscordProfiles();
-            _statsRenderOnline();
+            _statsRefreshAll();
             STORE.timers.push(setInterval(_statsRefreshCounters, 5000));
             STORE.timers.push(setInterval(_statsRefreshAggregates, 5000));
             STORE.timers.push(setInterval(_statsRefreshDaily, 15000));
@@ -3941,6 +3935,17 @@
             STORE.timers.push(setInterval(() => { if (STORE.popupOpen && _statsVisitorsOpen()) _statsRefreshVisitors(); }, 10000));
         }
         window.openStats = openStats;
+
+        function _statsRefreshAll() {
+            _statsRefreshCounters();
+            _statsRefreshAggregates();
+            _statsRefreshDaily();
+            _statsRefreshRanking();
+            _statsRefreshVisitors();
+            _statsRefreshDiscordProfiles();
+            _statsRenderOnline();
+        }
+        window.statsRefreshNow = _statsRefreshAll;
 
         window.showStatsSection = function(name, button) {
             document.querySelectorAll('#statsOverlay .stats-section').forEach(section => { section.hidden = section.id !== 'stats' + name[0].toUpperCase() + name.slice(1); });
