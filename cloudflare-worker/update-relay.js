@@ -4,7 +4,7 @@ const ADMIN_DISCORD_IDS = new Set([
 ]);
 
 const MAX_REQUEST_BYTES = 3_500_000;
-const MAX_SINGLE_FILE_BYTES = 90_000; // sous la limite free plan Cloudflare (100 Ko)
+const MAX_SINGLE_FILE_BYTES = 2_000_000; // limite réelle Workers = 100 Mo ; marge confortable
 const GITHUB_ALLOWED_PREFIXES = [
   /^\/?\d{3}\//,
   /^\/?index\.html$/,
@@ -297,7 +297,7 @@ export default {
 
       const updateActions = new Set(['create', 'editField', 'delete']);
       const adminActions = new Set(['saveContentEdits', 'resetContentEdits', 'createCard', 'deleteCard', 'deleteStaticCard']);
-      const gitActions = new Set(['createBulletin', 'deleteBulletin', 'gitBase', 'gitBlob', 'gitBlobStart', 'gitBlobChunk', 'gitBlobFinish', 'gitCommit']);
+      const gitActions = new Set(['createBulletin', 'deleteBulletin', 'gitBase', 'gitBlob', 'gitCommit']);
       if (!updateActions.has(input.action) && !adminActions.has(input.action) && !gitActions.has(input.action)) {
         return json({ error: 'Action inconnue.' }, 400);
       }
@@ -355,57 +355,6 @@ export default {
             body: JSON.stringify({ content, encoding: isDataUrl ? 'base64' : 'utf-8' }),
           });
           return json({ ok: true, sha: blob.sha, path });
-        }
-        if (input.action === 'gitBlobStart') {
-          // Début upload chunked pour un fichier volumineux
-          if (!env.UPLOAD_SESSIONS) {
-            throw new Error('Binding KV UPLOAD_SESSIONS manquant dans le Worker.');
-          }
-          const path = String(input.path || '').replace(/^\/+/, '');
-          if (!path || path.length > 200 || path.includes('..') || !GITHUB_ALLOWED_PREFIXES.some(re => re.test(path))) {
-            throw new Error('Chemin non autorisé.');
-          }
-          const uploadId = crypto.randomUUID();
-          const session = { path, encoding: input.encoding || 'utf-8', chunks: [] };
-          await env.UPLOAD_SESSIONS.put(uploadId, JSON.stringify(session), { expirationTtl: 3600 });
-          return json({ ok: true, uploadId });
-        }
-        if (input.action === 'gitBlobChunk') {
-          if (!env.UPLOAD_SESSIONS) {
-            throw new Error('Binding KV UPLOAD_SESSIONS manquant dans le Worker.');
-          }
-          const uploadId = String(input.uploadId || '');
-          const chunk = String(input.chunk || '');
-          if (!uploadId || !chunk || chunk.length > MAX_SINGLE_FILE_BYTES) {
-            throw new Error('Chunk invalide.');
-          }
-          const raw = await env.UPLOAD_SESSIONS.get(uploadId);
-          if (!raw) throw new Error('Session expirée.');
-          const session = JSON.parse(raw);
-          session.chunks.push(chunk);
-          await env.UPLOAD_SESSIONS.put(uploadId, JSON.stringify(session), { expirationTtl: 3600 });
-          return json({ ok: true, received: session.chunks.length });
-        }
-        if (input.action === 'gitBlobFinish') {
-          if (!env.UPLOAD_SESSIONS) {
-            throw new Error('Binding KV UPLOAD_SESSIONS manquant dans le Worker.');
-          }
-          const uploadId = String(input.uploadId || '');
-          if (!uploadId) throw new Error('Session manquante.');
-          const raw = await env.UPLOAD_SESSIONS.get(uploadId);
-          if (!raw) throw new Error('Session expirée.');
-          const session = JSON.parse(raw);
-          const fullContent = session.chunks.join('');
-          const isDataUrl = session.encoding === 'base64-dataurl';
-          const content = isDataUrl ? fullContent.replace(/^data:[^,]*,/, '') : fullContent;
-          const repo = env.GITHUB_REPO;
-          const blob = await githubApi(env, `/repos/${repo}/git/blobs`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ content, encoding: isDataUrl ? 'base64' : 'utf-8' }),
-          });
-          await env.UPLOAD_SESSIONS.delete(uploadId);
-          return json({ ok: true, sha: blob.sha, path: session.path });
         }
         if (input.action === 'gitCommit') {
           // Étape 3 : crée tree + commit à partir des SHAs collectés

@@ -670,8 +670,6 @@ ${body}
                 msg = 'Session Discord expirée. Reconnecte-toi dans Paramètres → Profil Discord.';
             } else if (/GITHUB_/i.test(msg)) {
                 msg = 'Secrets GitHub manquants côté Worker. Ajoute GITHUB_TOKEN (PAT scope repo) et GITHUB_REPO (BloxNewsFr/BloxNews-FR) dans Settings → Variables.';
-            } else if (/UPLOAD_SESSIONS/i.test(msg)) {
-                msg = 'Binding KV UPLOAD_SESSIONS manquant. Crée un KV namespace puis lie-le dans le Worker (Settings → Bindings → KV Namespace → UPLOAD_SESSIONS).';
             } else if (/401|403/i.test(String(res.status))) {
                 msg = 'Accès refusé (' + res.status + '). Vérifie ton login Discord.';
             }
@@ -1315,29 +1313,18 @@ ${body}
                 btn.disabled = true;
                 const payload = await buildPayload(form);
 
-                // Envoi fractionné : gitBase → gitBlob (ou chunked) → gitCommit
-                // Chaque requête reste sous 80 Ko (limite free plan Cloudflare)
+                // Envoi par fichier : gitBase → gitBlob×N → gitCommit
+                // (la limite réelle des Workers Cloudflare est de 100 Mo,
+                //  on évite juste une seule requête géante)
                 setStatus('Récupération de la base Git…');
                 const base = await callUpdateRelay('gitBase', {});
                 const entries = [];
                 let i = 0;
-                const CHUNK_LIMIT = 70000;
                 for (const file of payload.files) {
                     i++;
                     setStatus(`Envoi ${i}/${payload.files.length} : ${file.path}…`);
-                    if (file.content.length <= CHUNK_LIMIT) {
-                        const res = await callUpdateRelay('gitBlob', { file });
-                        entries.push({ path: file.path, sha: res.sha });
-                    } else {
-                        const start = await callUpdateRelay('gitBlobStart', { path: file.path, encoding: file.encoding });
-                        const content = file.content;
-                        for (let off = 0; off < content.length; off += CHUNK_LIMIT) {
-                            const chunk = content.slice(off, off + CHUNK_LIMIT);
-                            await callUpdateRelay('gitBlobChunk', { uploadId: start.uploadId, chunk });
-                        }
-                        const fin = await callUpdateRelay('gitBlobFinish', { uploadId: start.uploadId });
-                        entries.push({ path: file.path, sha: fin.sha });
-                    }
+                    const res = await callUpdateRelay('gitBlob', { file });
+                    entries.push({ path: file.path, sha: res.sha });
                 }
                 setStatus('Création du commit…');
                 const result = await callUpdateRelay('gitCommit', {
