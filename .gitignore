@@ -1,3 +1,8 @@
 .firebase/
 functions/node_modules/
 functions/.runtimeconfig.json
+
+# Wrangler (état local, peut contenir des identifiants)
+cloudflare-worker/.wrangler/
+.dev.vars
+.wrangler/
