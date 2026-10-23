@@ -136,7 +136,7 @@
     }
 
     function _resolve(path) {
-        try { return document.querySelector(path.replace(/:nth\((\d+)\)/g, ':nth-child($1)')); } catch { return null; }
+        try { return document.querySelector(path.replace(/:nth\((\d+)\)/g, ':nth-of-type($1)')); } catch { return null; }
     }
 
     function _applyLocal() {
