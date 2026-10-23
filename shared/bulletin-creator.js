@@ -661,7 +661,19 @@ ${body}
         let data = null;
         try { data = await res.json(); } catch (e) { /* ignore */ }
         if (!res.ok || (data && data.ok === false)) {
-            const msg = (data && (data.error || data.message)) || ('HTTP ' + res.status);
+            let msg = (data && (data.error || data.message)) || ('HTTP ' + res.status);
+            // Erreurs connues → messages explicites
+            if (/Action (Git )?inconnue|Action inconnue/i.test(msg)) {
+                msg = 'Le Worker Cloudflare n\'a pas les nouvelles actions (gitBase/gitBlob/gitCommit). Redéploie update-relay.js sur Cloudflare.';
+            } else if (/trop volumineuse/i.test(msg)) {
+                msg = 'Requête trop volumineuse — le Worker a peut-être encore l\'ancienne limite. Redéploie update-relay.js (nouvelle limite 3,5 Mo + envoi chunked).';
+            } else if (/Reconnecte-toi/i.test(msg)) {
+                msg = 'Session Discord expirée. Reconnecte-toi dans Paramètres.';
+            } else if (/GITHUB_/i.test(msg)) {
+                msg = 'Secrets GitHub manquants côté Worker (GITHUB_TOKEN, GITHUB_REPO…).';
+            } else if (/UPLOAD_SESSIONS/i.test(msg)) {
+                msg = 'Binding KV UPLOAD_SESSIONS manquant dans le Worker Cloudflare.';
+            }
             throw new Error(msg);
         }
         return data;
