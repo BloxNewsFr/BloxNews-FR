@@ -769,8 +769,30 @@ ${body}
     }
 
     /* ── Preview ── */
-    function renderPreview(iframe, form) {
-        const html = buildBulletinHtml({
+    async function buildPreviewCss(form) {
+        const parts = [];
+        try { parts.push(await loadDefaultCss()); } catch (e) { /* fallback minimal */ }
+        try {
+            const themeCss = await loadThemeCss(form.theme);
+            if (themeCss) parts.push('/* thème ' + form.theme + ' */\n' + themeCss);
+        } catch (e) { /* ignore */ }
+        // assets communs (lightbox / engagement / astuces) — chemins depuis la page hôte
+        const rootBase = location.pathname.replace(/[^/]*$/, '');
+        for (const path of [
+            _sharedBase() + 'bulletin-lightbox.css',
+            rootBase + 'astuces/astuces.css',
+            _sharedBase() + 'bulletin-engagement.css'
+        ]) {
+            try {
+                const res = await fetch(path);
+                if (res.ok) parts.push(await res.text());
+            } catch (e) { /* ignore */ }
+        }
+        return parts.join('\n\n');
+    }
+
+    async function renderPreview(iframe, form) {
+        let html = buildBulletinHtml({
             num: parseInt(form.num, 10) || 26,
             title: form.journalTitle || 'Le Bulletin Blox',
             subtitle: form.subtitle,
@@ -788,11 +810,26 @@ ${body}
             side: form.side,
             box: form.box
         });
+
+        // Inline le CSS du bulletin (le fichier NNN/bulletin-NNN.css n'existe
+        // pas encore) + les CSS partagés, pour que l'aperçu soit fidèle.
+        const inlineCss = await buildPreviewCss(form);
+        html = html
+            .replace(/<link rel="stylesheet" href="\.\/bulletin-[^"]+">\s*/g, '')
+            .replace(/<link rel="stylesheet" href="\.\.\/shared\/bulletin-theme-[^"]+">\s*/g, '')
+            .replace(/<link rel="stylesheet" href="\.\.\/shared\/bulletin-lightbox\.css">\s*/g, '')
+            .replace(/<link rel="stylesheet" href="\.\.\/astuces\/astuces\.css">\s*/g, '')
+            .replace(/<link rel="stylesheet" href="\.\.\/shared\/bulletin-engagement\.css">\s*/g, '')
+            .replace(/(<meta charset="utf-8">)/, `$1\n    <base href="${_previewBaseHref()}">`)
+            .replace('</head>', `    <style>\n${inlineCss}\n    </style>\n</head>`);
+
         const doc = iframe.contentDocument;
         doc.open();
         doc.write(html);
         doc.close();
-        if (form.theme === 'halloween') {
+
+        // fallback thème si le CSS de thème n'a pas pu être fetché
+        if (form.theme === 'halloween' && !inlineCss.includes('theme-halloween') && !inlineCss.includes('--orange')) {
             const s = doc.createElement('style');
             s.textContent = `
                 body { background: #0d0505 !important; color: #e8dcc8; }
@@ -800,28 +837,26 @@ ${body}
                 .journal-title { color:#ff9500 !important; font-family:Creepster,cursive !important; text-shadow:0 0 20px #ff6a00,2px 2px 0 #000; }
                 .wanted-box, .right-col { background:rgba(20,10,20,0.85) !important; border-color:rgba(255,106,0,0.25) !important; }
                 h2 { color:#ff9500 !important; border-bottom-color:rgba(255,106,0,0.35) !important; }
-                .journal-subtitle, .wanted-subtitle, .wanted-text p, .section-subtext, .side-text p { color:#b08888 !important; }
-                .wanted-title { color:#ff9500 !important; }
-                .journal-meta { color:#cc2200 !important; }
-                .site-footer { background:#0a0505 !important; }
             `;
             doc.head.appendChild(s);
-        } else if (form.theme === 'valentine') {
+        } else if (form.theme === 'valentine' && !inlineCss.includes('theme-valentine') && !inlineCss.includes('--rose')) {
             const s = doc.createElement('style');
             s.textContent = `
                 body { background: linear-gradient(170deg,#1a0a0f,#2d0a1e 30%,#3d1025 60%,#1a0a0f) !important; color:#f0d0d8 !important; }
-                .blue-banner { background: linear-gradient(135deg,#8b0000,#c2185b,#d4a017,#c2185b,#8b0000) !important; background-size:300% auto !important; box-shadow:0 8px 40px rgba(194,24,91,0.5) !important; }
-                .blue-banner::before, .blue-banner::after { content:"❤️"; margin:0 14px; display:inline-block; }
-                .journal-title { color:#ffd700 !important; text-shadow:0 0 30px rgba(255,215,0,0.3),0 2px 4px rgba(0,0,0,0.3) !important; }
+                .blue-banner { background: linear-gradient(135deg,#8b0000,#c2185b,#d4a017,#c2185b,#8b0000) !important; background-size:300% auto !important; }
+                .journal-title { color:#ffd700 !important; }
                 .wanted-box, .right-col { background:rgba(40,5,20,0.85) !important; border-color:rgba(255,55,95,0.4) !important; }
                 h2 { color:#ff8aa8 !important; border-bottom-color:rgba(255,55,95,0.5) !important; }
-                .journal-subtitle, .wanted-subtitle, .wanted-text p, .section-subtext, .side-text p { color:#e0b0c0 !important; }
-                .wanted-title { color:#ff6080 !important; }
-                .journal-meta { color:#f8e0e8 !important; }
-                .site-footer { background:#14040c !important; }
             `;
             doc.head.appendChild(s);
         }
+    }
+
+    function _previewBaseHref() {
+        // Depuis index.html (racine) on simule un sous-dossier NNN/ pour que
+        // les chemins ../shared/… et ../BF_news.png du template résolvent.
+        const dir = location.pathname.replace(/[^/]*$/, '');
+        return location.origin + dir + '000/';
     }
 
     /* ── UI ── */
@@ -1213,14 +1248,16 @@ ${body}
             if (row) row.remove();
         },
 
-        preview() {
+        async preview() {
             try {
                 const form = collectForm();
                 if (!form.num) { setStatus('Numéro invalide', 'err'); return; }
                 const frame = document.getElementById('bcPreviewFrame');
-                renderPreview(frame, form);
+                setStatus('Chargement de l’aperçu…');
+                await renderPreview(frame, form);
                 document.getElementById('bcPreviewMeta').textContent =
                     '#' + fmtNum(form.num) + (form.theme ? ' · ' + form.theme : ' · standard');
+                setStatus('');
             } catch (e) {
                 setStatus('Aperçu impossible : ' + e.message, 'err');
             }
