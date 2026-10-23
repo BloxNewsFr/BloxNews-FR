@@ -662,17 +662,18 @@ ${body}
         try { data = await res.json(); } catch (e) { /* ignore */ }
         if (!res.ok || (data && data.ok === false)) {
             let msg = (data && (data.error || data.message)) || ('HTTP ' + res.status);
-            // Erreurs connues → messages explicites
             if (/Action (Git )?inconnue|Action inconnue/i.test(msg)) {
-                msg = 'Le Worker Cloudflare n\'a pas les nouvelles actions (gitBase/gitBlob/gitCommit). Redéploie update-relay.js sur Cloudflare.';
+                msg = '⚠️ Worker Cloudflare pas à jour. Ouvre Cloudflare → Workers → blox-update-relay → colle le contenu de cloudflare-worker/update-relay.js → Deploy. Puis crée un KV namespace « UPLOAD_SESSIONS » et lie-le dans Bindings.';
             } else if (/trop volumineuse/i.test(msg)) {
-                msg = 'Requête trop volumineuse — le Worker a peut-être encore l\'ancienne limite. Redéploie update-relay.js (nouvelle limite 3,5 Mo + envoi chunked).';
+                msg = '⚠️ Worker Cloudflare pas à jour (ancienne limite). Redéploie update-relay.js avec les nouvelles actions gitBase/gitBlob/gitCommit.';
             } else if (/Reconnecte-toi/i.test(msg)) {
-                msg = 'Session Discord expirée. Reconnecte-toi dans Paramètres.';
+                msg = 'Session Discord expirée. Reconnecte-toi dans Paramètres → Profil Discord.';
             } else if (/GITHUB_/i.test(msg)) {
-                msg = 'Secrets GitHub manquants côté Worker (GITHUB_TOKEN, GITHUB_REPO…).';
+                msg = 'Secrets GitHub manquants côté Worker. Ajoute GITHUB_TOKEN (PAT scope repo) et GITHUB_REPO (BloxNewsFr/BloxNews-FR) dans Settings → Variables.';
             } else if (/UPLOAD_SESSIONS/i.test(msg)) {
-                msg = 'Binding KV UPLOAD_SESSIONS manquant dans le Worker Cloudflare.';
+                msg = 'Binding KV UPLOAD_SESSIONS manquant. Crée un KV namespace puis lie-le dans le Worker (Settings → Bindings → KV Namespace → UPLOAD_SESSIONS).';
+            } else if (/401|403/i.test(String(res.status))) {
+                msg = 'Accès refusé (' + res.status + '). Vérifie ton login Discord.';
             }
             throw new Error(msg);
         }
@@ -1314,51 +1315,41 @@ ${body}
                 btn.disabled = true;
                 const payload = await buildPayload(form);
 
-                let result = null;
-                try {
-                    // Envoi fractionné : gitBase → gitBlob (ou chunked) → gitCommit
-                    setStatus('Récupération de la base Git…');
-                    const base = await callUpdateRelay('gitBase', {});
-                    const entries = [];
-                    let i = 0;
-                    const CHUNK_LIMIT = 80000;
-                    for (const file of payload.files) {
-                        i++;
-                        setStatus(`Envoi ${i}/${payload.files.length} : ${file.path}…`);
-                        if (file.content.length <= CHUNK_LIMIT) {
-                            const res = await callUpdateRelay('gitBlob', { file });
-                            entries.push({ path: file.path, sha: res.sha });
-                        } else {
-                            const start = await callUpdateRelay('gitBlobStart', { path: file.path, encoding: file.encoding });
-                            const content = file.content;
-                            for (let off = 0; off < content.length; off += CHUNK_LIMIT) {
-                                const chunk = content.slice(off, off + CHUNK_LIMIT);
-                                await callUpdateRelay('gitBlobChunk', { uploadId: start.uploadId, chunk });
-                            }
-                            const fin = await callUpdateRelay('gitBlobFinish', { uploadId: start.uploadId });
-                            entries.push({ path: file.path, sha: fin.sha });
+                // Envoi fractionné : gitBase → gitBlob (ou chunked) → gitCommit
+                // Chaque requête reste sous 80 Ko (limite free plan Cloudflare)
+                setStatus('Récupération de la base Git…');
+                const base = await callUpdateRelay('gitBase', {});
+                const entries = [];
+                let i = 0;
+                const CHUNK_LIMIT = 70000;
+                for (const file of payload.files) {
+                    i++;
+                    setStatus(`Envoi ${i}/${payload.files.length} : ${file.path}…`);
+                    if (file.content.length <= CHUNK_LIMIT) {
+                        const res = await callUpdateRelay('gitBlob', { file });
+                        entries.push({ path: file.path, sha: res.sha });
+                    } else {
+                        const start = await callUpdateRelay('gitBlobStart', { path: file.path, encoding: file.encoding });
+                        const content = file.content;
+                        for (let off = 0; off < content.length; off += CHUNK_LIMIT) {
+                            const chunk = content.slice(off, off + CHUNK_LIMIT);
+                            await callUpdateRelay('gitBlobChunk', { uploadId: start.uploadId, chunk });
                         }
+                        const fin = await callUpdateRelay('gitBlobFinish', { uploadId: start.uploadId });
+                        entries.push({ path: file.path, sha: fin.sha });
                     }
-                    setStatus('Création du commit…');
-                    result = await callUpdateRelay('gitCommit', {
-                        baseCommitSha: base.baseCommitSha,
-                        baseTreeSha: base.baseTreeSha,
-                        entries,
-                        message: payload.theme
-                            ? `bulletin: publie #${payload.num} (theme ${payload.theme})`
-                            : `bulletin: publie #${payload.num}`,
-                        num: payload.num,
-                        theme: payload.theme
-                    });
-                } catch (chunkErr) {
-                    // Fallback : ancienne méthode createBulletin (tout en un)
-                    setStatus('Méthode alternative…');
-                    result = await callUpdateRelay('createBulletin', {
-                        num: payload.num,
-                        theme: payload.theme,
-                        files: payload.files
-                    });
                 }
+                setStatus('Création du commit…');
+                const result = await callUpdateRelay('gitCommit', {
+                    baseCommitSha: base.baseCommitSha,
+                    baseTreeSha: base.baseTreeSha,
+                    entries,
+                    message: payload.theme
+                        ? `bulletin: publie #${payload.num} (theme ${payload.theme})`
+                        : `bulletin: publie #${payload.num}`,
+                    num: payload.num,
+                    theme: payload.theme
+                });
 
                 setStatus(`✅ Bulletin #${payload.num} publié ! ` + (result.commit ? `(commit ${result.commit.slice(0, 7)})` : ''), 'ok');
                 if (result.commit) {
