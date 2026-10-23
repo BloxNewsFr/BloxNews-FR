@@ -669,7 +669,7 @@ ${body}
             } else if (/Reconnecte-toi/i.test(msg)) {
                 msg = 'Session Discord expirée. Reconnecte-toi dans Paramètres → Profil Discord.';
             } else if (/GITHUB_/i.test(msg)) {
-                msg = 'Secrets GitHub manquants côté Worker. Ajoute GITHUB_TOKEN (PAT scope repo) et GITHUB_REPO (BloxNewsFr/BloxNews-FR) dans Settings → Variables.';
+                msg = msg + ' — (diagnostic complet dans la console du navigateur)';
             } else if (/401|403/i.test(String(res.status))) {
                 msg = 'Accès refusé (' + res.status + '). Vérifie ton login Discord.';
             }
@@ -1316,6 +1316,17 @@ ${body}
                 // Envoi par fichier : gitBase → gitBlob×N → gitCommit
                 // (la limite réelle des Workers Cloudflare est de 100 Mo,
                 //  on évite juste une seule requête géante)
+                setStatus('Vérification de la configuration GitHub…');
+                let check = null;
+                try { check = await callUpdateRelay('gitCheck', {}); } catch (e) { /* ignore */ }
+                if (check && typeof check.hasToken === 'boolean') {
+                    console.log('[BulletinCreator] gitCheck', check);
+                    if (!check.hasToken) throw new Error('GITHUB_TOKEN absent du Worker. Ajoute-le dans Cloudflare → Worker → Settings → Variables and Secrets, puis redéploie.');
+                    if (!check.repoValid) throw new Error('GITHUB_REPO invalide : "' + check.repo + '". Valeur attendue : BloxNewsFr/BloxNews-FR.');
+                    if (check.authTest && !check.authTest.ok) {
+                        throw new Error('GitHub refuse le token (' + check.authTest.status + ' : ' + (check.authTest.message || '?') + '). Vérifie que le token a le scope repo (classic) ou Contents: Read and write (fine-grained).');
+                    }
+                }
                 setStatus('Récupération de la base Git…');
                 const base = await callUpdateRelay('gitBase', {});
                 const entries = [];

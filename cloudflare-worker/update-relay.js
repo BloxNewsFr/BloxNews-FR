@@ -112,8 +112,12 @@ async function handleAdminAction(env, input, idToken) {
 }
 
 function githubHeaders(env) {
+  const token = String(env.GITHUB_TOKEN || '')
+    .trim()
+    .replace(/^Bearer\s+/i, '')
+    .replace(/^["']|["']$/g, '');
   return {
-    Authorization: `Bearer ${env.GITHUB_TOKEN}`,
+    Authorization: `Bearer ${token}`,
     Accept: 'application/vnd.github+json',
     'X-GitHub-Api-Version': '2022-11-28',
     'User-Agent': 'bloxnews-relay',
@@ -127,7 +131,21 @@ async function githubApi(env, path, options = {}) {
   });
   const result = await response.json().catch(() => null);
   if (!response.ok) {
-    throw new Error(result?.message || `GitHub a refusé l'opération (${response.status}).`);
+    const status = response.status;
+    if (status === 404) {
+      throw new Error(
+        `GitHub 404 sur ${path}. Vérifie : GITHUB_REPO="${env.GITHUB_REPO || '(vide)'}", ` +
+        `branche="${env.GITHUB_BRANCH || 'main'}", et que le token a bien accès à ce dépôt ` +
+        `(token fine-grained : Repository access = ce repo + Contents: Read and write).`
+      );
+    }
+    if (status === 401) {
+      throw new Error('GitHub 401 : GITHUB_TOKEN invalide ou expiré. Régénère-le.');
+    }
+    if (status === 403) {
+      throw new Error(`GitHub 403 : le token n'a pas la permission d'écrire (Contents: Read and write).`);
+    }
+    throw new Error(result?.message || `GitHub a refusé l'opération (${status}).`);
   }
   return result;
 }
@@ -171,9 +189,9 @@ function validateBulletinFiles(input) {
 
 async function createBulletinOnGitHub(env, payload) {
   const { files, theme } = payload;
-  const branch = env.GITHUB_BRANCH || 'main';
+  const branch = (env.GITHUB_BRANCH || 'main').trim();
 
-  const repo = env.GITHUB_REPO;
+  const repo = (env.GITHUB_REPO || '').trim();
   if (!repo || !/^[\w.-]+\/[\w.-]+$/.test(repo)) throw new Error('GITHUB_REPO manquant ou invalide.');
   if (!env.GITHUB_TOKEN) throw new Error('GITHUB_TOKEN manquant.');
 
@@ -225,8 +243,8 @@ async function createBulletinOnGitHub(env, payload) {
 }
 
 async function deleteBulletinOnGitHub(env, num) {
-  const branch = env.GITHUB_BRANCH || 'main';
-  const repo = env.GITHUB_REPO;
+  const branch = (env.GITHUB_BRANCH || 'main').trim();
+  const repo = (env.GITHUB_REPO || '').trim();
   if (!repo || !/^[\w.-]+\/[\w.-]+$/.test(repo)) throw new Error('GITHUB_REPO manquant ou invalide.');
   if (!env.GITHUB_TOKEN) throw new Error('GITHUB_TOKEN manquant.');
 
@@ -297,7 +315,7 @@ export default {
 
       const updateActions = new Set(['create', 'editField', 'delete']);
       const adminActions = new Set(['saveContentEdits', 'resetContentEdits', 'createCard', 'deleteCard', 'deleteStaticCard']);
-      const gitActions = new Set(['createBulletin', 'deleteBulletin', 'gitBase', 'gitBlob', 'gitCommit']);
+      const gitActions = new Set(['createBulletin', 'deleteBulletin', 'gitBase', 'gitBlob', 'gitCommit', 'gitCheck']);
       if (!updateActions.has(input.action) && !adminActions.has(input.action) && !gitActions.has(input.action)) {
         return json({ error: 'Action inconnue.' }, 400);
       }
@@ -323,11 +341,40 @@ export default {
           const result = await deleteBulletinOnGitHub(env, num);
           return json({ ok: true, commit: result.commit, num });
         }
+        if (input.action === 'gitCheck') {
+          const repo = (env.GITHUB_REPO || '').trim();
+          const branch = (env.GITHUB_BRANCH || 'main').trim();
+          const token = String(env.GITHUB_TOKEN || '').trim();
+          const result = {
+            ok: true,
+            hasToken: token.length > 0,
+            tokenLength: token.length,
+            tokenPrefix: token ? token.slice(0, 4) : '',
+            repo: repo || '(vide)',
+            branch,
+            repoValid: /^[\w.-]+\/[\w.-]+$/.test(repo),
+            deletePasswordSet: !!env.DELETE_PASSWORD,
+            authTest: null,
+          };
+          if (token && result.repoValid) {
+            try {
+              const res = await fetch(`https://api.github.com/repos/${repo}`, { headers: githubHeaders(env) });
+              result.authTest = { status: res.status, ok: res.ok };
+              if (!res.ok) {
+                const body = await res.json().catch(() => null);
+                result.authTest.message = body?.message || null;
+              }
+            } catch (e) {
+              result.authTest = { error: e.message };
+            }
+          }
+          return json(result);
+        }
         if (input.action === 'gitBase') {
           // Étape 1 : récupère le SHA de base de la branche
-          const branch = env.GITHUB_BRANCH || 'main';
-          const repo = env.GITHUB_REPO;
-          if (!repo || !/^[\w.-]+\/[\w.-]+$/.test(repo)) throw new Error('GITHUB_REPO manquant ou invalide.');
+          const branch = (env.GITHUB_BRANCH || 'main').trim();
+          const repo = (env.GITHUB_REPO || '').trim();
+          if (!repo || !/^[\w.-]+\/[\w.-]+$/.test(repo)) throw new Error('GITHUB_REPO manquant ou invalide : "' + repo + '".');
           if (!env.GITHUB_TOKEN) throw new Error('GITHUB_TOKEN manquant.');
           const ref = await githubApi(env, `/repos/${repo}/git/ref/heads/${encodeURIComponent(branch)}`);
           const baseCommit = await githubApi(env, `/repos/${repo}/git/commits/${ref.object.sha}`);
@@ -348,7 +395,7 @@ export default {
           }
           const isDataUrl = file.encoding === 'base64-dataurl';
           const content = isDataUrl ? file.content.replace(/^data:[^,]*,/, '') : file.content;
-          const repo = env.GITHUB_REPO;
+          const repo = (env.GITHUB_REPO || '').trim();
           const blob = await githubApi(env, `/repos/${repo}/git/blobs`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -362,8 +409,8 @@ export default {
           if (!baseCommitSha || !baseTreeSha || !Array.isArray(entries) || !entries.length) {
             throw new Error('Données de commit incomplètes.');
           }
-          const repo = env.GITHUB_REPO;
-          const branch = env.GITHUB_BRANCH || 'main';
+          const repo = (env.GITHUB_REPO || '').trim();
+          const branch = (env.GITHUB_BRANCH || 'main').trim();
           const treeEntries = entries.map(e => ({
             path: String(e.path).replace(/^\/+/, ''),
             mode: '100644',
