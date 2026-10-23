@@ -8,7 +8,7 @@
     }
 
     ready(function () {
-        const root = document.querySelector('.bulletin-container');
+        const root = document.querySelector('.bulletin-container') || document.querySelector('main.main-content');
         if (!root) return;
 
         const images = Array.from(root.querySelectorAll('img')).filter((img) => {

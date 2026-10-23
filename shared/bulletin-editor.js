@@ -13,7 +13,7 @@
     const RELAY_URL = 'https://blox-update-relay.c9yz5m8pw6.workers.dev';
     const DB_URL    = 'https://blox-bulletin-comments-default-rtdb.europe-west1.firebasedatabase.app/content_edits.json';
 
-    const SCOPE = 'main.bulletin-container, .journal-header';
+    const SCOPE = 'main.bulletin-container, main.main-content, .bulletin-container, .journal-header';
     const TEXT_SELS = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'li', '.summary', '.wanted-subtitle', '.section-subtext', '.qa-user', '.qa-answer', '.journal-subtitle', '.byline'];
     const EXCLUDE = '.site-header, .social-share, .bulletin-pagination, .bulletin-comments, .back-button-container, .bulletin-engagement, .search-overlay, .mobile-nav-dropdown, .discord-dropdown, button, input, textarea, select, .logo, script, style';
 
