@@ -4415,7 +4415,11 @@
             display: block; width: 13px; height: 13px;
             border-radius: 3px; border: 1.5px solid rgba(255,255,255,0.3);
         }
-        #fmtHlColorInput { position: fixed; opacity: 0; width: 0; height: 0; pointer-events: none; }
+        #fmtHlColorInput, #fmtTextColorInput {
+            position: fixed; top: 8px; left: 50%; transform: translateX(-50%);
+            width: 1px; height: 1px; padding: 0; border: none; background: none;
+            opacity: 0; pointer-events: none;
+        }
         .fmt-sep {
             width: 1px; height: 16px; background: rgba(255,255,255,0.1);
             margin: 0 4px; flex-shrink: 0;
@@ -13115,8 +13119,8 @@
         }
     })();
     </script>    <!-- Palette de couleurs surlignage — directement dans body pour éviter tout overflow -->
-    <input type="color" id="fmtHlColorInput" value="#ffd000" style="display:none">
-    <input type="color" id="fmtTextColorInput" value="#ff5252" style="display:none">
+    <input type="color" id="fmtHlColorInput" value="#ffd000">
+    <input type="color" id="fmtTextColorInput" value="#ff5252">
 
     <!-- ═══════════════════════════════════════════════
          PANNEAU PARAMÈTRES

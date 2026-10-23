@@ -169,6 +169,19 @@
                     el.dataset.beEditable = '1';
                 });
             });
+            // Passe générique : tout élément avec du texte direct (divs custom
+            // comme .blue-banner, .wanted-text, .journal-meta…) sauf s'il est
+            // déjà couvert par un parent taggé.
+            scope.querySelectorAll('*').forEach(el => {
+                if (el.dataset.beEditable || _isExcluded(el)) return;
+                const hasDirectText = [...el.childNodes].some(
+                    n => n.nodeType === 3 && n.textContent.trim().length > 0
+                );
+                if (!hasDirectText) return;
+                if (el.closest('[data-be-editable]')) return;
+                el.dataset.bePath = el.dataset.bePath || _getEditPath(el);
+                el.dataset.beEditable = '1';
+            });
             scope.querySelectorAll('img').forEach(img => {
                 if (img.dataset.beEditable === 'img' || _isExcluded(img)) return;
                 img.dataset.bePath = img.dataset.bePath || _getEditPath(img);
@@ -445,7 +458,11 @@
             .be-fmt button:hover { background: rgba(255,255,255,0.16); }
             .be-fmt .be-dot { width: 13px; height: 13px; border-radius: 50%; display: inline-block; border: 1px solid rgba(255,255,255,0.3); }
             .be-fmt .be-fmt--hl { width: auto; padding: 0 7px; display: inline-flex; align-items: center; gap: 5px; }
-            .be-fmt input[type="color"] { position: absolute; opacity: 0; pointer-events: none; width: 0; height: 0; }
+            .be-fmt input[type="color"] {
+                position: absolute; top: 0; left: 0;
+                width: 1px; height: 1px; padding: 0; border: none; background: none;
+                opacity: 0; pointer-events: none;
+            }
             .be-fmt .be-hint { font-size: 9px; color: rgba(255,255,255,0.3); margin-left: auto; }
             .be-actions { display: flex; gap: 6px; margin-top: 8px; justify-content: flex-end; }
             .be-btn {
