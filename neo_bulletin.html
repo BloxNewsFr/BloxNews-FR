@@ -4495,6 +4495,11 @@
             outline: 2px dashed rgba(255,218,0,0.75); outline-offset: 2px; cursor: pointer;
         }
         body.edit-mode img[data-editable="img"]:hover { outline-color: #ff1a1a; }
+        /* En mode édition, les overlays de wrapper ne doivent pas intercepter le clic image */
+        body.edit-mode .news-card__image-wrapper::after,
+        body.edit-mode .group-card__image-wrapper::after,
+        body.edit-mode .news-card__image-wrapper::before,
+        body.edit-mode .group-card__image-wrapper::before { pointer-events: none; }
 
         /* ══ COMMENTAIRES AMÉLIORÉS — réactions emoji ══ */
         .comment-reactions {
@@ -10587,6 +10592,24 @@
         });
     }
 
+    // Réapplique les éditions d'image en ignorant le cache
+    // (les re-rendus Firebase écrasent le src des images)
+    function _reapplyImageEdits() {
+        const edits = loadEdits();
+        const cache = _appliedEditsCache || (_appliedEditsCache = {});
+        Object.entries(edits).forEach(([path, text]) => {
+            if (!path.startsWith(IMG_EDIT_PREFIX)) return;
+            try {
+                const sel = path.slice(IMG_EDIT_PREFIX.length).replace(/:nth\((\d+)\)/g, ':nth-child($1)');
+                const el = document.querySelector(sel);
+                if (el && el.tagName === 'IMG' && text) {
+                    if (el.getAttribute('src') !== text) el.src = text;
+                    cache[path] = text;
+                }
+            } catch(e) {}
+        });
+    }
+
     function tagEditables(root) {
         const scope = root || document;
         EDITABLE_SELS.forEach(sel => {
@@ -10663,16 +10686,18 @@
         log.scrollTop = log.scrollHeight;
     }
 
+    // Capture phase : intercepter AVANT les onclick inline des cards (drawer/modal)
     document.addEventListener('click', e => {
         if (!_editMode) return;
         if (e.target.closest('#editInlinePopup') || e.target.closest('#editImgPopup') || e.target.closest('#editModePanel')) return;
         const el = e.target.closest('[data-editable]');
         if (!el) return;
         e.preventDefault();
+        e.stopPropagation();
         e.stopImmediatePropagation();
         if (el.dataset.editable === 'img') openEditImgPopup(el, e.clientX, e.clientY);
         else openEditInline(el, e.clientX, e.clientY);
-    });
+    }, true);
 
     let _editEl = null;
     function openEditInline(el, x, y) {
@@ -12642,6 +12667,8 @@
                     // Synchroniser les group-cards avec les cards Firebase
                     _syncGroupCards(fbCards);
                     _injectDateLabels();
+                    // _syncGroupCards peut écraser le src des images éditées → réappliquer
+                    _reapplyImageEdits();
                 }, 120);
             });
         } else {
