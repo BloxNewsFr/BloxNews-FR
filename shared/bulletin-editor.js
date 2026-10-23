@@ -638,9 +638,21 @@
     document.addEventListener('keydown', e => {
         if (!(e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'e')) return;
         const active = document.activeElement;
-        if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA') && !active.closest('.be-popup')) return;
+        if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA')) {
+            // Dans le popup texte → surlignage (comme neo_bulletin)
+            if (active.id === 'beTextarea') {
+                e.preventDefault();
+                if (!_savedSel) _savedSel = { start: active.selectionStart, end: active.selectionEnd };
+                document.getElementById('beHlColorInput').click();
+                return;
+            }
+            if (active.closest('.be-popup')) return;
+            // Ne pas voler le raccourci si l'overlay de recherche est réellement ouvert
+            const overlay = active.closest('.search-overlay');
+            if (overlay && overlay.classList.contains('is-active')) return;
+        }
         e.preventDefault();
-        try { _toggleMode(); } catch (err) { console.error('[be] toggle error', err); }
+        _toggleMode();
     });
 
     // ── Init ────────────────────────────────────────────────────
