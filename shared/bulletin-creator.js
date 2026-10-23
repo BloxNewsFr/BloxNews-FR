@@ -616,19 +616,53 @@ ${body}
     }
 
     function patchIndexHtml(src, entry) {
-        if (!entry) return src;
-        const re = /(const\s+specialCards\s*=\s*\{)/;
-        if (!re.test(src)) return src;
-        return src.replace(re, '$1\n            ' + entry);
+        let out = src;
+        // Carte spéciale (objet specialCards)
+        if (entry) {
+            const re = /(const\s+specialCards\s*=\s*\{)/;
+            if (re.test(out)) out = out.replace(re, '$1\n            ' + entry);
+        }
+        return out;
     }
 
-    function patchArchivesHtml(src, num, dateIso) {
+    /* Insère une ligne à la FIN d'un tableau `const X = [ ... ];` */
+    function _appendToArray(src, constName, line) {
+        const startRe = new RegExp(`const\\s+${constName}\\s*=\\s*\\[`);
+        const m = startRe.exec(src);
+        if (!m) return src;
+        const startIdx = m.index + m[0].length;
+        const endIdx = src.indexOf('];', startIdx);
+        if (endIdx === -1) return src;
+        return src.slice(0, endIdx) + `            ${line}\n        ` + src.slice(endIdx);
+    }
+
+    /* Ajoute une clé à la FIN d'un objet `const X = { ... };` sur une seule ligne */
+    function _appendToObject(src, constName, keyValue) {
+        const startRe = new RegExp(`const\\s+${constName}\\s*=\\s*\\{`);
+        const m = startRe.exec(src);
+        if (!m) return src;
+        const startIdx = m.index + m[0].length;
+        const endIdx = src.indexOf('};', startIdx);
+        if (endIdx === -1) return src;
+        const before = src.slice(0, endIdx).replace(/[\s,]*$/, '');
+        return before + keyValue + '\n        ' + src.slice(endIdx);
+    }
+
+    function _addToSpecialNums(src, num) {
         const n = fmtNum(num);
-        if (src.includes(`"${n}"`)) return src;
-        const re = /(const\s+bulletins\s*=\s*\[)/;
-        if (!re.test(src)) return src;
-        const line = `\n            { num: "${n}", img: "./${n}/img/hero.jpg", href: "./${n}/bulletin-${n}.html", date: "${dateIso}" },`;
-        return src.replace(re, '$1' + line);
+        const re = /(const\s+specialNums\s*=\s*new Set\(\[)([^\]]*)(\]\))/;
+        if (!re.test(src) || new RegExp(`"${n}"`).test(src.match(re)[2])) return src;
+        return src.replace(re, (m, a, list, c) => `${a}${list}${list.trim() ? ',' : ''}"${n}"${c}`);
+    }
+
+    function patchArchivesHtml(src, num, dateIso, theme) {
+        const n = fmtNum(num);
+        if (src.includes(`num: "${n}"`)) return src;
+        let out = _appendToArray(src, 'bulletins',
+            `{ num: "${n}", img: "./${n}/img/hero.jpg", href: "./${n}/bulletin-${n}.html", date: "${dateIso}" },`);
+        out = _appendToObject(out, 'bulletinDates', `,"${n}":"${dateIso}"`);
+        if (theme) out = _addToSpecialNums(out, n);
+        return out;
     }
 
     function patchSourcesJson(src, num) {
@@ -790,15 +824,16 @@ ${body}
         const entry = specialCardEntry(n, form.theme);
         if (indexSrc) {
             let patched = patchIndexHtml(indexSrc, entry);
-            const cardRe = new RegExp('(const\\s+bulletins\\s*=\\s*\\[)');
-            if (cardRe.test(patched)) {
-                patched = patched.replace(cardRe,
-                    `$1\n            { num: "${num}", img: "${heroCardImg || './' + num + '/img/hero.jpg'}", href: "./${num}/bulletin-${num}.html", date: "${dateIso}" },`);
+            // Les bulletins sont stockés du plus ancien au plus récent :
+            // on ajoute à la FIN (l'affichage inverse l'ordre).
+            if (!patched.includes(`num: "${num}"`)) {
+                patched = _appendToArray(patched, 'bulletins',
+                    `{ num: "${num}", img: "${heroCardImg || './' + num + '/img/hero.jpg'}", href: "./${num}/bulletin-${num}.html", date: "${dateIso}" },`);
             }
             files.push({ path: 'index.html', content: patched, encoding: 'utf-8', overwrite: true });
         }
         if (archivesSrc) {
-            files.push({ path: 'archives.html', content: patchArchivesHtml(archivesSrc, n, dateIso), encoding: 'utf-8', overwrite: true });
+            files.push({ path: 'archives.html', content: patchArchivesHtml(archivesSrc, n, dateIso, form.theme), encoding: 'utf-8', overwrite: true });
         }
         if (sourcesSrc) {
             files.push({ path: 'sources.json', content: patchSourcesJson(sourcesSrc, n), encoding: 'utf-8', overwrite: true });
