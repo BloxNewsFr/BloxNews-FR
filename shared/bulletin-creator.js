@@ -655,11 +655,12 @@ ${body}
         return src.replace(re, (m, a, list, c) => `${a}${list}${list.trim() ? ',' : ''}"${n}"${c}`);
     }
 
-    function patchArchivesHtml(src, num, dateIso, theme) {
+    function patchArchivesHtml(src, num, dateIso, theme, imgPath) {
         const n = fmtNum(num);
         if (src.includes(`num: "${n}"`)) return src;
+        const img = imgPath || `./${n}/img/hero.jpg`;
         let out = _appendToArray(src, 'bulletins',
-            `{ num: "${n}", img: "./${n}/img/hero.jpg", href: "./${n}/bulletin-${n}.html", date: "${dateIso}" },`);
+            `{ num: "${n}", img: "${img}", href: "./${n}/bulletin-${n}.html", date: "${dateIso}" },`);
         out = _appendToObject(out, 'bulletinDates', `,"${n}":"${dateIso}"`);
         if (theme) out = _addToSpecialNums(out, n);
         return out;
@@ -817,6 +818,7 @@ ${body}
             totalChars += dataUrl.length;
             files.push({ path: img.dest, content: dataUrl, encoding: 'base64-dataurl' });
             if (img.key === 'hero') heroCardImg = './' + img.dest;
+            if (!heroCardImg) heroCardImg = './' + img.dest;
         }
         if (totalChars > 1_900_000) {
             throw new Error('Trop d\'images pour une seule publication (' + Math.round(totalChars / 1024) + ' Ko). Réduis le nombre ou la taille des images.');
@@ -841,7 +843,7 @@ ${body}
             files.push({ path: 'index.html', content: patched, encoding: 'utf-8', overwrite: true });
         }
         if (archivesSrc) {
-            files.push({ path: 'archives.html', content: patchArchivesHtml(archivesSrc, n, dateIso, form.theme), encoding: 'utf-8', overwrite: true });
+            files.push({ path: 'archives.html', content: patchArchivesHtml(archivesSrc, n, dateIso, form.theme, heroCardImg), encoding: 'utf-8', overwrite: true });
         }
         if (sourcesSrc) {
             files.push({ path: 'sources.json', content: patchSourcesJson(sourcesSrc, n), encoding: 'utf-8', overwrite: true });

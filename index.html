@@ -2364,7 +2364,7 @@
             { num: "024", img: "./024/img/ItsHere.png",            href: "./024/bulletin-024.html", date: "2026-07-31" },
             { num: "PVP 1", img: "./pvp1/img/PvpChanges.png",        href: "./pvp1/bulletin-pvp1.html", date: "2026-08-07" },
             { num: "025", img: "./025/img/HalloweenBanner.png",      href: "./025/bulletin-025.html", date: "2026-10-18" },
-            { num: "026", img: "./026/img/hero.jpg", href: "./026/bulletin-026.html", date: "2026-10-23" },
+            { num: "026", img: "./026/img/wanted.jpg", href: "./026/bulletin-026.html", date: "2026-10-23" },
         ];
         let NEW_DAYS = parseInt(localStorage.getItem('bloxnews_new_days') || '7', 10); // Badge "Nouveau" visible pendant N jours après publication
         function isRecentBulletin(b) {
@@ -2957,7 +2957,7 @@
                     return `<article class="news-card ${special.className || ""}" id="bulletin-${b.num}" onclick="_statsTrackBulletinView('${b.num}');window.location='${b.href}'">
                         ${deco}
                         <div class="news-card__image-wrapper">
-                            <img src="${b.img}" class="news-card__image" alt="Bulletin #${b.num}" loading="lazy" decoding="async">
+                            <img src="${b.img}" class="news-card__image" alt="Bulletin #${b.num}" loading="lazy" onerror="this.style.display='none'" decoding="async">
                             <div class="news-card__badge">${special.badge || `#${b.num}`}</div>
                             ${statusLabel ? `<div class="news-card__new">${statusLabel}</div>` : ""}
                         </div>

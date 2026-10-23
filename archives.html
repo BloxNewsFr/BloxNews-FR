@@ -471,7 +471,7 @@
             { num: "024", img: "./024/img/ItsHere.png",            href: "./024/bulletin-024.html" },
             { num: "025", img: "./025/img/HalloweenBanner.png",   href: "./025/bulletin-025.html" },
             { num: "PVP 1", img: "./pvp1/img/PvpChanges.png",     href: "./pvp1/bulletin-pvp1.html" },
-            { num: "026", img: "./026/img/hero.jpg", href: "./026/bulletin-026.html", date: "2026-10-23" },
+            { num: "026", img: "./026/img/wanted.jpg", href: "./026/bulletin-026.html", date: "2026-10-23" },
         ];
         const bulletinDates = {
             "001":"2025-03-20","002":"2025-03-27","003":"2025-04-03","004":"2025-04-10","005":"2025-05-09","006":"2025-05-15","007":"2025-05-23","008":"2025-05-30","009":"2025-06-05","010":"2025-06-13","011":"2025-06-20","012":"2025-06-20","013":"2025-07-04","014":"2025-07-11","015":"2025-07-19","016":"2025-07-25","017":"2025-10-16","018":"2025-12-01","019":"2026-02-08","020":"2026-07-02","021":"2026-07-09","022":"2026-07-17","023":"2026-07-23","024":"2026-07-31","025":"2026-10-18","PVP 1":"2026-08-07","026":"2026-10-23"
@@ -521,7 +521,7 @@
                 const entries = list.filter(b => b.year === year).sort((a,b) => b.date.localeCompare(a.date));
                 return `<section class="archive-year"><h2 class="archive-year__heading">${year}<span style="font:600 11px Inter,sans-serif;opacity:.55">${entries.length} édition${entries.length !== 1 ? 's' : ''}</span></h2><div class="archive-year__grid">${entries.map(b => `
                     <a class="archive-card" href="${b.href}" data-search="${b.num.toLowerCase()} ${b.year} ${b.type}">
-                        <div class="archive-card__img-wrap"><img src="${b.img}" alt="Bulletin #${b.num}" loading="lazy" decoding="async"></div>
+                        <div class="archive-card__img-wrap"><img src="${b.img}" alt="Bulletin #${b.num}" loading="lazy" onerror="this.style.display='none'" decoding="async"></div>
                         <div class="archive-card__num">#${b.num}</div>
                         <div class="archive-card__meta"><span class="archive-card__year">${new Date(`${b.date}T12:00:00`).toLocaleDateString('fr-FR',{day:'numeric',month:'short'})}</span><span class="archive-card__type">${b.type === 'pvp' ? 'PvP' : b.type === 'special' ? 'Spécial' : 'Bulletin'}</span></div>
                     </a>`).join('')}</div></section>`;
