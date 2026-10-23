@@ -127,8 +127,8 @@
             ? `\n    <link rel="stylesheet" href="../shared/bulletin-theme-${opts.theme}.css">`
             : '';
         const fonts = opts.theme === 'halloween'
-            ? 'family=Luckiest+Guy&family=Inter:wght@300;400;500;600;700;900&family=Creepster'
-            : 'family=Luckiest+Guy&family=Inter:wght@300;400;500;600;700;900';
+            ? 'Luckiest+Guy&family=Inter:wght@300;400;500;600;700;900&family=Creepster'
+            : 'Luckiest+Guy&family=Inter:wght@300;400;500;600;700;900';
         const heroSrc = opts.hero ? esc(opts.hero) : '../shared/background.png';
         const ogImage = opts.hero && opts.hero.startsWith('data:')
             ? `https://bloxnewsfr.github.io/BloxNews-FR/${n}/img/hero.jpg`
