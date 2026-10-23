@@ -12,7 +12,8 @@ Ce Worker est le relais gratuit entre le site et Firebase. Il vérifie l’ident
    - `GITHUB_REPO` : `BloxNewsFr/BloxNews-FR`
    - `GITHUB_BRANCH` (optionnel) : `main` par défaut
    Le Worker crée blobs + tree + commit via l’API Git Data de GitHub et met à jour la branche. Seuls les chemins `NNN/…`, `index.html`, `archives.html` et `sources.json` sont acceptés.
-5. Le Worker est déployé à `https://blox-update-relay.c9yz5m8pw6.workers.dev`; cette adresse est déjà renseignée dans `UPDATE_RELAY_ENDPOINT` de `neo_bulletin.html` et dans `shared/bulletin-creator.js`. Publie le site après la configuration.
+5. Pour l’action `deleteBulletin` (suppression d’un bulletin), ajoute aussi le secret `DELETE_PASSWORD` : le mot de passe demandé dans l’UI de suppression. Sans ce secret, la suppression est refusée.
+6. Le Worker est déployé à `https://blox-update-relay.c9yz5m8pw6.workers.dev`; cette adresse est déjà renseignée dans `UPDATE_RELAY_ENDPOINT` de `neo_bulletin.html` et dans `shared/bulletin-creator.js`. Publie le site après la configuration.
 6. Dans les règles Realtime Database, réserve les écritures des branches protégées à l’UID Firebase du compte technique. Remplace les branches `updates`, `content_edits`, `custom_cards` et `deleted_static_ids` par celles-ci, en remplaçant la valeur par cet UID :
 
 ```json
