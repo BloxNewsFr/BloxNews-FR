@@ -3,7 +3,7 @@ const ADMIN_DISCORD_IDS = new Set([
   '775096691240992798',  // neolixx
 ]);
 
-const MAX_REQUEST_BYTES = 2_000_000;
+const MAX_REQUEST_BYTES = 3_500_000;
 const GITHUB_ALLOWED_PREFIXES = [
   /^\/?\d{3}\//,
   /^\/?index\.html$/,
@@ -230,11 +230,18 @@ export default {
 
     let input;
     try {
+      // Content-Length peut être absent (chunked) : on valide aussi après parse
       if (Number(request.headers.get('Content-Length') || 0) > MAX_REQUEST_BYTES) return json({ error: 'Requête trop volumineuse.' }, 413);
       input = await request.json();
     } catch {
       return json({ error: 'Requête JSON invalide.' }, 400);
     }
+
+    // validation taille post-parse (Content-Length absent ou mensonger)
+    try {
+      const raw = JSON.stringify(input);
+      if (raw.length > MAX_REQUEST_BYTES) return json({ error: 'Requête trop volumineuse.' }, 413);
+    } catch { /* ignore */ }
 
     const discordToken = input?.discordAccessToken;
     if (typeof discordToken !== 'string' || discordToken.length < 10 || discordToken.length > 4096) {

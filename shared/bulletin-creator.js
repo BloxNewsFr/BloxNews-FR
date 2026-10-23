@@ -107,7 +107,6 @@
                         reject(new Error('Image trop lourde même compressée — essaie une image plus petite.'));
                         return;
                     }
-                    const w = parseInt(out.match(/,(\d+)x(\d+);/)?.[1] || '0', 10);
                     resolve({ dataUrl: out, bytes: Math.round(out.length * 0.75) });
                 };
                 img.src = reader.result;
@@ -728,27 +727,30 @@ ${body}
         ];
 
         const images = [
-            { key: 'hero', file: form.heroFile, dest: `${num}/img/hero.jpg`, maxDim: 1600, quality: 0.82 },
-            { key: 'wanted', file: form.wanted && form.wanted.file, dest: `${num}/img/wanted.jpg`, maxDim: 1400, quality: 0.8 },
-            { key: 'side', file: form.side && form.side.file, dest: `${num}/img/side.jpg`, maxDim: 1200, quality: 0.8 },
-            { key: 'box', file: form.box && form.box.file, dest: `${num}/img/box.jpg`, maxDim: 1200, quality: 0.8 }
+            { key: 'hero', file: form.heroFile, dest: `${num}/img/hero.jpg`, maxDim: 1280, quality: 0.72 },
+            { key: 'wanted', file: form.wanted && form.wanted.file, dest: `${num}/img/wanted.jpg`, maxDim: 1100, quality: 0.7 },
+            { key: 'side', file: form.side && form.side.file, dest: `${num}/img/side.jpg`, maxDim: 900, quality: 0.68 },
+            { key: 'box', file: form.box && form.box.file, dest: `${num}/img/box.jpg`, maxDim: 900, quality: 0.68 }
         ];
+        (form.articles || []).forEach((a, i) => {
+            if (a && a.file) {
+                images.push({ key: 'art' + i, file: a.file, dest: `${num}/img/article-${i + 1}.jpg`, maxDim: 900, quality: 0.68 });
+            }
+        });
         let heroCardImg = null;
+        let totalChars = html.length + css.length;
         for (const img of images) {
             if (!img.file) continue;
-            const { dataUrl } = await compressImage(img.file, img.maxDim, img.quality);
+            // budget restant pour rester sous la limite worker (~1,6 Mo utiles)
+            const remaining = 1_600_000 - totalChars;
+            const maxChars = Math.max(70000, Math.min(130000, Math.floor(remaining / Math.max(1, images.filter(x => x.file).length - images.indexOf(img)))));
+            const { dataUrl } = await compressImage(img.file, img.maxDim, img.quality, maxChars);
+            totalChars += dataUrl.length;
             files.push({ path: img.dest, content: dataUrl, encoding: 'base64-dataurl' });
             if (img.key === 'hero') heroCardImg = './' + img.dest;
         }
-        (form.articles || []).forEach((a, i) => {
-            if (a && a.file) {
-                images.push({ key: 'art' + i, file: a.file, dest: `${num}/img/article-${i + 1}.jpg`, maxDim: 1200, quality: 0.8 });
-            }
-        });
-        for (const img of images) {
-            if (!img.file || img.key === 'hero' || img.key === 'wanted' || img.key === 'side' || img.key === 'box') continue;
-            const { dataUrl } = await compressImage(img.file, img.maxDim, img.quality);
-            files.push({ path: img.dest, content: dataUrl, encoding: 'base64-dataurl' });
+        if (totalChars > 1_900_000) {
+            throw new Error('Trop d\'images pour une seule publication (' + Math.round(totalChars / 1024) + ' Ko). Réduis le nombre ou la taille des images.');
         }
 
         const [indexSrc, archivesSrc, sourcesSrc, prevSrc] = await Promise.all([
@@ -1132,13 +1134,17 @@ ${body}
         const theme = themeEl ? themeEl.value : null;
         const heroFile = document.getElementById('bcHero').files[0] || null;
         const heroPreview = heroFile ? URL.createObjectURL(heroFile) : null;
-        const articles = [...document.querySelectorAll('.bcx-article')].map(row => ({
-            title: row.querySelector('.bc-art-title').value.trim(),
-            author: row.querySelector('.bc-art-author').value.trim(),
-            body: row.querySelector('.bc-art-body').value,
-            summary: row.querySelector('.bc-art-summary').value.trim(),
-            file: row.querySelector('.bc-art-img').files[0] || null
-        }));
+        const articles = [...document.querySelectorAll('.bcx-article')].map(row => {
+            const file = row.querySelector('.bc-art-img').files[0] || null;
+            return {
+                title: row.querySelector('.bc-art-title').value.trim(),
+                author: row.querySelector('.bc-art-author').value.trim(),
+                body: row.querySelector('.bc-art-body').value,
+                summary: row.querySelector('.bc-art-summary').value.trim(),
+                file,
+                image: file ? URL.createObjectURL(file) : null
+            };
+        });
         const wantedFile = document.getElementById('bcWantedImg').files[0] || null;
         const sideFile = document.getElementById('bcSideImg').files[0] || null;
         const boxFile = document.getElementById('bcBoxImg').files[0] || null;
@@ -1158,7 +1164,7 @@ ${body}
                 author: document.getElementById('bcWantedAuthor').value.trim(),
                 body: document.getElementById('bcWantedBody').value,
                 summary: document.getElementById('bcWantedSummary').value.trim(),
-                image: null,
+                image: wantedFile ? URL.createObjectURL(wantedFile) : null,
                 file: wantedFile
             },
             articles,
@@ -1167,14 +1173,14 @@ ${body}
                 author: document.getElementById('bcSideAuthor').value.trim(),
                 body: document.getElementById('bcSideBody').value,
                 summary: document.getElementById('bcSideSummary').value.trim(),
-                image: null,
+                image: sideFile ? URL.createObjectURL(sideFile) : null,
                 file: sideFile
             },
             box: {
                 title: document.getElementById('bcBoxTitle').value.trim(),
                 body: document.getElementById('bcBoxBody').value,
                 summary: document.getElementById('bcBoxSummary').value.trim(),
-                image: null,
+                image: boxFile ? URL.createObjectURL(boxFile) : null,
                 file: boxFile
             }
         };
