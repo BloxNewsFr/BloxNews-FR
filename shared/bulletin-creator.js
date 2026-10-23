@@ -651,17 +651,21 @@ ${body}
 
     /* ── Form state helpers ── */
     let _defaultCssCache = null;
+    function _sharedBase() {
+        // index.html est à la racine ; les bulletins sont dans NNN/
+        return /\/\d{3}\//.test(location.pathname) ? '../shared/' : './shared/';
+    }
     async function loadDefaultCss() {
         if (_defaultCssCache) return _defaultCssCache;
-        const res = await fetch('../shared/bulletin-default.css');
-        if (!res.ok) throw new Error('CSS par défaut introuvable');
+        const res = await fetch(_sharedBase() + 'bulletin-default.css');
+        if (!res.ok) throw new Error('CSS par défaut introuvable (' + res.status + ')');
         _defaultCssCache = await res.text();
         return _defaultCssCache;
     }
 
     async function loadThemeCss(theme) {
         if (!theme) return '';
-        const res = await fetch('../shared/bulletin-theme-' + theme + '.css');
+        const res = await fetch(_sharedBase() + 'bulletin-theme-' + theme + '.css');
         return res.ok ? res.text() : '';
     }
 

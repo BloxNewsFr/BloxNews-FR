@@ -15,7 +15,8 @@
 
     const SCOPE = 'main.bulletin-container, main.main-content, .bulletin-container, .journal-header';
     const TEXT_SELS = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'li', '.summary', '.wanted-subtitle', '.section-subtext', '.qa-user', '.qa-answer', '.journal-subtitle', '.byline'];
-    const EXCLUDE = '.site-header, .social-share, .bulletin-pagination, .bulletin-comments, .back-button-container, .bulletin-engagement, .search-overlay, .mobile-nav-dropdown, .discord-dropdown, button, input, textarea, select, .logo, script, style';
+    const EXCLUDE = '.site-header, .social-share, .bulletin-pagination, .bulletin-comments, .back-button-container, .bulletin-engagement, .search-overlay, .mobile-nav-dropdown, .discord-dropdown, button, input, textarea, select, .logo, script, style, .summary b, .summary > b';
+    const SUMMARY_B_RE = /^\s*(?:📌\s*)?Résumé\s*:?\s*$/i;
 
     let _editMode = false;
     let _editEl   = null;
@@ -75,17 +76,36 @@
     }
 
     async function _saveEdit(path, value) {
-        const remote = await _fetchRemote();
-        const local  = _loadLocal();
-        const map    = { ...remote };
-        for (const [k, v] of Object.entries(local)) {
-            if (k.startsWith(PREFIX) && !(k in remote)) map[k] = v;
-        }
-        map[path] = value;
+        // PATCH delta : on n'envoie que la clé modifiée (le worker fusionne).
+        // value === null → suppression de la clé (reset).
         const encoded = {};
-        for (const [k, v] of Object.entries(map)) encoded[_encKey(k)] = v;
+        encoded[_encKey(path)] = value === null ? null : value;
         await _relay('saveContentEdits', { edits: encoded });
-        _saveLocal(map);
+        const local = _loadLocal();
+        if (value === null) delete local[path];
+        else local[path] = value;
+        _saveLocal(local);
+    }
+
+    function _summaryLabelHtml() {
+        return '<b>📌 Résumé :</b>';
+    }
+
+    function _stripSummaryLabel(el) {
+        if (!el.classList || !el.classList.contains('summary')) return el.innerHTML;
+        let html = el.innerHTML;
+        const b = el.querySelector(':scope > b');
+        if (b && SUMMARY_B_RE.test(b.textContent || '')) {
+            // retire le premier <b> label du HTML brut
+            html = html.replace(/<b[^>]*>\s*(?:📌\s*)?Résumé\s*:?\s*<\/b>\s*/i, '');
+        }
+        return html;
+    }
+
+    function _applySummaryLabel(text) {
+        // si l'éditeur a tapé sans le label, on le remet devant
+        if (SUMMARY_B_RE.test(text.replace(/<[^>]+>/g, '').trim().slice(0, 20))) return text;
+        return _summaryLabelHtml() + text;
     }
 
     function _hexToInk(hex) {
@@ -174,6 +194,8 @@
             // déjà couvert par un parent taggé.
             scope.querySelectorAll('*').forEach(el => {
                 if (el.dataset.beEditable || _isExcluded(el)) return;
+                // ne jamais rendre le label « 📌 Résumé : » éditable seul
+                if (el.tagName === 'B' && SUMMARY_B_RE.test(el.textContent || '')) return;
                 const hasDirectText = [...el.childNodes].some(
                     n => n.nodeType === 3 && n.textContent.trim().length > 0
                 );
@@ -289,7 +311,11 @@
         const path = el.dataset.bePath || _getEditPath(el);
         const stored = _loadLocal()[PREFIX + path];
         if (stored !== undefined) ta.value = stored;
-        else ta.value = el.innerHTML.replace(/<br\s*\/?>/gi, '\n').replace(/<[^>]+>/g, '').trim();
+        else if (el.classList.contains('summary')) {
+            ta.value = _stripSummaryLabel(el).replace(/<br\s*\/?>/gi, '\n').replace(/<[^>]+>/g, '').trim();
+        } else {
+            ta.value = el.innerHTML.replace(/<br\s*\/?>/gi, '\n').replace(/<[^>]+>/g, '').trim();
+        }
         popup.classList.add('is-open');
         const pw = 330, ph = 210;
         popup.style.left = Math.min(x + 10, window.innerWidth - pw - 16) + 'px';
@@ -306,7 +332,8 @@
         if (!_editEl) return;
         const raw = document.getElementById('beTextarea')?.value;
         if (raw === undefined) return;
-        const text = raw.replace(/^[ \t]+|[ \t]+$/gm, '').replace(/^\n+|\n+$/g, '');
+        let text = raw.replace(/^[ \t]+|[ \t]+$/gm, '').replace(/^\n+|\n+$/g, '');
+        if (_editEl.classList.contains('summary')) text = _applySummaryLabel(text);
         _editEl.innerHTML = _renderMarkdown(text);
         const path = PREFIX + (_editEl.dataset.bePath || _getEditPath(_editEl));
         _appliedCache[path] = text;
@@ -314,9 +341,9 @@
         local[path] = text;
         _saveLocal(local);
         _saveEdit(path, text).then(() => {
-            _toast('Sauvegardé : "' + text.slice(0, 24) + '…"', 'ok');
+            _toast('Sauvegardé (cloud + local) : "' + text.slice(0, 24) + '…"', 'ok');
         }).catch(err => {
-            _toast('Échec sauvegarde : ' + (err?.message || err), 'err');
+            _toast('Échec sauvegarde cloud : ' + (err?.message || err) + ' — gardé en local.', 'err');
         });
         _closeText();
     }
@@ -384,11 +411,45 @@
         local[path] = src;
         _saveLocal(local);
         _saveEdit(path, src).then(() => {
-            _toast('Image sauvegardée.', 'ok');
+            _toast('Image sauvegardée (cloud + local).', 'ok');
         }).catch(err => {
-            _toast('Échec sauvegarde image : ' + (err?.message || err), 'err');
+            _toast('Échec sauvegarde image : ' + (err?.message || err) + ' — gardé en local.', 'err');
         });
         _closeImg();
+    }
+
+    async function _resetEdits() {
+        if (!_isAdmin()) return;
+        const ok = confirm('Réinitialiser TOUTES les modifications de ce bulletin (#' + NUM + ')\n\n• local\n• cloud (Firebase)\n\nLe contenu d\'origine sera restauré. Continuer ?');
+        if (!ok) return;
+        _toast('Réinitialisation…', 'info');
+        try {
+            // 1. purger le local
+            const local = _loadLocal();
+            let n = 0;
+            for (const k of Object.keys(local)) {
+                if (k.startsWith(PREFIX)) { delete local[k]; n++; }
+            }
+            _saveLocal(local);
+            // 2. purger le cloud (null = delete via PATCH)
+            try {
+                const remote = await _fetchRemote();
+                const dels = {};
+                for (const k of Object.keys(remote)) {
+                    if (k.startsWith(PREFIX)) dels[_encKey(k)] = null;
+                }
+                if (Object.keys(dels).length) {
+                    await _relay('saveContentEdits', { edits: dels });
+                }
+                _toast('Cloud purgé pour #' + NUM + '.', 'ok');
+            } catch (cloudErr) {
+                _toast('Cloud non purgé : ' + (cloudErr?.message || cloudErr) + ' — local nettoyé.', 'err');
+            }
+            _toast(n + ' édit(s) local(aux) supprimé(s). Rechargement…', 'ok');
+            setTimeout(() => location.reload(), 900);
+        } catch (err) {
+            _toast('Échec reset : ' + (err?.message || err), 'err');
+        }
     }
 
     function _injectUi() {
@@ -422,6 +483,12 @@
                 cursor: pointer; font-size: 13px; padding: 2px 4px;
             }
             #bePanelClose:hover { color: #fff; }
+            #beResetBtn {
+                background: rgba(255,80,80,0.12); border: 1px solid rgba(255,80,80,0.35);
+                color: #ff9a9a; border-radius: 6px; font-size: 10px; font-weight: 700;
+                padding: 3px 8px; cursor: pointer; letter-spacing: 0.3px;
+            }
+            #beResetBtn:hover { background: rgba(255,80,80,0.25); color: #fff; }
             #beLog { max-height: 120px; overflow-y: auto; font-size: 11px; line-height: 1.5; }
             .be-log__line { color: rgba(255,255,255,0.55); }
             .be-log__line.is-ok { color: #6fdc8c; }
@@ -505,6 +572,7 @@
                     <span>✏️</span>
                     <span id="bePanelTitle">Mode Édition Bulletin #${NUM}</span>
                     <span id="beBadge">INACTIF</span>
+                    <button id="beResetBtn" title="Réinitialiser toutes les modifications de ce bulletin (local + cloud)">↺ Reset</button>
                     <button id="bePanelClose" title="Fermer">✕</button>
                 </div>
                 <div id="beLog"></div>
