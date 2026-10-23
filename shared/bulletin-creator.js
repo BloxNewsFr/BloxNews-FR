@@ -1349,9 +1349,13 @@ ${body}
                     theme: payload.theme
                 });
 
-                setStatus(`✅ Bulletin #${payload.num} publié ! ` + (result.commit ? `(commit ${result.commit.slice(0, 7)})` : ''), 'ok');
-                if (result.commit) {
-                    setTimeout(() => { window.location.href = './' + payload.num + '/bulletin-' + payload.num + '.html'; }, 1600);
+                const url = './' + payload.num + '/bulletin-' + payload.num + '.html';
+                const statusEl = document.getElementById('bcStatus');
+                if (statusEl) {
+                    statusEl.innerHTML = `✅ Bulletin #${payload.num} publié ! ` +
+                        `<a href="${url}" target="_blank" rel="noopener" style="color:#8ab4ff;text-decoration:underline;font-weight:700">Ouvrir le bulletin</a> ` +
+                        `<span style="opacity:.65">— GitHub Pages peut prendre 1–2 min pour se déployer.</span>`;
+                    statusEl.className = 'bcx-status ok';
                 }
             } catch (e) {
                 setStatus('❌ ' + e.message, 'err');
