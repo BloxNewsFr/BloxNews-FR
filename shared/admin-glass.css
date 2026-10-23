@@ -163,7 +163,11 @@
                 top: 64px; padding: 10px 14px; gap: 6px;
                 flex-wrap: wrap; overflow-x: visible;
             }
-            .stats-nav button { flex: 1 1 calc(50% - 3px); padding: 9px 10px; }
+            .stats-nav button,
+            html:not([data-theme="dark"]) .stats-nav button,
+            html[data-theme="dark"] .stats-nav button {
+                flex: 0 0 calc(50% - 3px); max-width: calc(50% - 3px); padding: 9px 10px;
+            }
             .stats-header { height: 64px; padding: 0 16px; }
             .stats-title { font-size: 15px; white-space: nowrap; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
             .stats-title .stats-live { display: none; }
