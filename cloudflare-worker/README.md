@@ -7,8 +7,13 @@ Ce Worker est le relais gratuit entre le site et Firebase. Il vérifie l’ident
 1. Dans Firebase Authentication, active le fournisseur **E-mail/Mot de passe** et crée un compte technique dédié au Worker. Ne réutilise pas ton compte personnel. Note son UID dans la fiche du compte.
 2. Dans Cloudflare, crée un Worker nommé `blox-update-relay` et colle le contenu de `update-relay.js` dans son éditeur, puis déploie-le.
 3. Dans **Settings → Variables and Secrets**, ajoute comme secrets `FIREBASE_API_KEY`, `FIREBASE_DATABASE_URL`, `FIREBASE_EDITOR_EMAIL`, `FIREBASE_EDITOR_PASSWORD` et `FIREBASE_EDITOR_UID`. Les valeurs Firebase sont celles de la configuration déjà présente dans `neo_bulletin.html`; l’UID vient de la fiche du compte technique.
-4. Le Worker est déployé à `https://blox-update-relay.c9yz5m8pw6.workers.dev`; cette adresse est déjà renseignée dans `UPDATE_RELAY_ENDPOINT` de `neo_bulletin.html`. Publie le site après la configuration.
-5. Dans les règles Realtime Database, réserve les écritures des branches protégées à l’UID Firebase du compte technique. Remplace les branches `updates`, `content_edits`, `custom_cards` et `deleted_static_ids` par celles-ci, en remplaçant la valeur par cet UID :
+4. Pour l’action `createBulletin` (création de bulletins depuis la page d’accueil), ajoute aussi :
+   - `GITHUB_TOKEN` : PAT (classic) avec le scope `repo` sur `BloxNewsFr/BloxNews-FR`
+   - `GITHUB_REPO` : `BloxNewsFr/BloxNews-FR`
+   - `GITHUB_BRANCH` (optionnel) : `main` par défaut
+   Le Worker crée blobs + tree + commit via l’API Git Data de GitHub et met à jour la branche. Seuls les chemins `NNN/…`, `index.html`, `archives.html` et `sources.json` sont acceptés.
+5. Le Worker est déployé à `https://blox-update-relay.c9yz5m8pw6.workers.dev`; cette adresse est déjà renseignée dans `UPDATE_RELAY_ENDPOINT` de `neo_bulletin.html` et dans `shared/bulletin-creator.js`. Publie le site après la configuration.
+6. Dans les règles Realtime Database, réserve les écritures des branches protégées à l’UID Firebase du compte technique. Remplace les branches `updates`, `content_edits`, `custom_cards` et `deleted_static_ids` par celles-ci, en remplaçant la valeur par cet UID :
 
 ```json
 "updates": {
