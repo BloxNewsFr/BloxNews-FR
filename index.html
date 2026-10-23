@@ -3617,27 +3617,22 @@
         if (!/^\d{3}$/.test(padded) || padded === '000') { alert('Numéro invalide.'); return; }
         const password = prompt('Mot de passe de suppression :');
         if (!password) return;
-        if (!confirm(`Supprimer définitivement le bulletin #${padded} ?`)) return;
+        if (!confirm(`Supprimer définitivement le bulletin #${padded} ?\n\nFichiers, carte d'accueil et entrée d'archive seront retirés.`)) return;
 
         try {
-            let token = null;
-            try { token = JSON.parse(localStorage.getItem('bloxbulletin_discord_token') || 'null')?.token; } catch {}
-            if (!token) { alert('Reconnecte-toi avec Discord.'); return; }
-
-            const res = await fetch('https://blox-update-relay.c9yz5m8pw6.workers.dev', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: 'deleteBulletin', discordAccessToken: token, num: padded, password })
-            });
-            const data = await res.json().catch(() => ({}));
-            if (!res.ok || data.ok === false) {
-                alert('Erreur : ' + (data.error || ('HTTP ' + res.status)));
+            if (!window.BulletinCreator || typeof window.BulletinCreator.deleteBulletin !== 'function') {
+                alert('Créateur non chargé. Recharge la page.');
                 return;
             }
-            alert('✅ Bulletin #' + padded + ' supprimé !');
+            _settingsFeedback(btn, 'Suppression…');
+            const res = await window.BulletinCreator.deleteBulletin(padded, password);
+            alert('✅ Bulletin #' + padded + ' supprimé !' + (res && res.deleted ? ` (${res.deleted} fichier(s))` : '') +
+                '\n\nGitHub Pages peut prendre 1–2 min pour refléter la suppression.');
             _settingsFeedback(btn, '✓ Supprimé');
+            setTimeout(() => location.reload(), 1200);
         } catch (e) {
             alert('Erreur : ' + e.message);
+            _settingsFeedback(btn, '✕ Échec');
         }
     }
 

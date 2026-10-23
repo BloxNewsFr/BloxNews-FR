@@ -646,6 +646,22 @@ ${body}
         return src.replace(re, (m, p1, _dm, p3) => `${p1} data-max="${fmtNum(num)}"${p3}`);
     }
 
+    /* ── Retrait d'un bulletin de index/archives ── */
+    function removeIndexBulletin(src, num) {
+        const n = fmtNum(num);
+        let out = src;
+        // entrée du tableau bulletins
+        out = out.replace(new RegExp(`[ \\t]*\\{\\s*num:\\s*"${n}"[\\s\\S]*?\\},[ \\t]*\\n?`, 'g'), '');
+        // entrée specialCards
+        out = out.replace(new RegExp(`[ \\t]*"${n}":\\s*\\{[^{}]*\\},?[ \\t]*\\n?`, 'g'), '');
+        return out;
+    }
+
+    function removeArchivesBulletin(src, num) {
+        const n = fmtNum(num);
+        return src.replace(new RegExp(`[ \\t]*\\{\\s*num:\\s*"${n}"[\\s\\S]*?\\},[ \\t]*\\n?`, 'g'), '');
+    }
+
     /* ── Publication via le Worker ── */
     async function callUpdateRelay(action, payload) {
         let token = null;
@@ -1299,6 +1315,85 @@ ${body}
             } catch (e) {
                 setStatus('Aperçu impossible : ' + e.message, 'err');
             }
+        },
+
+        async deleteBulletin(num, password) {
+            const n = parseInt(num, 10);
+            if (!n || n < 1 || n > MAX_NUM) throw new Error('Numéro invalide');
+            const padded = fmtNum(n);
+            if (!password) throw new Error('Mot de passe requis');
+
+            setStatus('Vérification de la base Git…');
+            const base = await callUpdateRelay('gitBase', {});
+
+            // Prépare les mises à jour de index/archives + pagination du précédent
+            setStatus('Mise à jour de l’index et des archives…');
+            const [indexSrc, archivesSrc, prevSrc] = await Promise.all([
+                fetchText('./index.html'),
+                fetchText('./archives.html'),
+                n > 1 ? fetchText(`./${fmtNum(n - 1)}/bulletin-${fmtNum(n - 1)}.html`) : Promise.resolve(null)
+            ]);
+
+            const files = [];
+            if (indexSrc) {
+                const patched = removeIndexBulletin(indexSrc, n);
+                if (patched !== indexSrc) files.push({ path: 'index.html', content: patched, encoding: 'utf-8' });
+            }
+            if (archivesSrc) {
+                const patched = removeArchivesBulletin(archivesSrc, n);
+                if (patched !== archivesSrc) files.push({ path: 'archives.html', content: patched, encoding: 'utf-8' });
+            }
+            if (prevSrc && n > 1) {
+                const patched = patchPrevBulletinEngagement(prevSrc, n - 1);
+                if (patched !== prevSrc) {
+                    files.push({
+                        path: `${fmtNum(n - 1)}/bulletin-${fmtNum(n - 1)}.html`,
+                        content: patched,
+                        encoding: 'utf-8'
+                    });
+                }
+            }
+
+            const entries = [];
+            let i = 0;
+            for (const file of files) {
+                i++;
+                setStatus(`Préparation ${i}/${files.length} : ${file.path}…`);
+                const res = await callUpdateRelay('gitBlob', { file });
+                entries.push({ path: file.path, sha: res.sha });
+            }
+
+            setStatus('Suppression du bulletin…');
+            const result = await callUpdateRelay('gitDeleteCommit', {
+                baseCommitSha: base.baseCommitSha,
+                baseTreeSha: base.baseTreeSha,
+                num: padded,
+                password,
+                entries
+            });
+
+            // Nettoyage des éditions cloud de ce bulletin (best-effort)
+            try {
+                setStatus('Nettoyage des éditions…');
+                const res = await fetch(
+                    'https://blox-bulletin-comments-default-rtdb.europe-west1.firebasedatabase.app/content_edits.json',
+                    { cache: 'no-store' }
+                );
+                if (res.ok) {
+                    const data = await res.json() || {};
+                    const edits = {};
+                    for (const key of Object.keys(data)) {
+                        let decoded = key;
+                        try { decoded = decodeURIComponent(key); } catch (e) { /* ignore */ }
+                        if (decoded.startsWith(padded + '::')) edits[key] = null;
+                    }
+                    if (Object.keys(edits).length) {
+                        await callUpdateRelay('saveContentEdits', { edits });
+                    }
+                }
+            } catch (e) { /* best-effort : ne bloque pas la suppression */ }
+
+            return result;
         },
 
         async publish() {

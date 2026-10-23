@@ -315,7 +315,7 @@ export default {
 
       const updateActions = new Set(['create', 'editField', 'delete']);
       const adminActions = new Set(['saveContentEdits', 'resetContentEdits', 'createCard', 'deleteCard', 'deleteStaticCard']);
-      const gitActions = new Set(['createBulletin', 'deleteBulletin', 'gitBase', 'gitBlob', 'gitCommit', 'gitCheck']);
+      const gitActions = new Set(['createBulletin', 'deleteBulletin', 'gitBase', 'gitBlob', 'gitCommit', 'gitCheck', 'gitDeleteCommit']);
       if (!updateActions.has(input.action) && !adminActions.has(input.action) && !gitActions.has(input.action)) {
         return json({ error: 'Action inconnue.' }, 400);
       }
@@ -402,6 +402,51 @@ export default {
             body: JSON.stringify({ content, encoding: isDataUrl ? 'base64' : 'utf-8' }),
           });
           return json({ ok: true, sha: blob.sha, path });
+        }
+        if (input.action === 'gitDeleteCommit') {
+          if (!env.DELETE_PASSWORD || input.password !== env.DELETE_PASSWORD) {
+            return json({ error: 'Mot de passe incorrect.' }, 403);
+          }
+          const num = String(input.num || '');
+          if (!/^\d{3}$/.test(num) || num === '000') {
+            return json({ error: 'Numéro de bulletin invalide.' }, 400);
+          }
+          const { baseCommitSha, baseTreeSha, entries } = input;
+          if (!baseCommitSha || !baseTreeSha) {
+            return json({ error: 'Données de commit incomplètes.' }, 400);
+          }
+          const repo = (env.GITHUB_REPO || '').trim();
+          const branch = (env.GITHUB_BRANCH || 'main').trim();
+          const fullTree = await githubApi(env, `/repos/${repo}/git/trees/${baseTreeSha}?recursive=1`);
+          const prefix = num + '/';
+          const deletions = (fullTree.tree || [])
+            .filter(t => t.type === 'blob' && t.path.startsWith(prefix))
+            .map(t => ({ path: t.path, mode: '100644', type: 'blob', sha: null }));
+          if (!deletions.length) {
+            return json({ error: 'Bulletin #' + num + ' introuvable dans le dépôt.' }, 404);
+          }
+          const additions = (Array.isArray(entries) ? entries : []).map(e => ({
+            path: String(e.path).replace(/^\/+/, ''),
+            mode: '100644',
+            type: 'blob',
+            sha: e.sha,
+          }));
+          const tree = await githubApi(env, `/repos/${repo}/git/trees`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ base_tree: baseTreeSha, tree: [...deletions, ...additions] }),
+          });
+          const commit = await githubApi(env, `/repos/${repo}/git/commits`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: `bulletin: supprime #${num}`, tree: tree.sha, parents: [baseCommitSha] }),
+          });
+          await githubApi(env, `/repos/${repo}/git/refs/heads/${encodeURIComponent(branch)}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ sha: commit.sha, force: false }),
+          });
+          return json({ ok: true, commit: commit.sha, deleted: deletions.length });
         }
         if (input.action === 'gitCommit') {
           // Étape 3 : crée tree + commit à partir des SHAs collectés
