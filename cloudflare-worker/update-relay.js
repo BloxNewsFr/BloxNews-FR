@@ -233,7 +233,7 @@ async function createBulletinOnGitHub(env, payload) {
     body: JSON.stringify({ message, tree: tree.sha, parents: [baseCommitSha] }),
   });
 
-  await githubApi(env, `/repos/${repo}/git/refs`, {
+  await githubApi(env, `/repos/${repo}/git/refs/heads/${encodeURIComponent(branch)}`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ sha: commit.sha, force: false }),
@@ -271,7 +271,7 @@ async function deleteBulletinOnGitHub(env, num) {
     body: JSON.stringify({ message: `bulletin: supprime #${num}`, tree: tree.sha, parents: [baseCommitSha] }),
   });
 
-  await githubApi(env, `/repos/${repo}/git/refs`, {
+  await githubApi(env, `/repos/${repo}/git/refs/heads/${encodeURIComponent(branch)}`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ sha: commit.sha, force: false }),
@@ -428,7 +428,7 @@ export default {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ message: msg, tree: tree.sha, parents: [baseCommitSha] }),
           });
-          await githubApi(env, `/repos/${repo}/git/refs`, {
+          await githubApi(env, `/repos/${repo}/git/refs/heads/${encodeURIComponent(branch)}`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ sha: commit.sha, force: false }),
