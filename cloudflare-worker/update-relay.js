@@ -4,6 +4,7 @@ const ADMIN_DISCORD_IDS = new Set([
 ]);
 
 const MAX_REQUEST_BYTES = 3_500_000;
+const MAX_SINGLE_FILE_BYTES = 90_000; // sous la limite free plan Cloudflare (100 Ko)
 const GITHUB_ALLOWED_PREFIXES = [
   /^\/?\d{3}\//,
   /^\/?index\.html$/,
@@ -296,7 +297,7 @@ export default {
 
       const updateActions = new Set(['create', 'editField', 'delete']);
       const adminActions = new Set(['saveContentEdits', 'resetContentEdits', 'createCard', 'deleteCard', 'deleteStaticCard']);
-      const gitActions = new Set(['createBulletin', 'deleteBulletin']);
+      const gitActions = new Set(['createBulletin', 'deleteBulletin', 'gitBase', 'gitBlob', 'gitCommit']);
       if (!updateActions.has(input.action) && !adminActions.has(input.action) && !gitActions.has(input.action)) {
         return json({ error: 'Action inconnue.' }, 400);
       }
@@ -321,6 +322,71 @@ export default {
           }
           const result = await deleteBulletinOnGitHub(env, num);
           return json({ ok: true, commit: result.commit, num });
+        }
+        if (input.action === 'gitBase') {
+          // Étape 1 : récupère le SHA de base de la branche
+          const branch = env.GITHUB_BRANCH || 'main';
+          const repo = env.GITHUB_REPO;
+          if (!repo || !/^[\w.-]+\/[\w.-]+$/.test(repo)) throw new Error('GITHUB_REPO manquant ou invalide.');
+          if (!env.GITHUB_TOKEN) throw new Error('GITHUB_TOKEN manquant.');
+          const ref = await githubApi(env, `/repos/${repo}/git/ref/heads/${encodeURIComponent(branch)}`);
+          const baseCommit = await githubApi(env, `/repos/${repo}/git/commits/${ref.object.sha}`);
+          return json({ ok: true, baseCommitSha: ref.object.sha, baseTreeSha: baseCommit.tree.sha });
+        }
+        if (input.action === 'gitBlob') {
+          // Étape 2 : crée un blob (un fichier à la fois, reste sous 100 Ko)
+          const file = input.file;
+          if (!file || typeof file.path !== 'string' || typeof file.content !== 'string') {
+            throw new Error('Fichier invalide.');
+          }
+          const path = file.path.replace(/^\/+/, '');
+          if (path.length > 200 || path.includes('..') || !GITHUB_ALLOWED_PREFIXES.some(re => re.test(path))) {
+            throw new Error('Chemin non autorisé : ' + path);
+          }
+          if (file.content.length > MAX_SINGLE_FILE_BYTES) {
+            throw new Error('Fichier trop volumineux : ' + path);
+          }
+          const isDataUrl = file.encoding === 'base64-dataurl';
+          const content = isDataUrl ? file.content.replace(/^data:[^,]*,/, '') : file.content;
+          const repo = env.GITHUB_REPO;
+          const blob = await githubApi(env, `/repos/${repo}/git/blobs`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ content, encoding: isDataUrl ? 'base64' : 'utf-8' }),
+          });
+          return json({ ok: true, sha: blob.sha, path });
+        }
+        if (input.action === 'gitCommit') {
+          // Étape 3 : crée tree + commit à partir des SHAs collectés
+          const { baseCommitSha, baseTreeSha, entries, message, theme, num } = input;
+          if (!baseCommitSha || !baseTreeSha || !Array.isArray(entries) || !entries.length) {
+            throw new Error('Données de commit incomplètes.');
+          }
+          const repo = env.GITHUB_REPO;
+          const branch = env.GITHUB_BRANCH || 'main';
+          const treeEntries = entries.map(e => ({
+            path: String(e.path).replace(/^\/+/, ''),
+            mode: '100644',
+            type: 'blob',
+            sha: e.sha,
+          }));
+          const tree = await githubApi(env, `/repos/${repo}/git/trees`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ base_tree: baseTreeSha, tree: treeEntries }),
+          });
+          const msg = message || (theme ? `bulletin: publie #${num} (theme ${theme})` : `bulletin: publie #${num}`);
+          const commit = await githubApi(env, `/repos/${repo}/git/commits`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: msg, tree: tree.sha, parents: [baseCommitSha] }),
+          });
+          await githubApi(env, `/repos/${repo}/git/refs`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ sha: commit.sha, force: false }),
+          });
+          return json({ ok: true, commit: commit.sha, tree: tree.sha });
         }
         return json({ error: 'Action Git inconnue.' }, 400);
       }

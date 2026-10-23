@@ -66,7 +66,7 @@
 
     /* ── Compression image ── */
     function compressImage(file, maxDim, quality, maxChars) {
-        maxChars = maxChars || 130000; // ~95 Ko JPEG en base64
+        maxChars = maxChars || 85000; // sous la limite 100 Ko Cloudflare (blob base64)
         return new Promise((resolve, reject) => {
             if (!file) return reject(new Error('Fichier manquant'));
             if (!/^image\//.test(file.type)) return reject(new Error('Type invalide : ' + file.type));
@@ -743,7 +743,7 @@ ${body}
             if (!img.file) continue;
             // budget restant pour rester sous la limite worker (~1,6 Mo utiles)
             const remaining = 1_600_000 - totalChars;
-            const maxChars = Math.max(70000, Math.min(130000, Math.floor(remaining / Math.max(1, images.filter(x => x.file).length - images.indexOf(img)))));
+            const maxChars = Math.max(60000, Math.min(85000, Math.floor(remaining / Math.max(1, images.filter(x => x.file).length - images.indexOf(img)))));
             const { dataUrl } = await compressImage(img.file, img.maxDim, img.quality, maxChars);
             totalChars += dataUrl.length;
             files.push({ path: img.dest, content: dataUrl, encoding: 'base64-dataurl' });
@@ -1297,11 +1297,29 @@ ${body}
                 setStatus('Génération des fichiers…');
                 btn.disabled = true;
                 const payload = await buildPayload(form);
-                setStatus(`Publication de ${payload.files.length} fichier(s) via le relais…`);
-                const result = await callUpdateRelay('createBulletin', {
+
+                // Envoi fractionné : gitBase → gitBlob×N → gitCommit
+                // (contourne la limite 100 Ko du plan free Cloudflare)
+                setStatus('Récupération de la base Git…');
+                const base = await callUpdateRelay('gitBase', {});
+                const entries = [];
+                let i = 0;
+                for (const file of payload.files) {
+                    i++;
+                    setStatus(`Envoi ${i}/${payload.files.length} : ${file.path}…`);
+                    const res = await callUpdateRelay('gitBlob', { file });
+                    entries.push({ path: file.path, sha: res.sha });
+                }
+                setStatus('Création du commit…');
+                const result = await callUpdateRelay('gitCommit', {
+                    baseCommitSha: base.baseCommitSha,
+                    baseTreeSha: base.baseTreeSha,
+                    entries,
+                    message: payload.theme
+                        ? `bulletin: publie #${payload.num} (theme ${payload.theme})`
+                        : `bulletin: publie #${payload.num}`,
                     num: payload.num,
-                    theme: payload.theme,
-                    files: payload.files
+                    theme: payload.theme
                 });
                 setStatus(`✅ Bulletin #${payload.num} publié ! ` + (result.commit ? `(commit ${result.commit.slice(0, 7)})` : ''), 'ok');
                 if (result.commit) {
