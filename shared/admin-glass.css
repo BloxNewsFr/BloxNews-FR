@@ -1,0 +1,159 @@
+/* Styles partagés des panneaux admin et statistiques BloxNews */
+/* Administration — verre liquide BloxNews, sans toucher aux données */
+        .settings-overlay.is-open,
+        .stats-overlay.is-open {
+            background: rgba(7, 10, 24, .62);
+            -webkit-backdrop-filter: blur(22px) saturate(1.45);
+            backdrop-filter: blur(22px) saturate(1.45);
+        }
+        .settings-panel,
+        html[data-theme="dark"] .settings-panel,
+        .stats-panel,
+        html:not([data-theme="dark"]) .stats-panel {
+            color: #f5f7ff;
+            background:
+                radial-gradient(ellipse at 8% 0%, rgba(255, 60, 70, .14), transparent 42%),
+                radial-gradient(ellipse at 100% 12%, rgba(77, 130, 255, .15), transparent 38%),
+                rgba(17, 20, 35, .78);
+            border: 1px solid rgba(255,255,255,.17);
+            box-shadow: 0 32px 100px rgba(0,0,0,.48), inset 0 1px 0 rgba(255,255,255,.18);
+            -webkit-backdrop-filter: blur(30px) saturate(1.5);
+            backdrop-filter: blur(30px) saturate(1.5);
+        }
+        .settings-panel { border-radius: 24px; }
+        .settings-header, .stats-header,
+        html:not([data-theme="dark"]) .stats-header {
+            background: rgba(255,255,255,.055);
+            -webkit-backdrop-filter: blur(24px);
+            backdrop-filter: blur(24px);
+            border-bottom-color: rgba(255,255,255,.11);
+        }
+        .settings-section, html[data-theme="dark"] .settings-section {
+            border-bottom-color: rgba(255,255,255,.09);
+        }
+        .settings-section-label { color: rgba(220,228,255,.64); }
+        .settings-title, .settings-row-label, .settings-profile-name,
+        html:not([data-theme="dark"]) .settings-title,
+        html:not([data-theme="dark"]) .settings-row-label,
+        html:not([data-theme="dark"]) .settings-profile-name { color: #f5f7ff; }
+        .settings-row-sub, .settings-profile-sub, .settings-footer,
+        html:not([data-theme="dark"]) .settings-row-sub,
+        html:not([data-theme="dark"]) .settings-profile-sub { color: rgba(225,232,255,.58); }
+        .settings-row + .settings-row,
+        html[data-theme="dark"] .settings-row + .settings-row {
+            border-top-color: rgba(255,255,255,.08);
+        }
+        .settings-btn, .settings-toggle, .settings-close {
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.16), 0 5px 16px rgba(0,0,0,.16);
+        }
+        .settings-btn--secondary,
+        html[data-theme="dark"] .settings-btn--secondary {
+            color: #e7edff;
+            background: linear-gradient(135deg, rgba(88,101,242,.35), rgba(66,111,220,.16));
+            border: 1px solid rgba(155,174,255,.26);
+        }
+        .stats-panel { border-radius: 26px; }
+        .stats-panel::before {
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #ff4658 18%, #9bb7ff 52%, #ffda00 82%, transparent);
+            opacity: .95;
+        }
+        .stats-header { padding: 22px 26px 18px; }
+        .stats-title { color: #fff; }
+        .stats-title::first-letter { color: #ffda00; }
+        .stats-nav {
+            position: sticky; top: 73px; z-index: 1;
+            padding: 13px 22px 12px;
+            background: rgba(12,15,29,.55);
+            border-bottom: 1px solid rgba(255,255,255,.07);
+            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(20px);
+        }
+        .stats-nav button,
+        html:not([data-theme="dark"]) .stats-nav button {
+            flex: 1; min-height: 42px; padding: 10px 14px;
+            color: rgba(235,239,255,.74);
+            background: rgba(255,255,255,.055);
+            border: 1px solid rgba(255,255,255,.12);
+            border-radius: 13px;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.09);
+            transition: transform .2s, background .2s, border-color .2s, box-shadow .2s;
+        }
+        .stats-nav button:hover { transform: translateY(-1px); background: rgba(255,255,255,.11); }
+        .stats-nav button[aria-selected="true"],
+        html:not([data-theme="dark"]) .stats-nav button[aria-selected="true"] {
+            color: #fff;
+            background: linear-gradient(120deg, rgba(255,65,80,.82), rgba(91,119,255,.77));
+            border-color: rgba(255,255,255,.34);
+            box-shadow: 0 7px 24px rgba(86,105,255,.24), inset 0 1px 0 rgba(255,255,255,.3);
+        }
+        .stats-body { padding: 24px 26px 28px; gap: 22px; }
+        .stats-section { animation: statsGlassEnter .28s ease both; }
+        @keyframes statsGlassEnter { from { opacity: .55; transform: translateY(5px); } to { opacity: 1; transform: none; } }
+        .stats-section-title,
+        html:not([data-theme="dark"]) .stats-section-title { color: #fff; font-size: 19px; }
+        .stats-tile,
+        html:not([data-theme="dark"]) .stats-tile {
+            background: linear-gradient(145deg, rgba(255,255,255,.105), rgba(255,255,255,.035));
+            border-color: rgba(255,255,255,.14);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.12), 0 9px 24px rgba(0,0,0,.1);
+        }
+        .stats-tile--clickable:hover,
+        html:not([data-theme="dark"]) .stats-tile--clickable:hover {
+            background: linear-gradient(145deg, rgba(255,218,0,.14), rgba(255,255,255,.055));
+            border-color: rgba(255,218,0,.34);
+        }
+        .stats-tile-value,
+        html:not([data-theme="dark"]) .stats-tile-value { color: #fff; }
+        .stats-tile-label,
+        html:not([data-theme="dark"]) .stats-tile-label { color: rgba(231,236,255,.58); }
+        .stats-online,
+        html:not([data-theme="dark"]) .stats-online {
+            background: radial-gradient(ellipse at 50% 0%, rgba(62,226,151,.16), transparent 68%), rgba(255,255,255,.045);
+            border-color: rgba(104,238,174,.26);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.12), 0 14px 34px rgba(0,0,0,.12);
+        }
+        .stats-discord-card,
+        html:not([data-theme="dark"]) .stats-discord-card {
+            color: #f3f5ff;
+            background: linear-gradient(135deg, rgba(88,101,242,.22), rgba(255,255,255,.045));
+            border-color: rgba(145,157,255,.27);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.14), 0 12px 32px rgba(0,0,0,.12);
+        }
+        .stats-discord-card p,
+        html:not([data-theme="dark"]) .stats-discord-card p { color: rgba(231,236,255,.68); }
+        .stats-visitors-list, .stats-ranking-list,
+        html:not([data-theme="dark"]) .stats-visitors-list,
+        html:not([data-theme="dark"]) .stats-ranking-list {
+            background: rgba(255,255,255,.045);
+            border-color: rgba(255,255,255,.12);
+        }
+        .stats-visitor-item, .stats-ranking-item,
+        html:not([data-theme="dark"]) .stats-visitor-item,
+        html:not([data-theme="dark"]) .stats-ranking-item { color: rgba(244,246,255,.82); }
+        .stats-visitor-item:hover, .stats-ranking-item:hover,
+        html:not([data-theme="dark"]) .stats-visitor-item:hover,
+        html:not([data-theme="dark"]) .stats-ranking-item:hover { background: rgba(255,255,255,.075); }
+        .stats-section-label, .stats-visitors-header,
+        html:not([data-theme="dark"]) .stats-section-label,
+        html:not([data-theme="dark"]) .stats-visitors-header { color: rgba(220,228,255,.52); }
+        .stats-refresh, html:not([data-theme="dark"]) .stats-refresh { color: rgba(220,228,255,.38); }
+        .stats-online-label, .stats-online-empty,
+        .stats-visitors-empty, .stats-ranking-empty,
+        .stats-visitor-time, .stats-daily-bar-val, .stats-daily-bar-day,
+        html:not([data-theme="dark"]) .stats-online-label,
+        html:not([data-theme="dark"]) .stats-online-empty,
+        html:not([data-theme="dark"]) .stats-visitors-empty,
+        html:not([data-theme="dark"]) .stats-ranking-empty,
+        html:not([data-theme="dark"]) .stats-visitor-time,
+        html:not([data-theme="dark"]) .stats-daily-bar-val,
+        html:not([data-theme="dark"]) .stats-daily-bar-day { color: rgba(225,232,255,.56); }
+        @media (max-width: 600px) {
+            .stats-nav { top: 68px; padding: 10px 14px; gap: 6px; }
+            .stats-nav button { flex: 0 0 auto; padding: 9px 12px; }
+            .stats-header { padding: 18px 18px 14px; }
+            .stats-body { padding: 18px 16px 22px; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .stats-section { animation: none; }
+        }
