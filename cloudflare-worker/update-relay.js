@@ -3,6 +3,15 @@ const ADMIN_DISCORD_IDS = new Set([
   '775096691240992798',  // neolixx
 ]);
 
+const MAX_REQUEST_BYTES = 2_000_000;
+const GITHUB_ALLOWED_PREFIXES = [
+  /^\/?\d{3}\//,
+  /^\/?index\.html$/,
+  /^\/?archives\.html$/,
+  /^\/?sources\.json$/,
+];
+const GITHUB_MAX_FILES = 30;
+
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
@@ -97,6 +106,119 @@ async function handleAdminAction(env, input, idToken) {
   throw new Error('Action admin inconnue.');
 }
 
+function githubHeaders(env) {
+  return {
+    Authorization: `Bearer ${env.GITHUB_TOKEN}`,
+    Accept: 'application/vnd.github+json',
+    'X-GitHub-Api-Version': '2022-11-28',
+    'User-Agent': 'bloxnews-relay',
+  };
+}
+
+async function githubApi(env, path, options = {}) {
+  const response = await fetch(`https://api.github.com${path}`, {
+    ...options,
+    headers: { ...githubHeaders(env), ...(options.headers || {}) },
+  });
+  const result = await response.json().catch(() => null);
+  if (!response.ok) {
+    throw new Error(result?.message || `GitHub a refusé l'opération (${response.status}).`);
+  }
+  return result;
+}
+
+function validateBulletinFiles(input) {
+  const num = input.num;
+  if (typeof num !== 'string' || !/^\d{3}$/.test(num) || num === '000') {
+    throw new Error('Numéro de bulletin invalide.');
+  }
+  if (input.theme != null && !['halloween', 'valentine'].includes(input.theme)) {
+    throw new Error('Thème invalide.');
+  }
+  const files = input.files;
+  if (!Array.isArray(files) || files.length === 0 || files.length > GITHUB_MAX_FILES) {
+    throw new Error('Liste de fichiers invalide.');
+  }
+  const seen = new Set();
+  for (const file of files) {
+    if (!file || typeof file.path !== 'string' || typeof file.content !== 'string') {
+      throw new Error('Fichier invalide.');
+    }
+    const path = file.path.replace(/^\/+/, '');
+    if (path.length > 200 || path.includes('..') || path.includes('//')) {
+      throw new Error('Chemin de fichier invalide.');
+    }
+    if (!GITHUB_ALLOWED_PREFIXES.some((re) => re.test(path))) {
+      throw new Error(`Chemin non autorisé : ${path}`);
+    }
+    if (file.encoding && !['utf-8', 'base64-dataurl'].includes(file.encoding)) {
+      throw new Error('Encodage de fichier invalide.');
+    }
+    const maxContent = file.encoding === 'base64-dataurl' ? 1_800_000 : 400_000;
+    if (file.content.length > maxContent) {
+      throw new Error(`Fichier trop volumineux : ${path}`);
+    }
+    if (seen.has(path)) throw new Error(`Doublon de fichier : ${path}`);
+    seen.add(path);
+  }
+  return { num, theme: input.theme || null, files };
+}
+
+async function createBulletinOnGitHub(env, payload) {
+  const { files, theme } = payload;
+  const branch = env.GITHUB_BRANCH || 'main';
+
+  const repo = env.GITHUB_REPO;
+  if (!repo || !/^[\w.-]+\/[\w.-]+$/.test(repo)) throw new Error('GITHUB_REPO manquant ou invalide.');
+  if (!env.GITHUB_TOKEN) throw new Error('GITHUB_TOKEN manquant.');
+
+  const ref = await githubApi(env, `/repos/${repo}/git/ref/heads/${encodeURIComponent(branch)}`);
+  const baseCommitSha = ref.object.sha;
+  const baseCommit = await githubApi(env, `/repos/${repo}/git/commits/${baseCommitSha}`);
+  const baseTreeSha = baseCommit.tree.sha;
+
+  const treeEntries = [];
+  for (const file of files) {
+    const path = file.path.replace(/^\/+/, '');
+    const isDataUrl = file.encoding === 'base64-dataurl';
+    const content = isDataUrl
+      ? file.content.replace(/^data:[^,]*,/, '')
+      : file.content;
+    const blob = await githubApi(env, `/repos/${repo}/git/blobs`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        content,
+        encoding: isDataUrl ? 'base64' : 'utf-8',
+      }),
+    });
+    treeEntries.push({ path, mode: '100644', type: 'blob', sha: blob.sha });
+  }
+
+  const tree = await githubApi(env, `/repos/${repo}/git/trees`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ base_tree: baseTreeSha, tree: treeEntries }),
+  });
+
+  const message = theme
+    ? `bulletin: publie #${payload.num} (theme ${theme})`
+    : `bulletin: publie #${payload.num}`;
+  const commit = await githubApi(env, `/repos/${repo}/git/commits`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ message, tree: tree.sha, parents: [baseCommitSha] }),
+  });
+
+  await githubApi(env, `/repos/${repo}/git/refs`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ sha: commit.sha, force: false }),
+  });
+
+  return { commit: commit.sha, tree: tree.sha };
+}
+
 export default {
   async fetch(request, env) {
     if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: corsHeaders });
@@ -104,7 +226,7 @@ export default {
 
     let input;
     try {
-      if (Number(request.headers.get('Content-Length') || 0) > 100_000) return json({ error: 'Requête trop volumineuse.' }, 413);
+      if (Number(request.headers.get('Content-Length') || 0) > MAX_REQUEST_BYTES) return json({ error: 'Requête trop volumineuse.' }, 413);
       input = await request.json();
     } catch {
       return json({ error: 'Requête JSON invalide.' }, 400);
@@ -125,10 +247,22 @@ export default {
 
       const updateActions = new Set(['create', 'editField', 'delete']);
       const adminActions = new Set(['saveContentEdits', 'resetContentEdits', 'createCard', 'deleteCard', 'deleteStaticCard']);
-      if (!updateActions.has(input.action) && !adminActions.has(input.action)) return json({ error: 'Action inconnue.' }, 400);
+      const gitActions = new Set(['createBulletin']);
+      if (!updateActions.has(input.action) && !adminActions.has(input.action) && !gitActions.has(input.action)) {
+        return json({ error: 'Action inconnue.' }, 400);
+      }
       const updateId = input.action === 'create' ? input.update?.id : input.updateId;
       if (updateActions.has(input.action) && (typeof updateId !== 'string' || !/^upd_[a-zA-Z0-9_-]{1,80}$/.test(updateId))) {
         return json({ error: 'Identifiant d’update invalide.' }, 400);
+      }
+
+      if (gitActions.has(input.action)) {
+        if (input.action === 'createBulletin') {
+          const payload = validateBulletinFiles(input);
+          const result = await createBulletinOnGitHub(env, payload);
+          return json({ ok: true, commit: result.commit, num: payload.num });
+        }
+        return json({ error: 'Action Git inconnue.' }, 400);
       }
 
       const idToken = await firebaseToken(env);

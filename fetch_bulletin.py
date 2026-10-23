@@ -12,11 +12,13 @@ MAX_NEW        = int(os.getenv("MAX_NEW_PER_RUN", "3"))
 REPO_ROOT      = Path(__file__).resolve().parent
 STATE          = REPO_ROOT / "sources.json"
 INDEX          = REPO_ROOT / "index.html"
+ARCHIVES       = REPO_ROOT / "archives.html"
 TIMEOUT        = 30
 
 # Modeles par ordre de preference
 GEMINI_MODELS = [
-    os.getenv("GEMINI_MODEL", "gemini-3.8-flash"),
+    os.getenv("GEMINI_MODEL", "gemini-1.5-flash-latest"),
+    "gemini-3.8-flash",
     "gemini-2.5-flash-lite",
     "gemini-1.5-flash",
 ]

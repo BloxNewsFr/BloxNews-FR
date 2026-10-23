@@ -26,12 +26,13 @@
     if (specialThemes[bulletin]) root.classList.add(`bulletin-theme--${specialThemes[bulletin]}`);
 
     const nav = root.querySelector('.bulletin-pagination');
+    const maxBulletin = parseInt(root.dataset.max, 10) || 25;
     const previous = Number(bulletin) - 1;
     const next = Number(bulletin) + 1;
     const makeLink = (direction, number, arrow) => {
         const link = document.createElement('a');
         link.className = 'bulletin-pagination__link bulletin-pagination__link--' + direction;
-        if (number < 1 || number > 25) {
+        if (number < 1 || number > maxBulletin) {
             link.href = '#';
             link.setAttribute('aria-disabled', 'true');
             link.tabIndex = -1;
@@ -40,7 +41,7 @@
             link.href = `../${n}/bulletin-${n}.html`;
         }
         const text = document.createElement('span');
-        text.innerHTML = `<span class="bulletin-pagination__direction">${direction === 'previous' ? 'Bulletin précédent' : 'Bulletin suivant'}</span><span class="bulletin-pagination__title">${number >= 1 && number <= 25 ? `Bulletin #${String(number).padStart(3, '0')}` : 'À venir'}</span>`;
+        text.innerHTML = `<span class="bulletin-pagination__direction">${direction === 'previous' ? 'Bulletin précédent' : 'Bulletin suivant'}</span><span class="bulletin-pagination__title">${number >= 1 && number <= maxBulletin ? `Bulletin #${String(number).padStart(3, '0')}` : 'À venir'}</span>`;
         const icon = document.createElement('span');
         icon.className = 'bulletin-pagination__arrow';
         icon.textContent = arrow;

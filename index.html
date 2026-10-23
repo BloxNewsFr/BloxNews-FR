@@ -3754,6 +3754,16 @@
                         Réinitialiser
                     </button>
                 </div>
+
+                <div class="settings-row">
+                    <div class="settings-row-info">
+                        <div class="settings-row-label">Créer un bulletin</div>
+                        <div class="settings-row-sub">Génère un bulletin au design standard, avec carte spéciale Halloween / Saint-Valentin optionnelle</div>
+                    </div>
+                    <button class="settings-btn settings-btn--secondary" onclick="closeSettings(null);setTimeout(function(){window.BulletinCreator&&window.BulletinCreator.open()},200)">
+                        Ouvrir le créateur
+                    </button>
+                </div>
             </div>
 
             <div class="settings-footer">BloxNews-FR • v2026</div>
@@ -4216,5 +4226,20 @@
     </script>
 
     <script src="./shared/site-experience.js"></script>
+    <script>
+        window.BLOX_LAST_BULLETIN = (function () {
+            try {
+                let max = 25;
+                if (typeof bulletins !== 'undefined' && Array.isArray(bulletins)) {
+                    bulletins.forEach(function (b) {
+                        const n = parseInt(b.num, 10);
+                        if (n > max) max = n;
+                    });
+                }
+                return max;
+            } catch (e) { return 25; }
+        })();
+    </script>
+    <script src="./shared/bulletin-creator.js"></script>
 </body>
 </html>
