@@ -91,21 +91,24 @@
         return '<b>📌 Résumé :</b>';
     }
 
+    function _summaryLabelText() {
+        return '📌 Résumé : ';
+    }
+
     function _stripSummaryLabel(el) {
         if (!el.classList || !el.classList.contains('summary')) return el.innerHTML;
         let html = el.innerHTML;
         const b = el.querySelector(':scope > b');
         if (b && SUMMARY_B_RE.test(b.textContent || '')) {
-            // retire le premier <b> label du HTML brut
             html = html.replace(/<b[^>]*>\s*(?:📌\s*)?Résumé\s*:?\s*<\/b>\s*/i, '');
         }
         return html;
     }
 
     function _applySummaryLabel(text) {
-        // si l'éditeur a tapé sans le label, on le remet devant
-        if (SUMMARY_B_RE.test(text.replace(/<[^>]+>/g, '').trim().slice(0, 20))) return text;
-        return _summaryLabelHtml() + text;
+        const bare = text.replace(/<[^>]+>/g, '').trim();
+        if (SUMMARY_B_RE.test(bare.slice(0, 24))) return text;
+        return _summaryLabelText() + text;
     }
 
     function _hexToInk(hex) {
@@ -174,6 +177,9 @@
                 if (value && el.tagName === 'IMG' && el.getAttribute('src') !== value) el.src = value;
             } else {
                 el.innerHTML = _renderMarkdown(value);
+                if (el.classList.contains('summary') && !el.querySelector(':scope > b')) {
+                    el.insertAdjacentHTML('afterbegin', _summaryLabelHtml());
+                }
             }
             _appliedCache[cacheKey] = value;
         }
@@ -309,9 +315,13 @@
         const popup = document.getElementById('beTextPopup');
         const ta = document.getElementById('beTextarea');
         const path = el.dataset.bePath || _getEditPath(el);
+        const isSummary = el.classList.contains('summary');
         const stored = _loadLocal()[PREFIX + path];
-        if (stored !== undefined) ta.value = stored;
-        else if (el.classList.contains('summary')) {
+        if (stored !== undefined) {
+            ta.value = isSummary
+                ? stored.replace(/^\s*(?:<b[^>]*>)?\s*(?:📌\s*)?Résumé\s*:?\s*(?:<\/b>)?\s*/i, '')
+                : stored;
+        } else if (isSummary) {
             ta.value = _stripSummaryLabel(el).replace(/<br\s*\/?>/gi, '\n').replace(/<[^>]+>/g, '').trim();
         } else {
             ta.value = el.innerHTML.replace(/<br\s*\/?>/gi, '\n').replace(/<[^>]+>/g, '').trim();
@@ -333,8 +343,12 @@
         const raw = document.getElementById('beTextarea')?.value;
         if (raw === undefined) return;
         let text = raw.replace(/^[ \t]+|[ \t]+$/gm, '').replace(/^\n+|\n+$/g, '');
-        if (_editEl.classList.contains('summary')) text = _applySummaryLabel(text);
+        const isSummary = _editEl.classList.contains('summary');
+        if (isSummary) text = _applySummaryLabel(text);
         _editEl.innerHTML = _renderMarkdown(text);
+        if (isSummary && !_editEl.querySelector(':scope > b')) {
+            _editEl.insertAdjacentHTML('afterbegin', _summaryLabelHtml());
+        }
         const path = PREFIX + (_editEl.dataset.bePath || _getEditPath(_editEl));
         _appliedCache[path] = text;
         const local = _loadLocal();
@@ -616,6 +630,7 @@
         document.getElementById('bePanelClose').addEventListener('click', () => {
             document.getElementById('bePanel').classList.remove('is-open');
         });
+        document.getElementById('beResetBtn').addEventListener('click', _resetEdits);
 
         const bar = document.getElementById('beFmtBar');
         bar.querySelectorAll('button[data-fmt]').forEach(btn => {
