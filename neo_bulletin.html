@@ -4467,6 +4467,35 @@
         }
         .edit-inline__btn--save:hover { transform: scale(1.04); }
 
+        /* Edit image popup */
+        #editImgPopup {
+            position: fixed; z-index: 99992;
+            background: rgba(14,14,22,0.98); backdrop-filter: blur(18px);
+            border: 1px solid rgba(255,255,255,0.12); border-radius: 14px;
+            padding: 12px 14px; width: 320px; max-width: 92vw;
+            box-shadow: 0 16px 60px rgba(0,0,0,0.5);
+            display: none; visibility: hidden;
+        }
+        #editImgPopup.is-open { display: block; visibility: visible; }
+        #editImgPreview {
+            width: 100%; height: 110px; object-fit: cover;
+            border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 8px; background: rgba(255,255,255,0.04);
+        }
+        #editImgUrl {
+            width: 100%; border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.06); border-radius: 8px;
+            padding: 7px 10px; color: #fff; font-size: 12px;
+            font-family: 'Inter', sans-serif; outline: none;
+        }
+        #editImgUrl:focus { border-color: rgba(255,26,26,0.5); }
+        .edit-img-row { display: flex; gap: 6px; margin-top: 8px; align-items: center; }
+        .edit-img-row .edit-inline__btn--save { margin-left: auto; }
+        body.edit-mode img[data-editable="img"] {
+            outline: 2px dashed rgba(255,218,0,0.75); outline-offset: 2px; cursor: pointer;
+        }
+        body.edit-mode img[data-editable="img"]:hover { outline-color: #ff1a1a; }
+
         /* ══ COMMENTAIRES AMÉLIORÉS — réactions emoji ══ */
         .comment-reactions {
             display: flex; align-items: center; gap: 5px;
@@ -4813,6 +4842,12 @@
 
             /* ── Edit inline popup ── */
             #editInlinePopup {
+                width: calc(100vw - 20px) !important;
+                left: 10px !important;
+                top: auto !important;
+                bottom: 100px !important;
+            }
+            #editImgPopup {
                 width: calc(100vw - 20px) !important;
                 left: 10px !important;
                 top: auto !important;
@@ -6651,8 +6686,8 @@
             <button class="edit-panel__close" onclick="toggleEditMode()">✕</button>
         </div>
         <div class="edit-panel__hint">
-            <strong>Clique sur n'importe quel texte</strong> pour le modifier.<br>
-            Les modifications sont sauvegardées localement.
+            <strong>Clique sur un texte</strong> pour le modifier, <strong>sur une image</strong> pour la remplacer.<br>
+            Raccourcis : Ctrl+B gras · Ctrl+I italique · Ctrl+U souligné · Ctrl+H surlignage.
         </div>
         <div class="edit-panel__cmd">
             <span class="edit-panel__cmd-prefix">›</span>
@@ -6676,13 +6711,31 @@
                     <span class="fmt-hl-dot" id="fmtHlDot" style="background:#ffd000"></span>
                 </button>
             </div>
+            <div class="fmt-hl-wrap">
+                <button class="fmt-btn fmt-hl-btn" id="fmtTextColorBtn" onmousedown="_saveFmtSel(event)" onclick="toggleTextColorPicker(event)" title="Couleur du texte">
+                    <span class="fmt-hl-dot" id="fmtTextColorDot" style="background:#ff5252"></span>
+                </button>
+            </div>
             <div class="fmt-sep"></div>
-            <span class="fmt-hint">**gras** *ital* __souligné__ ~~barré~~ ==surligné==</span>
+            <span class="fmt-hint">**gras** *ital* ==surligné== [#c]couleur[/]</span>
         </div>
         <textarea id="editInlineTextarea" rows="5" style="resize:vertical;min-height:90px"></textarea>
         <div class="edit-inline__actions">
             <button class="edit-inline__btn edit-inline__btn--cancel" onclick="closeEditInline()">Annuler</button>
             <button class="edit-inline__btn edit-inline__btn--save" onclick="saveEditInline()">Sauvegarder</button>
+        </div>
+    </div>
+
+    <!-- ── INLINE IMAGE POPUP ── -->
+    <div id="editImgPopup">
+        <div class="edit-inline__label">Changer l'image</div>
+        <img id="editImgPreview" alt="">
+        <input type="text" id="editImgUrl" placeholder="https://… ou image compressée">
+        <div class="edit-img-row">
+            <button class="edit-inline__btn edit-inline__btn--cancel" onclick="document.getElementById('editImgFile').click()">Fichier…</button>
+            <input type="file" id="editImgFile" accept="image/*" style="display:none" onchange="_editImgFileSelected(this)">
+            <button class="edit-inline__btn edit-inline__btn--cancel" onclick="closeEditImgPopup()">Annuler</button>
+            <button class="edit-inline__btn edit-inline__btn--save" onclick="saveEditImg()">Appliquer</button>
         </div>
     </div>
 
@@ -10281,7 +10334,7 @@
         '.desktop-tabs', '.mnav-chips',
         '.settings-overlay', '#newCardModal', '#deleteCardModal',
         '#groupDrawerOverlay', '.modal-overlay', '.comments-modal-overlay',
-        '[class*="edit-panel"]', '#editInlinePopup', '#editModePanel', '#editModeToast',
+        '[class*="edit-panel"]', '#editInlinePopup', '#editImgPopup', '#editModePanel', '#editModeToast',
         '.open-modal-btn', '.post-like-btn', '.social-share', '.actus-like-wrap',
         '.card-comments-toggle', '.discord-login-btn', '.discord-dropdown',
         'button', 'input', 'textarea', 'select',
@@ -10325,6 +10378,9 @@
         // Surlignage rouge par défaut : ==texte==
         h = h.replace(/==(.+?)==/g,
             '<mark style="color:#cc0000;background:rgba(255,26,26,0.1);padding:2px 8px;border-radius:6px;font-weight:bold">$1</mark>');
+        // Couleur de texte : [#RRGGBB]texte[/]
+        h = h.replace(/\[#([0-9a-fA-F]{3,8})\]([\s\S]+?)\[\/\]/g,
+            (m, color, txt) => `<span style="color:#${color}">${txt}</span>`);
         h = h.replace(/__(.+?)__/g, '<u>$1</u>');
         h = h.replace(/~~(.+?)~~/g, '<s>$1</s>');
         h = h.replace(/\*(.+?)\*/g, '<em>$1</em>');
@@ -10377,6 +10433,44 @@
         } else {
             const ph = '…';
             ta.value = before + openMark + ph + '==' + after;
+            ta.focus(); ta.setSelectionRange(s + openMark.length, s + openMark.length + ph.length);
+        }
+    }
+
+    // ── Couleur de texte — sélecteur natif ──────────────────────────
+    let _textColor = '#ff5252';
+    let _fmtColorPending = false;
+
+    function toggleTextColorPicker(e) {
+        e.preventDefault(); e.stopPropagation();
+        const input = document.getElementById('fmtTextColorInput');
+        if (!input) return;
+        if (!_savedSel) {
+            const ta = document.getElementById('editInlineTextarea');
+            if (ta) _savedSel = { start: ta.selectionStart, end: ta.selectionEnd };
+        }
+        _fmtColorPending = true;
+        input.click();
+    }
+
+    function pickTextColor(hex) {
+        _textColor = hex;
+        const dot = document.getElementById('fmtTextColorDot');
+        if (dot) dot.style.background = hex;
+        const ta = document.getElementById('editInlineTextarea');
+        if (!ta) return;
+        const s = _savedSel ? _savedSel.start : ta.selectionStart;
+        const e = _savedSel ? _savedSel.end   : ta.selectionEnd;
+        _savedSel = null;
+        const before = ta.value.slice(0, s), after = ta.value.slice(e), sel = ta.value.slice(s, e);
+        const openMark  = `[#${hex.replace('#','')}]`;
+        const closeMark = '[/]';
+        if (sel) {
+            ta.value = before + openMark + sel + closeMark + after;
+            ta.focus(); ta.setSelectionRange(s, e + openMark.length + closeMark.length);
+        } else {
+            const ph = '…';
+            ta.value = before + openMark + ph + closeMark + after;
             ta.focus(); ta.setSelectionRange(s + openMark.length, s + openMark.length + ph.length);
         }
     }
@@ -10472,14 +10566,22 @@
     }
 
     let _appliedEditsCache = null;
+    const IMG_EDIT_PREFIX = 'img::';
     function applyStoredEdits() {
         const edits = loadEdits();
         const cache = _appliedEditsCache || (_appliedEditsCache = {});
         Object.entries(edits).forEach(([path, text]) => {
             try {
                 if (cache[path] === text) return;
-                const el = document.querySelector(path.replace(/:nth\((\d+)\)/g, ':nth-child($1)'));
-                if (el) el.innerHTML = renderMarkdown(text);
+                const isImg = path.startsWith(IMG_EDIT_PREFIX);
+                const sel = isImg ? path.slice(IMG_EDIT_PREFIX.length) : path;
+                const el = document.querySelector(sel.replace(/:nth\((\d+)\)/g, ':nth-child($1)'));
+                if (!el) return;
+                if (isImg) {
+                    if (text && el.tagName === 'IMG') el.src = text;
+                } else {
+                    el.innerHTML = renderMarkdown(text);
+                }
                 cache[path] = text;
             } catch(e) {}
         });
@@ -10504,6 +10606,17 @@
                 el.dataset.editable = '1';
             });
         });
+        // Images de cards éditables (clic → popup changement d'image)
+        scope.querySelectorAll('img.news-card__image, img.group-card__image').forEach(img => {
+            if (img.dataset.editable === 'img') return;
+            let isExcluded = false;
+            for (const exclSel of EXCLUDED_SELS) {
+                if (img.closest(exclSel)) { isExcluded = true; break; }
+            }
+            if (isExcluded) return;
+            if (!img.dataset.editPath) img.dataset.editPath = getEditPath(img);
+            img.dataset.editable = 'img';
+        });
     }
 
     function toggleEditMode() {
@@ -10514,6 +10627,7 @@
                 document.body.classList.remove('edit-mode');
                 document.getElementById('editModePanel')?.classList.remove('is-open');
                 closeEditInline();
+                closeEditImgPopup();
             }
             editLog('err', '⛔ Accès refusé — administrateurs uniquement.');
             return;
@@ -10533,6 +10647,7 @@
             editLog('info', '✏️ Mode édition activé — clique sur un texte pour l\'éditer.');
         } else {
             closeEditInline();
+            closeEditImgPopup();
             editLog('info', '💤 Mode édition désactivé.');
         }
     }
@@ -10550,12 +10665,13 @@
 
     document.addEventListener('click', e => {
         if (!_editMode) return;
-        if (e.target.closest('#editInlinePopup') || e.target.closest('#editModePanel')) return;
+        if (e.target.closest('#editInlinePopup') || e.target.closest('#editImgPopup') || e.target.closest('#editModePanel')) return;
         const el = e.target.closest('[data-editable]');
         if (!el) return;
         e.preventDefault();
         e.stopImmediatePropagation();
-        openEditInline(el, e.clientX, e.clientY);
+        if (el.dataset.editable === 'img') openEditImgPopup(el, e.clientX, e.clientY);
+        else openEditInline(el, e.clientX, e.clientY);
     });
 
     let _editEl = null;
@@ -10620,6 +10736,105 @@
         closeEditInline();
     }
 
+    // ── Édition d'image ──────────────────────────────────────────────
+    let _editImgEl = null;
+
+    function openEditImgPopup(img, x, y) {
+        _editImgEl = img;
+        const popup = document.getElementById('editImgPopup');
+        const preview = document.getElementById('editImgPreview');
+        const urlInput = document.getElementById('editImgUrl');
+        if (!popup || !preview || !urlInput) return;
+        const edits = loadEdits();
+        const path = IMG_EDIT_PREFIX + (img.dataset.editPath || getEditPath(img));
+        const stored = edits[path];
+        const curSrc = stored || img.getAttribute('src') || '';
+        preview.src = curSrc;
+        urlInput.value = curSrc.startsWith('data:') ? '' : curSrc;
+        urlInput.placeholder = curSrc.startsWith('data:') ? 'Image intégrée — colle une URL ou un fichier' : 'https://… ou image compressée';
+        popup.classList.add('is-open');
+        popup.style.display = 'block';
+        const pw = 320; const ph = 240;
+        popup.style.left = Math.min(x + 10, window.innerWidth - pw - 16) + 'px';
+        popup.style.top  = Math.min(y + 10, window.innerHeight - ph - 16) + 'px';
+    }
+
+    function closeEditImgPopup() {
+        _editImgEl = null;
+        const popup = document.getElementById('editImgPopup');
+        if (popup) { popup.classList.remove('is-open'); popup.style.display = 'none'; }
+        const fi = document.getElementById('editImgFile');
+        if (fi) fi.value = '';
+    }
+
+    // Compresse une image en JPEG ≤ 1600px, qualité auto jusqu'à ~220 Ko
+    function _editImgCompress(dataUrl) {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.onload = () => {
+                const maxDim = 1600;
+                const scale = Math.min(1, maxDim / Math.max(img.width, img.height));
+                const c = document.createElement('canvas');
+                c.width = Math.max(1, Math.round(img.width * scale));
+                c.height = Math.max(1, Math.round(img.height * scale));
+                c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+                let quality = 0.82;
+                let out = c.toDataURL('image/jpeg', quality);
+                while (out.length > 220_000 && quality > 0.35) {
+                    quality -= 0.12;
+                    out = c.toDataURL('image/jpeg', quality);
+                }
+                if (out.length > 250_000) reject(new Error('Image trop lourde même compressée.'));
+                else resolve(out);
+            };
+            img.onerror = () => reject(new Error('Fichier image invalide.'));
+            img.src = dataUrl;
+        });
+    }
+
+    function _editImgFileSelected(input) {
+        const file = input.files[0];
+        input.value = '';
+        if (!file || !_editImgEl) return;
+        if (!file.type.startsWith('image/')) {
+            editLog('err', 'Fichier refusé : uniquement des images.');
+            return;
+        }
+        const reader = new FileReader();
+        reader.onload = e => {
+            _editImgCompress(e.target.result).then(dataUrl => {
+                const preview = document.getElementById('editImgPreview');
+                if (preview) preview.src = dataUrl;
+                const urlInput = document.getElementById('editImgUrl');
+                if (urlInput) urlInput.value = dataUrl;
+                editLog('info', 'Image compressée — clique sur Appliquer.');
+            }).catch(err => editLog('err', err.message));
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function saveEditImg() {
+        if (!_editImgEl) return;
+        const src = (document.getElementById('editImgUrl')?.value || '').trim();
+        if (!src) { editLog('err', 'Indique une URL ou choisis un fichier.'); return; }
+        if (!/^(https?:\/\/|\.\/|\/|data:image\/)/i.test(src)) {
+            editLog('err', 'Source invalide (https, chemin relatif ou data:image attendu).');
+            return;
+        }
+        const img = _editImgEl;
+        const path = IMG_EDIT_PREFIX + (img.dataset.editPath || getEditPath(img));
+        const oldSrc = img.getAttribute('src') || '';
+        img.src = src;
+        const edits = loadEdits();
+        edits[path] = src;
+        if (_appliedEditsCache) _appliedEditsCache[path] = src;
+        saveEdits(edits).then(savedToFirebase => {
+            if (savedToFirebase) editLog('ok', `Image sauvegardée Firebase : ${oldSrc.slice(-28)}`);
+            else if (!FB_EDITS_REF) editLog('info', 'Image appliquée localement.');
+        });
+        closeEditImgPopup();
+    }
+
     document.addEventListener('change', function(e) {
         if (e.target.id === 'fmtHlColorInput') {
             _hlColor = e.target.value;
@@ -10631,10 +10846,44 @@
                 if (dot) dot.style.background = _hlColor;
             }
         }
+        if (e.target.id === 'fmtTextColorInput') {
+            _textColor = e.target.value;
+            if (_fmtColorPending) {
+                _fmtColorPending = false;
+                pickTextColor(_textColor);
+            } else {
+                const dot = document.getElementById('fmtTextColorDot');
+                if (dot) dot.style.background = _textColor;
+            }
+        }
     });
 
+    // ── Raccourcis clavier dans le popup d'édition ───────────────────
+    // Ctrl+B gras · Ctrl+I italique · Ctrl+U souligné · Ctrl+H surlignage
+    document.addEventListener('keydown', function(e) {
+        if (!_editEl) return;
+        const ta = document.getElementById('editInlineTextarea');
+        if (document.activeElement !== ta) return;
+        if (!(e.ctrlKey || e.metaKey) || e.shiftKey) return;
+        const k = e.key.toLowerCase();
+        const wraps = { b: '**', i: '*', u: '__' };
+        if (wraps[k]) {
+            e.preventDefault(); e.stopPropagation();
+            _savedSel = { start: ta.selectionStart, end: ta.selectionEnd };
+            fmtWrap(wraps[k]);
+            _savedSel = null;
+        } else if (k === 'h') {
+            e.preventDefault(); e.stopPropagation();
+            _fmtHlPending = true;
+            document.getElementById('fmtHlColorInput')?.click();
+        }
+    }, true);
+
     document.addEventListener('keydown', e => {
-        if (e.key === 'Escape' && _editEl) { closeEditInline(); return; }
+        if (e.key === 'Escape') {
+            if (_editImgEl) { closeEditImgPopup(); return; }
+            if (_editEl) { closeEditInline(); return; }
+        }
         if (e.key === 'Enter' && !e.shiftKey && _editEl) {
             e.preventDefault(); saveEditInline();
         }
@@ -12840,6 +13089,7 @@
     })();
     </script>    <!-- Palette de couleurs surlignage — directement dans body pour éviter tout overflow -->
     <input type="color" id="fmtHlColorInput" value="#ffd000" style="display:none">
+    <input type="color" id="fmtTextColorInput" value="#ff5252" style="display:none">
 
     <!-- ═══════════════════════════════════════════════
          PANNEAU PARAMÈTRES

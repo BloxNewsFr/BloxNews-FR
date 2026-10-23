@@ -54,7 +54,11 @@ async function handleAdminAction(env, input, idToken) {
       throw new Error('Liste de modifications invalide.');
     }
     for (const [key, value] of Object.entries(edits)) {
-      if (key.length > 1000 || typeof value !== 'string' || value.length > 30000) throw new Error('Modification invalide.');
+      if (key.length > 1000 || typeof value !== 'string') throw new Error('Modification invalide.');
+      // Les images (data:image compressées côté client) ont une limite plus haute
+      const isImage = key.startsWith('img%3A%3A') || key.startsWith('img::');
+      const maxLen = isImage ? 350000 : 30000;
+      if (value.length > maxLen) throw new Error('Modification invalide.');
     }
     await firebaseRequest(env, 'content_edits', idToken, 'PUT', edits);
     return;
