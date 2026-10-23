@@ -9,7 +9,8 @@
         .settings-panel,
         html[data-theme="dark"] .settings-panel,
         .stats-panel,
-        html:not([data-theme="dark"]) .stats-panel {
+        html:not([data-theme="dark"]) .stats-panel,
+        html[data-theme="dark"] .stats-panel {
             color: #f5f7ff;
             background:
                 radial-gradient(ellipse at 8% 0%, rgba(255, 60, 70, .14), transparent 42%),
@@ -20,7 +21,7 @@
             -webkit-backdrop-filter: blur(30px) saturate(1.5);
             backdrop-filter: blur(30px) saturate(1.5);
         }
-        .settings-panel { border-radius: 24px; }
+        .settings-panel { border-radius: 24px; position: relative; }
         .settings-header, .stats-header,
         html:not([data-theme="dark"]) .stats-header {
             background: rgba(255,255,255,.055);
@@ -52,17 +53,26 @@
             background: linear-gradient(135deg, rgba(88,101,242,.35), rgba(66,111,220,.16));
             border: 1px solid rgba(155,174,255,.26);
         }
-        .stats-panel { border-radius: 26px; }
-        .stats-panel::before {
+        .stats-panel { border-radius: 26px; position: relative; }
+        .stats-panel::before,
+        html:not([data-theme="dark"]) .stats-panel::before,
+        html[data-theme="dark"] .stats-panel::before {
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0;
             height: 2px;
             background: linear-gradient(90deg, transparent, #ff4658 18%, #9bb7ff 52%, #ffda00 82%, transparent);
             opacity: .95;
+            animation: none;
+            pointer-events: none;
         }
-        .stats-header { padding: 22px 26px 18px; }
+        .stats-header {
+            height: 72px; padding: 0 24px; box-sizing: border-box;
+            align-items: center;
+        }
         .stats-title { color: #fff; }
         .stats-title::first-letter { color: #ffda00; }
         .stats-nav {
-            position: sticky; top: 73px; z-index: 1;
+            position: sticky; top: 72px; z-index: 1;
             padding: 13px 22px 12px;
             background: rgba(12,15,29,.55);
             border-bottom: 1px solid rgba(255,255,255,.07);
@@ -149,11 +159,160 @@
         html:not([data-theme="dark"]) .stats-daily-bar-val,
         html:not([data-theme="dark"]) .stats-daily-bar-day { color: rgba(225,232,255,.56); }
         @media (max-width: 600px) {
-            .stats-nav { top: 68px; padding: 10px 14px; gap: 6px; }
-            .stats-nav button { flex: 0 0 auto; padding: 9px 12px; }
-            .stats-header { padding: 18px 18px 14px; }
+            .stats-nav {
+                top: 64px; padding: 10px 14px; gap: 6px;
+                flex-wrap: wrap; overflow-x: visible;
+            }
+            .stats-nav button { flex: 1 1 calc(50% - 3px); padding: 9px 10px; }
+            .stats-header { height: 64px; padding: 0 16px; }
+            .stats-title { font-size: 15px; white-space: nowrap; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+            .stats-title .stats-live { display: none; }
             .stats-body { padding: 18px 16px 22px; }
         }
         @media (prefers-reduced-motion: reduce) {
             .stats-section { animation: none; }
         }
+
+        /* ══════════════════════════════════════════════════════════════
+           PALETTE VERRE — lisibilité quel que soit le thème
+           Les panneaux restent sombres/transparents même en thème clair :
+           toutes les couleurs héritées des styles « fond blanc » sont
+           neutralisées ici (spécificité 0,4,0 / 0,5,0).
+        ══════════════════════════════════════════════════════════════ */
+
+        /* Voile au-dessus de la page (les panneaux sont toujours en verre) */
+        .settings-overlay.is-open,
+        .stats-overlay.is-open,
+        html:not([data-theme="dark"]) .stats-overlay.is-open,
+        html[data-theme="dark"] .stats-overlay.is-open {
+            background: rgba(7, 10, 24, .62);
+            -webkit-backdrop-filter: blur(22px) saturate(1.45);
+            backdrop-filter: blur(22px) saturate(1.45);
+        }
+
+        /* ── Paramètres ─────────────────────────────────────────────── */
+        .settings-overlay.is-open .settings-panel .settings-title,
+        .settings-overlay.is-open .settings-panel .settings-row-label,
+        .settings-overlay.is-open .settings-panel .settings-profile-name { color: #f4f7ff; }
+
+        .settings-overlay.is-open .settings-panel .settings-row-sub,
+        .settings-overlay.is-open .settings-panel .settings-profile-sub,
+        .settings-overlay.is-open .settings-panel .settings-footer { color: rgba(226,232,255,.7); }
+
+        .settings-overlay.is-open .settings-panel .settings-section-label { color: rgba(220,228,255,.72); }
+
+        .settings-overlay.is-open .settings-panel .settings-close {
+            color: rgba(240,244,255,.9); background: rgba(255,255,255,.1);
+        }
+        .settings-overlay.is-open .settings-panel .settings-close:hover { background: rgba(255,255,255,.2); color: #fff; }
+
+        .settings-overlay.is-open .settings-panel .settings-profile-avatar--empty {
+            background: rgba(255,255,255,.12); color: rgba(238,242,255,.85);
+        }
+
+        .settings-overlay.is-open .settings-panel .settings-select {
+            color: #eef2ff; background: rgba(255,255,255,.1);
+            border-color: rgba(255,255,255,.2);
+        }
+        .settings-overlay.is-open .settings-panel .settings-select option { background: #1b1f33; color: #eef2ff; }
+
+        .settings-overlay.is-open .settings-panel .settings-toggle { background: rgba(255,255,255,.22); }
+        .settings-overlay.is-open .settings-panel .settings-toggle[aria-checked="true"] { background: #2f6fe0; }
+
+        .settings-overlay.is-open .settings-panel .settings-btn--secondary {
+            color: #e7edff;
+            background: linear-gradient(135deg, rgba(88,101,242,.4), rgba(66,111,220,.2));
+            border: 1px solid rgba(155,174,255,.32);
+        }
+        .settings-overlay.is-open .settings-panel .settings-btn--danger {
+            color: #ff8f97; background: rgba(255,80,96,.16);
+        }
+        .settings-overlay.is-open .settings-panel .settings-btn--danger:hover { background: rgba(255,80,96,.28); }
+
+        .settings-overlay.is-open .settings-panel .settings-section,
+        .settings-overlay.is-open .settings-panel .settings-row + .settings-row { border-color: rgba(255,255,255,.09); }
+
+        /* ── Statistiques ───────────────────────────────────────────── */
+        .stats-overlay.is-open .stats-panel .stats-title { color: #fff; }
+        .stats-overlay.is-open .stats-panel .stats-title::first-letter { color: #ffda00; }
+
+        .stats-overlay.is-open .stats-panel .stats-live { color: #7ef0b4; background: rgba(62,226,151,.16); }
+        .stats-overlay.is-open .stats-panel .stats-live::before { background: #7ef0b4; }
+
+        .stats-overlay.is-open .stats-panel .stats-close {
+            color: rgba(240,244,255,.9); background: rgba(255,255,255,.1);
+        }
+        .stats-overlay.is-open .stats-panel .stats-close:hover { background: rgba(255,255,255,.2); color: #fff; }
+
+        .stats-overlay.is-open .stats-panel .stats-nav button {
+            color: rgba(236,240,255,.85);
+            background: rgba(255,255,255,.06);
+            border-color: rgba(255,255,255,.14);
+        }
+        .stats-overlay.is-open .stats-panel .stats-nav button:hover { background: rgba(255,255,255,.12); }
+        .stats-overlay.is-open .stats-panel .stats-nav button[aria-selected="true"] {
+            color: #fff;
+            background: linear-gradient(120deg, #e1273c, #3f5fd6);
+            border-color: rgba(255,255,255,.35);
+            box-shadow: 0 7px 24px rgba(86,105,255,.28), inset 0 1px 0 rgba(255,255,255,.28);
+        }
+
+        .stats-overlay.is-open .stats-panel .stats-section-title { color: #fff; }
+        .stats-overlay.is-open .stats-panel .stats-section-label,
+        .stats-overlay.is-open .stats-panel .stats-visitors-header,
+        .stats-overlay.is-open .stats-panel .stats-daily-title,
+        .stats-overlay.is-open .stats-panel .stats-ranking-title { color: rgba(220,228,255,.72); }
+
+        .stats-overlay.is-open .stats-panel .stats-tile {
+            background: linear-gradient(145deg, rgba(255,255,255,.1), rgba(255,255,255,.04));
+            border-color: rgba(255,255,255,.14);
+        }
+        .stats-overlay.is-open .stats-panel .stats-tile-value { color: #fff; }
+        .stats-overlay.is-open .stats-panel .stats-tile--accent .stats-tile-value { color: #ff6a75; }
+        .stats-overlay.is-open .stats-panel .stats-tile-label { color: rgba(224,230,255,.78); }
+        .stats-overlay.is-open .stats-panel .stats-tile--clickable:hover {
+            background: linear-gradient(145deg, rgba(255,218,0,.14), rgba(255,255,255,.06));
+            border-color: rgba(255,218,0,.4);
+        }
+        .stats-overlay.is-open .stats-panel .stats-tile--clickable:hover .stats-tile-label { color: #ffd75e; }
+
+        .stats-overlay.is-open .stats-panel .stats-online-label,
+        .stats-overlay.is-open .stats-panel .stats-online-empty,
+        .stats-overlay.is-open .stats-panel .stats-visitors-empty,
+        .stats-overlay.is-open .stats-panel .stats-ranking-empty,
+        .stats-overlay.is-open .stats-panel .stats-visitor-time,
+        .stats-overlay.is-open .stats-panel .stats-daily-bar-val,
+        .stats-overlay.is-open .stats-panel .stats-daily-bar-day { color: rgba(226,232,255,.7); }
+
+        .stats-overlay.is-open .stats-panel .stats-refresh { color: rgba(220,228,255,.58); }
+
+        .stats-overlay.is-open .stats-panel .stats-user-chip {
+            background: rgba(255,255,255,.1); border-color: rgba(255,255,255,.14); color: rgba(240,244,255,.9);
+        }
+        .stats-overlay.is-open .stats-panel .stats-visitors-count {
+            background: rgba(255,90,104,.18); color: #ff8f97;
+        }
+        .stats-overlay.is-open .stats-panel .stats-visitor-item,
+        .stats-overlay.is-open .stats-panel .stats-ranking-item { color: rgba(240,244,255,.9); }
+        .stats-overlay.is-open .stats-panel .stats-visitor-item:hover,
+        .stats-overlay.is-open .stats-panel .stats-ranking-item:hover { background: rgba(255,255,255,.08); }
+        .stats-overlay.is-open .stats-panel .stats-ranking-pos {
+            background: rgba(255,255,255,.12); color: rgba(240,244,255,.85);
+        }
+        .stats-overlay.is-open .stats-panel .stats-ranking-count { color: rgba(226,232,255,.75); }
+
+        .stats-overlay.is-open .stats-panel .stats-discord-card {
+            color: #f3f5ff;
+            background: linear-gradient(135deg, rgba(88,101,242,.22), rgba(255,255,255,.05));
+            border-color: rgba(145,157,255,.28);
+        }
+        .stats-overlay.is-open .stats-panel .stats-discord-card p { color: rgba(226,232,255,.75); }
+
+        .stats-overlay.is-open .stats-panel .stats-visitors-list,
+        .stats-overlay.is-open .stats-panel .stats-ranking-list {
+            background: rgba(255,255,255,.05); border-color: rgba(255,255,255,.14);
+        }
+        .stats-overlay.is-open .stats-panel .stats-visitor-item + .stats-visitor-item,
+        .stats-overlay.is-open .stats-panel .stats-ranking-item + .stats-ranking-item { border-top-color: rgba(255,255,255,.08); }
+
+        .stats-overlay.is-open .stats-panel .stats-daily-bar-fill { background: linear-gradient(180deg, #ff5a68, #ff8c42); }
