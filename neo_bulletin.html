@@ -10580,7 +10580,7 @@
                 if (cache[path] === text) return;
                 const isImg = path.startsWith(IMG_EDIT_PREFIX);
                 const sel = isImg ? path.slice(IMG_EDIT_PREFIX.length) : path;
-                const el = document.querySelector(sel.replace(/:nth\((\d+)\)/g, ':nth-child($1)'));
+                const el = document.querySelector(sel.replace(/:nth\((\d+)\)/g, ':nth-of-type($1)'));
                 if (!el) return;
                 if (isImg) {
                     if (text && el.tagName === 'IMG') el.src = text;
@@ -10600,7 +10600,7 @@
         Object.entries(edits).forEach(([path, text]) => {
             if (!path.startsWith(IMG_EDIT_PREFIX)) return;
             try {
-                const sel = path.slice(IMG_EDIT_PREFIX.length).replace(/:nth\((\d+)\)/g, ':nth-child($1)');
+                const sel = path.slice(IMG_EDIT_PREFIX.length).replace(/:nth\((\d+)\)/g, ':nth-of-type($1)');
                 const el = document.querySelector(sel);
                 if (el && el.tagName === 'IMG' && text) {
                     if (el.getAttribute('src') !== text) el.src = text;
