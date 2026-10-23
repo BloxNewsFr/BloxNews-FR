@@ -69,7 +69,10 @@
         if (title && link) out.push({ id:`news:${link}`, title, href:link, source:'Actualités' });
       });
       document.querySelectorAll('.bulletin-card a[href], a.bulletin-card[href], .news-card a[href]').forEach(a => {
-        const title = a.querySelector('.news-card__title, h2, h3')?.textContent.trim() || a.textContent.trim().slice(0,90);
+        // On privilégie le titre de la carte ; le lien peut n'être qu'un bouton
+        // (« Lire maintenant → ») et ne doit jamais devenir le libellé.
+        const card = a.closest('.news-card, .bulletin-card, article') || a;
+        const title = card.querySelector('.news-card__title, h2, h3, .card-title')?.textContent.trim() || a.textContent.trim().slice(0,90);
         if (title) out.push({id:`news:${a.href}`,title,href:a.href,source:'Actualités'});
       });
     } else if (page === 'neo_bulletin.html') {
@@ -82,7 +85,11 @@
         }
       });
     }
-    return [...new Map(out.map(item => [item.id,item])).values()];
+    // Déduplication : on garde la PREMIÈRE occurrence (titre de carte),
+    // pas la dernière (qui peut être un bouton).
+    const byId = new Map();
+    out.forEach(item => { if (!byId.has(item.id)) byId.set(item.id, item); });
+    return [...byId.values()];
   }
   function initNotifications() {
     const icons = document.querySelector('.site-header__icons');
