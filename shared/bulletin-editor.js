@@ -640,7 +640,7 @@
         const active = document.activeElement;
         if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA') && !active.closest('.be-popup')) return;
         e.preventDefault();
-        _toggleMode();
+        try { _toggleMode(); } catch (err) { console.error('[be] toggle error', err); }
     });
 
     // ── Init ────────────────────────────────────────────────────
