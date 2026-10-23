@@ -358,6 +358,9 @@ export default {
         }
         if (input.action === 'gitBlobStart') {
           // Début upload chunked pour un fichier volumineux
+          if (!env.UPLOAD_SESSIONS) {
+            throw new Error('Binding KV UPLOAD_SESSIONS manquant dans le Worker.');
+          }
           const path = String(input.path || '').replace(/^\/+/, '');
           if (!path || path.length > 200 || path.includes('..') || !GITHUB_ALLOWED_PREFIXES.some(re => re.test(path))) {
             throw new Error('Chemin non autorisé.');
@@ -368,6 +371,9 @@ export default {
           return json({ ok: true, uploadId });
         }
         if (input.action === 'gitBlobChunk') {
+          if (!env.UPLOAD_SESSIONS) {
+            throw new Error('Binding KV UPLOAD_SESSIONS manquant dans le Worker.');
+          }
           const uploadId = String(input.uploadId || '');
           const chunk = String(input.chunk || '');
           if (!uploadId || !chunk || chunk.length > MAX_SINGLE_FILE_BYTES) {
@@ -381,6 +387,9 @@ export default {
           return json({ ok: true, received: session.chunks.length });
         }
         if (input.action === 'gitBlobFinish') {
+          if (!env.UPLOAD_SESSIONS) {
+            throw new Error('Binding KV UPLOAD_SESSIONS manquant dans le Worker.');
+          }
           const uploadId = String(input.uploadId || '');
           if (!uploadId) throw new Error('Session manquante.');
           const raw = await env.UPLOAD_SESSIONS.get(uploadId);
