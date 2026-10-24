@@ -513,6 +513,7 @@
 
         body.dark-mode .publish-date { color: #999; }
         body.dark-mode .grey-box .byline { color: #bbb; }
+        body.dark-mode .grey-box { background-color: #13131e; border-color: #2a2a35;}
         body.dark-mode .stay-tuned { color: #aaa; }
     
 

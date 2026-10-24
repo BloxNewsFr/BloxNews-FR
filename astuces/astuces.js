@@ -1,4 +1,5 @@
 (function() {
+    id = 'tips';
     const tips = [
         "Tu peux cliquer sur une image pour l'agrandir !",
         "Recherche rapidement des articles grâce à l'icône loupe dans le menu.",
