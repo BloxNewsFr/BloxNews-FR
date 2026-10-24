@@ -1,118 +1,143 @@
-/* Search shortcuts, notification center and cross-site search scopes */
-.global-search-scopes { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin:14px 4px 0; }
-.global-search-scopes a { color:rgba(255,255,255,.72); text-decoration:none; font:600 12px Inter,sans-serif; padding:8px 12px; border:1px solid rgba(255,255,255,.12); border-radius:999px; background:rgba(255,255,255,.05); transition:.18s ease; }
-.global-search-scopes a:hover,.global-search-scopes a[aria-current="page"] { color:#fff; border-color:rgba(255,255,255,.28); background:rgba(255,255,255,.13); }
+(() => {
+  const page = location.pathname.split('/').pop() || 'index.html';
+  const routes = [
+    { file: 'index.html', label: 'Actualités' },
+    { file: 'neo_bulletin.html', label: 'Leaks' },
+    { file: 'archives.html', label: 'Archives' },
+  ];
+  const safe = value => String(value || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const ready = fn => document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', fn, { once:true }) : fn();
 
-/* ── Cloche notification ── */
-.site-notification { position:relative; display:inline-flex; align-items:center; }
+  function initSearch() {
+    document.addEventListener('keydown', event => {
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
+        event.preventDefault();
+        if (typeof window.openSearch === 'function') window.openSearch();
+        else document.getElementById('archiveJump')?.focus();
+      }
+    });
+    const overlay = document.getElementById('searchOverlay');
+    const container = overlay?.querySelector('.search-container');
+    if (!overlay || !container) {
+      const query = new URLSearchParams(location.search).get('q');
+      const archiveInput = document.getElementById('archiveJump');
+      if (query && archiveInput) { archiveInput.value = query; archiveInput.dispatchEvent(new Event('input', { bubbles:true })); }
+      return;
+    }
+    if (!container.querySelector('.global-search-scopes')) {
+      const scopes = document.createElement('nav');
+      scopes.className = 'global-search-scopes';
+      scopes.setAttribute('aria-label', 'Chercher dans une section');
+      scopes.innerHTML = routes.map(r => `<a href="./${r.file}" data-route="${r.file}">${r.label}</a>`).join('');
+      container.append(scopes);
+      scopes.addEventListener('click', event => {
+        const link = event.target.closest('a[data-route]');
+        if (!link) return;
+        const q = document.getElementById('searchInput')?.value.trim();
+        if (q) { event.preventDefault(); location.href = `./${link.dataset.route}?q=${encodeURIComponent(q)}`; }
+      });
+    }
+    const current = container.querySelector(`[data-route="${CSS.escape(page)}"]`);
+    current?.setAttribute('aria-current','page');
+    const query = new URLSearchParams(location.search).get('q');
+    if (query) {
+      const input = document.getElementById('searchInput');
+      if (input && typeof window.executeSearch === 'function') {
+        input.value = query;
+        window.executeSearch();
+      }
+    }
+    if (page === 'neo_bulletin.html') {
+      const params = new URLSearchParams(location.search);
+      const category = params.get('category'), cardId = params.get('card');
+      if (category && /^cat-[a-z0-9-]+$/.test(category)) setTimeout(() => {
+        document.querySelector(`.leaks-tab[data-target="${CSS.escape(category)}"]`)?.click();
+        if (cardId) setTimeout(() => { const card=document.getElementById(cardId); card?.scrollIntoView({behavior:'smooth',block:'center'}); }, 450);
+      }, 100);
+    }
+  }
 
-.site-notification__trigger {
-    position:relative; border:0; background:transparent; color:inherit; cursor:pointer;
-    display:grid; place-items:center;
-    width:36px; height:36px; border-radius:10px;
-    transition:background .2s;
-    padding:0 !important;
-}
-.site-notification__trigger:hover { background:rgba(0,0,0,0.07); }
-html[data-theme="dark"] .site-notification__trigger:hover { background:rgba(255,255,255,0.10); }
-html:not([data-theme="dark"]) .site-notification__trigger { color:#25263a; }
-.site-notification__trigger .material-symbols-outlined { padding:0 !important; font-size:22px; }
+  const STORAGE = 'bloxsite_notifications_v1';
+  function getState() { try { return JSON.parse(localStorage.getItem(STORAGE) || '{"knownByPage":{},"items":[],"seen":0}'); } catch { return {knownByPage:{},items:[],seen:0}; } }
+  function saveState(s) { try { localStorage.setItem(STORAGE, JSON.stringify(s)); } catch {} }
+  function collectContent() {
+    const out = [];
+    if (page === 'index.html') {
+      document.querySelectorAll('.news-grid .news-card, .bulletin-card, .news-card, [data-num]').forEach((el, i) => {
+        const title = el.querySelector('.news-card__title, h2, h3, .card-title')?.textContent.trim() || el.getAttribute('aria-label') || el.dataset.num;
+        const link = el.matches('a[href]') ? el.href : el.querySelector('a[href]')?.href;
+        if (title && link) out.push({ id:`news:${link}`, title, href:link, source:'Actualités' });
+      });
+      document.querySelectorAll('.bulletin-card a[href], a.bulletin-card[href], .news-card a[href]').forEach(a => {
+        // On privilégie le titre de la carte ; le lien peut n'être qu'un bouton
+        // (« Lire maintenant → ») et ne doit jamais devenir le libellé.
+        const card = a.closest('.news-card, .bulletin-card, article') || a;
+        const title = card.querySelector('.news-card__title, h2, h3, .card-title')?.textContent.trim() || a.textContent.trim().slice(0,90);
+        if (title) out.push({id:`news:${a.href}`,title,href:a.href,source:'Actualités'});
+      });
+    } else if (page === 'neo_bulletin.html') {
+      document.querySelectorAll('#neoTabsAndSections .category-section .news-card, #neoTabsAndSections .category-section .group-card, #neoTabsAndSections .category-section .secret-bulletin').forEach(el => {
+        const title = el.querySelector('.news-card__title, .group-card__title, .bulletin-header h2, h2')?.textContent.trim();
+        if (title) {
+          const section=el.closest('.category-section');
+          const href=`./neo_bulletin.html?category=${encodeURIComponent(section?.id || '')}&card=${encodeURIComponent(el.id || '')}`;
+          out.push({ id:`leak:${el.id || el.dataset.ccId || title}`, title, href, source:'Leaks' });
+        }
+      });
+    }
+    // Déduplication : on garde la PREMIÈRE occurrence (titre de carte),
+    // pas la dernière (qui peut être un bouton).
+    const byId = new Map();
+    out.forEach(item => { if (!byId.has(item.id)) byId.set(item.id, item); });
+    return [...byId.values()];
+  }
+  function initNotifications() {
+    const icons = document.querySelector('.site-header__icons');
+    if (!icons || icons.querySelector('.site-notification')) return;
+    const widget = document.createElement('div');
+    widget.className = 'site-notification';
+    widget.innerHTML = `<button class="site-notification__trigger" type="button" aria-label="Notifications" aria-expanded="false" title="Notifications"><span class="material-symbols-outlined" aria-hidden="true">notifications</span><span class="site-notification__badge" hidden></span></button><section class="site-notification__panel" aria-label="Notifications"><div class="site-notification__head"><strong>Dernières nouveautés</strong><button class="site-notification__read" type="button">Tout marquer comme lu</button></div><div class="site-notification__list"></div></section>`;
+    icons.prepend(widget);
+    const trigger = widget.querySelector('button');
+    const panel = widget.querySelector('.site-notification__panel');
+    const render = () => {
+      const state = getState();
+      const unread = Math.max(0, state.items.filter(item => item.created > state.seen).length);
+      const badge = widget.querySelector('.site-notification__badge');
+      badge.hidden = !unread;
+      badge.textContent = unread > 9 ? '9+' : String(unread);
+      const list = widget.querySelector('.site-notification__list');
+      list.innerHTML = state.items.length ? state.items.slice(0,12).map(item => `<a class="site-notification__item" href="${safe(item.href)}"><b>${safe(item.title)}</b><small>${safe(item.source)} · ${new Date(item.created).toLocaleDateString('fr-FR')}</small></a>`).join('') : '<div class="site-notification__empty">Tu es à jour. Les nouveaux contenus apparaîtront ici.</div>';
+    };
+    trigger.addEventListener('click', event => { event.stopPropagation(); const open = widget.classList.toggle('is-open'); trigger.setAttribute('aria-expanded',String(open)); if (open) { const state=getState(); state.seen=Date.now(); saveState(state); render(); } });
+    widget.querySelector('.site-notification__read').addEventListener('click', () => { const state=getState(); state.seen=Date.now(); saveState(state); render(); });
+    document.addEventListener('click', event => { if (!widget.contains(event.target)) { widget.classList.remove('is-open'); trigger.setAttribute('aria-expanded','false'); } });
+    let state = getState();
+    const inventory = collectContent();
+    state.knownByPage ||= {};
+    const firstNeoVisit = page === 'neo_bulletin.html' && !Array.isArray(state.knownByPage[page]);
+    if (firstNeoVisit) state.knownByPage[page] = null;
+    else if (!Array.isArray(state.knownByPage[page])) state.knownByPage[page] = inventory.map(item => item.id);
+    else {
+      const known = new Set(state.knownByPage[page]);
+      const fresh = inventory.filter(item => !known.has(item.id));
+      state.items = [...fresh.map(item => ({...item,created:Date.now()})), ...(state.items || [])].slice(0,30);
+      state.knownByPage[page] = [...new Set([...state.knownByPage[page],...inventory.map(item => item.id)])].slice(-1000);
+    }
+    saveState(state); render();
+    const watchRoot = page === 'neo_bulletin.html' ? document.getElementById('neoTabsAndSections') : page === 'index.html' ? document.getElementById('news-grid') : null;
+    const watch = () => {
+      if (!watchRoot) return;
+      new MutationObserver(() => {
+        const current = collectContent(); const snapshot = getState(); snapshot.knownByPage ||= {}; const known = new Set(snapshot.knownByPage[page] || []);
+        const fresh = current.filter(item => !known.has(item.id));
+        if (fresh.length) { snapshot.items=[...fresh.map(item=>({...item,created:Date.now()})),...(snapshot.items||[])].slice(0,30); snapshot.knownByPage[page]=[...new Set([...known,...current.map(item=>item.id)])].slice(-1000); saveState(snapshot); render(); }
+      }).observe(watchRoot,{childList:true,subtree:true});
+    };
+    if (firstNeoVisit && watchRoot) {
+      setTimeout(() => { const baseline=getState(); baseline.knownByPage ||= {}; baseline.knownByPage[page]=collectContent().map(item=>item.id); saveState(baseline); watch(); }, 2200);
+    } else watch();
+  }
 
-/* Badge compteur */
-.site-notification__badge {
-    position:absolute; top:1px; right:0;
-    min-width:17px; height:17px; padding:0 4px;
-    display:grid; place-items:center;
-    border-radius:999px;
-    background:#ef2525; color:#fff;
-    font:800 10px Inter,sans-serif;
-    box-shadow:0 2px 9px rgba(239,37,37,.4);
-}
-
-/* ── Panneau ── */
-.site-notification__panel {
-    position:absolute; z-index:100001;
-    right:0; top:calc(100% + 10px);
-    width:min(340px,calc(100vw - 28px));
-    max-height:min(480px,72vh);
-    overflow:hidden;
-    color:#f5f5fb;
-    background:rgba(16,17,28,0.97);
-    border:1px solid rgba(255,255,255,.13);
-    border-radius:20px;
-    box-shadow:0 24px 60px rgba(0,0,0,.45), 0 0 0 1px rgba(255,255,255,.04) inset;
-    backdrop-filter:blur(28px) saturate(1.6);
-    -webkit-backdrop-filter:blur(28px) saturate(1.6);
-    display:none;
-    flex-direction:column;
-}
-.site-notification.is-open .site-notification__panel { display:flex; animation:siteNotifIn .18s ease-out; }
-
-/* En-tête panneau */
-.site-notification__head {
-    display:flex; align-items:center; justify-content:space-between; gap:12px;
-    padding:14px 16px 12px;
-    border-bottom:1px solid rgba(255,255,255,.08);
-    flex-shrink:0;
-}
-.site-notification__head strong {
-    font:800 13px/1 Inter,sans-serif;
-    letter-spacing:.2px;
-    color:#fff;
-}
-.site-notification__read {
-    border:1px solid rgba(255,255,255,.1); border-radius:8px;
-    color:rgba(255,255,255,.55); background:rgba(255,255,255,.04);
-    cursor:pointer; font:600 11px Inter,sans-serif;
-    padding:5px 10px; transition:all .15s;
-}
-.site-notification__read:hover { background:rgba(255,255,255,.1); color:#fff; }
-
-/* Liste scrollable */
-.site-notification__list { overflow-y:auto; flex:1; padding:8px 8px 10px; }
-.site-notification__list::-webkit-scrollbar { width:4px; }
-.site-notification__list::-webkit-scrollbar-thumb { background:rgba(255,255,255,.12); border-radius:4px; }
-
-/* Item individuel */
-.site-notification__item {
-    display:flex; flex-direction:column; gap:4px;
-    color:inherit; text-decoration:none;
-    padding:10px 10px;
-    border-radius:12px;
-    transition:background .15s;
-    border-bottom:none;
-}
-.site-notification__item:hover { background:rgba(255,255,255,.07); }
-.site-notification__item + .site-notification__item { border-top:1px solid rgba(255,255,255,.05); }
-
-.site-notification__item b {
-    display:block;
-    font:700 12px/1.35 Inter,sans-serif;
-    color:#eef0fa;
-    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-}
-.site-notification__item small {
-    display:flex; align-items:center; gap:6px;
-    color:rgba(255,255,255,.38); font:500 10px Inter,sans-serif;
-}
-/* Puce source colorée */
-.site-notification__item small::before {
-    content:''; display:inline-block;
-    width:6px; height:6px; border-radius:50%; flex-shrink:0;
-    background:rgba(255,218,0,.7);
-}
-
-.site-notification__empty {
-    padding:20px 12px 12px;
-    color:rgba(255,255,255,.38);
-    font:500 12px Inter,sans-serif;
-    text-align:center; line-height:1.5;
-}
-
-@keyframes siteNotifIn { from { opacity:0; transform:translateY(-6px) scale(.98); } to { opacity:1; transform:translateY(0) scale(1); } }
-
-@media(max-width:600px) {
-    .site-notification__panel { right:-48px; }
-    .global-search-scopes { gap:6px; }
-    .global-search-scopes a { font-size:11px; padding:7px 10px; }
-}
+  ready(() => { initSearch(); initNotifications(); });
+})();
