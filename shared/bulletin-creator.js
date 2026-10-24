@@ -956,52 +956,93 @@ ${body}
     function ensureStyles() {
         if (document.getElementById('bcStyles')) return;
         const css = `
-.bcx-overlay{position:fixed;inset:0;z-index:99990;background:rgba(5,5,18,0.55);backdrop-filter:blur(24px) saturate(1.4);-webkit-backdrop-filter:blur(24px) saturate(1.4);display:flex;align-items:flex-start;justify-content:center;padding:24px 16px;opacity:0;pointer-events:none;transition:opacity .35s}
+/* ── Overlay ── */
+.bcx-overlay{position:fixed;inset:0;z-index:99990;background:rgba(4,4,16,0.7);backdrop-filter:blur(20px) saturate(1.5);-webkit-backdrop-filter:blur(20px) saturate(1.5);display:flex;align-items:flex-start;justify-content:center;padding:20px 16px;opacity:0;pointer-events:none;transition:opacity .3s}
 .bcx-overlay.is-active{opacity:1;pointer-events:auto}
-.bcx-panel{width:min(980px,100%);max-height:calc(100vh - 48px);overflow-y:auto;background:linear-gradient(165deg,rgba(30,30,60,0.82),rgba(14,14,32,0.92));border:1px solid rgba(255,255,255,0.12);border-radius:24px;color:#e8e8f5;font-family:Inter,sans-serif;box-shadow:0 32px 100px rgba(0,0,0,0.55),inset 0 1px 0 rgba(255,255,255,0.1),inset 0 -1px 0 rgba(0,0,0,0.3);backdrop-filter:blur(40px) saturate(1.6);-webkit-backdrop-filter:blur(40px) saturate(1.6)}
-.bcx-head{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;border-bottom:1px solid rgba(255,255,255,0.08);position:sticky;top:0;background:linear-gradient(180deg,rgba(30,30,60,0.95),rgba(14,14,32,0.98));z-index:2;border-radius:24px 24px 0 0;backdrop-filter:blur(20px)}
-.bcx-title{font-size:18px;font-weight:900;margin:0;letter-spacing:.3px;background:linear-gradient(135deg,#fff,#a8b4d8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.bcx-close{width:36px;height:36px;border-radius:12px;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.05);color:#aaa;font-size:18px;cursor:pointer;backdrop-filter:blur(10px);transition:all .2s}
-.bcx-close:hover{background:rgba(255,60,60,0.2);color:#ff6b6b;border-color:rgba(255,60,60,0.3)}
-.bcx-body{padding:22px 24px 28px}
-.bcx-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-@media(max-width:720px){.bcx-grid{grid-template-columns:1fr}}
-.bcx-field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
-.bcx-field label{font-size:12px;font-weight:700;color:#9aa0b8;text-transform:uppercase;letter-spacing:.5px}
-.bcx-field input,.bcx-field textarea,.bcx-field select{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:10px 14px;color:#eee;font-family:Inter,sans-serif;font-size:14px;outline:none;backdrop-filter:blur(10px);transition:border-color .2s,background .2s,box-shadow .2s}
-.bcx-field input:focus,.bcx-field textarea:focus{border-color:rgba(120,140,255,0.55);background:rgba(255,255,255,0.09);box-shadow:0 0 0 3px rgba(120,140,255,0.12)}
-.bcx-field textarea{min-height:90px;resize:vertical;line-height:1.5}
-.bcx-mdbar{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px}
-.bcx-mdbar button{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.08);color:#ccc;border-radius:8px;padding:5px 10px;font-size:12px;cursor:pointer;backdrop-filter:blur(8px);transition:all .15s}
-.bcx-mdbar button:hover{background:rgba(255,255,255,0.14);color:#fff;transform:translateY(-1px)}
-.bcx-section{border:1px solid rgba(255,255,255,0.08);border-radius:18px;padding:18px;margin-bottom:18px;background:rgba(255,255,255,0.03);backdrop-filter:blur(16px) saturate(1.3);box-shadow:inset 0 1px 0 rgba(255,255,255,0.06),0 4px 24px rgba(0,0,0,0.15)}
-.bcx-section h3{margin:0 0 12px;font-size:14px;font-weight:800;color:#aeb6d0;text-transform:uppercase;letter-spacing:.6px}
-.bcx-checks{display:flex;gap:18px;flex-wrap:wrap;margin:10px 0}
-.bcx-check{display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13.5px;color:#ccc;padding:8px 14px;border-radius:12px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.03);backdrop-filter:blur(8px);transition:all .2s}
-.bcx-check:hover{background:rgba(255,255,255,0.07);border-color:rgba(255,255,255,0.12)}
-.bcx-check input{accent-color:#7a8cff;width:16px;height:16px}
-.bcx-theme-preview{width:100%;height:90px;border-radius:14px;border:2px solid rgba(255,255,255,0.1);margin-top:8px;display:flex;align-items:center;justify-content:center;font-family:LuckiestGuy,cursive;font-size:16px;letter-spacing:1px;transition:all .3s;backdrop-filter:blur(12px)}
-.bcx-theme-preview.preview-halloween{background:linear-gradient(135deg,rgba(26,5,5,0.9),rgba(58,10,10,0.9),rgba(13,13,13,0.9));color:#ff9500;font-family:Creepster,cursive;border-color:rgba(255,106,0,0.5);text-shadow:0 0 14px #ff6a00;box-shadow:0 0 30px rgba(255,106,0,0.2)}
-.bcx-theme-preview.preview-valentine{background:linear-gradient(135deg,rgba(139,0,0,0.9),rgba(194,24,91,0.9),rgba(212,160,23,0.9),rgba(194,24,91,0.9));color:#fff;text-shadow:0 0 12px rgba(255,20,80,0.6);border-color:rgba(255,48,96,0.5);box-shadow:0 0 30px rgba(255,20,80,0.2)}
-.bcx-theme-preview.preview-default{background:linear-gradient(135deg,rgba(23,94,194,0.85),rgba(41,128,212,0.85),rgba(23,94,194,0.85));color:#fff;box-shadow:0 0 30px rgba(23,94,194,0.15)}
-.bcx-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
-.bcx-btn{border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:12px 22px;font-weight:800;font-size:13px;cursor:pointer;font-family:Inter,sans-serif;transition:all .2s;backdrop-filter:blur(12px);position:relative;overflow:hidden}
-.bcx-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,0.15),transparent 50%);opacity:0;transition:opacity .2s}
-.bcx-btn:hover::before{opacity:1}
-.bcx-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.25)}
+
+/* ── Panel ── */
+.bcx-panel{width:min(900px,100%);max-height:calc(100vh - 40px);overflow-y:auto;background:rgba(13,13,28,0.96);border:1px solid rgba(255,255,255,0.1);border-radius:22px;color:#e4e4f0;font-family:Inter,sans-serif;box-shadow:0 40px 120px rgba(0,0,0,0.7),inset 0 1px 0 rgba(255,255,255,0.08)}
+.bcx-panel::-webkit-scrollbar{width:5px}
+.bcx-panel::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:5px}
+
+/* ── Header ── */
+.bcx-head{display:flex;align-items:center;justify-content:space-between;padding:16px 22px;border-bottom:1px solid rgba(255,255,255,0.07);position:sticky;top:0;background:rgba(13,13,28,0.98);z-index:2;border-radius:22px 22px 0 0}
+.bcx-title{font-size:16px;font-weight:900;margin:0;letter-spacing:.2px;display:flex;align-items:center;gap:8px;color:#fff}
+.bcx-title-icon{width:28px;height:28px;border-radius:8px;background:rgba(255,218,0,0.15);border:1px solid rgba(255,218,0,0.25);display:grid;place-items:center;font-size:15px;flex-shrink:0}
+.bcx-close{width:32px;height:32px;border-radius:10px;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.04);color:#888;font-size:16px;cursor:pointer;transition:all .2s;display:grid;place-items:center}
+.bcx-close:hover{background:rgba(255,60,60,0.18);color:#ff6b6b;border-color:rgba(255,60,60,0.25)}
+
+/* ── Body ── */
+.bcx-body{padding:20px 22px 26px}
+
+/* ── Bloc infos de base ── */
+.bcx-base-block{background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.07);border-radius:16px;padding:16px 18px 4px;margin-bottom:18px}
+.bcx-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:700px){.bcx-grid{grid-template-columns:1fr}}
+
+/* ── Champs ── */
+.bcx-field{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
+.bcx-field label{font-size:10.5px;font-weight:700;color:#6b7499;text-transform:uppercase;letter-spacing:.7px}
+.bcx-field input[type="text"],
+.bcx-field input[type="number"],
+.bcx-field input[type="date"],
+.bcx-field textarea,
+.bcx-field select{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.09);border-radius:10px;padding:9px 13px;color:#e0e0f0;font-family:Inter,sans-serif;font-size:13.5px;outline:none;transition:border-color .2s,background .2s,box-shadow .2s;width:100%;box-sizing:border-box}
+.bcx-field input[type="text"]:focus,
+.bcx-field input[type="number"]:focus,
+.bcx-field input[type="date"]:focus,
+.bcx-field textarea:focus{border-color:rgba(255,218,0,0.4);background:rgba(255,218,0,0.04);box-shadow:0 0 0 3px rgba(255,218,0,0.08)}
+.bcx-field input[type="file"]{color:#888;font-size:12px;padding:7px 10px;cursor:pointer}
+.bcx-field textarea{min-height:88px;resize:vertical;line-height:1.55}
+.bcx-field input::placeholder,.bcx-field textarea::placeholder{color:#444860}
+
+/* ── Toolbar markdown ── */
+.bcx-mdbar{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:5px}
+.bcx-mdbar button{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.07);color:#9098b8;border-radius:7px;padding:4px 9px;font-size:11px;cursor:pointer;transition:all .15s;font-family:Inter,sans-serif}
+.bcx-mdbar button:hover{background:rgba(255,255,255,0.1);color:#fff}
+
+/* ── Sections ── */
+.bcx-section{border:1px solid rgba(255,255,255,0.07);border-radius:16px;padding:16px 18px;margin-bottom:14px;background:rgba(255,255,255,0.02)}
+.bcx-section h3{margin:0 0 14px;font-size:11px;font-weight:800;color:#5c6480;text-transform:uppercase;letter-spacing:.8px;display:flex;align-items:center;gap:7px}
+.bcx-section h3::before{content:'';display:inline-block;width:3px;height:14px;border-radius:2px;background:rgba(255,218,0,0.6);flex-shrink:0}
+
+/* ── Thèmes ── */
+.bcx-checks{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 14px}
+.bcx-check{display:flex;align-items:center;gap:7px;cursor:pointer;font-size:13px;color:#b0b8d0;padding:8px 14px;border-radius:10px;border:1px solid rgba(255,255,255,0.07);background:rgba(255,255,255,0.03);transition:all .18s;user-select:none}
+.bcx-check:hover{background:rgba(255,255,255,0.07);border-color:rgba(255,255,255,0.12);color:#fff}
+.bcx-check input{accent-color:#ffd900;width:15px;height:15px;flex-shrink:0}
+.bcx-theme-preview{width:100%;height:80px;border-radius:12px;border:1.5px solid rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;font-family:'Luckiest Guy',cursive;font-size:15px;letter-spacing:1.5px;transition:all .3s}
+.bcx-theme-preview.preview-halloween{background:linear-gradient(135deg,#1a0505,#3a0a0a,#0d0d0d);color:#ff9500;font-family:Creepster,cursive;border-color:rgba(255,106,0,0.45);text-shadow:0 0 14px #ff6a00;box-shadow:0 0 24px rgba(255,106,0,0.15)}
+.bcx-theme-preview.preview-valentine{background:linear-gradient(135deg,#8b0000,#c2185b,#d4a017,#c2185b);color:#fff;text-shadow:0 0 10px rgba(255,20,80,0.5);border-color:rgba(255,48,96,0.4);box-shadow:0 0 24px rgba(255,20,80,0.15)}
+.bcx-theme-preview.preview-default{background:linear-gradient(135deg,#175ec2,#2980d4,#175ec2);color:#fff;box-shadow:0 0 20px rgba(23,94,194,0.2)}
+
+/* ── Actions ── */
+.bcx-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.06)}
+.bcx-btn{border:1px solid rgba(255,255,255,0.09);border-radius:12px;padding:11px 20px;font-weight:800;font-size:13px;cursor:pointer;font-family:Inter,sans-serif;transition:all .2s;display:inline-flex;align-items:center;gap:6px}
+.bcx-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,0,0,0.3)}
 .bcx-btn:active{transform:translateY(0)}
-.bcx-btn--primary{background:linear-gradient(135deg,rgba(255,218,0,0.95),rgba(255,194,0,0.95));color:#000;border-color:rgba(255,218,0,0.3);box-shadow:0 4px 20px rgba(255,218,0,0.3)}
-.bcx-btn--ghost{background:rgba(255,255,255,0.07);color:#ddd}
-.bcx-btn--danger{background:linear-gradient(135deg,rgba(198,40,40,0.9),rgba(229,57,53,0.9));color:#fff;border-color:rgba(255,80,80,0.2)}
-.bcx-btn:disabled{opacity:.45;cursor:not-allowed;transform:none!important}
-.bcx-status{margin-top:14px;font-size:13px;color:#8ea0c0;min-height:18px;padding:10px 14px;border-radius:10px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.05);backdrop-filter:blur(8px)}
-.bcx-status.ok{color:#6fcf97;border-color:rgba(111,207,151,0.2);background:rgba(111,207,151,0.06)}
-.bcx-status.err{color:#ff7b7b;border-color:rgba(255,123,123,0.2);background:rgba(255,123,123,0.06)}
-.bcx-preview-wrap{margin-top:18px;border:1px solid rgba(255,255,255,0.1);border-radius:16px;overflow:hidden;background:#fff;box-shadow:0 8px 32px rgba(0,0,0,0.2)}
-.bcx-preview-bar{display:flex;justify-content:space-between;align-items:center;padding:8px 14px;background:rgba(255,255,255,0.04);border-bottom:1px solid rgba(255,255,255,0.07);font-size:12px;color:#99a;backdrop-filter:blur(8px)}
+.bcx-btn--primary{background:linear-gradient(135deg,#ffd900,#ffbe00);color:#000;border-color:rgba(255,218,0,0.2);box-shadow:0 3px 16px rgba(255,218,0,0.25)}
+.bcx-btn--ghost{background:rgba(255,255,255,0.06);color:#c0c8e0;border-color:rgba(255,255,255,0.08)}
+.bcx-btn--ghost:hover{background:rgba(255,255,255,0.1);color:#fff}
+.bcx-btn--danger{background:linear-gradient(135deg,#c62828,#e53935);color:#fff;border-color:rgba(255,80,80,0.15)}
+.bcx-btn:disabled{opacity:.4;cursor:not-allowed;transform:none!important;box-shadow:none!important}
+
+/* ── Status ── */
+.bcx-status{margin-top:12px;font-size:12.5px;color:#6b7499;padding:10px 14px;border-radius:10px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.05);min-height:16px;line-height:1.5}
+.bcx-status.ok{color:#6fcf97;border-color:rgba(111,207,151,0.2);background:rgba(111,207,151,0.05)}
+.bcx-status.err{color:#ff7b7b;border-color:rgba(255,123,123,0.2);background:rgba(255,123,123,0.05)}
+
+/* ── Aperçu ── */
+.bcx-preview-wrap{margin-top:16px;border:1px solid rgba(255,255,255,0.08);border-radius:14px;overflow:hidden;background:#fff}
+.bcx-preview-bar{display:flex;justify-content:space-between;align-items:center;padding:7px 14px;background:rgba(10,10,24,0.96);border-bottom:1px solid rgba(255,255,255,0.06);font-size:11px;color:#555870}
 .bcx-preview-frame{width:100%;height:420px;border:none;display:block;background:#f5f6fa}
-.bcx-imglabel{display:inline-flex;align-items:center;gap:6px;margin-top:4px;font-size:12px;color:#8890a8}
-.bcx-imglabel img{width:36px;height:36px;object-fit:cover;border-radius:8px;border:1px solid rgba(255,255,255,0.15)}
+
+/* ── Image label ── */
+.bcx-imglabel{display:inline-flex;align-items:center;gap:6px;margin-top:3px;font-size:11.5px;color:#6b7499}
+.bcx-imglabel img{width:34px;height:34px;object-fit:cover;border-radius:7px;border:1px solid rgba(255,255,255,0.12)}
+
+/* ── Article card ── */
+.bcx-article{background:rgba(100,120,255,0.04)!important;border-color:rgba(100,120,255,0.12)!important}
 `;
         const st = document.createElement('style');
         st.id = 'bcStyles';
@@ -1031,39 +1072,41 @@ ${body}
         const today = new Date().toISOString().slice(0, 10);
         return `
 <div class="bcx-head">
-    <h2 class="bcx-title">📝 Créer un bulletin</h2>
+    <h2 class="bcx-title"><span class="bcx-title-icon">📝</span> Créer un bulletin</h2>
     <button class="bcx-close" onclick="BulletinCreator.close()" aria-label="Fermer">✕</button>
 </div>
 <div class="bcx-body">
-    <div class="bcx-grid">
-        <div class="bcx-field">
-            <label for="bcNum">Numéro</label>
-            <input id="bcNum" type="number" min="1" max="999" value="${nextNum}">
-        </div>
-        <div class="bcx-field">
-            <label for="bcDate">Date de publication</label>
-            <input id="bcDate" type="date" value="${today}">
-        </div>
-        <div class="bcx-field">
-            <label for="bcBanner">Texte du bandeau</label>
-            <input id="bcBanner" type="text" placeholder="The Blox Bulletin #${fmtNum(nextNum)}">
-        </div>
-        <div class="bcx-field">
-            <label for="bcJournal">Titre journal</label>
-            <input id="bcJournal" type="text" value="The Blox Bulletin">
-        </div>
-        <div class="bcx-field" style="grid-column:1/-1">
-            <label for="bcSubtitle">Sous-titre</label>
-            <input id="bcSubtitle" type="text" placeholder="Un chapitre s'ouvre…">
-        </div>
-        <div class="bcx-field">
-            <label for="bcAuthor">Auteur principal</label>
-            <input id="bcAuthor" type="text" value="BloxNews">
-        </div>
-        <div class="bcx-field">
-            <label for="bcHero">Image à la une (hero)</label>
-            <input id="bcHero" type="file" accept="image/*">
-            <span class="bcx-imglabel" id="bcHeroLabel"></span>
+    <div class="bcx-base-block">
+        <div class="bcx-grid">
+            <div class="bcx-field">
+                <label for="bcNum">Numéro</label>
+                <input id="bcNum" type="number" min="1" max="999" value="${nextNum}">
+            </div>
+            <div class="bcx-field">
+                <label for="bcDate">Date de publication</label>
+                <input id="bcDate" type="date" value="${today}">
+            </div>
+            <div class="bcx-field">
+                <label for="bcBanner">Texte du bandeau</label>
+                <input id="bcBanner" type="text" placeholder="The Blox Bulletin #${fmtNum(nextNum)}">
+            </div>
+            <div class="bcx-field">
+                <label for="bcJournal">Titre journal</label>
+                <input id="bcJournal" type="text" value="The Blox Bulletin">
+            </div>
+            <div class="bcx-field" style="grid-column:1/-1">
+                <label for="bcSubtitle">Sous-titre</label>
+                <input id="bcSubtitle" type="text" placeholder="Un chapitre s'ouvre…">
+            </div>
+            <div class="bcx-field">
+                <label for="bcAuthor">Auteur principal</label>
+                <input id="bcAuthor" type="text" value="BloxNews">
+            </div>
+            <div class="bcx-field">
+                <label for="bcHero">Image à la une (hero)</label>
+                <input id="bcHero" type="file" accept="image/*">
+                <span class="bcx-imglabel" id="bcHeroLabel"></span>
+            </div>
         </div>
     </div>
 

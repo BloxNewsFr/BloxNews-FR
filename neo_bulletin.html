@@ -608,8 +608,8 @@
         .bulletin-content { position: relative; z-index: 1; }
         .bulletin-content p { font-size: 14.5px; margin-bottom: 16px; color: rgba(225,218,218,0.85); line-height: 1.75; }
         .bulletin-content p:last-child { margin-bottom: 0; }
-        .bulletin-content .highlightr { color: #ff4444; background: rgba(255, 26, 26, 0.14); padding: 2px 8px; border-radius: 6px; font-weight: 700; }
-        .bulletin-content .highlightv { color: #a67fff; background: rgba(120, 50, 255, 0.14); padding: 2px 8px; border-radius: 6px; font-weight: 700; }
+        .bulletin-content .highlightr { color: #ff4040; font-weight: 800; padding: 0; background: linear-gradient(transparent 58%, rgba(255,50,50,0.22) 58%); border-radius: 0; }
+        .bulletin-content .highlightv { color: #b87fff; font-weight: 800; padding: 0; background: linear-gradient(transparent 58%, rgba(140,70,255,0.22) 58%); border-radius: 0; }
         .bulletin-content .key-info {
             display: inline-block; background: rgba(255,26,26,0.08); border: 1px solid rgba(255,26,26,0.15);
             border-radius: 6px; padding: 1px 10px; font-size: 13px; font-weight: 700;
@@ -2205,12 +2205,12 @@
         }
         html:not([data-theme="dark"]) .bulletin-content p:last-child { margin-bottom: 0; }
         html:not([data-theme="dark"]) .bulletin-content .highlightr {
-            background: rgba(204,0,0,0.08);
-            color: #c62828;
+            color: #cc1a1a;
+            background: linear-gradient(transparent 58%, rgba(204,0,0,0.18) 58%);
         }
         html:not([data-theme="dark"]) .bulletin-content .highlightv {
-            background: rgba(120,50,255,0.08);
-            color: #6a3de8;
+            color: #5c2de8;
+            background: linear-gradient(transparent 58%, rgba(100,40,230,0.18) 58%);
         }
         html:not([data-theme="dark"]) .bulletin-content .key-info {
             background: rgba(204,0,0,0.06);
@@ -5886,13 +5886,11 @@
             color: #c9171e;
             font: 400 4.1em/.78 Georgia, serif;
         }
-        #cat-actus .bulletin-content .highlightr,
-        #cat-actus .bulletin-content .highlightv,
         #cat-actus .bulletin-content .key-info {
             padding: 0;
             border: 0;
             border-radius: 0;
-            background: linear-gradient(transparent 62%, rgba(215,25,32,.18) 62%);
+            background: linear-gradient(transparent 58%, rgba(215,25,32,.18) 58%);
             color: #9d1016;
             font-weight: 800;
         }
