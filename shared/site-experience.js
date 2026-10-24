@@ -139,5 +139,104 @@
     } else watch();
   }
 
-  ready(() => { initSearch(); initNotifications(); });
+  // ── PWA : manifest + meta theme-color ──
+  function initPWA() {
+    // Manifest
+    if (!document.querySelector('link[rel="manifest"]')) {
+      const l = document.createElement('link');
+      l.rel = 'manifest'; l.href = '/BloxNews-FR/manifest.json';
+      document.head.appendChild(l);
+    }
+    // Theme color
+    if (!document.querySelector('meta[name="theme-color"]')) {
+      const m = document.createElement('meta');
+      m.name = 'theme-color'; m.content = '#e20000';
+      document.head.appendChild(m);
+    }
+    // Apple touch icon
+    if (!document.querySelector('link[rel="apple-touch-icon"]')) {
+      const a = document.createElement('link');
+      a.rel = 'apple-touch-icon'; a.href = '/BloxNews-FR/icons/icon-192x192.png';
+      document.head.appendChild(a);
+    }
+  }
+
+  // ── Notifications push FCM ──
+  // Remplace VAPID_PUBLIC_KEY par ta clé publique Web Push (Firebase Console → Cloud Messaging)
+  const VAPID_PUBLIC_KEY = 'BDxYpmLmyw5GrZByri54qulYuyS-mfvCWMkw89xluUSzCOJChVLrhm7v_S74PUgMa1QII8-k1jSSDwAJ_5ITbBo';
+  const FCM_STORAGE_KEY  = 'bloxsite_fcm_token_v1';
+
+  async function initPushNotifications() {
+    // Vérifie le support
+    if (!('serviceWorker' in navigator) || !('PushManager' in window)) return;
+    if (VAPID_PUBLIC_KEY.startsWith('REMPLACE')) return; // pas encore configuré
+
+    try {
+      // Enregistre le service worker
+      const reg = await navigator.serviceWorker.register('/BloxNews-FR/firebase-messaging-sw.js', { scope: '/BloxNews-FR/' });
+
+      // Charge Firebase Messaging (doit déjà être chargé sur la page)
+      const messaging = window.firebaseMessaging || (typeof firebase !== 'undefined' && firebase.apps.length ? firebase.messaging() : null);
+      if (!messaging) return;
+
+      // Vérifie si la permission est déjà accordée
+      if (Notification.permission === 'denied') return;
+
+      // Demande la permission uniquement si pas encore décidée
+      if (Notification.permission === 'default') {
+        // On attend une interaction utilisateur pour demander (UX)
+        const alreadyAsked = localStorage.getItem('bloxsite_push_asked');
+        if (alreadyAsked) return;
+      }
+
+      // Récupère le token FCM
+      const token = await messaging.getToken({ vapidKey: VAPID_PUBLIC_KEY, serviceWorkerRegistration: reg });
+      if (!token) return;
+
+      // Sauvegarde le token (le Worker Cloudflare pourra l'utiliser pour envoyer des push)
+      const stored = localStorage.getItem(FCM_STORAGE_KEY);
+      if (stored !== token) {
+        localStorage.setItem(FCM_STORAGE_KEY, token);
+        // Envoie le token au Worker pour qu'il le stocke dans Firebase
+        fetch('https://blox-update-relay.c9yz5m8pw6.workers.dev', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'registerPushToken', token })
+        }).catch(() => {});
+      }
+    } catch (err) {
+      console.warn('[PWA] Push init failed:', err.message);
+    }
+  }
+
+  // Bouton "Activer les notifications" affiché dans le panneau notif
+  function injectPushToggle(widget) {
+    if (!('Notification' in window) || Notification.permission === 'granted') return;
+    const panel = widget.querySelector('.site-notification__panel');
+    if (!panel || panel.querySelector('.site-notif-push-btn')) return;
+    const btn = document.createElement('button');
+    btn.className = 'site-notif-push-btn';
+    btn.innerHTML = '🔔 Activer les notifications push';
+    btn.addEventListener('click', async () => {
+      localStorage.setItem('bloxsite_push_asked', '1');
+      const perm = await Notification.requestPermission();
+      if (perm === 'granted') {
+        btn.remove();
+        initPushNotifications();
+      }
+    });
+    panel.querySelector('.site-notification__list').before(btn);
+  }
+
+  ready(() => {
+    initPWA();
+    initSearch();
+    initNotifications();
+    // Injecte le bouton push après que la cloche soit créée
+    setTimeout(() => {
+      const widget = document.querySelector('.site-notification');
+      if (widget) injectPushToggle(widget);
+      if (Notification.permission === 'granted') initPushNotifications();
+    }, 500);
+  });
 })();
