@@ -99,3 +99,13 @@ html:not([data-theme="dark"]) .site-notification__trigger { color:#25263a; }
 
 @keyframes siteNotifIn { from{opacity:0;transform:translateY(-6px) scale(.98)} to{opacity:1;transform:translateY(0) scale(1)} }
 @media(max-width:600px) { .site-notification__panel{right:-48px} .global-search-scopes{gap:6px} .global-search-scopes a{font-size:11px;padding:7px 10px} }
+
+/* ── Bouton activer notifications push ── */
+.site-notif-push-btn {
+    display:block; width:100%; margin:8px 0 4px;
+    padding:10px 14px; border-radius:12px; border:1px solid rgba(255,218,0,0.2);
+    background:rgba(255,218,0,0.08); color:rgba(255,218,0,0.9);
+    font:700 12px Inter,sans-serif; cursor:pointer; text-align:left;
+    transition:background .15s, border-color .15s;
+}
+.site-notif-push-btn:hover { background:rgba(255,218,0,0.15); border-color:rgba(255,218,0,0.35); }

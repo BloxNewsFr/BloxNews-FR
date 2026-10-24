@@ -1,115 +1,242 @@
-(function () {
-    function ready(fn) {
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', fn);
-        } else {
-            fn();
-        }
-    }
+(() => {
+  const page = location.pathname.split('/').pop() || 'index.html';
+  const routes = [
+    { file: 'index.html', label: 'Actualités' },
+    { file: 'neo_bulletin.html', label: 'Leaks' },
+    { file: 'archives.html', label: 'Archives' },
+  ];
+  const safe = value => String(value || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const ready = fn => document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', fn, { once:true }) : fn();
 
-    ready(function () {
-        const root = document.querySelector('.bulletin-container') || document.querySelector('main.main-content');
-        if (!root) return;
-
-        const images = Array.from(root.querySelectorAll('img')).filter((img) => {
-            const src = img.getAttribute('src');
-            if (!src) return false;
-            if (img.closest('a, button')) return false;
-            if (img.closest('.social-share, .site-header, .mobile-nav, .auth-section')) return false;
-            return true;
-        });
-
-        if (!images.length) return;
-
-        const lightbox = document.createElement('div');
-        lightbox.className = 'bulletin-image-lightbox';
-        lightbox.setAttribute('role', 'dialog');
-        lightbox.setAttribute('aria-modal', 'true');
-        lightbox.setAttribute('aria-label', 'Image agrandie');
-        lightbox.innerHTML = [
-            '<div class="bulletin-image-lightbox__panel">',
-            '<button class="bulletin-image-lightbox__close" type="button" aria-label="Fermer">&times;</button>',
-            '<img class="bulletin-image-lightbox__img" alt="">',
-            '</div>'
-        ].join('');
-        document.body.appendChild(lightbox);
-
-        const modalImg = lightbox.querySelector('.bulletin-image-lightbox__img');
-        const closeBtn = lightbox.querySelector('.bulletin-image-lightbox__close');
-        let activeSourceImg = null;
-
-        function fitImageToViewport() {
-            const sourceWidth = modalImg.naturalWidth || activeSourceImg?.naturalWidth || 1;
-            const sourceHeight = modalImg.naturalHeight || activeSourceImg?.naturalHeight || 1;
-            const viewportWidth = window.innerWidth * (window.innerWidth <= 640 ? 0.96 : 0.94);
-            const viewportHeight = window.innerHeight * (window.innerWidth <= 640 ? 0.86 : 0.9);
-            const ratio = sourceWidth / sourceHeight;
-
-            let targetWidth = viewportWidth;
-            let targetHeight = targetWidth / ratio;
-
-            if (targetHeight > viewportHeight) {
-                targetHeight = viewportHeight;
-                targetWidth = targetHeight * ratio;
-            }
-
-            modalImg.style.width = Math.round(targetWidth) + 'px';
-            modalImg.style.height = Math.round(targetHeight) + 'px';
-        }
-
-        function openLightbox(img) {
-            activeSourceImg = img;
-            modalImg.onload = fitImageToViewport;
-            modalImg.src = img.currentSrc || img.src;
-            modalImg.alt = img.alt || 'Image agrandie';
-            if (modalImg.complete) fitImageToViewport();
-            lightbox.classList.add('is-active');
-            document.body.classList.add('bulletin-lightbox-open');
-            closeBtn.focus({ preventScroll: true });
-        }
-
-        function closeLightbox() {
-            lightbox.classList.remove('is-active');
-            document.body.classList.remove('bulletin-lightbox-open');
-            window.setTimeout(function () {
-                if (!lightbox.classList.contains('is-active')) {
-                    modalImg.removeAttribute('src');
-                    modalImg.removeAttribute('style');
-                    modalImg.onload = null;
-                    activeSourceImg = null;
-                }
-            }, 250);
-        }
-
-        images.forEach((img) => {
-            img.setAttribute('data-bulletin-lightbox', '');
-            img.setAttribute('tabindex', '0');
-            img.setAttribute('role', 'button');
-            img.setAttribute('aria-label', (img.alt ? img.alt + ' - ' : '') + 'ouvrir en grand');
-
-            img.addEventListener('click', function () {
-                openLightbox(img);
-            });
-
-            img.addEventListener('keydown', function (event) {
-                if (event.key === 'Enter' || event.key === ' ') {
-                    event.preventDefault();
-                    openLightbox(img);
-                }
-            });
-        });
-
-        closeBtn.addEventListener('click', closeLightbox);
-        lightbox.addEventListener('click', function (event) {
-            if (event.target === lightbox) closeLightbox();
-        });
-        document.addEventListener('keydown', function (event) {
-            if (event.key === 'Escape' && lightbox.classList.contains('is-active')) {
-                closeLightbox();
-            }
-        });
-        window.addEventListener('resize', function () {
-            if (lightbox.classList.contains('is-active')) fitImageToViewport();
-        });
+  function initSearch() {
+    document.addEventListener('keydown', event => {
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
+        event.preventDefault();
+        if (typeof window.openSearch === 'function') window.openSearch();
+        else document.getElementById('archiveJump')?.focus();
+      }
     });
+    const overlay = document.getElementById('searchOverlay');
+    const container = overlay?.querySelector('.search-container');
+    if (!overlay || !container) {
+      const query = new URLSearchParams(location.search).get('q');
+      const archiveInput = document.getElementById('archiveJump');
+      if (query && archiveInput) { archiveInput.value = query; archiveInput.dispatchEvent(new Event('input', { bubbles:true })); }
+      return;
+    }
+    if (!container.querySelector('.global-search-scopes')) {
+      const scopes = document.createElement('nav');
+      scopes.className = 'global-search-scopes';
+      scopes.setAttribute('aria-label', 'Chercher dans une section');
+      scopes.innerHTML = routes.map(r => `<a href="./${r.file}" data-route="${r.file}">${r.label}</a>`).join('');
+      container.append(scopes);
+      scopes.addEventListener('click', event => {
+        const link = event.target.closest('a[data-route]');
+        if (!link) return;
+        const q = document.getElementById('searchInput')?.value.trim();
+        if (q) { event.preventDefault(); location.href = `./${link.dataset.route}?q=${encodeURIComponent(q)}`; }
+      });
+    }
+    const current = container.querySelector(`[data-route="${CSS.escape(page)}"]`);
+    current?.setAttribute('aria-current','page');
+    const query = new URLSearchParams(location.search).get('q');
+    if (query) {
+      const input = document.getElementById('searchInput');
+      if (input && typeof window.executeSearch === 'function') {
+        input.value = query;
+        window.executeSearch();
+      }
+    }
+    if (page === 'neo_bulletin.html') {
+      const params = new URLSearchParams(location.search);
+      const category = params.get('category'), cardId = params.get('card');
+      if (category && /^cat-[a-z0-9-]+$/.test(category)) setTimeout(() => {
+        document.querySelector(`.leaks-tab[data-target="${CSS.escape(category)}"]`)?.click();
+        if (cardId) setTimeout(() => { const card=document.getElementById(cardId); card?.scrollIntoView({behavior:'smooth',block:'center'}); }, 450);
+      }, 100);
+    }
+  }
+
+  const STORAGE = 'bloxsite_notifications_v1';
+  function getState() { try { return JSON.parse(localStorage.getItem(STORAGE) || '{"knownByPage":{},"items":[],"seen":0}'); } catch { return {knownByPage:{},items:[],seen:0}; } }
+  function saveState(s) { try { localStorage.setItem(STORAGE, JSON.stringify(s)); } catch {} }
+  function collectContent() {
+    const out = [];
+    if (page === 'index.html') {
+      document.querySelectorAll('.news-grid .news-card, .bulletin-card, .news-card, [data-num]').forEach((el, i) => {
+        const title = el.querySelector('.news-card__title, h2, h3, .card-title')?.textContent.trim() || el.getAttribute('aria-label') || el.dataset.num;
+        const link = el.matches('a[href]') ? el.href : el.querySelector('a[href]')?.href;
+        if (title && link) out.push({ id:`news:${link}`, title, href:link, source:'Actualités' });
+      });
+      document.querySelectorAll('.bulletin-card a[href], a.bulletin-card[href], .news-card a[href]').forEach(a => {
+        // On privilégie le titre de la carte ; le lien peut n'être qu'un bouton
+        // (« Lire maintenant → ») et ne doit jamais devenir le libellé.
+        const card = a.closest('.news-card, .bulletin-card, article') || a;
+        const title = card.querySelector('.news-card__title, h2, h3, .card-title')?.textContent.trim() || a.textContent.trim().slice(0,90);
+        if (title) out.push({id:`news:${a.href}`,title,href:a.href,source:'Actualités'});
+      });
+    } else if (page === 'neo_bulletin.html') {
+      document.querySelectorAll('#neoTabsAndSections .category-section .news-card, #neoTabsAndSections .category-section .group-card, #neoTabsAndSections .category-section .secret-bulletin').forEach(el => {
+        const title = el.querySelector('.news-card__title, .group-card__title, .bulletin-header h2, h2')?.textContent.trim();
+        if (title) {
+          const section=el.closest('.category-section');
+          const href=`./neo_bulletin.html?category=${encodeURIComponent(section?.id || '')}&card=${encodeURIComponent(el.id || '')}`;
+          out.push({ id:`leak:${el.id || el.dataset.ccId || title}`, title, href, source:'Leaks' });
+        }
+      });
+    }
+    // Déduplication : on garde la PREMIÈRE occurrence (titre de carte),
+    // pas la dernière (qui peut être un bouton).
+    const byId = new Map();
+    out.forEach(item => { if (!byId.has(item.id)) byId.set(item.id, item); });
+    return [...byId.values()];
+  }
+  function initNotifications() {
+    const icons = document.querySelector('.site-header__icons');
+    if (!icons || icons.querySelector('.site-notification')) return;
+    const widget = document.createElement('div');
+    widget.className = 'site-notification';
+    widget.innerHTML = `<button class="site-notification__trigger" type="button" aria-label="Notifications" aria-expanded="false" title="Notifications"><span class="material-symbols-outlined" aria-hidden="true">notifications</span><span class="site-notification__badge" hidden></span></button><section class="site-notification__panel" aria-label="Notifications"><div class="site-notification__head"><strong>Dernières nouveautés</strong><button class="site-notification__read" type="button">Tout marquer comme lu</button></div><div class="site-notification__list"></div></section>`;
+    icons.prepend(widget);
+    const trigger = widget.querySelector('button');
+    const panel = widget.querySelector('.site-notification__panel');
+    const render = () => {
+      const state = getState();
+      const unread = Math.max(0, state.items.filter(item => item.created > state.seen).length);
+      const badge = widget.querySelector('.site-notification__badge');
+      badge.hidden = !unread;
+      badge.textContent = unread > 9 ? '9+' : String(unread);
+      const list = widget.querySelector('.site-notification__list');
+      list.innerHTML = state.items.length ? state.items.slice(0,12).map(item => `<a class="site-notification__item" href="${safe(item.href)}"><b>${safe(item.title)}</b><small>${safe(item.source)} · ${new Date(item.created).toLocaleDateString('fr-FR')}</small></a>`).join('') : '<div class="site-notification__empty">Tu es à jour. Les nouveaux contenus apparaîtront ici.</div>';
+    };
+    trigger.addEventListener('click', event => { event.stopPropagation(); const open = widget.classList.toggle('is-open'); trigger.setAttribute('aria-expanded',String(open)); if (open) { const state=getState(); state.seen=Date.now(); saveState(state); render(); } });
+    widget.querySelector('.site-notification__read').addEventListener('click', () => { const state=getState(); state.seen=Date.now(); saveState(state); render(); });
+    document.addEventListener('click', event => { if (!widget.contains(event.target)) { widget.classList.remove('is-open'); trigger.setAttribute('aria-expanded','false'); } });
+    let state = getState();
+    const inventory = collectContent();
+    state.knownByPage ||= {};
+    const firstNeoVisit = page === 'neo_bulletin.html' && !Array.isArray(state.knownByPage[page]);
+    if (firstNeoVisit) state.knownByPage[page] = null;
+    else if (!Array.isArray(state.knownByPage[page])) state.knownByPage[page] = inventory.map(item => item.id);
+    else {
+      const known = new Set(state.knownByPage[page]);
+      const fresh = inventory.filter(item => !known.has(item.id));
+      state.items = [...fresh.map(item => ({...item,created:Date.now()})), ...(state.items || [])].slice(0,30);
+      state.knownByPage[page] = [...new Set([...state.knownByPage[page],...inventory.map(item => item.id)])].slice(-1000);
+    }
+    saveState(state); render();
+    const watchRoot = page === 'neo_bulletin.html' ? document.getElementById('neoTabsAndSections') : page === 'index.html' ? document.getElementById('news-grid') : null;
+    const watch = () => {
+      if (!watchRoot) return;
+      new MutationObserver(() => {
+        const current = collectContent(); const snapshot = getState(); snapshot.knownByPage ||= {}; const known = new Set(snapshot.knownByPage[page] || []);
+        const fresh = current.filter(item => !known.has(item.id));
+        if (fresh.length) { snapshot.items=[...fresh.map(item=>({...item,created:Date.now()})),...(snapshot.items||[])].slice(0,30); snapshot.knownByPage[page]=[...new Set([...known,...current.map(item=>item.id)])].slice(-1000); saveState(snapshot); render(); }
+      }).observe(watchRoot,{childList:true,subtree:true});
+    };
+    if (firstNeoVisit && watchRoot) {
+      setTimeout(() => { const baseline=getState(); baseline.knownByPage ||= {}; baseline.knownByPage[page]=collectContent().map(item=>item.id); saveState(baseline); watch(); }, 2200);
+    } else watch();
+  }
+
+  // ── PWA : manifest + meta theme-color ──
+  function initPWA() {
+    // Manifest
+    if (!document.querySelector('link[rel="manifest"]')) {
+      const l = document.createElement('link');
+      l.rel = 'manifest'; l.href = '/BloxNews-FR/manifest.json';
+      document.head.appendChild(l);
+    }
+    // Theme color
+    if (!document.querySelector('meta[name="theme-color"]')) {
+      const m = document.createElement('meta');
+      m.name = 'theme-color'; m.content = '#e20000';
+      document.head.appendChild(m);
+    }
+    // Apple touch icon
+    if (!document.querySelector('link[rel="apple-touch-icon"]')) {
+      const a = document.createElement('link');
+      a.rel = 'apple-touch-icon'; a.href = '/BloxNews-FR/icons/icon-192x192.png';
+      document.head.appendChild(a);
+    }
+  }
+
+  // ── Notifications push FCM ──
+  // Remplace VAPID_PUBLIC_KEY par ta clé publique Web Push (Firebase Console → Cloud Messaging)
+  const VAPID_PUBLIC_KEY = 'BDxYpmLmyw5GrZByri54qulYuyS-mfvCWMkw89xluUSzCOJChVLrhm7v_S74PUgMa1QII8-k1jSSDwAJ_5ITbBo';
+  const FCM_STORAGE_KEY  = 'bloxsite_fcm_token_v1';
+
+  async function initPushNotifications() {
+    // Vérifie le support
+    if (!('serviceWorker' in navigator) || !('PushManager' in window)) return;
+    if (VAPID_PUBLIC_KEY.startsWith('REMPLACE')) return; // pas encore configuré
+
+    try {
+      // Enregistre le service worker
+      const reg = await navigator.serviceWorker.register('/BloxNews-FR/firebase-messaging-sw.js', { scope: '/BloxNews-FR/' });
+
+      // Charge Firebase Messaging (doit déjà être chargé sur la page)
+      const messaging = window.firebaseMessaging || (typeof firebase !== 'undefined' && firebase.apps.length ? firebase.messaging() : null);
+      if (!messaging) return;
+
+      // Vérifie si la permission est déjà accordée
+      if (Notification.permission === 'denied') return;
+
+      // Demande la permission uniquement si pas encore décidée
+      if (Notification.permission === 'default') {
+        // On attend une interaction utilisateur pour demander (UX)
+        const alreadyAsked = localStorage.getItem('bloxsite_push_asked');
+        if (alreadyAsked) return;
+      }
+
+      // Récupère le token FCM
+      const token = await messaging.getToken({ vapidKey: VAPID_PUBLIC_KEY, serviceWorkerRegistration: reg });
+      if (!token) return;
+
+      // Sauvegarde le token (le Worker Cloudflare pourra l'utiliser pour envoyer des push)
+      const stored = localStorage.getItem(FCM_STORAGE_KEY);
+      if (stored !== token) {
+        localStorage.setItem(FCM_STORAGE_KEY, token);
+        // Envoie le token au Worker pour qu'il le stocke dans Firebase
+        fetch('https://blox-update-relay.c9yz5m8pw6.workers.dev', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'registerPushToken', token })
+        }).catch(() => {});
+      }
+    } catch (err) {
+      console.warn('[PWA] Push init failed:', err.message);
+    }
+  }
+
+  // Bouton "Activer les notifications" affiché dans le panneau notif
+  function injectPushToggle(widget) {
+    if (!('Notification' in window) || Notification.permission === 'granted') return;
+    const panel = widget.querySelector('.site-notification__panel');
+    if (!panel || panel.querySelector('.site-notif-push-btn')) return;
+    const btn = document.createElement('button');
+    btn.className = 'site-notif-push-btn';
+    btn.innerHTML = '🔔 Activer les notifications push';
+    btn.addEventListener('click', async () => {
+      localStorage.setItem('bloxsite_push_asked', '1');
+      const perm = await Notification.requestPermission();
+      if (perm === 'granted') {
+        btn.remove();
+        initPushNotifications();
+      }
+    });
+    panel.querySelector('.site-notification__list').before(btn);
+  }
+
+  ready(() => {
+    initPWA();
+    initSearch();
+    initNotifications();
+    // Injecte le bouton push après que la cloche soit créée
+    setTimeout(() => {
+      const widget = document.querySelector('.site-notification');
+      if (widget) injectPushToggle(widget);
+      if (Notification.permission === 'granted') initPushNotifications();
+    }, 500);
+  });
 })();

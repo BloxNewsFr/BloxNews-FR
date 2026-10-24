@@ -108,6 +108,39 @@ async function handleAdminAction(env, input, idToken) {
     await firebaseRequest(env, 'deleted_static_ids', idToken, 'PUT', ids);
     return;
   }
+  if (action === 'sendPush') {
+    // Envoie une notification push à tous les tokens enregistrés via FCM HTTP v1
+    const { title, body, url } = input;
+    if (!title || typeof title !== 'string' || title.length > 200) throw new Error('Titre invalide.');
+    const tokens = await firebaseRequest(env, 'push_tokens', idToken, 'GET');
+    if (!tokens || typeof tokens !== 'object') return; // aucun abonné
+    const tokenList = Object.values(tokens).filter(t => typeof t === 'string' && t.length > 10);
+    if (!tokenList.length) return;
+    // FCM HTTP v1 nécessite un OAuth2 token → on utilise l'API legacy (HTTP v0) avec Server Key
+    // La Server Key est stockée dans la variable d'env FCM_SERVER_KEY
+    await Promise.allSettled(tokenList.map(token =>
+      fetch('https://fcm.googleapis.com/fcm/send', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `key=${env.FCM_SERVER_KEY}`,
+        },
+        body: JSON.stringify({
+          to: token,
+          notification: {
+            title,
+            body: body || 'Nouvelle information disponible !',
+            icon: '/BloxNews-FR/icons/icon-192x192.png',
+            badge: '/BloxNews-FR/icons/icon-96x96.png',
+            click_action: url || 'https://bloxnewsfr.github.io/BloxNews-FR/',
+          },
+          data: { url: url || 'https://bloxnewsfr.github.io/BloxNews-FR/' },
+          webpush: { headers: { Urgency: 'high' } },
+        }),
+      })
+    ));
+    return;
+  }
   throw new Error('Action admin inconnue.');
 }
 
@@ -314,7 +347,7 @@ export default {
       if (!ADMIN_DISCORD_IDS.has(String(user.id))) return json({ error: 'Ce compte Discord ne peut pas gérer les updates.' }, 403);
 
       const updateActions = new Set(['create', 'editField', 'delete']);
-      const adminActions = new Set(['saveContentEdits', 'resetContentEdits', 'createCard', 'deleteCard', 'deleteStaticCard']);
+      const adminActions = new Set(['saveContentEdits', 'resetContentEdits', 'createCard', 'deleteCard', 'deleteStaticCard', 'sendPush']);
       const gitActions = new Set(['createBulletin', 'deleteBulletin', 'gitBase', 'gitBlob', 'gitCommit', 'gitCheck', 'gitDeleteCommit']);
       if (!updateActions.has(input.action) && !adminActions.has(input.action) && !gitActions.has(input.action)) {
         return json({ error: 'Action inconnue.' }, 400);
@@ -481,6 +514,18 @@ export default {
           return json({ ok: true, commit: commit.sha, tree: tree.sha });
         }
         return json({ error: 'Action Git inconnue.' }, 400);
+      }
+
+      // Enregistrement token push — accessible sans être admin
+      if (input.action === 'registerPushToken') {
+        const token = input.token;
+        if (!token || typeof token !== 'string' || token.length < 10 || token.length > 512) {
+          return json({ error: 'Token invalide.' }, 400);
+        }
+        const fbToken = await firebaseToken(env);
+        const key = encodeFirebaseKey(token.slice(-40)); // clé Firebase = derniers 40 chars du token
+        await firebaseRequest(env, `push_tokens/${key}`, fbToken, 'PUT', token);
+        return json({ ok: true });
       }
 
       const idToken = await firebaseToken(env);
