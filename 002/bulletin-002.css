@@ -601,7 +601,8 @@
         body.dark-mode .journal-subtitle { color: #bbb; }
         body.dark-mode .journal-meta { color: #aaa; }
         body.dark-mode .dashed-line { border-top-color: #2a2a35; }
-        body.dark-mode .wanted-box { background-color: #13131e; border-color: #2a2a35; }
+        body.dark-mode .wanted-box { background: rgba(180,40,30,0.15); border-color: rgba(180,40,30,0.3); color: #ccc; }
+        body.dark-mode .wanted-box .byline { color: #bbb; }
         body.dark-mode .wanted-title { color: #e05040; }
         body.dark-mode .wanted-subtitle { color: #bbb; }
         body.dark-mode .wanted-text p { color: #ccc; }
