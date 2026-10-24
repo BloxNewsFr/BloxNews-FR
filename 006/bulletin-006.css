@@ -186,8 +186,8 @@
         .summary b { color: #5865f2; text-transform: uppercase; font-size: 11px; font-style: normal; display: block; margin-bottom: 4px; letter-spacing: 0.5px; }
 
         /* ── DEUX COLONNES ── */
-        .content-columns { display: flex; gap: 30px; margin-bottom: 35px; }
-        .left-col { flex: 1.7; }
+        .content-columns { display: grid; grid-template-columns: 1.7fr 1.1fr; align-items: start; gap: 30px; margin-bottom: 35px; }
+        .left-col { grid-column: 1; grid-row: 1 / span 2; }
         .right-col { flex: 1.1; background-color: #fff; padding: 24px; border-radius: 16px; height: fit-content; box-shadow: 0 4px 20px rgba(0,0,0,0.06); border: 1px solid #e8e8f0; }
 
         h2 { border-bottom: 2px solid #111; padding-bottom: 5px; font-size: 22px; font-weight: 900; margin: 0 0 6px 0; color: #111; }
@@ -283,7 +283,8 @@
 @media (max-width: 768px) {
             .site-header { padding: 12px 20px; }
             .site-nav { display: none; }
-            .content-columns { flex-direction: column; }
+            .content-columns { display: flex; flex-direction: column; }
+            .left-col { grid-column: auto; grid-row: auto; }
             .front-inner { flex-direction: column; }
             .front-inner img { width: 100%; }
             .campfire-inner { flex-direction: column; }
