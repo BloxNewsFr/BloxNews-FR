@@ -489,13 +489,14 @@
         body.dark-mode .wanted-subtitle { color: #bbb; }
         body.dark-mode .wanted-text p { color: #ccc; }
         body.dark-mode .summary { background: rgba(88,101,242,0.12); color: #bbb; }
-        body.dark-mode .right-col { background-color: #13131e; border-color: #2a2a35; }
+        body.dark-mode .col-half { background-color: #13131e; border-color: #2a2a35; }
         body.dark-mode h2 { border-bottom-color: #444; color: #eee; }
         body.dark-mode .section-subtext { color: #bbb; }
         body.dark-mode .qa-item { border-bottom-color: #2a2a35; }
         body.dark-mode .qa-user { color: #ddd; }
         body.dark-mode .qa-answer { color: #bbb; border-left-color: #555; }
         body.dark-mode .side-text p { color: #ccc; }
+        body.dark-mode .summary { background: rgba(88,101,242,0.12); color: #bbb; }
         body.dark-mode .dragon-section { border-top-color: #444; }
         body.dark-mode .dragon-img { border-color: #444; }
         body.dark-mode .yellow-box { background-color: #8b7500; border-color: #bba000; }
@@ -515,9 +516,13 @@
 
         body.dark-mode .publish-date { color: #999; }
         body.dark-mode .important-banner span { color: #e06050; }
+        body.dark-mode .important-banner { background-color: rgba(180,40,30,0.15); border-color: rgba(180,40,30,0.3);}
         body.dark-mode .front-box .byline { color: #bbb; }
         body.dark-mode .col-half .byline { color: #bbb; }
         body.dark-mode .stay-tuned { color: #aaa; }
+        body.dark-mode .front-box .byline { color: #bbb; }
+        body.dark-mode .front-box { background: rgba(180,40,30,0.15); border-color: rgba(180,40,30,0.3); color: #ccc; }
+        
     
 
         /* ═══════════════════════════════════════════════════

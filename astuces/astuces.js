@@ -1,5 +1,4 @@
 (function() {
-    id = 'tips';
     const tips = [
         "Tu peux cliquer sur une image pour l'agrandir !",
         "Recherche rapidement des articles grâce à l'icône loupe dans le menu.",
@@ -11,7 +10,6 @@
     const DISPLAY_DURATION = 6000;  // Visible pendant 6 secondes
     const CYCLE_INTERVAL = 30000;   // Apparaît toutes les 30 secondes
     const FIRST_DELAY = 2000;       // Premier affichage 2s après l'arrivée
-
     let currentTipIndex = 0;
     let toastEl, textEl;
     let cycleInterval, autoHideTimeout;

@@ -156,7 +156,7 @@
             padding: 6px 10px; letter-spacing: 0.5px;
         }
         .winner-card--1 .winner-card__rank { background: #ffd700; color: #5c4400; }
-        .winner-card--2 .winner-card__rank { background: #dcdcdc; color: #333; }
+        .winner-card--2 .winner-card__rank { background: #dcdcdc; color: #232323; }
         .winner-card--3 .winner-card__rank { background: #e0b183; color: #4a2c10; }
         .winner-card__name { padding: 10px 12px; font-size: 13.5px; font-weight: 700; color: #222; }
 
@@ -430,6 +430,7 @@
         body.dark-mode .honorable-intro { color: #bbb; }
         body.dark-mode .honorable-card { background: #1a1a28; border-color: #2a2a35; color: #ccc; }
         body.dark-mode .closing-note { color: #6aaff0; }
+        body.dark-mode .contest-intro p { color: #bbb}
     
 
         /* ═══════════════════════════════════════════════════

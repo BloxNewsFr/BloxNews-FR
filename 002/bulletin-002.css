@@ -262,7 +262,7 @@
         /* BLOC SCIENTIST */
         .scientist-img { width: 100%; height: auto; border: 3px solid #000000; border-radius: 8px; margin: 15px 0; }
         .scientist-text p { font-size: 14px; margin-bottom: 12px; }
-        .scientist-quote { border-left: 3px solid #111111; padding-left: 15px; font-style: italic; margin: 15px 0; font-size: 13.5px; }
+        .scientist-quote { border-left: 3px solid #111111; padding-left: 15px; font-style: italic; margin: 15px 0; font-size: 13.5px; background-color: #eee; }
 
         /* SECTION CHROMATICS */
         .chromatics-section { margin-top: 40px; border-top: 2px solid #111111; padding-top: 25px; }
@@ -637,6 +637,7 @@
         body.dark-mode .chromatic-card p { color: #ccc; }
         body.dark-mode .dev-thought-box { background: #1a1a28; border-color: #2a2a35; }
         body.dark-mode .stay-tuned-banner { background: #1a1a28; border-color: #2a2a35; color: #ccc; }
+        body.dark-mode .scientist-quote { color: #bbb; border-left-color: #555;  background-color: #171725;}
     
 
         /* ═══════════════════════════════════════════════════

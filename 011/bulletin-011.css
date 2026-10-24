@@ -531,8 +531,13 @@
 
         body.dark-mode .publish-date { color: #999; }
         body.dark-mode .grey-box .byline { color: #bbb; }
+        body.dark-mode .grey-box { background: #1a1a28; border-color: #2a2a35; color: #ccc; }
         body.dark-mode .poll-btn { background: #5a3a9a; color: #ddd; }
         body.dark-mode .stay-tuned { color: #aaa; }
+        body.dark-mode .poll-box { background: rgba(88,101,242,0.12);}
+        body.dark-mode .poll-box h3 { color: #fffbfb;}
+        body.dark-mode .poll-box p { color: #bbb;}
+        body.dark-mode .poll-box textarea { background: #1a1a28; color: #bbb;}
     
 
         /* ═══════════════════════════════════════════════════
