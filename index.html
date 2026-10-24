@@ -226,30 +226,10 @@
         .site-header__icons { display: flex; gap: 4px; align-items: center; position: absolute; right: 55px; }
         .site-header__icons > span.material-symbols-outlined {
             padding: 8px; border-radius: 10px; cursor: pointer;
-            transition: background 0.2s, color 0.2s;
-            display: inline-flex; align-items: center; justify-content: center;
+            transition: background 0.2s; display: inline-flex; align-items: center;
         }
         .site-header__icons > span.material-symbols-outlined:hover { background: rgba(0,0,0,0.07); }
         html[data-theme="dark"] .site-header__icons > span.material-symbols-outlined:hover { background: rgba(255,255,255,0.10); }
-
-        /* ── BOUTON CRÉER (admin navbar) ── */
-        .navbar-create-btn {
-            display: inline-flex; align-items: center; gap: 6px;
-            padding: 7px 14px 7px 10px; border-radius: 20px; border: none; cursor: pointer;
-            background: linear-gradient(135deg, rgba(255,218,0,0.92), rgba(255,190,0,0.92));
-            color: #000; font-size: 13px; font-weight: 800; font-family: 'Inter', sans-serif;
-            transition: all 0.22s cubic-bezier(0.34,1.56,0.64,1);
-            box-shadow: 0 2px 12px rgba(255,218,0,0.35);
-            white-space: nowrap; user-select: none; flex-shrink: 0;
-        }
-        .navbar-create-btn:hover {
-            transform: translateY(-1px) scale(1.04);
-            box-shadow: 0 4px 20px rgba(255,218,0,0.5);
-        }
-        .navbar-create-btn:active { transform: scale(0.96); }
-        .navbar-create-btn .material-symbols-outlined { font-size: 18px; }
-        .navbar-create-btn__label { letter-spacing: 0.2px; }
-        @media (max-width: 600px) { .navbar-create-btn__label { display: none; } .navbar-create-btn { padding: 7px 8px; border-radius: 12px; } }
 
         /* ── DISCORD AUTH ── */
         .discord-login-btn {
@@ -2265,12 +2245,8 @@
             </ul>
         </nav>
         <div class="site-header__icons">
-            <span class="material-symbols-outlined" onclick="openSearch()" role="button" tabindex="0" aria-label="Rechercher" title="Rechercher">search</span>
+            <span class="material-symbols-outlined" onclick="openSearch()">search</span>
             <span class="material-symbols-outlined" id="themeToggle" role="button" tabindex="0" aria-label="Changer de thème" title="Changer de thème">dark_mode</span>
-            <button class="navbar-create-btn" id="navbarCreateBtn" style="display:none" onclick="window.BulletinCreator&&window.BulletinCreator.open()" title="Créer un bulletin" aria-label="Créer un bulletin">
-                <span class="material-symbols-outlined">add_circle</span>
-                <span class="navbar-create-btn__label">Créer</span>
-            </button>
             <span class="material-symbols-outlined" id="settingsToggle" role="button" tabindex="0" aria-label="Paramètres" title="Paramètres" onclick="openSettings()">settings</span>
 
             <div class="discord-skeleton" id="discordSkeleton"></div>
@@ -3430,9 +3406,6 @@
         document.getElementById('discordDropdownTag').textContent  = '@' + user.username;
         pill.onclick = (e) => { e.stopPropagation(); pill.classList.toggle('dropdown-open'); };
         document.addEventListener('click', () => pill.classList.remove('dropdown-open'));
-        // Bouton "Créer" visible uniquement pour les admins
-        const createBtn = document.getElementById('navbarCreateBtn');
-        if (createBtn) createBtn.style.display = SETTINGS_ADMIN_IDS.includes(user.id) ? '' : 'none';
     }
 
     function _discordLogout() {
@@ -3440,8 +3413,6 @@
         localStorage.removeItem(DISCORD_USER_KEY);
         document.getElementById('discordUserPill').classList.remove('is-visible', 'dropdown-open');
         document.getElementById('discordLoginBtn').style.display = '';
-        const createBtn = document.getElementById('navbarCreateBtn');
-        if (createBtn) createBtn.style.display = 'none';
     }
 
     (async function _discordInit() {
