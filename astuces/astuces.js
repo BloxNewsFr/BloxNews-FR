@@ -4,6 +4,7 @@
         "Recherche rapidement des articles grâce à l'icône loupe dans le menu.",
         "Change de thème à tout moment avec le bouton Mode Sombre.",
         "Abonne-toi au Discord officiel pour ne manquer aucun leak !",
+        "Ajoute ce site comme signet si tu es sur mobile !",
     ];
 
     const DISPLAY_DURATION = 6000;  // Visible pendant 6 secondes
