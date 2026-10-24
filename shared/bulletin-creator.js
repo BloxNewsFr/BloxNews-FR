@@ -969,6 +969,8 @@ ${body}
 .bcx-head{display:flex;align-items:center;justify-content:space-between;padding:16px 22px;border-bottom:1px solid rgba(255,255,255,0.07);position:sticky;top:0;background:rgba(13,13,28,0.98);z-index:2;border-radius:22px 22px 0 0}
 .bcx-title{font-size:16px;font-weight:900;margin:0;letter-spacing:.2px;display:flex;align-items:center;gap:8px;color:#fff}
 .bcx-title-icon{width:28px;height:28px;border-radius:8px;background:rgba(255,218,0,0.15);border:1px solid rgba(255,218,0,0.25);display:grid;place-items:center;font-size:15px;flex-shrink:0}
+.bcx-title-num{font-size:12px;font-weight:700;color:rgba(255,218,0,0.7);background:rgba(255,218,0,0.1);border:1px solid rgba(255,218,0,0.2);border-radius:6px;padding:2px 8px;letter-spacing:.5px}
+.bcx-base-block__label{font-size:10px;font-weight:800;color:#454a6a;text-transform:uppercase;letter-spacing:1px;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,0.05)}
 .bcx-close{width:32px;height:32px;border-radius:10px;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.04);color:#888;font-size:16px;cursor:pointer;transition:all .2s;display:grid;place-items:center}
 .bcx-close:hover{background:rgba(255,60,60,0.18);color:#ff6b6b;border-color:rgba(255,60,60,0.25)}
 
@@ -1072,11 +1074,16 @@ ${body}
         const today = new Date().toISOString().slice(0, 10);
         return `
 <div class="bcx-head">
-    <h2 class="bcx-title"><span class="bcx-title-icon">📝</span> Créer un bulletin</h2>
+    <h2 class="bcx-title">
+        <span class="bcx-title-icon">📰</span>
+        Créer un bulletin
+        <span class="bcx-title-num">#${fmtNum(nextNum)}</span>
+    </h2>
     <button class="bcx-close" onclick="BulletinCreator.close()" aria-label="Fermer">✕</button>
 </div>
 <div class="bcx-body">
     <div class="bcx-base-block">
+        <div class="bcx-base-block__label">Informations générales</div>
         <div class="bcx-grid">
             <div class="bcx-field">
                 <label for="bcNum">Numéro</label>

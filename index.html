@@ -224,12 +224,12 @@
         }
         .is-hidden { display: none !important; }
         .site-header__icons { display: flex; gap: 4px; align-items: center; position: absolute; right: 55px; }
-        .site-header__icons > span.material-symbols-outlined {
+        .site-header__icons > span.material-symbols-outlined:not(.mobile-menu-btn) {
             padding: 8px; border-radius: 10px; cursor: pointer;
             transition: background 0.2s; display: inline-flex; align-items: center;
         }
-        .site-header__icons > span.material-symbols-outlined:hover { background: rgba(0,0,0,0.07); }
-        html[data-theme="dark"] .site-header__icons > span.material-symbols-outlined:hover { background: rgba(255,255,255,0.10); }
+        .site-header__icons > span.material-symbols-outlined:not(.mobile-menu-btn):hover { background: rgba(0,0,0,0.07); }
+        html[data-theme="dark"] .site-header__icons > span.material-symbols-outlined:not(.mobile-menu-btn):hover { background: rgba(255,255,255,0.10); }
 
         /* ── DISCORD AUTH ── */
         .discord-login-btn {
