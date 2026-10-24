@@ -205,8 +205,14 @@
     box-shadow: 0 2px 12px rgba(255,218,0,0.35);
 }
 .is-hidden { display: none !important; }
-        .site-header__icons { position: absolute; right: 55px; display: flex; gap: 12px; color: var(--color-text); cursor: pointer; align-items: center; }
-.site-header__icons:hover {transform: scale(1.05)}
+        .site-header__icons { position: absolute; right: 55px; display: flex; gap: 4px; color: var(--color-text); align-items: center; }
+        .site-header__icons > span.material-symbols-outlined {
+            padding: 8px; border-radius: 10px; cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+            display: inline-flex; align-items: center; justify-content: center;
+        }
+        .site-header__icons > span.material-symbols-outlined:hover { background: rgba(0,0,0,0.07); }
+        html[data-theme="dark"] .site-header__icons > span.material-symbols-outlined:hover { background: rgba(255,255,255,0.10); }
         /* ── DISCORD AUTH ── */
         .discord-login-btn {
             display: flex; align-items: center; gap: 8px;
@@ -12723,31 +12729,21 @@
     function _isDiscordEditor(user = _getDiscordUser()) {
         return !!user && ADMIN_DISCORD_IDS.includes(String(user.id));
     }
-async function callUpdateRelay(action, payload = {}) {
-    if (UPDATE_RELAY_ENDPOINT.includes('YOUR-WORKER')) {
-        throw new Error("Le relais Cloudflare n'est pas encore configuré dans le site.");
-    }
-    const session = JSON.parse(localStorage.getItem(DISCORD_TOKEN_KEY) || 'null');
-    const token = typeof session === 'string' ? session : session?.token;
-    if (!token) throw new Error('Reconnecte-toi avec Discord avant de publier.');
-    const response = await fetch(UPDATE_RELAY_ENDPOINT, {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action, discordAccessToken: token, ...payload })
-    });
-    const result = await response.json().catch(() => ({}));
-    if (!response.ok) {
-        // ── Nouveau : détecter token expiré et nettoyer la session ──
-        if (response.status === 401 || (result.error || '').toLowerCase().includes('token')) {
-            localStorage.removeItem(DISCORD_TOKEN_KEY);
-            localStorage.removeItem(DISCORD_USER_KEY);
-            // Forcer la mise à jour de l'UI Discord
-            if (typeof _updateDiscordUI === 'function') _updateDiscordUI(null);
-            throw new Error('Ta session Discord a expiré. Reconnecte-toi (bouton en haut à droite).');
+    async function callUpdateRelay(action, payload = {}) {
+        if (UPDATE_RELAY_ENDPOINT.includes('YOUR-WORKER')) {
+            throw new Error('Le relais Cloudflare n’est pas encore configuré dans le site.');
         }
-        throw new Error(result.error || `Relais indisponible (${response.status}).`);
+        const session = JSON.parse(localStorage.getItem(DISCORD_TOKEN_KEY) || 'null');
+        const token = typeof session === 'string' ? session : session?.token;
+        if (!token) throw new Error('Reconnecte-toi avec Discord avant de publier.');
+        const response = await fetch(UPDATE_RELAY_ENDPOINT, {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action, discordAccessToken: token, ...payload })
+        });
+        const result = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(result.error || `Relais indisponible (${response.status}).`);
+        return result;
     }
-    return result;
-}
 
     function _updateEditModeVisibility() {
         const user = _getDiscordUser();
