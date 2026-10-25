@@ -1,0 +1,19 @@
+/* ── Fix hover icônes navbar — partagé par tous les bulletins ── */
+/* Remplace le scale(1.15) global par un hover individuel propre */
+
+.site-header__icons { gap: 4px !important; }
+
+.site-header__icons > span.material-symbols-outlined:not(.mobile-menu-btn) {
+    padding: 8px !important; border-radius: 10px;
+    cursor: pointer; transition: background 0.2s !important;
+    display: inline-flex !important; align-items: center;
+    transform: none !important;
+}
+.site-header__icons > span.material-symbols-outlined:not(.mobile-menu-btn):hover {
+    background: rgba(0,0,0,0.07) !important;
+    transform: none !important;
+}
+body.dark-mode .site-header__icons > span.material-symbols-outlined:not(.mobile-menu-btn):hover {
+    background: rgba(255,255,255,0.10) !important;
+    transform: none !important;
+}
