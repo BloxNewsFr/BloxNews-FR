@@ -6,6 +6,7 @@
 
     const PREFIX    = 'b' + NUM + '::';
     const IMG_P     = 'img::';
+    const IMG_SIZE_P = 'img-size::';
     const EDIT_KEY  = 'blox_content_edits_v1';
     const USER_KEY  = 'bloxbulletin_discord_user';
     const TOKEN_KEY = 'bloxbulletin_discord_token';
@@ -22,6 +23,71 @@
     let _editEl   = null;
     let _editImgEl = null;
     let _appliedCache = {};
+    const _resizeHandles = new Map();
+
+    function _updateResizeHandles() {
+        for (const [img, handle] of _resizeHandles) {
+            if (!img.isConnected) { handle.remove(); _resizeHandles.delete(img); continue; }
+            const rect = img.getBoundingClientRect();
+            handle.style.left = rect.right + 'px';
+            handle.style.top = rect.bottom + 'px';
+        }
+    }
+
+    function _persistImageWidth(img, widthPct) {
+        const path = PREFIX + IMG_SIZE_P + (img.dataset.bePath || _getEditPath(img));
+        const width = Math.round(widthPct * 10) / 10;
+        const local = _loadLocal();
+        local[path] = width;
+        _saveLocal(local);
+        _appliedCache[path] = width;
+        _saveEdit(path, width).then(() => {
+            _toast('Taille de l’image sauvegardée.', 'ok');
+        }).catch(err => {
+            _toast('Échec de sauvegarde de la taille : ' + (err?.message || err) + ' — gardée en local.', 'err');
+        });
+    }
+
+    function _attachResizeHandle(img) {
+        if (_resizeHandles.has(img)) return;
+        const handle = document.createElement('button');
+        handle.type = 'button';
+        handle.className = 'be-img-resize-handle';
+        handle.setAttribute('aria-label', 'Redimensionner cette image');
+        handle.title = 'Glisser pour redimensionner';
+        handle.innerHTML = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 12 12 4M7 12h5V7"/></svg>';
+        document.body.appendChild(handle);
+        _resizeHandles.set(img, handle);
+
+        handle.addEventListener('pointerdown', event => {
+            if (!_editMode || event.button !== 0) return;
+            event.preventDefault();
+            event.stopPropagation();
+            const parent = img.parentElement;
+            const parentWidth = parent?.getBoundingClientRect().width || 0;
+            if (!parentWidth) return;
+            const startX = event.clientX;
+            const startPct = img.getBoundingClientRect().width / parentWidth * 100;
+            handle.setPointerCapture(event.pointerId);
+
+            const onMove = moveEvent => {
+                const widthPct = Math.max(5, Math.min(100, startPct + (moveEvent.clientX - startX) / parentWidth * 100));
+                img.style.width = widthPct + '%';
+                img.style.height = 'auto';
+                _updateResizeHandles();
+            };
+            const onEnd = endEvent => {
+                handle.removeEventListener('pointermove', onMove);
+                handle.removeEventListener('pointerup', onEnd);
+                handle.removeEventListener('pointercancel', onEnd);
+                if (handle.hasPointerCapture(endEvent.pointerId)) handle.releasePointerCapture(endEvent.pointerId);
+                _persistImageWidth(img, img.getBoundingClientRect().width / parentWidth * 100);
+            };
+            handle.addEventListener('pointermove', onMove);
+            handle.addEventListener('pointerup', onEnd);
+            handle.addEventListener('pointercancel', onEnd);
+        });
+    }
 
     function _isExcluded(el) {
         if (NUM === '005' && el.matches('.dev-thought-text')) return true;
@@ -171,12 +237,19 @@
             if (_appliedCache[cacheKey] === value) continue;
             const rest = key.slice(PREFIX.length);
             const isImg = rest.startsWith(IMG_P);
-            const sel = isImg ? rest.slice(IMG_P.length) : rest;
+            const isImgSize = rest.startsWith(IMG_SIZE_P);
+            const sel = isImg ? rest.slice(IMG_P.length) : isImgSize ? rest.slice(IMG_SIZE_P.length) : rest;
             const el = _resolve(sel);
             if (!el) continue;
             if (_isExcluded(el)) continue;
             if (isImg) {
                 if (value && el.tagName === 'IMG' && el.getAttribute('src') !== value) el.src = value;
+            } else if (isImgSize) {
+                const width = Number(value);
+                if (el.tagName === 'IMG' && Number.isFinite(width) && width > 0) {
+                    el.style.width = width + '%';
+                    el.style.height = 'auto';
+                }
             } else {
                 el.innerHTML = _renderMarkdown(value);
                 if (el.classList.contains('summary') && !el.querySelector(':scope > b')) {
@@ -216,6 +289,7 @@
                 if (img.dataset.beEditable === 'img' || _isExcluded(img)) return;
                 img.dataset.bePath = img.dataset.bePath || _getEditPath(img);
                 img.dataset.beEditable = 'img';
+                _attachResizeHandle(img);
             });
         });
     }
@@ -240,7 +314,8 @@
         if (badge) badge.textContent = on ? 'ACTIF' : 'INACTIF';
         if (on) {
             _tagEditables();
-            _toast('Mode édition activé — clique sur un texte ou une image.', 'ok');
+            _updateResizeHandles();
+            _toast('Mode édition activé — clique sur un texte ou une image ; tire la poignée rouge pour la redimensionner.', 'ok');
         } else {
             _closeText();
             _closeImg();
@@ -475,8 +550,16 @@
         style.textContent = `
             body.edit-mode [data-be-editable="1"] { outline: 1px dashed rgba(255,218,0,0.55); outline-offset: 2px; cursor: text; }
             body.edit-mode [data-be-editable="1"]:hover { outline-color: #ff1a1a; }
-            body.edit-mode img[data-be-editable="img"] { outline: 2px dashed rgba(255,218,0,0.75); outline-offset: 2px; cursor: pointer; }
+            body.edit-mode img[data-be-editable="img"] { outline: 2px dashed rgba(255,218,0,0.75); outline-offset: 2px; cursor: default; }
             body.edit-mode img[data-be-editable="img"]:hover { outline-color: #ff1a1a; }
+            .be-img-resize-handle {
+                display: none; position: fixed; z-index: 99991; width: 18px; height: 18px;
+                transform: translate(-50%,-50%); padding: 2px; border: 1px solid #fff;
+                border-radius: 5px; background: #ff1a1a; color: #fff; cursor: nwse-resize;
+                touch-action: none; box-shadow: 0 1px 6px rgba(0,0,0,.45);
+            }
+            .be-img-resize-handle svg { display: block; width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+            body.edit-mode .be-img-resize-handle { display: block; }
             body.edit-mode .hero-image-wrapper::before, body.edit-mode .hero-image-wrapper::after { pointer-events: none; }
             #bePanel {
                 position: fixed; bottom: 14px; left: 14px; z-index: 99990;
@@ -628,6 +711,9 @@
                 </div>
             </div>
         `);
+
+        window.addEventListener('resize', _updateResizeHandles);
+        window.addEventListener('scroll', _updateResizeHandles, true);
 
         document.getElementById('bePanelClose').addEventListener('click', () => {
             document.getElementById('bePanel').classList.remove('is-open');
