@@ -34,9 +34,12 @@
                 continue;
             }
             const rect = el.getBoundingClientRect();
+            const header = document.querySelector('.site-header');
+            const headerBottom = header ? header.getBoundingClientRect().bottom : -1;
             handles.forEach(handle => {
                 handle.style.left = (handle.dataset.side === 'left' ? rect.left : rect.right) + 'px';
                 handle.style.top = rect.bottom + 'px';
+                handle.style.visibility = rect.bottom < headerBottom ? 'hidden' : 'visible';
             });
         }
     }
@@ -647,7 +650,7 @@
             body.edit-mode img[data-be-editable="img"] { outline: 2px dashed rgba(255,218,0,0.75); outline-offset: 2px; cursor: default; }
             body.edit-mode img[data-be-editable="img"]:hover { outline-color: #ff1a1a; }
             .be-resize-handle {
-                display: none; position: fixed; z-index: 99991; width: 18px; height: 18px;
+                display: none; position: fixed; z-index: 999; width: 18px; height: 18px;
                 transform: translate(-50%,-50%); padding: 2px; border: 1px solid #fff;
                 border-radius: 5px; background: #ff1a1a; color: #fff; cursor: nwse-resize;
                 touch-action: none; box-shadow: 0 1px 6px rgba(0,0,0,.45);
