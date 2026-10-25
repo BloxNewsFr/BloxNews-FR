@@ -1,0 +1,22 @@
+.profile-preferences-controls { display: grid; gap: 10px; margin: 12px 0; }
+.profile-preferences-field { display: grid; grid-template-columns: minmax(130px, .8fr) minmax(160px, 1.2fr); align-items: center; gap: 12px; }
+.profile-preferences-field label { color: inherit; font-size: 12px; font-weight: 650; }
+.profile-preferences-field input, .profile-preferences-field select {
+    width: 100%; min-width: 0; box-sizing: border-box; padding: 9px 11px; border: 1px solid rgba(255,255,255,.18);
+    border-radius: 10px; background: rgba(7,10,24,.35); color: #f5f7ff; font: inherit; font-size: 12px;
+}
+.profile-preferences-help, .profile-preferences-status { margin: 4px 0 0; color: rgba(225,232,255,.64); font-size: 11px; line-height: 1.5; }
+.profile-preferences-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.profile-preferences-actions .settings-btn { min-height: 36px; }
+.profile-preferences-actions .settings-btn--danger { color: #ffd8df; background: rgba(203,42,73,.22); border: 1px solid rgba(255,117,137,.3); }
+.profile-preferences-field--switch { display: flex; justify-content: space-between; }
+.profile-preferences-field--switch .settings-toggle { flex: 0 0 48px; }
+.profile-preferences-danger-note { color: #ffb5c0; }
+body.profile-hide-reaction-animations .like-particle,
+body.profile-hide-reaction-animations .like-ripple,
+body.profile-hide-reaction-animations .emoji-particle,
+body.profile-hide-reaction-animations .comment-like-animation,
+body.profile-hide-reaction-animations .reaction-pop,
+body.profile-hide-reaction-animations [style*="likeParticle"] { display: none !important; animation: none !important; transition: none !important; }
+body.profile-hide-reaction-animations .like-animate { animation: none !important; transition: none !important; }
+@media (max-width: 520px) { .profile-preferences-field { grid-template-columns: 1fr; gap: 5px; } }

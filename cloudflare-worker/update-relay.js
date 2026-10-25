@@ -586,6 +586,26 @@ export default {
       }
     }
 
+    if (input?.action === 'statsDeleteDiscordProfile') {
+      if (typeof input.discordAccessToken !== 'string' || input.discordAccessToken.length < 10 || input.discordAccessToken.length > 4096) {
+        return json({ error: 'Reconnecte-toi avec Discord pour supprimer les données du profil.' }, 401);
+      }
+      try {
+        const user = await discordUserFromToken(input.discordAccessToken);
+        if (!user) return json({ error: 'La connexion Discord a expiré. Reconnecte-toi.' }, 401);
+        const token = await firebaseToken(env);
+        const id = encodeFirebaseKey(user.id);
+        await Promise.all([
+          firebaseRequest(env, `site_stats/discord_auth/profiles/${id}`, token, 'DELETE'),
+          firebaseRequest(env, `site_stats/discord_auth/linked_visits/${id}`, token, 'DELETE'),
+        ]);
+        return json({ ok: true });
+      } catch (error) {
+        console.error('Discord profile data deletion failure:', error);
+        return json({ error: error?.message || 'Impossible de supprimer les données du profil.' }, 502);
+      }
+    }
+
     if (input?.action === 'statsVisit' || input?.action === 'statsBulletinView' || input?.action === 'statsCardView') {
       if (input.action === 'statsVisit' && (
           typeof input.visitorId !== 'string' || !/^[a-zA-Z0-9_-]{8,64}$/.test(input.visitorId) ||

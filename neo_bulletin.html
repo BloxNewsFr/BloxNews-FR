@@ -6056,6 +6056,7 @@
     <link rel="stylesheet" href="./shared/site-experience.css">
     <link rel="stylesheet" href="./shared/admin-glass.css">
     <link rel="stylesheet" href="./shared/discord-stats.css">
+    <link rel="stylesheet" href="./shared/profile-preferences.css">
 </head>
 <body>
 
@@ -7471,6 +7472,7 @@
     </script>
 
     <script src="./shared/site-stats.js"></script>
+    <script src="./shared/profile-preferences.js"></script>
     <script src="./shared/discord-stats-ui.js"></script>
     <script>
     /* ════════════════════════════════════════════════════════════════
@@ -8118,19 +8120,19 @@
 
     function _dcRenderItem(c) {
         const _isMod  = window.currentUser && MODERATORS.includes(window.currentUser.username);
-        const _canDel = window.currentUser && (_isMod || c.username === window.currentUser.username);
+        const _canDel = window.currentUser && (_isMod || _profileOwns(c));
         const isPinned = !!c.pinned;
         const isFirst  = _dcDB.length > 0 && _dcDB.reduce((oldest, x) =>
             x.time < oldest.time ? x : oldest, _dcDB[0]).id === c.id;
         const pfx      = 'dc-';
         const replies = (c.replies||[]).map(r => {
-            const canDelR = window.currentUser && (_isMod || r.username === window.currentUser.username);
+            const canDelR = window.currentUser && (_isMod || _profileOwns(r));
             return `<div class="comment-reply" id="${pfx}reply-${r.id}">
                 ${avatarHTML(r, 30)}
                 <div class="comment-reply__body">
                     <div class="comment-reply__header">
                         ${discordTag()}
-                        <span class="comment-item__username">${r.username}</span>
+                        <span class="comment-item__username">${_profileEscape(_profileCommentName(r))}</span>
                         <span class="comment-item__time" title="${r.time}">${relativeTime(r.time)}</span>
                     </div>
                     <div class="comment-reply__text">${r.text}</div>
@@ -8160,7 +8162,7 @@
             <div class="comment-item__body">
                 <div class="comment-item__header">
                     ${discordTag()}
-                    <span class="comment-item__username">${c.username}</span>
+                    <span class="comment-item__username">${_profileEscape(_profileCommentName(c))}</span>
                     ${isFirst?`<span class="comment-first-badge">Premier 🎉</span>`:''}
                     ${isPinned?`<span class="comment-pin-badge">${commentIcon('pin')} Épinglé</span>`:''}
                     <span class="comment-item__time" title="${c.time}">${relativeTime(c.time)}</span>
@@ -8220,7 +8222,7 @@
         if (check.blocked) { _showCommentWarning('Contenu inapproprié.'); return; }
         const c = _dcDB.find(x => x.id === cid); if (!c) return;
         if (!c.replies) c.replies = [];
-        c.replies.push({ id: uid(), username: window.currentUser.username, avatar: window.currentUser.avatar||'',
+        c.replies.push({ id: uid(), ..._profileCommentFields(),
             text: txt, time: isoNow(), likes: 0, likedByMe: false });
         ta.value = ''; ta.style.height = '';
         wrap.style.display = 'none';
@@ -8314,7 +8316,7 @@
         if (check.blocked) { _showCommentWarning('Contenu inapproprié.'); return; }
         const taken = _imgTake(document.getElementById('decryptCommentWriteBox'));
         if (!txt && !taken.imgs.length) return;
-        const c = { id: uid(), username: window.currentUser.username, avatar: window.currentUser.avatar||'',
+        const c = { id: uid(), ..._profileCommentFields(),
             text: txt, time: isoNow(), likes: 0, likedByMe: false,
             replies: [], reactions: {}, myReactions: {}, pinned: false, images: [] };
         if (taken.imgs.length) {
@@ -8492,6 +8494,27 @@
     /* ─── Modérateurs ─── */
     const MODERATORS = ["fn_n0klip", "neolixx", "bryanbg"];
 
+    function _profileCommentFields(user = window.currentUser) {
+        if (!user) return {};
+        return window.BloxProfile?.commentIdentity(user) || { userId: user.id || null, username: user.username, discordUsername: user.username, avatar: user.avatar || '' };
+    }
+    function _profileCommentName(item) { return window.BloxProfile?.commentName(item) || item?.username || 'Membre'; }
+    function _profileEscape(value) { return String(value == null ? '' : value).replace(/[&<>"']/g, ch => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' })[ch]); }
+    function _profileOwns(item) {
+        const user = window.currentUser;
+        if (!user || !item) return false;
+        const identity = _profileCommentFields(user);
+        return (!!identity.userId && String(identity.userId) === String(item.userId || '')) ||
+            String(identity.discordUsername || user.username || '').toLowerCase() === String(item.discordUsername || item.username || '').toLowerCase();
+    }
+    window.addEventListener('blox-profile-preferences-changed', event => {
+        const mode = event.detail?.commentSort === 'recent' ? 'recent' : 'top';
+        if (typeof sortMode !== 'undefined') { sortMode = mode === 'recent' ? 'new' : 'top'; if (typeof renderList === 'function') renderList(); }
+        if (typeof _actusSortMode !== 'undefined') {
+            Object.keys(_actusSortMode).forEach(cardId => { _actusSortMode[cardId] = mode === 'recent' ? 'new' : 'top'; _actusRenderComments(cardId); });
+        }
+    });
+
     /* ─── Firebase INIT ─── */
     firebase.initializeApp({
         apiKey: "AIzaSyBkJsHWyoiEeqmEktUlgcED-8mBPnar_0w",
@@ -8536,11 +8559,14 @@
     const COMMENTS_DB = [];
     const MAX_SHOWN   = 4;
     window.currentUser = null;
-    let   sortMode    = 'top'; // 'top' | 'new'
+    let   sortMode    = window.BloxProfile?.preferences().commentSort === 'recent' ? 'new' : 'top'; // 'top' | 'new'
+    document.getElementById('sortTop')?.classList.toggle('active', sortMode === 'top');
+    document.getElementById('sortNew')?.classList.toggle('active', sortMode === 'new');
 
     /* ─── Sort ─── */
     function setSort(mode) {
         sortMode = mode;
+        window.BloxProfile?.saveCommentSort(mode === 'new' ? 'recent' : 'top');
         document.getElementById('sortTop')?.classList.toggle('active', mode === 'top');
         document.getElementById('sortNew')?.classList.toggle('active', mode === 'new');
         renderList();
@@ -8686,20 +8712,20 @@
 
     function _ccRenderItem(c) {
         const _isMod  = window.currentUser && MODERATORS.includes(window.currentUser.username);
-        const _canDel = window.currentUser && (_isMod || c.username === window.currentUser.username);
+        const _canDel = window.currentUser && (_isMod || _profileOwns(c));
         const isPinned = !!c.pinned;
         const isFirst  = _ccDB.length > 0 && _ccDB.reduce((oldest, x) =>
             x.time < oldest.time ? x : oldest, _ccDB[0]).id === c.id;
         const pfx      = 'cc-';
         // Replies
         const replies = (c.replies||[]).map(r => {
-            const canDelR = window.currentUser && (_isMod || r.username === window.currentUser.username);
+            const canDelR = window.currentUser && (_isMod || _profileOwns(r));
             return `<div class="comment-reply" id="${pfx}reply-${r.id}">
                 ${avatarHTML(r, 30)}
                 <div class="comment-reply__body">
                     <div class="comment-reply__header">
                         ${discordTag()}
-                        <span class="comment-item__username">${r.username}</span>
+                        <span class="comment-item__username">${_profileEscape(_profileCommentName(r))}</span>
                         <span class="comment-item__time" title="${r.time}">${relativeTime(r.time)}</span>
                     </div>
                     <div class="comment-reply__text">${r.text}</div>
@@ -8730,7 +8756,7 @@
             <div class="comment-item__body">
                 <div class="comment-item__header">
                     ${discordTag()}
-                    <span class="comment-item__username">${c.username}</span>
+                    <span class="comment-item__username">${_profileEscape(_profileCommentName(c))}</span>
                     ${isFirst?`<span class="comment-first-badge">Premier 🎉</span>`:''}
                     ${isPinned?`<span class="comment-pin-badge">${commentIcon('pin')} Épinglé</span>`:''}
                     <span class="comment-item__time" title="${c.time}">${relativeTime(c.time)}</span>
@@ -8766,7 +8792,7 @@
         if (check.blocked) { _showCommentWarning('Contenu inapproprié.'); return; }
         const taken = _imgTake(document.getElementById('cardCommentWriteBox'));
         if (!txt && !taken.imgs.length) return;
-        const c = { id: uid(), username: window.currentUser.username, avatar: window.currentUser.avatar||'',
+        const c = { id: uid(), ..._profileCommentFields(),
             text: txt, time: isoNow(), likes: 0, likedByMe: false,
             replies: [], reactions: {}, myReactions: {}, pinned: false, images: [] };
         if (taken.imgs.length) {
@@ -8822,7 +8848,7 @@
         if (check.blocked) { _showCommentWarning('Contenu inapproprié.'); return; }
         const c = _ccDB.find(x => x.id === cid); if (!c) return;
         if (!c.replies) c.replies = [];
-        const r = { id: uid(), username: window.currentUser.username, avatar: window.currentUser.avatar||'',
+        const r = { id: uid(), ..._profileCommentFields(),
             text: txt, time: isoNow(), likes: 0, likedByMe: false };
         c.replies.push(r);
         ta.value = ''; ta.style.height = '';
@@ -8925,7 +8951,11 @@
     function _initActusComments(cardId) {
         _actusCommentsDB[cardId] = [];
         _actusShown[cardId] = ACTUS_CC_MAX;
-        _actusSortMode[cardId] = 'new';
+        _actusSortMode[cardId] = window.BloxProfile?.preferences().commentSort === 'recent' ? 'new' : 'top';
+        const sortBar = document.querySelector(`[data-actus-sort-bar="${cardId}"]`);
+        if (sortBar) sortBar.querySelectorAll('.card-comment-sort-btn').forEach(button => {
+            button.classList.toggle('active', button.getAttribute('data-actus-sort') === `${_actusSortMode[cardId]}-${cardId}`);
+        });
         _actusUpdateLogin(cardId);
         _imgBindWriteBox(document.querySelector(`.actus-cc-write[data-actus-id="${cardId}"]`));
         const ref = FB_DB.ref('card_comments/' + cardId);
@@ -8980,7 +9010,7 @@
 
     function _actusGetSorted(cardId) {
         const db = _actusCommentsDB[cardId] || [];
-        const sort = _actusSortMode[cardId] || 'new';
+        const sort = _actusSortMode[cardId] || (window.BloxProfile?.preferences().commentSort === 'recent' ? 'new' : 'top');
         const pinned = db.filter(c => c.pinned);
         const rest = db.filter(c => !c.pinned);
         if (sort === 'top') rest.sort((a,b) => (b.likes||0) - (a.likes||0));
@@ -9008,20 +9038,20 @@
     function _actusRenderItem(c, cardId) {
         const db       = _actusCommentsDB[cardId] || [];
         const _isMod   = window.currentUser && MODERATORS.includes(window.currentUser.username);
-        const _canDel  = window.currentUser && (_isMod || c.username === window.currentUser.username);
+        const _canDel  = window.currentUser && (_isMod || _profileOwns(c));
         const pfx      = 'ac-' + (cardId || 'x') + '-';
         const isPinned = !!c.pinned;
         const isFirst  = db.length === 1 && db[0].id === c.id;
 
         // Réponses
         const replies = (c.replies||[]).map(r => {
-            const canDelR = window.currentUser && (_isMod || r.username === window.currentUser.username);
+            const canDelR = window.currentUser && (_isMod || _profileOwns(r));
             return `<div class="comment-reply" id="${pfx}reply-${r.id}">
                 ${avatarHTML(r, 30)}
                 <div class="comment-reply__body">
                     <div class="comment-reply__header">
                         ${discordTag()}
-                        <span class="comment-item__username">${r.username}</span>
+                        <span class="comment-item__username">${_profileEscape(_profileCommentName(r))}</span>
                         <span class="comment-item__time" title="${r.time}">${relativeTime(r.time)}</span>
                     </div>
                     <div class="comment-reply__text">${r.text}</div>
@@ -9054,7 +9084,7 @@
             <div class="comment-item__body">
                 <div class="comment-item__header">
                     ${discordTag()}
-                    <span class="comment-item__username">${c.username}</span>
+                    <span class="comment-item__username">${_profileEscape(_profileCommentName(c))}</span>
                     ${isFirst?`<span class="comment-first-badge">Premier 🎉</span>`:''}
                     ${isPinned?`<span class="comment-pin-badge">${commentIcon('pin')} Épinglé</span>`:''}
                     <span class="comment-item__time" title="${c.time}">${relativeTime(c.time)}</span>
@@ -9183,8 +9213,7 @@
         const db = _actusCommentsDB[cardId]; if (!db) return;
         const c = db.find(x => x.id === cid); if (!c) return;
         c.replies = c.replies || [];
-        c.replies.push({ id: uid(), username: window.currentUser.username,
-            avatar: window.currentUser.avatar||'', text: txt, time: isoNow(), likes: 0, likedByMe: false });
+        c.replies.push({ id: uid(), ..._profileCommentFields(), text: txt, time: isoNow(), likes: 0, likedByMe: false });
         ta.value = ''; box.classList.remove('is-open');
         _actusRenderComments(cardId);
         _actusFirebaseSave(cardId);
@@ -9227,7 +9256,7 @@
         if (check.blocked) { _showCommentWarning('Contenu inapproprié.'); return; }
         const taken = _imgTake(document.querySelector(`.actus-cc-write[data-actus-id="${cardId}"]`));
         if (!txt && !taken.imgs.length) return;
-        const c = { id: uid(), username: window.currentUser.username, avatar: window.currentUser.avatar||'',
+        const c = { id: uid(), ..._profileCommentFields(),
             text: txt, time: isoNow(), likes: 0, likedByMe: false, pinned: false, images: [] };
         if (taken.imgs.length) {
             try { c.images = await _imgUpload(taken.imgs); }
@@ -9244,6 +9273,7 @@
 
     window._actusSetSort = function(cardId, mode) {
         _actusSortMode[cardId] = mode;
+        window.BloxProfile?.saveCommentSort(mode === 'new' ? 'recent' : 'top');
         const bar = document.querySelector(`[data-actus-sort-bar="${cardId}"]`);
         if (bar) {
             bar.querySelectorAll('.card-comment-sort-btn').forEach(b => b.classList.toggle('active', b.getAttribute('data-actus-sort') === mode + '-' + cardId));
@@ -9343,8 +9373,8 @@
     };
 
     /* ─── Droits ─── */
-    function canDelete(c)      { if (!window.currentUser) return false; return MODERATORS.includes(window.currentUser.username) || c.username === window.currentUser.username; }
-    function canDeleteReply(r) { if (!window.currentUser) return false; return MODERATORS.includes(window.currentUser.username) || r.username === window.currentUser.username; }
+    function canDelete(c)      { if (!window.currentUser) return false; return MODERATORS.includes(window.currentUser.username) || _profileOwns(c); }
+    function canDeleteReply(r) { if (!window.currentUser) return false; return MODERATORS.includes(window.currentUser.username) || _profileOwns(r); }
     function isMod()           { return window.currentUser && MODERATORS.includes(window.currentUser.username); }
 
     /* ─── Helpers avatar / discord ─── */
@@ -9352,7 +9382,9 @@
     function userColor(n) { return COLORS[n.charCodeAt(0) % COLORS.length]; }
     function avatarHTML(u, size=38) {
         const s = `width:${size}px;height:${size}px;font-size:${Math.round(size*.42)}px;`;
-        if (u?.avatar) return `<img src="${u.avatar}" class="comment-avatar" style="${s}" alt="">`;
+        const account = window.currentUser && (u === window.currentUser || (u?.id && u.id === window.currentUser.id)) ? window.BloxProfile?.avatarSource(u) : '';
+        const source = account || u?.avatar || '';
+        if (source) return `<img src="${_profileEscape(source)}" class="comment-avatar" style="${s}" alt="">`;
         const l = (u?u.username:'?')[0].toUpperCase();
         return `<div class="comment-avatar--placeholder" style="${s}background:${userColor(u?u.username:'?')}">${l}</div>`;
     }
@@ -9449,7 +9481,7 @@
             <div class="comment-reply__body">
                 <div class="comment-reply__header">
                     ${discordTag()}
-                    <span class="comment-item__username">${r.username}</span>
+                    <span class="comment-item__username">${_profileEscape(_profileCommentName(r))}</span>
                     <span class="comment-item__time" title="${r.time}">${relativeTime(r.time)}</span>
                 </div>
                 <div class="comment-reply__text">${r.text}</div>
@@ -9474,7 +9506,7 @@
             <div class="comment-item__body">
                 <div class="comment-item__header">
                     ${discordTag()}
-                    <span class="comment-item__username">${c.username}</span>
+                    <span class="comment-item__username">${_profileEscape(_profileCommentName(c))}</span>
                     ${isFirstEver?`<span class="comment-first-badge">Premier 🎉</span>`:""}
                     ${isPinned?`<span class="comment-pin-badge">${commentIcon('pin')} Épinglé</span>`:""}
                     <span class="comment-item__time" title="${c.time}">${relativeTime(c.time)}</span>
@@ -9577,8 +9609,7 @@
         }
         const taken = _imgTake(document.getElementById("commentWriteBox"));
         if (!txt && !taken.imgs.length) return;
-        const c = { id: uid(), username: window.currentUser.username,
-            avatar: window.currentUser.avatar, text: txt, time: isoNow(),
+        const c = { id: uid(), ..._profileCommentFields(), text: txt, time: isoNow(),
             likes: 0, likedByMe: false, reactions: {}, myReactions: {}, replies: [], images: [] };
         if (taken.imgs.length) {
             try { c.images = await _imgUpload(taken.imgs); }
@@ -9695,8 +9726,7 @@
             return;
         }
         const c = COMMENTS_DB.find(x=>x.id===cid); if (!c) return;
-        c.replies.push({ id: uid(), username: window.currentUser.username,
-            avatar: window.currentUser.avatar, text: txt, time: isoNow(),
+        c.replies.push({ id: uid(), ..._profileCommentFields(), text: txt, time: isoNow(),
             likes: 0, likedByMe: false });
         saveDB();
         if (inp) { inp.value=""; inp.style.height=""; }
@@ -13037,6 +13067,7 @@
             userEl.classList.add('is-hidden');
             adminEl.classList.add('is-hidden');
         }
+        window.BloxProfile?.renderSettings();
     }
 
     // ── Toggles — état initial ───────────────────────────────────
@@ -13179,6 +13210,19 @@
                         <div class="settings-profile-sub" id="settingsTag">—</div>
                     </div>
                     <button class="settings-btn settings-btn--danger" onclick="_discordLogout();_settingsRefreshProfile()">Déconnecter</button>
+                </div>
+                <div class="settings-section is-hidden" id="settingsProfileOptions">
+                    <div class="settings-section-label">Personnaliser mon profil</div>
+                    <div class="profile-preferences-controls">
+                        <div class="profile-preferences-field"><label for="profileDisplayName">Pseudo BloxNews</label><input id="profileDisplayName" type="text" maxlength="24" placeholder="Pseudo Discord" autocomplete="nickname" onchange="window.BloxProfile?.saveAlias(this.value)"></div>
+                        <div class="profile-preferences-field"><label for="profileAvatarChoice">Avatar</label><select id="profileAvatarChoice" onchange="window.BloxProfile?.saveAvatar(this.value)"><option value="discord">Avatar Discord</option><option value="ninja">🥷 Ninja</option><option value="fruit">🍍 Fruit</option><option value="dragon">🐉 Dragon</option><option value="wave">🌊 Vague</option><option value="flame">🔥 Flamme</option><option value="star">⭐ Étoile</option><option value="fox">🦊 Renard</option></select></div>
+                        <div class="profile-preferences-field"><label for="profileCommentSort">Tri des commentaires</label><select id="profileCommentSort" onchange="window.BloxProfile?.saveCommentSort(this.value)"><option value="top">Les plus appréciés</option><option value="recent">Les plus récents</option></select></div>
+                        <div class="profile-preferences-field profile-preferences-field--switch"><label for="profileHideReactionAnimations">Masquer les effets des réactions</label><button class="settings-toggle" id="profileHideReactionAnimations" role="switch" aria-checked="false" onclick="window.BloxProfile?.toggleReactionAnimations()"><span class="settings-toggle-knob"></span></button></div>
+                    </div>
+                    <p class="profile-preferences-help">Le pseudo et l’avatar Discord d’origine restent visibles aux admins pour les nouveaux commentaires. Ces personnalisations sont enregistrées dans ce navigateur.</p>
+                    <p class="profile-preferences-status" id="profilePreferencesStatus" aria-live="polite"></p>
+                    <div class="profile-preferences-actions"><button class="settings-btn settings-btn--secondary" onclick="window.BloxProfile?.resetPreferences()">Réinitialiser ma personnalisation</button><button class="settings-btn settings-btn--danger" onclick="if(confirm('Supprimer le profil statistique Discord et les visites qui lui sont associées ? Les compteurs agrégés et les commentaires publics ne seront pas supprimés.')) window.BloxProfile?.deleteMyProfileData().catch(e=>{const s=document.getElementById('profileDataStatus');if(s)s.textContent=e.message})">Supprimer mes données de profil</button></div>
+                    <p class="profile-preferences-status profile-preferences-danger-note" id="profileDataStatus" aria-live="polite">La suppression efface les statistiques du profil, les visites associées et tes préférences locales, mais garde les compteurs agrégés anonymes et les commentaires publics.</p>
                 </div>
                 <div class="settings-row discord-visit-consent-row">
                     <div class="settings-row-info">
@@ -14275,20 +14319,20 @@
     function _updRenderItem(c, updId) {
         const db      = _updCommentsDB[updId] || [];
         const _isMod  = window.currentUser && MODERATORS.includes(window.currentUser.username);
-        const _canDel = window.currentUser && (_isMod || c.username === window.currentUser.username);
+        const _canDel = window.currentUser && (_isMod || _profileOwns(c));
         const pfx     = 'up-' + updId + '-';
         const isPinned = !!c.pinned;
         const isFirst  = db.length === 1 && db[0].id === c.id;
 
         // Réponses
         const replies = (c.replies||[]).map(r => {
-            const canDelR = window.currentUser && (_isMod || r.username === window.currentUser.username);
+            const canDelR = window.currentUser && (_isMod || _profileOwns(r));
             return `<div class="comment-reply" id="${pfx}reply-${r.id}">
                 ${avatarHTML(r, 30)}
                 <div class="comment-reply__body">
                     <div class="comment-reply__header">
                         ${discordTag()}
-                        <span class="comment-item__username">${r.username}</span>
+                        <span class="comment-item__username">${_profileEscape(_profileCommentName(r))}</span>
                         <span class="comment-item__time" title="${r.time}">${relativeTime(r.time)}</span>
                     </div>
                     <div class="comment-reply__text">${r.text}</div>
@@ -14321,7 +14365,7 @@
             <div class="comment-item__body">
                 <div class="comment-item__header">
                     ${discordTag()}
-                    <span class="comment-item__username">${c.username}</span>
+                    <span class="comment-item__username">${_profileEscape(_profileCommentName(c))}</span>
                     ${isFirst?`<span class="comment-first-badge">Premier 🎉</span>`:''}
                     ${isPinned?`<span class="comment-pin-badge">${commentIcon('pin')} Épinglé</span>`:''}
                     <span class="comment-item__time" title="${c.time}">${relativeTime(c.time)}</span>
@@ -14358,7 +14402,7 @@
         if (check.blocked) { _showCommentWarning?.('Contenu inapproprié.'); return; }
         const taken = _imgTake(document.getElementById('updWriteBox-' + updId));
         if (!txt && !taken.imgs.length) return;
-        const c = { id: uid(), username: window.currentUser.username, avatar: window.currentUser.avatar||'',
+        const c = { id: uid(), ..._profileCommentFields(),
             text: txt, time: isoNow(), likes:0, likedByMe:false, pinned:false, replies:[], reactions:{}, images: [] };
         if (taken.imgs.length) {
             try { c.images = await _imgUpload(taken.imgs); }
@@ -14406,7 +14450,7 @@
         const txt = (ta?.value||'').trim(); if (!txt) return;
         const c   = (_updCommentsDB[updId]||[]).find(x=>x.id===cid); if(!c) return;
         c.replies = c.replies||[];
-        c.replies.push({ id:uid(), username:window.currentUser.username, avatar:window.currentUser.avatar||'',
+        c.replies.push({ id:uid(), ..._profileCommentFields(),
             text:txt, time:isoNow(), likes:0, likedByMe:false });
         _updFirebaseSave(updId);
         ta.value=''; ta.style.height='';

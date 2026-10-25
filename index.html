@@ -2215,6 +2215,7 @@
     <link rel="stylesheet" href="./shared/site-experience.css">
     <link rel="stylesheet" href="./shared/admin-glass.css">
     <link rel="stylesheet" href="./shared/discord-stats.css">
+    <link rel="stylesheet" href="./shared/profile-preferences.css">
 </head>
 <body>
 
@@ -3459,6 +3460,7 @@
     </script>
 
     <script src="./shared/site-stats.js"></script>
+    <script src="./shared/profile-preferences.js"></script>
     <script src="./shared/discord-stats-ui.js"></script>
     <script>
     /* ════════════════════════════════════════════════════════════════
@@ -3523,6 +3525,7 @@
             userEl.classList.add('is-hidden');
             if (adminEl) adminEl.classList.add('is-hidden');
         }
+        window.BloxProfile?.renderSettings();
     }
 
     // ── Toggles — état initial ───────────────────────────────────
@@ -3693,6 +3696,19 @@
                         <div class="settings-profile-sub" id="settingsTag">—</div>
                     </div>
                     <button class="settings-btn settings-btn--danger" onclick="_discordLogout();_settingsRefreshProfile()">Déconnecter</button>
+                </div>
+                <div class="settings-section is-hidden" id="settingsProfileOptions">
+                    <div class="settings-section-label">Personnaliser mon profil</div>
+                    <div class="profile-preferences-controls">
+                        <div class="profile-preferences-field"><label for="profileDisplayName">Pseudo BloxNews</label><input id="profileDisplayName" type="text" maxlength="24" placeholder="Pseudo Discord" autocomplete="nickname" onchange="window.BloxProfile?.saveAlias(this.value)"></div>
+                        <div class="profile-preferences-field"><label for="profileAvatarChoice">Avatar</label><select id="profileAvatarChoice" onchange="window.BloxProfile?.saveAvatar(this.value)"><option value="discord">Avatar Discord</option><option value="ninja">🥷 Ninja</option><option value="fruit">🍍 Fruit</option><option value="dragon">🐉 Dragon</option><option value="wave">🌊 Vague</option><option value="flame">🔥 Flamme</option><option value="star">⭐ Étoile</option><option value="fox">🦊 Renard</option></select></div>
+                        <div class="profile-preferences-field"><label for="profileCommentSort">Tri des commentaires</label><select id="profileCommentSort" onchange="window.BloxProfile?.saveCommentSort(this.value)"><option value="top">Les plus appréciés</option><option value="recent">Les plus récents</option></select></div>
+                        <div class="profile-preferences-field profile-preferences-field--switch"><label for="profileHideReactionAnimations">Masquer les effets des réactions</label><button class="settings-toggle" id="profileHideReactionAnimations" role="switch" aria-checked="false" onclick="window.BloxProfile?.toggleReactionAnimations()"><span class="settings-toggle-knob"></span></button></div>
+                    </div>
+                    <p class="profile-preferences-help">Le pseudo et l’avatar Discord d’origine restent visibles aux admins pour les nouveaux commentaires. Ces personnalisations sont enregistrées dans ce navigateur.</p>
+                    <p class="profile-preferences-status" id="profilePreferencesStatus" aria-live="polite"></p>
+                    <div class="profile-preferences-actions"><button class="settings-btn settings-btn--secondary" onclick="window.BloxProfile?.resetPreferences()">Réinitialiser ma personnalisation</button><button class="settings-btn settings-btn--danger" onclick="if(confirm('Supprimer le profil statistique Discord et les visites qui lui sont associées ? Les compteurs agrégés et les commentaires publics ne seront pas supprimés.')) window.BloxProfile?.deleteMyProfileData().catch(e=>{const s=document.getElementById('profileDataStatus');if(s)s.textContent=e.message})">Supprimer mes données de profil</button></div>
+                    <p class="profile-preferences-status profile-preferences-danger-note" id="profileDataStatus" aria-live="polite">La suppression efface les statistiques du profil, les visites associées et tes préférences locales, mais garde les compteurs agrégés anonymes et les commentaires publics.</p>
                 </div>
                 <div class="settings-row discord-visit-consent-row">
                     <div class="settings-row-info">

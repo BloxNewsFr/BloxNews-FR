@@ -238,7 +238,8 @@
     <link rel="stylesheet" href="./bulletin-${n}.css">
     <link rel="stylesheet" href="../shared/bulletin-lightbox.css">
     <link rel="stylesheet" href="../astuces/astuces.css">
-    <link rel="stylesheet" href="../shared/bulletin-engagement.css">${extraCss}
+    <link rel="stylesheet" href="../shared/bulletin-engagement.css">
+    <link rel="stylesheet" href="../shared/profile-preferences.css">${extraCss}
 </head>
 <body class="theme-${opts.theme || 'default'}${themeClass ? '' : ''}">
 
@@ -598,6 +599,7 @@ ${body}
     </script>
     <script src="../shared/bulletin-lightbox.js"></script>
     <script src="../astuces/astuces.js"></script>
+    <script src="../shared/profile-preferences.js"></script>
     <script src="../shared/bulletin-engagement.js"></script>
     <script src="../shared/bulletin-editor.js"></script>
     <script src="../shared/site-stats.js"></script>

@@ -60,7 +60,7 @@
     const moderators = new Set(['fn_n0klip', 'neolixx', 'bryanbg']);
     const reactionEmojis = ['❤️', '😂', '😮', '🔥', '👍', '💀'];
     let commentItems = [];
-    let sortMode = 'top';
+    let sortMode = window.BloxProfile?.preferences().commentSort || 'top';
     const localStateKey = `bulletin-comment-state-${bulletin}`;
     let localState = {};
     try { localState = JSON.parse(localStorage.getItem(localStateKey) || '{}') || {}; } catch (_) {}
@@ -74,7 +74,8 @@
     }
 
     function avatarUrl(user) {
-        if (user.avatar && user.avatar.startsWith('http')) return user.avatar;
+        if (user.id && window.BloxProfile && currentUser()?.id === user.id) return window.BloxProfile.avatarSource(user) || user.avatar || '';
+        if (user.avatar && (user.avatar.startsWith('http') || user.avatar.startsWith('data:'))) return user.avatar;
         if (user.avatar && user.id) return `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.webp?size=96`;
         const index = user.discriminator && user.discriminator !== '0'
             ? Number(user.discriminator) % 5 : (BigInt(user.id || '0') >> 22n) % 6n;
@@ -119,7 +120,7 @@
         avatar.src = avatarUrl(user);
         avatar.alt = '';
         const label = document.createElement('span');
-        label.textContent = `Commenter en tant que ${user.global_name || user.username}`;
+        label.textContent = `Commenter en tant que ${window.BloxProfile?.aliasFor(user) || user.global_name || user.username}`;
         userLine.append(avatar, label);
         const textarea = document.createElement('textarea');
         textarea.className = 'bulletin-comments__textarea';
@@ -149,9 +150,7 @@
             try {
                 const comment = {
                     id: `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}`,
-                    userId: latestUser.id || null,
-                    username: latestUser.username,
-                    avatar: avatarUrl(latestUser),
+                    ...(window.BloxProfile ? window.BloxProfile.commentIdentity(latestUser) : { userId: latestUser.id || null, username: latestUser.username, avatar: avatarUrl(latestUser) }),
                     text,
                     time: new Date().toISOString(),
                     likes: 0,
@@ -195,13 +194,13 @@
     }
 
     function userIsModerator(user = currentUser()) {
-        return !!(user && moderators.has(String(user.username || '').toLowerCase()));
+        return !!(user && moderators.has(String(user.discordUsername || user.username || '').toLowerCase()));
     }
 
     function userOwns(item, user = currentUser()) {
         if (!user || !item) return false;
         return (!!user.id && String(user.id) === String(item.userId || '')) ||
-            String(user.username || '').toLowerCase() === String(item.username || '').toLowerCase();
+            String(user.discordUsername || user.username || '').toLowerCase() === String(item.discordUsername || item.username || '').toLowerCase();
     }
 
     function timestamp(item) {
@@ -276,7 +275,7 @@
         avatar.src = reply.avatar || ''; avatar.alt = ''; avatar.onerror = () => avatar.classList.add('bulletin-comments__avatar--empty');
         const body = document.createElement('div'); body.className = 'bulletin-comment__reply-content';
         const meta = document.createElement('div'); meta.className = 'bulletin-comment__meta';
-        const name = document.createElement('span'); name.className = 'bulletin-comment__name'; name.textContent = reply.username || 'Membre';
+        const name = document.createElement('span'); name.className = 'bulletin-comment__name'; name.textContent = window.BloxProfile?.commentName(reply) || reply.username || 'Membre';
         const date = document.createElement('time'); date.className = 'bulletin-comment__date';
         date.dateTime = new Date(timestamp(reply) || Date.now()).toISOString(); date.textContent = dateLabel(timestamp(reply));
         meta.append(name, date);
@@ -305,11 +304,11 @@
         avatar.src = item.avatar || ''; avatar.alt = ''; avatar.onerror = () => avatar.classList.add('bulletin-comments__avatar--empty');
         const content = document.createElement('div'); content.className = 'bulletin-comment__content';
         const meta = document.createElement('div'); meta.className = 'bulletin-comment__meta';
-        const username = document.createElement('span'); username.className = 'bulletin-comment__name'; username.textContent = item.username || 'Membre';
+        const username = document.createElement('span'); username.className = 'bulletin-comment__name'; username.textContent = window.BloxProfile?.commentName(item) || item.username || 'Membre';
         const date = document.createElement('time'); date.className = 'bulletin-comment__date';
         date.dateTime = new Date(timestamp(item) || Date.now()).toISOString(); date.textContent = dateLabel(timestamp(item));
         meta.append(username);
-        if (userIsModerator({ username: item.username })) { const tag = document.createElement('span'); tag.className = 'bulletin-comment__badge'; tag.textContent = 'ADMIN'; meta.append(tag); }
+        if (userIsModerator({ username: item.username, discordUsername: item.discordUsername })) { const tag = document.createElement('span'); tag.className = 'bulletin-comment__badge'; tag.textContent = 'ADMIN'; meta.append(tag); }
         if (item.pinned) { const tag = document.createElement('span'); tag.className = 'bulletin-comment__badge bulletin-comment__badge--pinned'; tag.textContent = 'ÉPINGLÉ'; meta.append(tag); }
         if (index === 0 && !item.pinned) { const tag = document.createElement('span'); tag.className = 'bulletin-comment__badge bulletin-comment__badge--first'; tag.textContent = 'À LA UNE'; meta.append(tag); }
         meta.append(date);
@@ -356,7 +355,7 @@
             const textValue = textarea.value.trim(); const user = currentUser(); if (!textValue || !user) return;
             submit.disabled = true;
             item.replies = item.replies || [];
-            item.replies.push({ id: `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 7)}`, userId: user.id || null, username: user.username, avatar: avatarUrl(user), text: textValue, time: new Date().toISOString(), likes: 0 });
+            item.replies.push({ id: `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 7)}`, ...(window.BloxProfile ? window.BloxProfile.commentIdentity(user) : { userId: user.id || null, username: user.username, avatar: avatarUrl(user) }), text: textValue, time: new Date().toISOString(), likes: 0 });
             await saveAfterChange(); renderComments({ val: () => commentItems });
         });
         form.addEventListener('submit', event => { event.preventDefault(); submit.click(); }); form.append(textarea, submit); content.append(form);
@@ -395,7 +394,7 @@
         list.replaceChildren();
         const toolbar = document.createElement('div'); toolbar.className = 'bulletin-comments__toolbar';
         const sortLabel = document.createElement('span'); sortLabel.textContent = 'Trier par'; toolbar.append(sortLabel);
-        [['top', 'Top'], ['recent', 'Récents']].forEach(([mode, label]) => toolbar.append(button(label, `bulletin-comments__sort${sortMode === mode ? ' is-active' : ''}`, () => { sortMode = mode; renderComments({ val: () => commentItems }); })));
+        [['top', 'Top'], ['recent', 'Récents']].forEach(([mode, label]) => toolbar.append(button(label, `bulletin-comments__sort${sortMode === mode ? ' is-active' : ''}`, () => { sortMode = mode; window.BloxProfile?.saveCommentSort(mode); renderComments({ val: () => commentItems }); })));
         list.append(toolbar);
         items.forEach((item, index) => list.append(renderComment(item, index, items)));
     }
@@ -421,6 +420,11 @@
 
     setStatus('Chargement des commentaires…');
     renderCompose();
+    window.addEventListener('blox-profile-preferences-changed', event => {
+        sortMode = event.detail?.commentSort === 'recent' ? 'recent' : 'top';
+        renderComments({ val: () => commentItems });
+        renderComposeAgain();
+    });
     const authRefresh = window.setInterval(renderComposeAgain, 700);
     window.setTimeout(() => window.clearInterval(authRefresh), 10000);
     loadFirebase().then(() => {

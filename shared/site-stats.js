@@ -118,6 +118,14 @@
         return send({ action: 'getDiscordStats', discordAccessToken: token, ...(profileId ? { profileId: String(profileId) } : {}) });
     }
 
+    async function deleteDiscordProfileData() {
+        const token = discordToken();
+        if (!token) throw new Error('Reconnecte-toi avec Discord pour supprimer les données du profil.');
+        await send({ action: 'statsDeleteDiscordProfile', discordAccessToken: token });
+        try { localStorage.setItem(VISIT_CONSENT_KEY, 'false'); } catch (_) {}
+        return true;
+    }
+
     function recordBulletinView(bulletinId) {
         if (!/^(?:\d{3}|pvp1)$/.test(String(bulletinId)) || bulletinId === '000') return Promise.resolve();
         const key = `blox_stats_read_${bulletinId}`;
@@ -135,6 +143,7 @@
     window.BloxStats = {
         recordVisit, recordDiscordLogin, recordBulletinView, recordCardView,
         hasVisitConsent, hasDiscordSession: () => !!discordToken(), setVisitConsent, loadDiscordDashboard,
+        deleteDiscordProfileData,
     };
     window.addEventListener('blox-discord-authenticated', recordVisit);
     window.addEventListener('blox-discord-login-success', recordDiscordLogin);
