@@ -5,13 +5,13 @@ importScripts('https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js
 importScripts('https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging-compat.js');
 
 firebase.initializeApp({
-  apiKey:            "REMPLACE_PAR_TON_API_KEY",
+  apiKey:            "AIzaSyBkJsHWyoiEeqmEktUlgcED-8mBPnar_0w",
   authDomain:        "blox-bulletin-comments.firebaseapp.com",
   databaseURL:       "https://blox-bulletin-comments-default-rtdb.firebaseio.com",
   projectId:         "blox-bulletin-comments",
   storageBucket:     "blox-bulletin-comments.appspot.com",
-  messagingSenderId: "REMPLACE_PAR_TON_SENDER_ID",
-  appId:             "REMPLACE_PAR_TON_APP_ID"
+  messagingSenderId: "774633429491",
+  appId:             "1:774633429491:web:d1f534a0df346fbea79a86",
 });
 
 const messaging = firebase.messaging();
