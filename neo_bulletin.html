@@ -14412,6 +14412,7 @@
     window._updPostComment = async function(updId) {
         if (!window.currentUser) return;
         const inp = document.querySelector(`.upd-cc-input[data-upd-id="${updId}"]`);
+        if (!inp) return;
         const txt = (inp?.value||'').trim();
         const check = typeof _filterComment === 'function' ? _filterComment(txt) : {blocked:false};
         if (check.blocked) { _showCommentWarning?.('Contenu inapproprié.'); return; }
@@ -14423,12 +14424,37 @@
             try { c.images = await _imgUpload(taken.imgs); }
             catch(e) { console.error('[updates] image upload error:', e); }
         }
-        (_updCommentsDB[updId] = _updCommentsDB[updId]||[]).unshift(c);
-        _updFirebaseSave(updId);
+        const comments = (_updCommentsDB[updId] = _updCommentsDB[updId]||[]);
+        comments.unshift(c);
+        _updRenderComments(updId);
+        const result = await _updFirebaseSave(updId);
+        if (!result.ok) {
+            _updCommentsDB[updId] = comments.filter(item => item.id !== c.id);
+            _updRenderComments(updId);
+            const denied = String(result.error?.code || result.error?.message || '').includes('PERMISSION_DENIED');
+            _updShowWriteError(updId, denied
+                ? 'Commentaire non enregistré : les règles Firebase refusent l’écriture dans les commentaires des updates.'
+                : 'Impossible d’enregistrer le commentaire. Vérifie ta connexion et réessaie.');
+            return;
+        }
         inp.value=''; inp.style.height='';
         _updUpdateCharCounter(inp, updId);
         _updRenderComments(updId);
     };
+
+    function _updShowWriteError(updId, message) {
+        const box = document.getElementById('updWriteBox-' + updId);
+        if (!box) return;
+        let error = box.parentElement?.querySelector('.upd-comment-write-error');
+        if (!error) {
+            error = document.createElement('div');
+            error.className = 'upd-comment-write-error';
+            error.setAttribute('role', 'status');
+            error.style.cssText = 'margin:6px 0 0 48px;color:#c62828;font:500 12px/1.4 Inter,sans-serif';
+            box.after(error);
+        }
+        error.textContent = message;
+    }
 
     // ── Like commentaire ─────────────────────────────────────────
     const _updLikeLock = new Set();
@@ -14562,13 +14588,14 @@
 
     // ── Firebase save ─────────────────────────────────────────────
     function _updFirebaseSave(updId) {
-        const db = _updCommentsDB[updId]; if (!db) return;
-        if (typeof FB_DB === 'undefined' || !FB_DB) return;
-        FB_DB.ref('update_comments/' + updId)
+        const db = _updCommentsDB[updId]; if (!db) return Promise.resolve({ok:false, error:new Error('Comments unavailable')});
+        if (typeof FB_DB === 'undefined' || !FB_DB) return Promise.resolve({ok:false, error:new Error('Firebase unavailable')});
+        return FB_DB.ref('update_comments/' + updId)
             .set(db.map(x => { const n={...x}; delete n.likedByMe; delete n.myReactions;
                 n.replies = (n.replies||[]).map(r=>{ const q={...r}; delete q.likedByMe; return q; });
                 return n; }))
-            .catch(e => console.error('[updates] save error:', e));
+            .then(() => ({ok:true}))
+            .catch(e => { console.error('[updates] save error:', e); return {ok:false, error:e}; });
     }
 
     // ── Lancer l'init quand Firebase est prêt ────────────────────
