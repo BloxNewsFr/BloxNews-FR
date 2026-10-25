@@ -1014,6 +1014,20 @@
         }
         .decrypt-panel .card-comment-input:focus { border-color: rgba(255,26,26,0.3); box-shadow: 0 0 0 3px rgba(255,26,26,0.06); background: rgba(255,255,255,0.07); }
         .decrypt-panel .card-comment-input::placeholder { color: rgba(255,255,255,0.2); }
+        .decrypt-panel .card-comments-empty { color: rgba(232,236,250,0.68) !important; }
+        .decrypt-panel .cc-attach-btn {
+            color: rgba(238,241,255,0.82);
+            background: rgba(255,255,255,0.075);
+            border-color: rgba(255,255,255,0.16);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 2px 8px rgba(0,0,0,0.22);
+        }
+        .decrypt-panel .cc-attach-btn:hover {
+            color: #ff9b9b;
+            background: rgba(255,65,80,0.14);
+            border-color: rgba(255,110,120,0.42);
+            box-shadow: 0 3px 12px rgba(220,30,50,0.18);
+        }
+        .decrypt-panel .cc-attach-btn:focus-visible { outline: 2px solid rgba(255,130,140,0.75); outline-offset: 2px; }
         .decrypt-panel .card-comment-submit {
             box-shadow: 0 2px 12px rgba(204,0,0,0.35);
             border-radius: 100px;
@@ -10175,6 +10189,7 @@
     // ══════════════════════════════════════════════════════════════
     const _sortModes = new Map();
     const _originalOrder = new Map();
+    const _sortableCardSelector = '.news-card, .group-card';
 
     function _cardLikeCount(card) {
         const btn = card.querySelector('.post-like-btn[data-post-id]');
@@ -10182,7 +10197,7 @@
     }
 
     function _flipSort(grid, sortFn, animate) {
-        const cards = [...grid.querySelectorAll('.news-card')];
+        const cards = [...grid.querySelectorAll(_sortableCardSelector)];
         if (cards.length < 2) return;
         const oldPositions = new Map();
         if (animate !== false) cards.forEach(c => oldPositions.set(c, c.getBoundingClientRect()));
@@ -10259,7 +10274,7 @@
     function _injectSortToggles() {
         document.querySelectorAll('.category-section:not(#cat-actus):not(#cat-updates)').forEach(section => {
             _sortModes.set(section.id, 'recent');
-            _originalOrder.set(section.id, [...section.querySelectorAll('.news-card')]);
+            _originalOrder.set(section.id, [...section.querySelectorAll('.news-grid > .news-card, .news-grid > .group-card')]);
             const title = section.querySelector('.category-title');
             if (!title || _originalOrder.get(section.id).length === 0) return;
 
@@ -11872,7 +11887,7 @@
         // Tri immédiat (affichage local, avant même la confirmation Firebase)
         try {
             document.querySelectorAll('.category-section:not(#cat-actus)').forEach(s => {
-                _originalOrder.set(s.id, [...s.querySelectorAll('.news-card')]);
+                _originalOrder.set(s.id, [...s.querySelectorAll('.news-grid > .news-card, .news-grid > .group-card')]);
             });
             _sortAllSections(false);
         } catch(e) { console.warn('[sort]', e); }
@@ -12619,7 +12634,7 @@
             if (el) el.remove();
         }
         document.querySelectorAll('.category-section:not(#cat-actus)').forEach(s => {
-            _originalOrder.set(s.id, [...s.querySelectorAll('.news-card')]);
+            _originalOrder.set(s.id, [...s.querySelectorAll('.news-grid > .news-card, .news-grid > .group-card')]);
         });
         _sortAllSections(false);
         editLog('ok', 'Élément supprimé.');
@@ -12712,7 +12727,7 @@
                     });
                     // Remettre à jour _originalOrder avec les nouvelles cards, puis trier
                     document.querySelectorAll('.category-section:not(#cat-actus)').forEach(s => {
-                        _originalOrder.set(s.id, [...s.querySelectorAll('.news-card')]);
+                        _originalOrder.set(s.id, [...s.querySelectorAll('.news-grid > .news-card, .news-grid > .group-card')]);
                     });
                     _sortAllSections(false);
                     // Synchroniser les group-cards avec les cards Firebase
