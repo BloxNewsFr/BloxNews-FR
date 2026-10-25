@@ -7,6 +7,7 @@
     const PREFIX    = 'b' + NUM + '::';
     const IMG_P     = 'img::';
     const IMG_SIZE_P = 'img-size::';
+    const EL_SIZE_P = 'el-size::';
     const EDIT_KEY  = 'blox_content_edits_v1';
     const USER_KEY  = 'bloxbulletin_discord_user';
     const TOKEN_KEY = 'bloxbulletin_discord_token';
@@ -26,9 +27,9 @@
     const _resizeHandles = new Map();
 
     function _updateResizeHandles() {
-        for (const [img, handle] of _resizeHandles) {
-            if (!img.isConnected) { handle.remove(); _resizeHandles.delete(img); continue; }
-            const rect = img.getBoundingClientRect();
+        for (const [el, handle] of _resizeHandles) {
+            if (!el.isConnected) { handle.remove(); _resizeHandles.delete(el); continue; }
+            const rect = el.getBoundingClientRect();
             handle.style.left = rect.right + 'px';
             handle.style.top = rect.bottom + 'px';
         }
@@ -49,32 +50,62 @@
         });
     }
 
-    function _attachResizeHandle(img) {
-        if (_resizeHandles.has(img)) return;
+    function _persistElementSize(el, widthPct, heightPx) {
+        const path = PREFIX + EL_SIZE_P + (el.dataset.bePath || _getEditPath(el));
+        const fontSize = parseFloat(getComputedStyle(el).fontSize) || 16;
+        const size = JSON.stringify({
+            w: Math.round(widthPct * 10) / 10,
+            h: Math.round((heightPx / fontSize) * 10) / 10
+        });
+        const local = _loadLocal();
+        local[path] = size;
+        _saveLocal(local);
+        _appliedCache[path] = size;
+        _saveEdit(path, size).then(() => {
+            _toast('Taille de l’élément sauvegardée.', 'ok');
+        }).catch(err => {
+            _toast('Échec de sauvegarde de la taille : ' + (err?.message || err) + ' — gardée en local.', 'err');
+        });
+    }
+
+    function _attachResizeHandle(el) {
+        if (_resizeHandles.has(el)) return;
+        const isImage = el.tagName === 'IMG';
         const handle = document.createElement('button');
         handle.type = 'button';
-        handle.className = 'be-img-resize-handle';
-        handle.setAttribute('aria-label', 'Redimensionner cette image');
-        handle.title = 'Glisser pour redimensionner';
+        handle.className = 'be-resize-handle';
+        handle.setAttribute('aria-label', isImage ? 'Redimensionner cette image' : 'Redimensionner cet élément');
+        handle.title = isImage ? 'Glisser pour redimensionner l’image' : 'Glisser pour redimensionner l’élément';
         handle.innerHTML = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 12 12 4M7 12h5V7"/></svg>';
         document.body.appendChild(handle);
-        _resizeHandles.set(img, handle);
+        _resizeHandles.set(el, handle);
 
         handle.addEventListener('pointerdown', event => {
             if (!_editMode || event.button !== 0) return;
             event.preventDefault();
             event.stopPropagation();
-            const parent = img.parentElement;
+            const parent = el.parentElement;
             const parentWidth = parent?.getBoundingClientRect().width || 0;
             if (!parentWidth) return;
             const startX = event.clientX;
-            const startPct = img.getBoundingClientRect().width / parentWidth * 100;
+            const startRect = el.getBoundingClientRect();
+            const startPct = startRect.width / parentWidth * 100;
+            const startY = event.clientY;
+            const fontSize = parseFloat(getComputedStyle(el).fontSize) || 16;
             handle.setPointerCapture(event.pointerId);
 
             const onMove = moveEvent => {
                 const widthPct = Math.max(5, Math.min(100, startPct + (moveEvent.clientX - startX) / parentWidth * 100));
-                img.style.width = widthPct + '%';
-                img.style.height = 'auto';
+                el.style.width = widthPct + '%';
+                if (isImage) {
+                    el.style.height = 'auto';
+                } else {
+                    if (getComputedStyle(el).display === 'inline') el.style.display = 'inline-block';
+                    el.style.boxSizing = 'border-box';
+                    el.style.maxWidth = '100%';
+                    el.style.overflow = 'auto';
+                    el.style.height = Math.max(24, Math.min(1800, startRect.height + moveEvent.clientY - startY)) + 'px';
+                }
                 _updateResizeHandles();
             };
             const onEnd = endEvent => {
@@ -82,7 +113,11 @@
                 handle.removeEventListener('pointerup', onEnd);
                 handle.removeEventListener('pointercancel', onEnd);
                 if (handle.hasPointerCapture(endEvent.pointerId)) handle.releasePointerCapture(endEvent.pointerId);
-                _persistImageWidth(img, img.getBoundingClientRect().width / parentWidth * 100);
+                if (isImage) {
+                    _persistImageWidth(el, el.getBoundingClientRect().width / parentWidth * 100);
+                } else {
+                    _persistElementSize(el, el.getBoundingClientRect().width / parentWidth * 100, el.getBoundingClientRect().height);
+                }
             };
             handle.addEventListener('pointermove', onMove);
             handle.addEventListener('pointerup', onEnd);
@@ -239,7 +274,8 @@
             const rest = key.slice(PREFIX.length);
             const isImg = rest.startsWith(IMG_P);
             const isImgSize = rest.startsWith(IMG_SIZE_P);
-            const sel = isImg ? rest.slice(IMG_P.length) : isImgSize ? rest.slice(IMG_SIZE_P.length) : rest;
+            const isElSize = rest.startsWith(EL_SIZE_P);
+            const sel = isImg ? rest.slice(IMG_P.length) : isImgSize ? rest.slice(IMG_SIZE_P.length) : isElSize ? rest.slice(EL_SIZE_P.length) : rest;
             const el = _resolve(sel);
             if (!el) continue;
             if (_isExcluded(el)) continue;
@@ -251,6 +287,20 @@
                     el.style.width = width + '%';
                     el.style.height = 'auto';
                 }
+            } else if (isElSize) {
+                try {
+                    const size = typeof value === 'string' ? JSON.parse(value) : value;
+                    const width = Number(size?.w);
+                    const height = Number(size?.h);
+                    if (Number.isFinite(width) && width > 0 && Number.isFinite(height) && height > 0) {
+                        el.style.width = width + '%';
+                        el.style.height = height + 'em';
+                        if (getComputedStyle(el).display === 'inline') el.style.display = 'inline-block';
+                        el.style.boxSizing = 'border-box';
+                        el.style.maxWidth = '100%';
+                        el.style.overflow = 'auto';
+                    }
+                } catch { /* ignore malformed local dimensions */ }
             } else {
                 el.innerHTML = _renderMarkdown(value);
                 if (el.classList.contains('summary') && !el.querySelector(':scope > b')) {
@@ -269,6 +319,7 @@
                     if (el.dataset.beEditable === '1' || _isExcluded(el)) return;
                     el.dataset.bePath = el.dataset.bePath || _getEditPath(el);
                     el.dataset.beEditable = '1';
+                    _attachResizeHandle(el);
                 });
             });
             // Passe générique : tout élément avec du texte direct (divs custom
@@ -285,6 +336,7 @@
                 if (el.closest('[data-be-editable]')) return;
                 el.dataset.bePath = el.dataset.bePath || _getEditPath(el);
                 el.dataset.beEditable = '1';
+                _attachResizeHandle(el);
             });
             scope.querySelectorAll('img').forEach(img => {
                 if (img.dataset.beEditable === 'img' || _isExcluded(img)) return;
@@ -316,7 +368,7 @@
         if (on) {
             _tagEditables();
             _updateResizeHandles();
-            _toast('Mode édition activé — clique sur un texte ou une image ; tire la poignée rouge pour la redimensionner.', 'ok');
+            _toast('Mode édition activé — les éléments modifiables ont une poignée rouge à tirer pour les redimensionner.', 'ok');
         } else {
             _closeText();
             _closeImg();
@@ -553,14 +605,14 @@
             body.edit-mode [data-be-editable="1"]:hover { outline-color: #ff1a1a; }
             body.edit-mode img[data-be-editable="img"] { outline: 2px dashed rgba(255,218,0,0.75); outline-offset: 2px; cursor: default; }
             body.edit-mode img[data-be-editable="img"]:hover { outline-color: #ff1a1a; }
-            .be-img-resize-handle {
+            .be-resize-handle {
                 display: none; position: fixed; z-index: 99991; width: 18px; height: 18px;
                 transform: translate(-50%,-50%); padding: 2px; border: 1px solid #fff;
                 border-radius: 5px; background: #ff1a1a; color: #fff; cursor: nwse-resize;
                 touch-action: none; box-shadow: 0 1px 6px rgba(0,0,0,.45);
             }
-            .be-img-resize-handle svg { display: block; width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-            body.edit-mode .be-img-resize-handle { display: block; }
+            .be-resize-handle svg { display: block; width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+            body.edit-mode .be-resize-handle { display: block; }
             body.edit-mode .hero-image-wrapper::before, body.edit-mode .hero-image-wrapper::after { pointer-events: none; }
             #bePanel {
                 position: fixed; bottom: 14px; left: 14px; z-index: 99990;
