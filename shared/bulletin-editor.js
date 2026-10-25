@@ -36,7 +36,8 @@
 
     function _persistImageWidth(img, widthPct) {
         const path = PREFIX + IMG_SIZE_P + (img.dataset.bePath || _getEditPath(img));
-        const width = Math.round(widthPct * 10) / 10;
+        // Le relais accepte uniquement des valeurs string pour content_edits.
+        const width = String(Math.round(widthPct * 10) / 10);
         const local = _loadLocal();
         local[path] = width;
         _saveLocal(local);
