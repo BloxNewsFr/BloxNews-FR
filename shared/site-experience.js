@@ -96,7 +96,7 @@
     if (!icons || icons.querySelector('.site-notification')) return;
     const widget = document.createElement('div');
     widget.className = 'site-notification';
-    widget.innerHTML = `<button class="site-notification__trigger" type="button" aria-label="Notifications" aria-expanded="false" title="Notifications"><span class="material-symbols-outlined" aria-hidden="true">notifications</span><span class="site-notification__badge" hidden></span></button><section class="site-notification__panel" aria-label="Notifications"><div class="site-notification__head"><strong>Dernières nouveautés</strong><button class="site-notification__read" type="button">Tout marquer comme lu</button></div><div class="site-notification__list"></div></section>`;
+    widget.innerHTML = `<button class="site-notification__trigger" type="button" aria-label="Notifications" aria-expanded="false" title="Notifications" style="all:unset;position:relative;cursor:pointer;display:grid;place-items:center;width:36px;height:36px;border-radius:10px;transition:background .2s;flex-shrink:0;box-sizing:border-box"><span class="material-symbols-outlined" aria-hidden="true" style="font-size:22px;line-height:1;padding:0;transform:none;display:block">notifications</span><span class="site-notification__badge" hidden></span></button><section class="site-notification__panel" aria-label="Notifications"><div class="site-notification__head"><strong>Dernières nouveautés</strong><button class="site-notification__read" type="button">Tout marquer comme lu</button></div><div class="site-notification__list"></div></section>`;
     icons.prepend(widget);
     const trigger = widget.querySelector('button');
     const panel = widget.querySelector('.site-notification__panel');
@@ -109,10 +109,14 @@
       const list = widget.querySelector('.site-notification__list');
       list.innerHTML = state.items.length ? state.items.slice(0,12).map(item => `<a class="site-notification__item" href="${safe(item.href)}"><b>${safe(item.title)}</b><small>${safe(item.source)} · ${new Date(item.created).toLocaleDateString('fr-FR')}</small></a>`).join('') : '<div class="site-notification__empty">Tu es à jour. Les nouveaux contenus apparaîtront ici.</div>';
     };
-    trigger.addEventListener('click', event => { event.stopPropagation(); const open = widget.classList.toggle('is-open'); trigger.setAttribute('aria-expanded',String(open)); if (open) { const state=getState(); state.seen=Date.now(); saveState(state); render(); } });
+    trigger.addEventListener('click', event => { event.stopPropagation(); const open = widget.classList.toggle('is-open'); trigger.setAttribute('aria-expanded',String(open)); if (open) render(); });
     widget.querySelector('.site-notification__read').addEventListener('click', () => { const state=getState(); state.seen=Date.now(); saveState(state); render(); });
     document.addEventListener('click', event => { if (!widget.contains(event.target)) { widget.classList.remove('is-open'); trigger.setAttribute('aria-expanded','false'); } });
     let state = getState();
+    if (state.readModeVersion !== 2) {
+      state.seen = 0;
+      state.readModeVersion = 2;
+    }
     const inventory = collectContent();
     state.knownByPage ||= {};
     const firstNeoVisit = page === 'neo_bulletin.html' && !Array.isArray(state.knownByPage[page]);
@@ -209,20 +213,23 @@
     }
   }
 
-  // Bouton "Activer les notifications" affiché dans le panneau notif
+  // Action discrète pour activer les notifications push
   function injectPushToggle(widget) {
     if (!('Notification' in window) || Notification.permission === 'granted') return;
     const panel = widget.querySelector('.site-notification__panel');
     if (!panel || panel.querySelector('.site-notif-push-btn')) return;
     const btn = document.createElement('button');
     btn.className = 'site-notif-push-btn';
-    btn.innerHTML = '🔔 Activer les notifications push';
+    btn.type = 'button';
+    btn.innerHTML = '<span class="material-symbols-outlined" aria-hidden="true">notifications_active</span><span>Recevoir les alertes</span><span class="site-notif-push-btn__arrow" aria-hidden="true">→</span>';
     btn.addEventListener('click', async () => {
       localStorage.setItem('bloxsite_push_asked', '1');
       const perm = await Notification.requestPermission();
       if (perm === 'granted') {
         btn.remove();
         initPushNotifications();
+      } else if (perm === 'denied') {
+        btn.remove();
       }
     });
     panel.querySelector('.site-notification__list').before(btn);
@@ -232,11 +239,10 @@
     initPWA();
     initSearch();
     initNotifications();
-    // Injecte le bouton push après que la cloche soit créée
     setTimeout(() => {
       const widget = document.querySelector('.site-notification');
       if (widget) injectPushToggle(widget);
-      if (Notification.permission === 'granted') initPushNotifications();
+      if ('Notification' in window && Notification.permission === 'granted') initPushNotifications();
     }, 500);
   });
 })();

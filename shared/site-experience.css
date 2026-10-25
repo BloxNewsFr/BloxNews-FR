@@ -9,33 +9,41 @@
 /* Le trigger est un <button>, pas un <span> — son hover est géré ici, pas par .site-header__icons */
 .site-notification__trigger {
     position:relative; border:0; background:transparent; color:inherit; cursor:pointer;
-    display:grid; place-items:center;
-    width:36px; height:36px; border-radius:10px;
+    display:grid !important; place-items:center;
+    width:36px !important; height:36px !important; border-radius:10px;
     transition:background .2s; flex-shrink:0;
+    padding:0 !important; transform:none !important;
+    box-sizing:border-box;
 }
-.site-notification__trigger:hover { background:rgba(0,0,0,0.07); }
-html[data-theme="dark"] .site-notification__trigger:hover { background:rgba(255,255,255,0.10); }
+.site-notification__trigger:hover { background:rgba(0,0,0,0.07); transform:none !important; }
+html[data-theme="dark"] .site-notification__trigger:hover,
+body.dark-mode .site-notification__trigger:hover { background:rgba(255,255,255,0.10); }
 html:not([data-theme="dark"]) .site-notification__trigger { color:#25263a; }
-.site-notification__trigger .material-symbols-outlined { font-size:22px; line-height:1; }
+.site-notification__trigger .material-symbols-outlined {
+    font-size:22px !important; line-height:1 !important;
+    padding:0 !important; transform:none !important;
+    display:block !important; width:auto !important; height:auto !important;
+}
 
 /* Badge compteur */
 .site-notification__badge {
     position:absolute; top:1px; right:0;
     min-width:17px; height:17px; padding:0 4px;
-    display:grid; place-items:center;
+    display:grid !important; place-items:center;
     border-radius:999px;
     background:#ef2525; color:#fff;
     font:800 10px Inter,sans-serif;
     box-shadow:0 2px 9px rgba(239,37,37,.4);
-    pointer-events:none;
+    pointer-events:none; cursor:default !important;
 }
+.site-header__icons .site-notification__badge { padding:0 4px !important; }
+.site-notification__badge[hidden] { display:none !important; }
 
 /* ── Panneau ── */
 .site-notification__panel {
-    position:fixed; z-index:100001;
-    left:50%; transform:translateX(-50%);
-    top:64px;
-    width:min(340px,calc(100vw - 28px));
+    position:absolute; z-index:100001;
+    right:0; top:calc(100% + 8px);
+    width:min(360px,calc(100vw - 24px));
     max-height:min(480px,72vh);
     overflow:hidden;
     color:#f5f5fb;
@@ -98,15 +106,25 @@ html:not([data-theme="dark"]) .site-notification__trigger { color:#25263a; }
     font:500 12px Inter,sans-serif; text-align:center;
 }
 
-@keyframes siteNotifIn { from{opacity:0;margin-top:-6px} to{opacity:1;margin-top:0} }
-@media(max-width:600px) { .site-notification__panel{top:56px} .global-search-scopes{gap:6px} .global-search-scopes a{font-size:11px;padding:7px 10px} }
-
-/* ── Bouton activer notifications push ── */
-.site-notif-push-btn {
-    display:block; width:100%; margin:8px 0 4px;
-    padding:10px 14px; border-radius:12px; border:1px solid rgba(255,218,0,0.2);
-    background:rgba(255,218,0,0.08); color:rgba(255,218,0,0.9);
-    font:700 12px Inter,sans-serif; cursor:pointer; text-align:left;
-    transition:background .15s, border-color .15s;
+@keyframes siteNotifIn { from{opacity:0;transform:translateY(-6px)} to{opacity:1;transform:translateY(0)} }
+@media(max-width:768px) {
+    .site-notification__panel { position:fixed; left:16px; right:auto; top:68px; width:min(360px,calc(100vw - 32px)); max-height:calc(100vh - 84px); }
 }
-.site-notif-push-btn:hover { background:rgba(255,218,0,0.15); border-color:rgba(255,218,0,0.35); }
+@media(max-width:480px) {
+    .site-notification__panel { left:12px; right:auto; top:60px; width:calc(100vw - 24px); max-height:calc(100vh - 72px); }
+}
+@media(max-width:600px) { .global-search-scopes{gap:6px} .global-search-scopes a{font-size:11px;padding:7px 10px} }
+
+/* Activation des notifications push */
+.site-notif-push-btn {
+    display:flex; align-items:center; gap:9px;
+    width:calc(100% - 16px); min-height:38px; margin:4px 8px 8px;
+    padding:7px 11px; border:1px solid rgba(255,218,0,.18); border-radius:10px;
+    color:rgba(255,255,255,.76); background:rgba(255,218,0,.045);
+    font:600 11px/1.2 Inter,sans-serif; cursor:pointer; text-align:left;
+    transition:background .16s ease,border-color .16s ease,color .16s ease;
+}
+.site-notif-push-btn:hover { color:#fff; background:rgba(255,218,0,.1); border-color:rgba(255,218,0,.32); }
+.site-notif-push-btn .material-symbols-outlined { color:#e8c92b; font-size:17px; line-height:1; }
+.site-notif-push-btn__arrow { margin-left:auto; color:rgba(255,255,255,.42); font-size:15px; transition:transform .16s ease; }
+.site-notif-push-btn:hover .site-notif-push-btn__arrow { transform:translateX(2px); color:rgba(255,255,255,.8); }
