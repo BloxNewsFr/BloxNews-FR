@@ -6055,6 +6055,7 @@
     <link rel="stylesheet" href="./shared/neo-theme.css">
     <link rel="stylesheet" href="./shared/site-experience.css">
     <link rel="stylesheet" href="./shared/admin-glass.css">
+    <link rel="stylesheet" href="./shared/discord-stats.css">
 </head>
 <body>
 
@@ -7470,6 +7471,7 @@
     </script>
 
     <script src="./shared/site-stats.js"></script>
+    <script src="./shared/discord-stats-ui.js"></script>
     <script>
     /* ════════════════════════════════════════════════════════════════
        GROUP DRAWER — données des groupes de fruits
@@ -12909,6 +12911,7 @@
                     try {
                         const user = await _discordFetchUser(token);
                         localStorage.setItem(DISCORD_TOKEN_KEY, JSON.stringify({ token, expiresAt }));
+                        try { sessionStorage.setItem('blox_stats_discord_login_event', Date.now() + '_' + Math.random().toString(36).slice(2, 12)); } catch (_) {}
                         localStorage.setItem(DISCORD_USER_KEY, JSON.stringify(user));
                         window.dispatchEvent(new Event('blox-discord-authenticated'));
                         setTimeout(() => window.BloxStats?.recordVisit(), 0);
@@ -12993,6 +12996,7 @@
     function openSettings() {
         _settingsRefreshProfile();
         _settingsRefreshToggles();
+        if (window._refreshVisitConsentControl) window._refreshVisitConsentControl();
         const ov = document.getElementById('settingsOverlay');
         if (!ov) return;
         ov.setAttribute('aria-hidden', 'false');
@@ -13176,6 +13180,15 @@
                     </div>
                     <button class="settings-btn settings-btn--danger" onclick="_discordLogout();_settingsRefreshProfile()">Déconnecter</button>
                 </div>
+                <div class="settings-row discord-visit-consent-row">
+                    <div class="settings-row-info">
+                        <div class="settings-row-label">Associer mes visites à mon profil Discord</div>
+                        <div class="settings-row-sub" id="visitConsentStatus">Profil de connexion conservé 180 jours. Association facultative : 100 visites maximum pendant 30 jours; aucune visite passée ne sera rattachée.</div>
+                    </div>
+                    <button class="settings-toggle" id="settingsVisitConsentToggle" role="switch" aria-checked="false" onclick="window.BloxDiscordStats?.toggleVisitConsent()" aria-label="Autoriser l’association des visites au profil Discord">
+                        <span class="settings-toggle-knob"></span>
+                    </button>
+                </div>
             </div>
 
             <!-- ── APPARENCE ── -->
@@ -13338,7 +13351,24 @@
               </section>
               <section class="stats-section" id="statsDiscord" role="tabpanel" hidden>
                 <h2 class="stats-section-title">Communauté Discord</h2>
-                <div class="stats-discord-card"><strong>Profils Discord enregistrés</strong><p>Comptes Discord identifiés lors de leur visite sur le site.</p><div class="stats-visitors-count" id="statsDiscordProfilesCount">0 profil</div><div class="stats-visitors-list" id="statsDiscordProfiles"><div class="stats-visitors-empty">Chargement des profils…</div></div></div>
+                <div class="discord-stats-dashboard">
+                    <div class="discord-stats-metrics">
+                        <article class="discord-stats-metric discord-stats-metric--primary"><span>Connexions aujourd’hui</span><strong id="discordStatTodayConnections">—</strong><small>Authentifications Discord réussies</small></article>
+                        <article class="discord-stats-metric discord-stats-metric--blue"><span>Comptes du jour</span><strong id="discordStatTodayAccounts">—</strong><small>Comptes Discord distincts</small></article>
+                        <article class="discord-stats-metric discord-stats-metric--green"><span>Connexions au total</span><strong id="discordStatTotalConnections">—</strong></article>
+                        <article class="discord-stats-metric discord-stats-metric--orange"><span>Profils conservés</span><strong id="discordStatRetainedProfiles">—</strong><small>180 jours après la dernière connexion</small></article>
+                    </div>
+                    <p class="discord-stats-note">Une connexion correspond à une authentification Discord réussie. Ces chiffres sont indépendants des visites du site. Les visites ne sont associées à un profil qu’après un accord distinct.</p>
+                    <div class="discord-stats-profiles">
+                        <div class="discord-stats-profiles-list">
+                            <div class="discord-stats-list-heading"><strong>Profils Discord</strong><span id="discordStatsListCount">0 profil récent</span></div>
+                            <label class="discord-stats-search-label" for="discordStatsSearch">Rechercher un profil</label>
+                            <input id="discordStatsSearch" class="discord-stats-search" type="search" placeholder="Pseudo ou identifiant Discord" autocomplete="off">
+                            <div id="discordStatsProfileList" class="discord-stats-profile-list"><div class="discord-stats-empty">Chargement des profils…</div></div>
+                        </div>
+                        <div id="discordStatsProfileDetail" class="discord-stats-profile-detail"><div class="discord-stats-empty">Sélectionne un profil pour voir ses détails.</div></div>
+                    </div>
+                </div>
               </section>
                 <div class="stats-refresh">↻ Mise à jour automatique</div>
             </div>
@@ -13364,7 +13394,12 @@
         const STALE_MS      = 180000;
 
         function _statsEsc(s) { return (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-        function _statsNowKey() { return new Date().toISOString().slice(0,10); }
+        function _statsDateKey(offsetDays = 0) {
+            const parts = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(new Date());
+            const values = Object.fromEntries(parts.map(part => [part.type, part.value]));
+            return new Date(Date.UTC(Number(values.year), Number(values.month) - 1, Number(values.day) - offsetDays)).toISOString().slice(0, 10);
+        }
+        function _statsNowKey() { return _statsDateKey(); }
 
         function _statsSessionId() {
             let id = null;
@@ -13543,7 +13578,7 @@
 
         /* ─── Journal quotidien ───────────────────────────────── */
         function _statsRefreshDaily() {
-            const keys = Array.from({ length: 7 }, (_, i) => new Date(Date.now() - (6 - i) * 86400000).toISOString().slice(0, 10));
+            const keys = Array.from({ length: 7 }, (_, i) => _statsDateKey(6 - i));
             Promise.all([
                 Promise.all(keys.map(key => FB_DB.ref('site_stats/visitors_log/' + key).once('value'))),
                 FB_DB.ref('site_stats/visitors_daily').once('value')
@@ -13597,28 +13632,7 @@
         }
 
         function _statsRefreshDiscordProfiles() {
-            const listEl = document.getElementById('statsDiscordProfiles');
-            if (!listEl) return;
-            FB_DB.ref('site_stats/visitors_log').once('value', snap => {
-                const profiles = new Map();
-                snap.forEach(day => day.forEach(child => {
-                    const key = child.key || '';
-                    const profile = child.val() || {};
-                    const id = profile.id || (key.startsWith('d:') ? key.slice(2) : '');
-                    if (!id || !profile.u) return;
-                    const previous = profiles.get(id);
-                    if (!previous || (profile.t || 0) > (previous.t || 0)) profiles.set(id, profile);
-                }));
-                const items = [...profiles.values()].sort((a, b) => (b.t || 0) - (a.t || 0));
-                const countEl = document.getElementById('statsDiscordProfilesCount');
-                if (countEl) countEl.textContent = items.length.toLocaleString('fr-FR') + (items.length > 1 ? ' profils' : ' profil');
-                listEl.innerHTML = items.length ? items.map(profile => {
-                    const avatar = profile.a
-                        ? `<img class="stats-visitor-avatar" src="${_statsEsc(profile.a)}" alt="" onerror="this.remove()">`
-                        : `<span class="stats-visitor-avatar stats-visitor-avatar--empty">${_statsEsc(profile.u.charAt(0).toUpperCase())}</span>`;
-                    return `<div class="stats-visitor-item">${avatar}<span class="stats-visitor-name">${_statsEsc(profile.u)}</span><span class="stats-visitor-time">${_statsEsc(_statsTime(profile.t))}</span></div>`;
-                }).join('') : '<div class="stats-visitors-empty">Aucun profil Discord enregistré</div>';
-            }, () => { listEl.innerHTML = '<div class="stats-visitors-empty">Impossible de charger les profils</div>'; });
+            if (window.BloxDiscordStats) window.BloxDiscordStats.load().catch(() => {});
         }
 
         /* ─── Vues des cards (leaks) ─────────────────────────── */

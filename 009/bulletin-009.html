@@ -467,6 +467,7 @@
                 try {
                     var user = await _discordFetchUser(token);
                     localStorage.setItem(DISCORD_TOKEN_KEY, JSON.stringify({ token: token, expiresAt: expiresAt }));
+                    try { sessionStorage.setItem('blox_stats_discord_login_event', Date.now() + '_' + Math.random().toString(36).slice(2, 12)); } catch (_) {}
                     localStorage.setItem(DISCORD_USER_KEY, JSON.stringify(user));
                     _discordShowUser(user);
                 } catch(e) { skeleton.classList.remove('is-visible'); loginBtn.style.display = ''; }

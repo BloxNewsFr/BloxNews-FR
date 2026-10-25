@@ -2,6 +2,10 @@ const ADMIN_DISCORD_IDS = new Set([
   '1503444854410317984', // fn_n0klip
   '775096691240992798',  // neolixx
 ]);
+const STATS_ADMIN_DISCORD_IDS = new Set([
+  ...ADMIN_DISCORD_IDS,
+  '965365062334308412', // bryanbg
+]);
 
 const MAX_REQUEST_BYTES = 3_500_000;
 const MAX_SINGLE_FILE_BYTES = 2_000_000; // limite réelle Workers = 100 Mo ; marge confortable
@@ -94,8 +98,130 @@ function encodeFirebaseKey(value) {
   return encodeURIComponent(value).replace(/\./g, '%2E');
 }
 
+function parisDay(timestamp = Date.now()) {
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit',
+  }).formatToParts(new Date(timestamp));
+  const values = Object.fromEntries(parts.map(part => [part.type, part.value]));
+  return `${values.year}-${values.month}-${values.day}`;
+}
+
+async function discordUserFromToken(token) {
+  const response = await fetch('https://discord.com/api/v10/users/@me', {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!response.ok) return null;
+  const user = await response.json().catch(() => null);
+  if (!user || typeof user.id !== 'string' || !/^\d{5,30}$/.test(user.id) || typeof user.username !== 'string') return null;
+  return user;
+}
+
+function discordAvatarUrl(user) {
+  if (user.avatar) return `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.webp?size=80`;
+  return `https://cdn.discordapp.com/embed/avatars/${Number((BigInt(user.id) >> 22n) % 6n)}.png`;
+}
+
+async function discordDailyAccountHash(env, day, discordId) {
+  const key = await crypto.subtle.importKey(
+    'raw', new TextEncoder().encode(env.FIREBASE_EDITOR_PASSWORD),
+    { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']
+  );
+  const signature = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(`${day}:${discordId}`));
+  return [...new Uint8Array(signature)].map(n => n.toString(16).padStart(2, '0')).join('');
+}
+
+async function sha256Hex(value) {
+  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(value));
+  return [...new Uint8Array(digest)].map(n => n.toString(16).padStart(2, '0')).join('');
+}
+
+async function cleanLinkedDiscordVisits(env, token, discordId, visits) {
+  const cutoff = Date.now() - 30 * 86400000;
+  const recent = Object.entries(visits || {})
+    .filter(([, visit]) => visit && Number(visit.t) >= cutoff)
+    .sort((a, b) => Number(b[1].t) - Number(a[1].t))
+    .slice(0, 100);
+  const path = `site_stats/discord_auth/linked_visits/${encodeFirebaseKey(discordId)}`;
+  if (recent.length) await firebaseRequest(env, path, token, 'PUT', Object.fromEntries(recent));
+  else await firebaseRequest(env, path, token, 'DELETE');
+  return recent.map(([, visit]) => visit);
+}
+
 async function handleAdminAction(env, input, idToken) {
   const { action } = input;
+  if (action === 'getDiscordStats') {
+    const profileId = input.profileId == null ? '' : String(input.profileId);
+    if (profileId && !/^\d{5,30}$/.test(profileId)) throw new Error('Identifiant Discord invalide.');
+
+    const now = Date.now();
+    const today = parisDay(now);
+    const profilesPath = 'site_stats/discord_auth/profiles';
+    const profiles = await firebaseRequest(env, profilesPath, idToken, 'GET') || {};
+    const retained = [];
+    await Promise.all(Object.entries(profiles).map(async ([id, profile]) => {
+      if (!profile || Number(profile.expiresAt) <= now) {
+        await Promise.all([
+          firebaseRequest(env, `${profilesPath}/${encodeFirebaseKey(id)}`, idToken, 'DELETE'),
+          firebaseRequest(env, `site_stats/discord_auth/linked_visits/${encodeFirebaseKey(id)}`, idToken, 'DELETE'),
+        ]);
+        return;
+      }
+      retained.push({
+        id,
+        username: String(profile.username || 'Utilisateur Discord').slice(0, 80),
+        avatar: String(profile.avatar || '').slice(0, 500),
+        firstConnection: Number(profile.firstConnection) || 0,
+        lastConnection: Number(profile.lastConnection) || 0,
+        connections: Number(profile.connections) || 0,
+        expiresAt: Number(profile.expiresAt) || 0,
+        visitConsent: profile.visitConsent === true,
+      });
+    }));
+    retained.sort((a, b) => b.lastConnection - a.lastConnection);
+
+    let selected = null;
+    let visits = [];
+    if (profileId) {
+      selected = retained.find(profile => profile.id === profileId) || null;
+      if (selected && selected.visitConsent) {
+        const rawVisits = await firebaseRequest(env, `site_stats/discord_auth/linked_visits/${encodeFirebaseKey(profileId)}`, idToken, 'GET');
+        visits = await cleanLinkedDiscordVisits(env, idToken, profileId, rawVisits);
+      } else if (selected) {
+        await firebaseRequest(env, `site_stats/discord_auth/linked_visits/${encodeFirebaseKey(profileId)}`, idToken, 'DELETE');
+      }
+    }
+
+    const dailyPath = `site_stats/discord_auth/daily/${today}`;
+    const [totalConnections, todayConnections, todayAccounts] = await Promise.all([
+      firebaseRequest(env, 'site_stats/discord_auth/metrics/totalConnections', idToken, 'GET'),
+      firebaseRequest(env, `${dailyPath}/connections`, idToken, 'GET'),
+      firebaseRequest(env, `${dailyPath}/accounts`, idToken, 'GET'),
+    ]);
+    const [dailyData, loginEvents] = await Promise.all([
+      firebaseRequest(env, 'site_stats/discord_auth/daily', idToken, 'GET'),
+      firebaseRequest(env, 'site_stats/discord_auth/login_events', idToken, 'GET'),
+    ]);
+    await Promise.all([
+      ...Object.keys(dailyData || {}).filter(date => date < today).map(date =>
+        firebaseRequest(env, `site_stats/discord_auth/daily/${encodeFirebaseKey(date)}`, idToken, 'DELETE')
+      ),
+      ...Object.entries(loginEvents || {}).filter(([, event]) => Number(event?.t) < now - 8 * 86400000).map(([hash]) =>
+        firebaseRequest(env, `site_stats/discord_auth/login_events/${encodeFirebaseKey(hash)}`, idToken, 'DELETE')
+      ),
+    ]);
+    return {
+      metrics: {
+        todayConnections: Number(todayConnections) || 0,
+        todayAccounts: Object.keys(todayAccounts || {}).length,
+        totalConnections: Number(totalConnections) || 0,
+        retainedProfiles: retained.length,
+      },
+      profiles: retained.slice(0, 100),
+      selected,
+      visits,
+      today,
+    };
+  }
   if (action === 'saveContentEdits') {
     const edits = input.edits;
     if (!edits || typeof edits !== 'object' || Array.isArray(edits) || Object.keys(edits).length > 500) {
@@ -371,11 +497,102 @@ export default {
       if (raw.length > MAX_REQUEST_BYTES) return json({ error: 'Requête trop volumineuse.' }, 413);
     } catch { /* ignore */ }
 
+    if (input?.action === 'statsDiscordLogin') {
+      if (typeof input.discordAccessToken !== 'string' || input.discordAccessToken.length < 10 || input.discordAccessToken.length > 4096) {
+        return json({ error: 'Données de connexion Discord invalides.' }, 400);
+      }
+      const loginEventTime = Number(String(input.eventId || '').split('_', 1)[0]);
+      if (!/^\d{10,16}_[a-zA-Z0-9_-]{6,40}$/.test(String(input.eventId || '')) ||
+          !Number.isFinite(loginEventTime) || Date.now() - loginEventTime > 10 * 60000 || loginEventTime - Date.now() > 60000) {
+        return json({ error: 'Événement de connexion expiré ou invalide.' }, 400);
+      }
+      try {
+        const user = await discordUserFromToken(input.discordAccessToken);
+        if (!user) return json({ error: 'La connexion Discord a expiré. Reconnecte-toi.' }, 401);
+        const token = await firebaseToken(env);
+        const now = Date.now();
+        const day = parisDay(now);
+        const tokenHash = await sha256Hex(input.discordAccessToken);
+        const eventPath = `site_stats/discord_auth/login_events/${tokenHash}`;
+        if (await firebaseRequest(env, eventPath, token, 'GET')) {
+          const current = await firebaseRequest(env, `site_stats/discord_auth/profiles/${encodeFirebaseKey(user.id)}`, token, 'GET');
+          return json({ ok: true, duplicate: true, visitConsent: current?.visitConsent === true });
+        }
+
+        const profilePath = `site_stats/discord_auth/profiles/${encodeFirebaseKey(user.id)}`;
+        const existingProfile = await firebaseRequest(env, profilePath, token, 'GET');
+        if (existingProfile && Number(existingProfile.expiresAt) <= now) {
+          await firebaseRequest(env, `site_stats/discord_auth/linked_visits/${encodeFirebaseKey(user.id)}`, token, 'DELETE');
+        }
+        const savedProfile = await firebaseTransform(env, profilePath, token, current => ({
+          id: user.id,
+          username: String(user.global_name || user.username).slice(0, 80),
+          avatar: discordAvatarUrl(user),
+          firstConnection: current && Number(current.expiresAt) > now ? Number(current.firstConnection) || now : now,
+          lastConnection: now,
+          connections: current && Number(current.expiresAt) > now ? (Number(current.connections) || 0) + 1 : 1,
+          expiresAt: now + 180 * 86400000,
+          visitConsent: !!(current && Number(current.expiresAt) > now && current.visitConsent === true),
+        }));
+        await firebaseIncrement(env, 'site_stats/discord_auth/metrics/totalConnections', token);
+        await firebaseIncrement(env, `site_stats/discord_auth/daily/${day}/connections`, token);
+        const accountHash = await discordDailyAccountHash(env, day, user.id);
+        await firebaseRequest(env, `site_stats/discord_auth/daily/${day}/accounts/${accountHash}`, token, 'PUT', true);
+        await firebaseRequest(env, eventPath, token, 'PUT', { t: now });
+
+        const daily = await firebaseRequest(env, 'site_stats/discord_auth/daily', token, 'GET') || {};
+        const expiryDay = parisDay(now - 2 * 86400000);
+        await Promise.all(Object.keys(daily).filter(date => date < expiryDay).map(date =>
+          firebaseRequest(env, `site_stats/discord_auth/daily/${encodeFirebaseKey(date)}`, token, 'DELETE')
+        ));
+        const oldEvents = await firebaseRequest(env, 'site_stats/discord_auth/login_events', token, 'GET') || {};
+        const eventCutoff = now - 8 * 86400000;
+        await Promise.all(Object.entries(oldEvents).filter(([, event]) => Number(event?.t) < eventCutoff).map(([hash]) =>
+          firebaseRequest(env, `site_stats/discord_auth/login_events/${encodeFirebaseKey(hash)}`, token, 'DELETE')
+        ));
+        return json({ ok: true, visitConsent: savedProfile.visitConsent });
+      } catch (error) {
+        console.error('Discord login stats failure:', error);
+        return json({ error: error?.message || 'La connexion n’a pas pu être enregistrée.' }, 502);
+      }
+    }
+
+    if (input?.action === 'statsSetVisitConsent') {
+      if (typeof input.discordAccessToken !== 'string' || input.discordAccessToken.length < 10 || input.discordAccessToken.length > 4096 ||
+          typeof input.consent !== 'boolean') return json({ error: 'Choix de consentement invalide.' }, 400);
+      try {
+        const user = await discordUserFromToken(input.discordAccessToken);
+        if (!user) return json({ error: 'Reconnecte-toi avec Discord pour modifier ce choix.' }, 401);
+        const token = await firebaseToken(env);
+        const now = Date.now();
+        const profilePath = `site_stats/discord_auth/profiles/${encodeFirebaseKey(user.id)}`;
+        await firebaseTransform(env, profilePath, token, current => ({
+          id: user.id,
+          username: String(user.global_name || user.username).slice(0, 80),
+          avatar: discordAvatarUrl(user),
+          firstConnection: Number(current?.firstConnection) || now,
+          lastConnection: Number(current?.lastConnection) || now,
+          connections: Number(current?.connections) || 0,
+          expiresAt: Number(current?.expiresAt) || now + 180 * 86400000,
+          visitConsent: input.consent,
+        }));
+        if (!input.consent) {
+          await firebaseRequest(env, `site_stats/discord_auth/linked_visits/${encodeFirebaseKey(user.id)}`, token, 'DELETE');
+        }
+        return json({ ok: true, consent: input.consent });
+      } catch (error) {
+        console.error('Discord visit consent failure:', error);
+        return json({ error: error?.message || 'Impossible d’enregistrer ce choix.' }, 502);
+      }
+    }
+
     if (input?.action === 'statsVisit' || input?.action === 'statsBulletinView' || input?.action === 'statsCardView') {
       if (input.action === 'statsVisit' && (
           typeof input.visitorId !== 'string' || !/^[a-zA-Z0-9_-]{8,64}$/.test(input.visitorId) ||
           (input.countPageview !== undefined && typeof input.countPageview !== 'boolean') ||
-          (input.discordAccessToken !== undefined && (typeof input.discordAccessToken !== 'string' || input.discordAccessToken.length > 4096)))) {
+          (input.associateVisits !== undefined && typeof input.associateVisits !== 'boolean') ||
+          (input.discordAccessToken !== undefined && (typeof input.discordAccessToken !== 'string' || input.discordAccessToken.length > 4096)) ||
+          (input.page !== undefined && (typeof input.page !== 'string' || input.page.length > 300 || !input.page.startsWith('/') || input.page.startsWith('//') || input.page.includes('..'))))) {
         return json({ error: 'Données de visite invalides.' }, 400);
       }
       if (input.action === 'statsBulletinView' &&
@@ -391,34 +608,35 @@ export default {
         const idToken = await firebaseToken(env);
         if (input.action === 'statsVisit') {
           const visitorId = input.visitorId;
-          let profile = { u: 'invité', a: '', t: Date.now() };
-          let discordId = null;
-          const discordToken = input.discordAccessToken;
-          if (typeof discordToken === 'string' && discordToken.length >= 10 && discordToken.length <= 4096) {
-            let discordResponse = null;
-            try {
-              discordResponse = await fetch('https://discord.com/api/v10/users/@me', {
-                headers: { Authorization: `Bearer ${discordToken}` },
-              });
-            } catch (_) {}
-            if (discordResponse?.ok) {
-              const user = await discordResponse.json();
-              if (typeof user.id === 'string' && /^\d{5,30}$/.test(user.id) && typeof user.username === 'string') {
-                discordId = user.id;
-                const avatar = user.avatar
-                  ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.webp?size=80`
-                  : `https://cdn.discordapp.com/embed/avatars/${Number((BigInt(user.id) >> 22n) % 6n)}.png`;
-                profile = { id: discordId, u: user.global_name || user.username, a: avatar, t: Date.now() };
-                profile.u = String(profile.u).slice(0, 80);
+          const now = Date.now();
+          const day = parisDay(now);
+          let visitConsent = false;
+          const visitorKey = `s:${visitorId}`;
+          const logPath = `site_stats/visitors_log/${day}/${encodeFirebaseKey(visitorKey)}`;
+          await firebaseRequest(env, logPath, idToken, 'PUT', { u: 'invité', a: '', t: now });
+          if (input.countPageview !== false) await firebaseIncrement(env, 'site_stats/pageviews', idToken);
+
+          if (input.associateVisits === true && typeof input.discordAccessToken === 'string' && input.discordAccessToken.length >= 10) {
+            let user = null;
+            try { user = await discordUserFromToken(input.discordAccessToken); } catch (_) {}
+            if (user) {
+              const profile = await firebaseRequest(env, `site_stats/discord_auth/profiles/${encodeFirebaseKey(user.id)}`, idToken, 'GET');
+              if (profile?.visitConsent === true) {
+                visitConsent = true;
+                const visitsPath = `site_stats/discord_auth/linked_visits/${encodeFirebaseKey(user.id)}`;
+                const visits = await firebaseRequest(env, visitsPath, idToken, 'GET') || {};
+                const visitKey = `${now.toString(36)}_${crypto.randomUUID().replace(/-/g, '').slice(0, 12)}`;
+                visits[visitKey] = { t: now, p: input.page || '/' };
+                await cleanLinkedDiscordVisits(env, idToken, user.id, visits);
+                const currentConsent = await firebaseRequest(env, `site_stats/discord_auth/profiles/${encodeFirebaseKey(user.id)}/visitConsent`, idToken, 'GET');
+                if (currentConsent !== true) {
+                  visitConsent = false;
+                  await firebaseRequest(env, `site_stats/discord_auth/linked_visits/${encodeFirebaseKey(user.id)}`, idToken, 'DELETE');
+                }
               }
             }
           }
-          const day = new Date().toISOString().slice(0, 10);
-          const visitorKey = `s:${visitorId}`;
-          const logPath = `site_stats/visitors_log/${day}/${encodeFirebaseKey(visitorKey)}`;
-          await firebaseRequest(env, logPath, idToken, 'PUT', profile);
-          if (input.countPageview !== false) await firebaseIncrement(env, 'site_stats/pageviews', idToken);
-          return json({ ok: true });
+          return json({ ok: true, visitConsent });
         }
 
         if (input.action === 'statsBulletinView') {
@@ -481,10 +699,12 @@ export default {
       });
       if (!discordResponse.ok) return json({ error: 'La connexion Discord a expiré. Reconnecte-toi.' }, 401);
       const user = await discordResponse.json();
-      if (!ADMIN_DISCORD_IDS.has(String(user.id))) return json({ error: 'Ce compte Discord ne peut pas gérer les updates.' }, 403);
+      const canManage = ADMIN_DISCORD_IDS.has(String(user.id));
+      const canReadStats = input.action === 'getDiscordStats' && STATS_ADMIN_DISCORD_IDS.has(String(user.id));
+      if (!canManage && !canReadStats) return json({ error: 'Ce compte Discord ne peut pas gérer les updates.' }, 403);
 
       const updateActions = new Set(['create', 'editField', 'delete']);
-      const adminActions = new Set(['saveContentEdits', 'resetContentEdits', 'createCard', 'deleteCard', 'deleteStaticCard', 'sendPush']);
+      const adminActions = new Set(['saveContentEdits', 'resetContentEdits', 'createCard', 'deleteCard', 'deleteStaticCard', 'sendPush', 'getDiscordStats']);
       const gitActions = new Set(['createBulletin', 'deleteBulletin', 'gitBase', 'gitBlob', 'gitCommit', 'gitCheck', 'gitDeleteCommit']);
       if (!updateActions.has(input.action) && !adminActions.has(input.action) && !gitActions.has(input.action)) {
         return json({ error: 'Action inconnue.' }, 400);
@@ -667,7 +887,8 @@ export default {
 
       const idToken = await firebaseToken(env);
       if (adminActions.has(input.action)) {
-        await handleAdminAction(env, input, idToken);
+        const result = await handleAdminAction(env, input, idToken);
+        if (input.action === 'getDiscordStats') return json(result);
       } else if (input.action === 'create') {
         const update = input.update;
         if (!update || update.id !== updateId || typeof update.title !== 'string' || update.title.length > 300 || typeof update.fullDesc !== 'string' || update.fullDesc.length > 30000) {
