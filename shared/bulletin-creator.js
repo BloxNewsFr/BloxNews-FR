@@ -603,7 +603,7 @@ ${body}
     <script src="../astuces/astuces.js"></script>
     <script src="../shared/profile-preferences.js"></script>
     <script src="../shared/bulletin-engagement.js"></script>
-    <script src="../shared/bulletin-editor.js"></script>
+    <script src="../shared/bulletin-editor.js?v=20261025-resize-1"></script>
     <script src="../shared/site-stats.js"></script>
 </body>
 </html>`;
