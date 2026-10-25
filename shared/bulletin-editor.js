@@ -15,7 +15,7 @@
 
     const SCOPE = 'main.bulletin-container, main.main-content, .bulletin-container, .journal-header';
     const TEXT_SELS = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'li', '.summary', '.wanted-subtitle', '.section-subtext', '.qa-user', '.qa-answer', '.journal-subtitle', '.byline'];
-    const EXCLUDE = '.site-header, .social-share, .bulletin-pagination, .bulletin-comments, .back-button-container, .bulletin-engagement, .search-overlay, .mobile-nav-dropdown, .discord-dropdown, button, input, textarea, select, .logo, script, style, .summary b, .summary > b';
+    const EXCLUDE = '.site-header, .social-share, .bulletin-pagination, .bulletin-comments, .back-button-container, .bulletin-engagement, .search-overlay, .mobile-nav-dropdown, .discord-dropdown, button, input, textarea, select, .logo, script, style, .summary b, .summary > b' + (NUM === '002' ? ', .summary, .dev-thought-box' : '');
     const SUMMARY_B_RE = /^\s*(?:📌\s*)?Résumé\s*:?\s*$/i;
 
     let _editMode = false;
@@ -173,6 +173,7 @@
             const sel = isImg ? rest.slice(IMG_P.length) : rest;
             const el = _resolve(sel);
             if (!el) continue;
+            if (_isExcluded(el)) continue;
             if (isImg) {
                 if (value && el.tagName === 'IMG' && el.getAttribute('src') !== value) el.src = value;
             } else {
