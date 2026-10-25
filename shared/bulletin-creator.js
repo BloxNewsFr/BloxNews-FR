@@ -599,6 +599,7 @@ ${body}
     <script src="../astuces/astuces.js"></script>
     <script src="../shared/bulletin-engagement.js"></script>
     <script src="../shared/bulletin-editor.js"></script>
+    <script src="../shared/site-stats.js"></script>
 </body>
 </html>`;
     }

@@ -7469,6 +7469,7 @@
         });
     </script>
 
+    <script src="./shared/site-stats.js"></script>
     <script>
     /* ════════════════════════════════════════════════════════════════
        GROUP DRAWER — données des groupes de fruits
@@ -12909,6 +12910,8 @@
                         const user = await _discordFetchUser(token);
                         localStorage.setItem(DISCORD_TOKEN_KEY, JSON.stringify({ token, expiresAt }));
                         localStorage.setItem(DISCORD_USER_KEY, JSON.stringify(user));
+                        window.dispatchEvent(new Event('blox-discord-authenticated'));
+                        setTimeout(() => window.BloxStats?.recordVisit(), 0);
                         showUserInNavbar(user);
                         window.currentUser = { username: user.username, avatar: _discordAvatarUrl(user) };
                         if (typeof discordLogin === 'function') discordLogin(window.currentUser);
@@ -13345,10 +13348,10 @@
     <script>
     /* ════════════════════════════════════════════════════════════════
        STATISTIQUES DU SITE
-       - Présence temps réel via .info/connected + nœud
-         site_stats/presence/<sessionId> avec onDisconnect().remove()
-       - Compteurs persistés dans site_stats/ (pageviews, visitors_today,
-         visitors_daily, card_views)
+       - Présence et événements transmis au Worker Cloudflare
+       - Audience journalière calculée depuis les visiteurs uniques
+         enregistrés dans site_stats/visitors_log
+       - Vues de cards suivies via site_stats/card_views
        - Total commentaires & likes agrégés en direct depuis les refs
          comments / card_comments / update_comments
        - Popup admin (bouton dans Paramètres → Avancé)
@@ -13358,7 +13361,6 @@
 
         const STORE = { online: [], popupOpen: false, counters: {}, daily: {}, aggComments: 0, aggLikes: 0, timers: [] };
         const REF_PRESENCE  = FB_DB.ref('site_stats/presence');
-        const REF_STATS     = FB_DB.ref('site_stats');
         const STALE_MS      = 180000;
 
         function _statsEsc(s) { return (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
@@ -13375,9 +13377,11 @@
         }
 
         function _statsUser() {
-            let u = null;
-            try { u = window.currentUser || JSON.parse(localStorage.getItem('bloxbulletin_discord_user') || 'null'); } catch(e) {}
-            return u;
+            try {
+                const cached = JSON.parse(localStorage.getItem('bloxbulletin_discord_user') || 'null');
+                if (cached && cached.id) return cached;
+            } catch(e) {}
+            return window.currentUser || null;
         }
         function _statsUserName() {
             const u = _statsUser();
@@ -13416,31 +13420,7 @@
         setInterval(_statsSendPresence, 30000);
 
         /* ─── Compteurs persistés ─────────────────────────────── */
-        function _statsBump(path, amount) {
-            FB_DB.ref(path).transaction(v => (v || 0) + (amount || 1)).catch(() => {});
-        }
-
-        _statsBump('site_stats/pageviews', 1);
-        const _vdToday = _statsNowKey();
-        let _vdStored = null;
-        try { _vdStored = localStorage.getItem('blox_stats_vd'); } catch(e) {}
-        if (_vdStored !== _vdToday) {
-            try { localStorage.setItem('blox_stats_vd', _vdToday); } catch(e) {}
-            _statsBump('site_stats/visitors_today', 1);
-            _statsBump('site_stats/visitors_daily/' + _vdToday, 1);
-            _statsLogVisitor(_vdToday);
-        }
-
-        /* ─── Journal des visiteurs du jour ────────────────────── */
-        function _statsVisitorKey() {
-            const u = _statsUser();
-            if (u && u.id) return 'd:' + u.id;
-            return 's:' + _statsSessionId();
-        }
-        function _statsLogVisitor(day) {
-            FB_DB.ref('site_stats/visitors_log/' + day + '/' + _statsVisitorKey())
-                .set({ u: _statsUserName(), a: _statsAvatar(), t: Date.now() }).catch(() => {});
-        }
+        /* Les visites et les lectures sont envoyées par shared/site-stats.js. */
 
         /* ─── Écoute en direct de la présence ────────────────── */
         REF_PRESENCE.on('value', snap => {
@@ -13483,6 +13463,7 @@
             STORE.timers.push(setInterval(_statsRefreshCardRanking, 15000));
             STORE.timers.push(setInterval(_statsRefreshDiscordProfiles, 60000));
             STORE.timers.push(setInterval(() => { if (STORE.popupOpen && _statsVisitorsOpen()) _statsRefreshVisitors(); }, 10000));
+            STORE.timers.push(setInterval(_statsRenderOnline, 30000));
         }
         window.openStats = openStats;
 
@@ -13509,17 +13490,19 @@
 
         /* ─── Compteurs ───────────────────────────────────────── */
         function _statsRefreshCounters() {
-            REF_STATS.once('value', snap => {
-                const v = snap.val() || {};
-                const cv = v.card_views || {};
+            Promise.all([
+                FB_DB.ref('site_stats/pageviews').once('value'),
+                FB_DB.ref('site_stats/card_views').once('value')
+            ]).then(([pageviewsSnap, cardViewsSnap]) => {
+                const cv = cardViewsSnap.val() || {};
                 const cards = Object.keys(cv).reduce((s, k) => s + ((cv[k] && cv[k].n) || cv[k] || 0), 0);
                 STORE.counters = {
-                    visitors_today: v.visitors_today || 0,
-                    pageviews:      v.pageviews      || 0,
+                    visitors_today: STORE.counters.visitors_today || 0,
+                    pageviews:      pageviewsSnap.val() || 0,
                     cards:          cards            || 0
                 };
                 if (STORE.popupOpen) _statsRenderCounters();
-            });
+            }).catch(() => {});
         }
 
         /* ─── Agrégation commentaires / likes ────────────────── */
@@ -13560,10 +13543,18 @@
 
         /* ─── Journal quotidien ───────────────────────────────── */
         function _statsRefreshDaily() {
-            FB_DB.ref('site_stats/visitors_daily').once('value', snap => {
-                STORE.daily = snap.val() || {};
+            const keys = Array.from({ length: 7 }, (_, i) => new Date(Date.now() - (6 - i) * 86400000).toISOString().slice(0, 10));
+            Promise.all([
+                Promise.all(keys.map(key => FB_DB.ref('site_stats/visitors_log/' + key).once('value'))),
+                FB_DB.ref('site_stats/visitors_daily').once('value')
+            ]).then(([snaps, legacySnap]) => {
+                const legacy = legacySnap.val() || {};
+                STORE.daily = {};
+                snaps.forEach((snap, i) => { STORE.daily[keys[i]] = snap.numChildren() || legacy[keys[i]] || 0; });
+                STORE.counters.visitors_today = STORE.daily[_statsNowKey()] || 0;
                 if (STORE.popupOpen) _statsRenderDaily();
-            });
+                if (STORE.popupOpen) _statsRenderCounters();
+            }).catch(() => {});
         }
 
         /* ─── Liste des visiteurs du jour ──────────────────────── */
@@ -13613,9 +13604,10 @@
                 snap.forEach(day => day.forEach(child => {
                     const key = child.key || '';
                     const profile = child.val() || {};
-                    if (!key.startsWith('d:') || !profile.u) return;
-                    const previous = profiles.get(key);
-                    if (!previous || (profile.t || 0) > (previous.t || 0)) profiles.set(key, profile);
+                    const id = profile.id || (key.startsWith('d:') ? key.slice(2) : '');
+                    if (!id || !profile.u) return;
+                    const previous = profiles.get(id);
+                    if (!previous || (profile.t || 0) > (previous.t || 0)) profiles.set(id, profile);
                 }));
                 const items = [...profiles.values()].sort((a, b) => (b.t || 0) - (a.t || 0));
                 const countEl = document.getElementById('statsDiscordProfilesCount');
@@ -13652,13 +13644,11 @@
         }
 
         function _statsTrackCard(art) {
-            const key = _statsCardKey(art);
+            const key = _statsCardKey(art).slice(0, 120);
             if (!key) return;
             const titleEl = art.querySelector('.news-card__title, .group-card__title');
             const title = titleEl ? titleEl.textContent.trim() : key;
-            FB_DB.ref('site_stats/card_views/' + key)
-                .transaction(cur => (cur && cur.n ? { n: cur.n + 1, t: title } : { n: 1, t: title }))
-                .catch(() => {});
+            if (window.BloxStats) window.BloxStats.recordCardView(key, title);
         }
 
         document.addEventListener('click', e => {
@@ -13695,6 +13685,8 @@
             const labelEl = document.getElementById('statsOnlineLabel');
             const usersEl = document.getElementById('statsOnlineUsers');
             if (!countEl || !usersEl) return;
+            const cutoff = Date.now() - STALE_MS;
+            STORE.online = STORE.online.filter(p => p && (p.t || 0) > cutoff);
             const n = STORE.online.length;
             countEl.textContent = n;
             if (labelEl) labelEl.textContent = n <= 1 ? 'personne sur le site' : 'personnes sur le site';

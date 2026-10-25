@@ -12,6 +12,7 @@ const GITHUB_ALLOWED_PREFIXES = [
   /^\/?sources\.json$/,
 ];
 const GITHUB_MAX_FILES = 30;
+let cachedFirebaseAuth = { token: '', expiresAt: 0, pending: null };
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -40,16 +41,53 @@ async function firebaseRequest(env, path, token, method, body) {
 }
 
 async function firebaseToken(env) {
-  const response = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${encodeURIComponent(env.FIREBASE_API_KEY)}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email: env.FIREBASE_EDITOR_EMAIL, password: env.FIREBASE_EDITOR_PASSWORD, returnSecureToken: true }),
-  });
-  const result = await response.json().catch(() => ({}));
-  if (!response.ok || !result.idToken || result.localId !== env.FIREBASE_EDITOR_UID) {
-    throw new Error('Le compte technique Firebase du relais est mal configuré.');
+  if (cachedFirebaseAuth.token && cachedFirebaseAuth.expiresAt > Date.now() + 60_000) return cachedFirebaseAuth.token;
+  if (cachedFirebaseAuth.pending) return cachedFirebaseAuth.pending;
+  cachedFirebaseAuth.pending = (async () => {
+    const response = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${encodeURIComponent(env.FIREBASE_API_KEY)}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: env.FIREBASE_EDITOR_EMAIL, password: env.FIREBASE_EDITOR_PASSWORD, returnSecureToken: true }),
+    });
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok || !result.idToken || result.localId !== env.FIREBASE_EDITOR_UID) {
+      throw new Error('Le compte technique Firebase du relais est mal configuré.');
+    }
+    cachedFirebaseAuth = {
+      token: result.idToken,
+      expiresAt: Date.now() + Math.max(60, Number(result.expiresIn) || 3600) * 1000,
+      pending: null,
+    };
+    return result.idToken;
+  })();
+  try { return await cachedFirebaseAuth.pending; }
+  finally { cachedFirebaseAuth.pending = null; }
+}
+
+async function firebaseIncrement(env, path, token) {
+  return firebaseTransform(env, path, token, value => (Number(value) || 0) + 1);
+}
+
+async function firebaseTransform(env, path, token, transform) {
+  const base = env.FIREBASE_DATABASE_URL.replace(/\/$/, '');
+  const url = `${base}/${path}.json?auth=${encodeURIComponent(token)}`;
+  for (let attempt = 0; attempt < 5; attempt++) {
+    const current = await fetch(url, { headers: { 'X-Firebase-ETag': 'true' } });
+    const value = await current.json().catch(() => null);
+    if (!current.ok) throw new Error(value?.error || `Firebase a refusé la lecture (${current.status}).`);
+    const etag = current.headers.get('ETag');
+    const next = transform(value);
+    const saved = await fetch(url, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'if-match': etag || 'null_etag' },
+      body: JSON.stringify(next),
+    });
+    if (saved.status === 412) continue;
+    const result = await saved.json().catch(() => null);
+    if (!saved.ok) throw new Error(result?.error || `Firebase a refusé l’écriture (${saved.status}).`);
+    return next;
   }
-  return result.idToken;
+  throw new Error('La statistique a changé trop souvent; réessaie.');
 }
 
 function encodeFirebaseKey(value) {
@@ -332,6 +370,75 @@ export default {
       const raw = JSON.stringify(input);
       if (raw.length > MAX_REQUEST_BYTES) return json({ error: 'Requête trop volumineuse.' }, 413);
     } catch { /* ignore */ }
+
+    if (input?.action === 'statsVisit' || input?.action === 'statsBulletinView' || input?.action === 'statsCardView') {
+      if (input.action === 'statsVisit' && (
+          typeof input.visitorId !== 'string' || !/^[a-zA-Z0-9_-]{8,64}$/.test(input.visitorId) ||
+          (input.countPageview !== undefined && typeof input.countPageview !== 'boolean') ||
+          (input.discordAccessToken !== undefined && (typeof input.discordAccessToken !== 'string' || input.discordAccessToken.length > 4096)))) {
+        return json({ error: 'Données de visite invalides.' }, 400);
+      }
+      if (input.action === 'statsBulletinView' &&
+          (typeof input.bulletinId !== 'string' || !/^(?:\d{3}|pvp1)$/.test(input.bulletinId) || input.bulletinId === '000')) {
+        return json({ error: 'Identifiant de bulletin invalide.' }, 400);
+      }
+      if (input.action === 'statsCardView' &&
+          (typeof input.cardId !== 'string' || !/^[a-zA-Z0-9_-]{1,120}$/.test(input.cardId) ||
+           typeof input.title !== 'string' || input.title.length > 160)) {
+        return json({ error: 'Données de vue de card invalides.' }, 400);
+      }
+      try {
+        const idToken = await firebaseToken(env);
+        if (input.action === 'statsVisit') {
+          const visitorId = input.visitorId;
+          let profile = { u: 'invité', a: '', t: Date.now() };
+          let discordId = null;
+          const discordToken = input.discordAccessToken;
+          if (typeof discordToken === 'string' && discordToken.length >= 10 && discordToken.length <= 4096) {
+            let discordResponse = null;
+            try {
+              discordResponse = await fetch('https://discord.com/api/v10/users/@me', {
+                headers: { Authorization: `Bearer ${discordToken}` },
+              });
+            } catch (_) {}
+            if (discordResponse?.ok) {
+              const user = await discordResponse.json();
+              if (typeof user.id === 'string' && /^\d{5,30}$/.test(user.id) && typeof user.username === 'string') {
+                discordId = user.id;
+                const avatar = user.avatar
+                  ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.webp?size=80`
+                  : `https://cdn.discordapp.com/embed/avatars/${Number((BigInt(user.id) >> 22n) % 6n)}.png`;
+                profile = { id: discordId, u: user.global_name || user.username, a: avatar, t: Date.now() };
+                profile.u = String(profile.u).slice(0, 80);
+              }
+            }
+          }
+          const day = new Date().toISOString().slice(0, 10);
+          const visitorKey = `s:${visitorId}`;
+          const logPath = `site_stats/visitors_log/${day}/${encodeFirebaseKey(visitorKey)}`;
+          await firebaseRequest(env, logPath, idToken, 'PUT', profile);
+          if (input.countPageview !== false) await firebaseIncrement(env, 'site_stats/pageviews', idToken);
+          return json({ ok: true });
+        }
+
+        if (input.action === 'statsBulletinView') {
+          const bulletinId = input.bulletinId;
+          await firebaseIncrement(env, `site_stats/bulletin_views/${encodeFirebaseKey(bulletinId)}`, idToken);
+          return json({ ok: true });
+        }
+
+        const cardId = input.cardId;
+        const title = input.title;
+        await firebaseTransform(env, `site_stats/card_views/${encodeFirebaseKey(cardId)}`, idToken, value => ({
+          n: ((value && Number(value.n)) || 0) + 1,
+          t: title || cardId,
+        }));
+        return json({ ok: true });
+      } catch (error) {
+        console.error('Stats event relay failure:', error);
+        return json({ error: error?.message || 'Le relais ne peut pas enregistrer cette statistique.' }, 502);
+      }
+    }
 
     // La présence est ouverte aux visiteurs, mais le relais ne permet que
     // l’écriture d’un nœud dans presence (aucun autre chemin Firebase).

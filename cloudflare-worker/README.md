@@ -41,8 +41,8 @@ Ces branches ne doivent pas hériter d’un `.write` plus permissif défini sur 
 
 Le compte technique ne doit servir qu’au Worker. Son mot de passe reste dans les secrets Cloudflare, jamais dans les fichiers du site. L’API key Firebase est déjà visible dans le code client; elle n’est pas un mot de passe.
 
-## Présence des visiteurs
+## Statistiques visiteurs et lectures
 
-Les pages `index.html` et `neo_bulletin.html` envoient maintenant leur présence au Worker (`action: statsPresence`). Cette action est publique pour compter aussi les visiteurs sans connexion Discord, mais elle ne peut écrire que dans `site_stats/presence/<sessionId>` et valide les champs reçus. Le compte technique utilise les permissions déjà définies sur `site_stats`; aucune règle Firebase supplémentaire n’est nécessaire. Les entrées sans heartbeat depuis trois minutes sont ignorées par le compteur. Déploie `update-relay.js` dans Cloudflare après toute mise à jour de cette fonctionnalité.
+Les pages `index.html`, `neo_bulletin.html` et les pages de lecture des bulletins utilisent le Worker pour les statistiques (`statsPresence`, `statsVisit`, `statsBulletinView`, `statsCardView`). Il vérifie les champs, limite les écritures à `site_stats`, et vérifie le jeton Discord auprès de Discord avant d’enregistrer un profil. Les invités restent comptés sans profil Discord. Le compte technique utilise les permissions déjà définies sur `site_stats`; aucune règle Firebase supplémentaire n’est nécessaire. Les entrées de présence sans heartbeat depuis trois minutes sont ignorées. Les visiteurs par jour sont calculés à partir des profils journaliers uniques dans `visitors_log`.
 
-Comme cette action est accessible aux visiteurs, configure aussi une règle de limitation de débit Cloudflare pour le Worker afin de réduire les requêtes abusives. Ne rends pas `site_stats` publiquement inscriptible dans les règles Firebase.
+Ces actions sont accessibles aux visiteurs pour permettre la collecte publique. Configure une règle de limitation de débit Cloudflare pour le Worker afin de réduire les requêtes abusives. Ne rends pas `site_stats` publiquement inscriptible dans les règles Firebase. Déploie `update-relay.js` dans Cloudflare après toute mise à jour de ces fonctionnalités.
