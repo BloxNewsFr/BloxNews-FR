@@ -27,12 +27,29 @@
     const _resizeHandles = new Map();
 
     function _updateResizeHandles() {
-        for (const [el, handle] of _resizeHandles) {
-            if (!el.isConnected) { handle.remove(); _resizeHandles.delete(el); continue; }
+        for (const [el, handles] of _resizeHandles) {
+            if (!el.isConnected) {
+                handles.forEach(handle => handle.remove());
+                _resizeHandles.delete(el);
+                continue;
+            }
             const rect = el.getBoundingClientRect();
-            handle.style.left = rect.right + 'px';
-            handle.style.top = rect.bottom + 'px';
+            handles.forEach(handle => {
+                handle.style.left = (handle.dataset.side === 'left' ? rect.left : rect.right) + 'px';
+                handle.style.top = rect.bottom + 'px';
+            });
         }
+    }
+
+    function _contentBox(el) {
+        const rect = el.getBoundingClientRect();
+        const style = getComputedStyle(el);
+        const paddingLeft = parseFloat(style.paddingLeft) || 0;
+        const paddingRight = parseFloat(style.paddingRight) || 0;
+        return {
+            left: rect.left + el.clientLeft + paddingLeft,
+            width: Math.max(1, el.clientWidth - paddingLeft - paddingRight)
+        };
     }
 
     function _persistImageWidth(img, widthPct) {
@@ -53,10 +70,18 @@
     function _persistElementSize(el, widthPct, heightPx) {
         const path = PREFIX + EL_SIZE_P + (el.dataset.bePath || _getEditPath(el));
         const fontSize = parseFloat(getComputedStyle(el).fontSize) || 16;
-        const size = JSON.stringify({
+        const dimensions = {
             w: Math.round(widthPct * 10) / 10,
             h: Math.round((heightPx / fontSize) * 10) / 10
-        });
+        };
+        if (el.dataset.beResizeLeft === '1') {
+            const parent = el.parentElement;
+            if (parent) {
+                const box = _contentBox(parent);
+                dimensions.x = Math.round(((el.getBoundingClientRect().left - box.left) / box.width) * 1000) / 10;
+            }
+        }
+        const size = JSON.stringify(dimensions);
         const local = _loadLocal();
         local[path] = size;
         _saveLocal(local);
@@ -71,31 +96,32 @@
     function _attachResizeHandle(el) {
         if (_resizeHandles.has(el)) return;
         const isImage = el.tagName === 'IMG';
-        const handle = document.createElement('button');
-        handle.type = 'button';
-        handle.className = 'be-resize-handle';
-        handle.setAttribute('aria-label', isImage ? 'Redimensionner cette image' : 'Redimensionner cet élément');
-        handle.title = isImage ? 'Glisser pour redimensionner l’image' : 'Glisser pour redimensionner l’élément';
-        handle.innerHTML = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 12 12 4M7 12h5V7"/></svg>';
-        document.body.appendChild(handle);
-        _resizeHandles.set(el, handle);
-
-        handle.addEventListener('pointerdown', event => {
+        const makeHandle = side => {
+            const handle = document.createElement('button');
+            handle.type = 'button';
+            handle.className = 'be-resize-handle';
+            handle.dataset.side = side;
+            handle.setAttribute('aria-label', isImage ? 'Redimensionner cette image' : (side === 'left' ? 'Redimensionner depuis la gauche' : 'Redimensionner depuis la droite'));
+            handle.title = isImage ? 'Glisser pour redimensionner l’image' : (side === 'left' ? 'Glisser pour redimensionner vers la gauche' : 'Glisser pour redimensionner vers la droite');
+            handle.innerHTML = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 12 12 4M7 12h5V7"/></svg>';
+            document.body.appendChild(handle);
+            handle.addEventListener('pointerdown', event => {
             if (!_editMode || event.button !== 0) return;
             event.preventDefault();
             event.stopPropagation();
             const parent = el.parentElement;
-            const parentWidth = parent?.getBoundingClientRect().width || 0;
+            const parentWidth = parent ? _contentBox(parent).width : 0;
             if (!parentWidth) return;
             const startX = event.clientX;
             const startRect = el.getBoundingClientRect();
             const startPct = startRect.width / parentWidth * 100;
+            const startLeftPct = (startRect.left - _contentBox(parent).left) / parentWidth * 100;
             const startY = event.clientY;
-            const fontSize = parseFloat(getComputedStyle(el).fontSize) || 16;
             handle.setPointerCapture(event.pointerId);
 
             const onMove = moveEvent => {
-                const widthPct = Math.max(5, Math.min(100, startPct + (moveEvent.clientX - startX) / parentWidth * 100));
+                const horizontalDelta = (moveEvent.clientX - startX) / parentWidth * 100;
+                const widthPct = Math.max(5, Math.min(100, startPct + (side === 'left' ? -horizontalDelta : horizontalDelta)));
                 el.style.width = widthPct + '%';
                 if (isImage) {
                     el.style.height = 'auto';
@@ -105,6 +131,11 @@
                     el.style.maxWidth = '100%';
                     el.style.overflow = 'auto';
                     el.style.height = Math.max(24, Math.min(1800, startRect.height + moveEvent.clientY - startY)) + 'px';
+                    if (side === 'left') {
+                        el.dataset.beResizeLeft = '1';
+                        el.style.marginLeft = Math.max(0, startLeftPct + horizontalDelta) + '%';
+                        el.style.marginRight = '0';
+                    }
                 }
                 _updateResizeHandles();
             };
@@ -114,15 +145,20 @@
                 handle.removeEventListener('pointercancel', onEnd);
                 if (handle.hasPointerCapture(endEvent.pointerId)) handle.releasePointerCapture(endEvent.pointerId);
                 if (isImage) {
-                    _persistImageWidth(el, el.getBoundingClientRect().width / parentWidth * 100);
+                    _persistImageWidth(el, el.getBoundingClientRect().width / _contentBox(parent).width * 100);
                 } else {
-                    _persistElementSize(el, el.getBoundingClientRect().width / parentWidth * 100, el.getBoundingClientRect().height);
+                    _persistElementSize(el, el.getBoundingClientRect().width / _contentBox(parent).width * 100, el.getBoundingClientRect().height);
                 }
             };
             handle.addEventListener('pointermove', onMove);
             handle.addEventListener('pointerup', onEnd);
             handle.addEventListener('pointercancel', onEnd);
-        });
+            });
+            return handle;
+        };
+        const handles = [makeHandle('right')];
+        if (!isImage) handles.push(makeHandle('left'));
+        _resizeHandles.set(el, handles);
     }
 
     function _isExcluded(el) {
@@ -299,6 +335,11 @@
                         el.style.boxSizing = 'border-box';
                         el.style.maxWidth = '100%';
                         el.style.overflow = 'auto';
+                        if (Number.isFinite(Number(size?.x))) {
+                            el.style.marginLeft = Number(size.x) + '%';
+                            el.style.marginRight = '0';
+                            el.dataset.beResizeLeft = '1';
+                        }
                     }
                 } catch { /* ignore malformed local dimensions */ }
             } else {
