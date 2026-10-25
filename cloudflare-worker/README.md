@@ -40,3 +40,9 @@ Ce Worker est le relais gratuit entre le site et Firebase. Il vérifie l’ident
 Ces branches ne doivent pas hériter d’un `.write` plus permissif défini sur la racine ou sur un parent : une autorisation d’écriture à un niveau supérieur s’applique aussi aux enfants. Ne mets pas `.write: true`. Les autres branches sont distinctes et gardent leurs règles actuelles; cette modification ne transforme pas les permissions de modération des commentaires en permissions serveur.
 
 Le compte technique ne doit servir qu’au Worker. Son mot de passe reste dans les secrets Cloudflare, jamais dans les fichiers du site. L’API key Firebase est déjà visible dans le code client; elle n’est pas un mot de passe.
+
+## Présence des visiteurs
+
+Les pages `index.html` et `neo_bulletin.html` envoient maintenant leur présence au Worker (`action: statsPresence`). Cette action est publique pour compter aussi les visiteurs sans connexion Discord, mais elle ne peut écrire que dans `site_stats/presence/<sessionId>` et valide les champs reçus. Le compte technique utilise les permissions déjà définies sur `site_stats`; aucune règle Firebase supplémentaire n’est nécessaire. Les entrées sans heartbeat depuis trois minutes sont ignorées par le compteur. Déploie `update-relay.js` dans Cloudflare après toute mise à jour de cette fonctionnalité.
+
+Comme cette action est accessible aux visiteurs, configure aussi une règle de limitation de débit Cloudflare pour le Worker afin de réduire les requêtes abusives. Ne rends pas `site_stats` publiquement inscriptible dans les règles Firebase.

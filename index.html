@@ -3940,20 +3940,29 @@
         }
 
         /* ─── Présence temps réel ─────────────────────────────── */
-        const MY_PRESENCE = FB_DB.ref('site_stats/presence/' + _statsSessionId());
+        const PRESENCE_SESSION_ID = _statsSessionId();
+        const PRESENCE_RELAY = 'https://blox-update-relay.c9yz5m8pw6.workers.dev';
+        function _statsSendPresence() {
+            const payload = {
+                action: 'statsPresence', sessionId: PRESENCE_SESSION_ID,
+                presence: {
+                    u: _statsUserName(), a: _statsAvatar(),
+                    p: window.location.pathname + window.location.search, t: Date.now()
+                }
+            };
+            return fetch(PRESENCE_RELAY, {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            }).then(response => {
+                if (!response.ok) throw new Error('HTTP ' + response.status);
+            }).catch(error => console.warn('[Stats] Présence non enregistrée :', error));
+        }
 
         FB_DB.ref('.info/connected').on('value', snap => {
-            if (snap.val() === true) {
-                MY_PRESENCE.set({ u: _statsUserName(), a: _statsAvatar(), p: window.location.pathname + window.location.search, t: Date.now() });
-                MY_PRESENCE.onDisconnect().remove();
-            }
+            if (snap.val() === true) _statsSendPresence();
         });
-        window.addEventListener('pagehide', () => { MY_PRESENCE.remove(); });
-        window.addEventListener('pageshow', () => {
-            MY_PRESENCE.set({ u: _statsUserName(), a: _statsAvatar(), p: window.location.pathname + window.location.search, t: Date.now() });
-            MY_PRESENCE.onDisconnect().remove();
-        });
-        setInterval(() => { MY_PRESENCE.update({ t: Date.now(), u: _statsUserName(), a: _statsAvatar() }).catch(() => {}); }, 30000);
+        window.addEventListener('pageshow', () => { _statsSendPresence(); });
+        setInterval(_statsSendPresence, 30000);
 
         /* ─── Compteurs persistés ─────────────────────────────── */
         function _statsBump(path, amount) {
@@ -3988,17 +3997,6 @@
             _statsBump('site_stats/bulletin_views/' + num, 1);
         }
         window._statsTrackBulletinView = _statsTrackBulletinView;
-
-        /* ─── Nettoyage des entrées présences orphelines ─────── */
-        setInterval(() => {
-            const cutoff = Date.now() - STALE_MS;
-            REF_PRESENCE.once('value', snap => {
-                snap.forEach(child => {
-                    const v = child.val();
-                    if (v && (v.t || 0) < cutoff) child.ref.remove();
-                });
-            });
-        }, 120000);
 
         /* ─── Écoute en direct de la présence ────────────────── */
         REF_PRESENCE.on('value', snap => {

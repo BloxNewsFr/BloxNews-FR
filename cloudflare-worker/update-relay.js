@@ -333,6 +333,36 @@ export default {
       if (raw.length > MAX_REQUEST_BYTES) return json({ error: 'Requête trop volumineuse.' }, 413);
     } catch { /* ignore */ }
 
+    // La présence est ouverte aux visiteurs, mais le relais ne permet que
+    // l’écriture d’un nœud dans presence (aucun autre chemin Firebase).
+    if (input?.action === 'statsPresence') {
+      const sessionId = input.sessionId;
+      if (typeof sessionId !== 'string' || !/^[a-zA-Z0-9_-]{8,40}$/.test(sessionId)) {
+        return json({ error: 'Identifiant de présence invalide.' }, 400);
+      }
+      const presence = input.presence;
+      if (!presence || typeof presence !== 'object' || Array.isArray(presence) ||
+          typeof presence.u !== 'string' || presence.u.length > 80 ||
+          typeof presence.a !== 'string' || presence.a.length > 500 ||
+          typeof presence.p !== 'string' || presence.p.length > 300 || !presence.p.startsWith('/') ||
+          !Number.isFinite(presence.t) || Math.abs(Date.now() - presence.t) > 120000) {
+        return json({ error: 'Données de présence invalides.' }, 400);
+      }
+      if (presence.a && !/^https:\/\/cdn\.discordapp\.com\/avatars\/[a-zA-Z0-9_-]+\/[a-zA-Z0-9_-]+\.(webp|png|jpg|gif)(\?.*)?$/.test(presence.a)) {
+        return json({ error: 'Avatar de présence invalide.' }, 400);
+      }
+
+      try {
+        const idToken = await firebaseToken(env);
+        const path = `site_stats/presence/${encodeFirebaseKey(sessionId)}`;
+        await firebaseRequest(env, path, idToken, 'PUT', presence);
+        return json({ ok: true });
+      } catch (error) {
+        console.error('Stats presence relay failure:', error);
+        return json({ error: error?.message || 'Le relais ne peut pas enregistrer la présence.' }, 502);
+      }
+    }
+
     const discordToken = input?.discordAccessToken;
     if (typeof discordToken !== 'string' || discordToken.length < 10 || discordToken.length > 4096) {
       return json({ error: 'Reconnecte-toi avec Discord.' }, 401);
