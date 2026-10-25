@@ -17,6 +17,7 @@ const GITHUB_ALLOWED_PREFIXES = [
 ];
 const GITHUB_MAX_FILES = 30;
 let cachedFirebaseAuth = { token: '', expiresAt: 0, pending: null };
+let cachedFcmAuth = { token: '', expiresAt: 0, pending: null };
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -66,6 +67,147 @@ async function firebaseToken(env) {
   })();
   try { return await cachedFirebaseAuth.pending; }
   finally { cachedFirebaseAuth.pending = null; }
+}
+
+function base64UrlBytes(bytes) {
+  let binary = '';
+  for (const byte of bytes) binary += String.fromCharCode(byte);
+  return btoa(binary).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
+}
+
+function base64UrlJson(value) {
+  return base64UrlBytes(new TextEncoder().encode(JSON.stringify(value)));
+}
+
+function decodeBase64Url(value) {
+  const normalized = String(value || '').replace(/-/g, '+').replace(/_/g, '/');
+  const padded = normalized + '='.repeat((4 - normalized.length % 4) % 4);
+  return Uint8Array.from(atob(padded), char => char.charCodeAt(0));
+}
+
+async function derivePushTokenKey(env, salt, usages) {
+  if (!env.FIREBASE_EDITOR_PASSWORD) throw new Error('Le secret Firebase du Worker est manquant.');
+  const material = await crypto.subtle.importKey('raw', new TextEncoder().encode(env.FIREBASE_EDITOR_PASSWORD), 'HKDF', false, ['deriveKey']);
+  return crypto.subtle.deriveKey(
+    { name: 'HKDF', salt, info: new TextEncoder().encode('bloxnews-fcm-token-v1'), hash: 'SHA-256' },
+    material,
+    { name: 'AES-GCM', length: 256 },
+    false,
+    usages,
+  );
+}
+
+async function encryptPushToken(env, token) {
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const key = await derivePushTokenKey(env, salt, ['encrypt']);
+  const ciphertext = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, new TextEncoder().encode(token));
+  return { v: 1, salt: base64UrlBytes(salt), iv: base64UrlBytes(iv), ciphertext: base64UrlBytes(new Uint8Array(ciphertext)) };
+}
+
+async function decryptPushToken(env, record) {
+  if (typeof record === 'string') return record; // compatibilité avec d’anciens jetons non chiffrés
+  if (!record || record.v !== 1 || !record.salt || !record.iv || !record.ciphertext) return null;
+  const salt = decodeBase64Url(record.salt);
+  const iv = decodeBase64Url(record.iv);
+  const ciphertext = decodeBase64Url(record.ciphertext);
+  const key = await derivePushTokenKey(env, salt, ['decrypt']);
+  const plaintext = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, ciphertext);
+  return new TextDecoder().decode(plaintext);
+}
+
+async function fcmAccessToken(env) {
+  if (cachedFcmAuth.token && cachedFcmAuth.expiresAt > Date.now() + 60_000) return cachedFcmAuth.token;
+  if (cachedFcmAuth.pending) return cachedFcmAuth.pending;
+  cachedFcmAuth.pending = (async () => {
+    if (!env.FCM_SERVICE_ACCOUNT_JSON) throw new Error('FCM_SERVICE_ACCOUNT_JSON manquant dans les secrets Cloudflare.');
+    let account;
+    try { account = JSON.parse(env.FCM_SERVICE_ACCOUNT_JSON); }
+    catch { throw new Error('FCM_SERVICE_ACCOUNT_JSON doit contenir le JSON du compte de service Firebase.'); }
+    if (!account.client_email || !account.private_key || !account.project_id) {
+      throw new Error('Le compte de service FCM doit contenir client_email, private_key et project_id.');
+    }
+    const now = Math.floor(Date.now() / 1000);
+    const claims = {
+      iss: account.client_email,
+      scope: 'https://www.googleapis.com/auth/firebase.messaging',
+      aud: account.token_uri || 'https://oauth2.googleapis.com/token',
+      iat: now,
+      exp: now + 3600,
+    };
+    const unsigned = `${base64UrlJson({ alg: 'RS256', typ: 'JWT' })}.${base64UrlJson(claims)}`;
+    const pem = account.private_key.replace(/\\n/g, '\n').replace(/-----BEGIN PRIVATE KEY-----|-----END PRIVATE KEY-----|\s/g, '');
+    const der = Uint8Array.from(atob(pem), char => char.charCodeAt(0));
+    const key = await crypto.subtle.importKey('pkcs8', der, { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' }, false, ['sign']);
+    const signature = new Uint8Array(await crypto.subtle.sign('RSASSA-PKCS1-v1_5', key, new TextEncoder().encode(unsigned)));
+    const assertion = `${unsigned}.${base64UrlBytes(signature)}`;
+    const tokenResponse = await fetch(claims.aud, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({ grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer', assertion }),
+    });
+    const tokenData = await tokenResponse.json().catch(() => ({}));
+    if (!tokenResponse.ok || !tokenData.access_token) throw new Error(tokenData.error_description || tokenData.error || 'Google a refusé le jeton OAuth FCM.');
+    cachedFcmAuth = { token: tokenData.access_token, expiresAt: Date.now() + Math.max(60, Number(tokenData.expires_in) || 3600) * 1000, pending: null };
+    return cachedFcmAuth.token;
+  })();
+  try { return await cachedFcmAuth.pending; }
+  finally { cachedFcmAuth.pending = null; }
+}
+
+async function sendPushToSubscribers(env, idToken, { title, body, url }) {
+  if (typeof title !== 'string' || !title.trim() || title.length > 200) throw new Error('Titre de notification invalide.');
+  const tokens = await firebaseRequest(env, 'site_stats/push_tokens', idToken, 'GET');
+  const entries = Object.entries(tokens || {}).filter(([, token]) =>
+    (typeof token === 'string' && token.length > 10) || (token && token.v === 1 && token.ciphertext)
+  );
+  if (!entries.length) return { sent: 0 };
+  const account = JSON.parse(env.FCM_SERVICE_ACCOUNT_JSON || '{}');
+  const accessToken = await fcmAccessToken(env);
+  const endpoint = `https://fcm.googleapis.com/v1/projects/${encodeURIComponent(account.project_id)}/messages:send`;
+  const targetUrl = typeof url === 'string' && url.startsWith('https://bloxnewsfr.github.io/BloxNews-FR/')
+    ? url : 'https://bloxnewsfr.github.io/BloxNews-FR/index.html';
+  const results = await Promise.allSettled(entries.map(async ([key, token]) => {
+    const registrationToken = await decryptPushToken(env, token);
+    if (!registrationToken) throw new Error('Jeton push chiffré invalide.');
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        message: {
+          token: registrationToken,
+          data: {
+            title: title.trim(),
+            body: String(body || 'Une nouveauté est disponible.').slice(0, 500),
+            url: targetUrl,
+            icon: '/BloxNews-FR/icons/icon-192x192.png',
+            badge: '/BloxNews-FR/icons/icon-96x96.png',
+          },
+          webpush: { headers: { Urgency: 'high' } },
+        },
+      }),
+    });
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}));
+      if (error.error?.details?.some(detail => detail.errorCode === 'UNREGISTERED')) {
+        await firebaseRequest(env, `site_stats/push_tokens/${encodeFirebaseKey(key)}`, idToken, 'DELETE');
+      }
+      throw new Error(error.error?.message || `FCM a refusé l’envoi (${response.status}).`);
+    }
+    return true;
+  }));
+  const sent = results.filter(result => result.status === 'fulfilled').length;
+  const failures = results.filter(result => result.status === 'rejected');
+  if (failures.length) console.error('FCM push delivery failures:', failures.map(result => result.reason?.message));
+  return { sent, failed: failures.length };
+}
+
+async function sendPushBestEffort(env, idToken, notification) {
+  try { return await sendPushToSubscribers(env, idToken, notification); }
+  catch (error) {
+    console.error('Automatic push notification failure:', error?.message || error);
+    return { sent: 0, error: error?.message || 'Échec de l’envoi push.' };
+  }
 }
 
 async function firebaseIncrement(env, path, token) {
@@ -252,7 +394,12 @@ async function handleAdminAction(env, input, idToken) {
         typeof card.sectionId !== 'string' || card.sectionId.length > 100 ||
         JSON.stringify(card).length > 90_000) throw new Error('Carte invalide.');
     await firebaseRequest(env, `custom_cards/${encodeFirebaseKey(card.id)}`, idToken, 'PUT', card);
-    return;
+    const notification = await sendPushBestEffort(env, idToken, {
+      title: `Nouvelle fuite : ${card.title}`.slice(0, 200),
+      body: String(card.excerpt || card.status || 'Une nouvelle fuite vient d’être publiée.').slice(0, 500),
+      url: `https://bloxnewsfr.github.io/BloxNews-FR/neo_bulletin.html?category=${encodeURIComponent(card.sectionId)}&card=${encodeURIComponent(card.id)}`,
+    });
+    return { notification };
   }
   if (action === 'deleteCard') {
     const cardId = input.cardId;
@@ -273,37 +420,9 @@ async function handleAdminAction(env, input, idToken) {
     return;
   }
   if (action === 'sendPush') {
-    // Envoie une notification push à tous les tokens enregistrés via FCM HTTP v1
     const { title, body, url } = input;
-    if (!title || typeof title !== 'string' || title.length > 200) throw new Error('Titre invalide.');
-    const tokens = await firebaseRequest(env, 'push_tokens', idToken, 'GET');
-    if (!tokens || typeof tokens !== 'object') return; // aucun abonné
-    const tokenList = Object.values(tokens).filter(t => typeof t === 'string' && t.length > 10);
-    if (!tokenList.length) return;
-    // FCM HTTP v1 nécessite un OAuth2 token → on utilise l'API legacy (HTTP v0) avec Server Key
-    // La Server Key est stockée dans la variable d'env FCM_SERVER_KEY
-    await Promise.allSettled(tokenList.map(token =>
-      fetch('https://fcm.googleapis.com/fcm/send', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `key=${env.FCM_SERVER_KEY}`,
-        },
-        body: JSON.stringify({
-          to: token,
-          notification: {
-            title,
-            body: body || 'Nouvelle information disponible !',
-            icon: '/BloxNews-FR/icons/icon-192x192.png',
-            badge: '/BloxNews-FR/icons/icon-96x96.png',
-            click_action: url || 'https://bloxnewsfr.github.io/BloxNews-FR/',
-          },
-          data: { url: url || 'https://bloxnewsfr.github.io/BloxNews-FR/' },
-          webpush: { headers: { Urgency: 'high' } },
-        }),
-      })
-    ));
-    return;
+    if (body !== undefined && (typeof body !== 'string' || body.length > 500)) throw new Error('Texte de notification invalide.');
+    return sendPushToSubscribers(env, idToken, { title, body, url });
   }
   throw new Error('Action admin inconnue.');
 }
@@ -496,6 +615,31 @@ export default {
       const raw = JSON.stringify(input);
       if (raw.length > MAX_REQUEST_BYTES) return json({ error: 'Requête trop volumineuse.' }, 413);
     } catch { /* ignore */ }
+
+    // Inscription push accessible aux visiteurs du site, sans session Discord.
+    // L’écriture reste limitée au sous-arbre prévu dans site_stats.
+    if (input?.action === 'registerPushToken') {
+      const origin = request.headers.get('Origin') || '';
+      const allowedOrigins = new Set([
+        'https://bloxnewsfr.github.io',
+        'https://bloxnews-fr-neolixxdiamond-8739.vercel.app',
+      ]);
+      if (!allowedOrigins.has(origin)) return json({ error: 'Origine du site non autorisée.' }, 403);
+      const token = input.token;
+      if (typeof token !== 'string' || token.length < 100 || token.length > 4096) {
+        return json({ error: 'Jeton de notification invalide.' }, 400);
+      }
+      try {
+        const idToken = await firebaseToken(env);
+        const key = await sha256Hex(token);
+        const encryptedToken = await encryptPushToken(env, token);
+        await firebaseRequest(env, `site_stats/push_tokens/${key}`, idToken, 'PUT', encryptedToken);
+        return json({ ok: true });
+      } catch (error) {
+        console.error('Push token registration failure:', error);
+        return json({ error: error?.message || 'Impossible d’enregistrer cet appareil.' }, 502);
+      }
+    }
 
     if (input?.action === 'statsDiscordLogin') {
       if (typeof input.discordAccessToken !== 'string' || input.discordAccessToken.length < 10 || input.discordAccessToken.length > 4096) {
@@ -738,7 +882,13 @@ export default {
         if (input.action === 'createBulletin') {
           const payload = validateBulletinFiles(input);
           const result = await createBulletinOnGitHub(env, payload);
-          return json({ ok: true, commit: result.commit, num: payload.num });
+          const idToken = await firebaseToken(env);
+          const notification = await sendPushBestEffort(env, idToken, {
+            title: `Nouveau bulletin #${payload.num}`,
+            body: 'Le dernier numéro du Blox Bulletin vient de paraître.',
+            url: `https://bloxnewsfr.github.io/BloxNews-FR/${payload.num}/bulletin-${payload.num}.html`,
+          });
+          return json({ ok: true, commit: result.commit, num: payload.num, notification });
         }
         if (input.action === 'deleteBulletin') {
           if (!env.DELETE_PASSWORD || input.password !== env.DELETE_PASSWORD) {
@@ -888,21 +1038,16 @@ export default {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ sha: commit.sha, force: false }),
           });
-          return json({ ok: true, commit: commit.sha, tree: tree.sha });
+          const idToken = await firebaseToken(env);
+          const bulletinNum = typeof num === 'string' && /^\d{3}$/.test(num) ? num : '';
+          const notification = bulletinNum ? await sendPushBestEffort(env, idToken, {
+            title: `Nouveau bulletin #${bulletinNum}`,
+            body: 'Le dernier numéro du Blox Bulletin vient de paraître.',
+            url: `https://bloxnewsfr.github.io/BloxNews-FR/${bulletinNum}/bulletin-${bulletinNum}.html`,
+          }) : { sent: 0 };
+          return json({ ok: true, commit: commit.sha, tree: tree.sha, notification });
         }
         return json({ error: 'Action Git inconnue.' }, 400);
-      }
-
-      // Enregistrement token push — accessible sans être admin
-      if (input.action === 'registerPushToken') {
-        const token = input.token;
-        if (!token || typeof token !== 'string' || token.length < 10 || token.length > 512) {
-          return json({ error: 'Token invalide.' }, 400);
-        }
-        const fbToken = await firebaseToken(env);
-        const key = encodeFirebaseKey(token.slice(-40)); // clé Firebase = derniers 40 chars du token
-        await firebaseRequest(env, `push_tokens/${key}`, fbToken, 'PUT', token);
-        return json({ ok: true });
       }
 
       const idToken = await firebaseToken(env);
@@ -915,6 +1060,11 @@ export default {
           return json({ error: 'Contenu de l’update invalide.' }, 400);
         }
         await firebaseRequest(env, `updates/${encodeURIComponent(updateId)}`, idToken, 'PUT', update);
+        await sendPushBestEffort(env, idToken, {
+          title: `Nouvelle fuite : ${update.title}`.slice(0, 200),
+          body: String(update.version || update.date || 'Une nouvelle actualité a été publiée.').slice(0, 500),
+          url: `https://bloxnewsfr.github.io/BloxNews-FR/neo_bulletin.html#${encodeURIComponent(updateId)}`,
+        });
       } else if (input.action === 'editField') {
         const fields = new Set(['title', 'version', 'date', 'fullDesc']);
         if (!fields.has(input.field) || typeof input.value !== 'string' || input.value.length > 30000) {

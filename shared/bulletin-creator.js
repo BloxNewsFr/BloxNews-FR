@@ -598,6 +598,7 @@ ${body}
         loginBtn.style.display = '';
     })();
     </script>
+    <script src="../shared/site-experience.js"></script>
     <script src="../shared/bulletin-lightbox.js"></script>
     <script src="../astuces/astuces.js"></script>
     <script src="../shared/profile-preferences.js"></script>

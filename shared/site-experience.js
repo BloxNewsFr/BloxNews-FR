@@ -166,56 +166,107 @@
   }
 
   // ── Notifications push FCM ──
-  // Remplace VAPID_PUBLIC_KEY par ta clé publique Web Push (Firebase Console → Cloud Messaging)
+  // Clé publique Web Push du projet Firebase.
   const VAPID_PUBLIC_KEY = 'BDxYpmLmyw5GrZByri54qulYuyS-mfvCWMkw89xluUSzCOJChVLrhm7v_S74PUgMa1QII8-k1jSSDwAJ_5ITbBo';
   const FCM_STORAGE_KEY  = 'bloxsite_fcm_token_v1';
+  const FCM_REGISTERED_KEY = 'bloxsite_fcm_registered_v1';
+  let messagingScriptsPromise = null;
+  let foregroundMessageBound = false;
+
+  function appBasePath() {
+    return location.pathname.startsWith('/BloxNews-FR/') ? '/BloxNews-FR/' : '/';
+  }
+
+  function loadClassicScript(src) {
+    return new Promise((resolve, reject) => {
+      const existing = [...document.scripts].find(script => script.src === src);
+      if (existing?.dataset.loaded === 'true') { resolve(); return; }
+      const script = existing || document.createElement('script');
+      script.addEventListener('load', () => { script.dataset.loaded = 'true'; resolve(); }, { once:true });
+      script.addEventListener('error', () => reject(new Error('Impossible de charger Firebase Messaging.')), { once:true });
+      if (!existing) { script.src = src; script.async = true; document.head.appendChild(script); }
+    });
+  }
+
+  async function loadFirebaseMessaging() {
+    if (messagingScriptsPromise) return messagingScriptsPromise;
+    messagingScriptsPromise = (async () => {
+      if (!window.firebase) await loadClassicScript('https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js');
+      if (!window.firebase) throw new Error('Firebase ne s’est pas chargé.');
+      if (!firebase.apps.length) firebase.initializeApp({
+        apiKey: 'AIzaSyBkJsHWyoiEeqmEktUlgcED-8mBPnar_0w',
+        authDomain: 'blox-bulletin-comments.firebaseapp.com',
+        databaseURL: 'https://blox-bulletin-comments-default-rtdb.europe-west1.firebasedatabase.app',
+        projectId: 'blox-bulletin-comments',
+        storageBucket: 'blox-bulletin-comments.firebasestorage.app',
+        messagingSenderId: '774633429491',
+        appId: '1:774633429491:web:d1f534a0df346fbea79a86'
+      });
+      if (typeof firebase.messaging !== 'function') {
+        await loadClassicScript('https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging-compat.js');
+      }
+      if (typeof firebase.messaging !== 'function') throw new Error('Le module Firebase Messaging est indisponible.');
+      return firebase.messaging();
+    })().catch(error => { messagingScriptsPromise = null; throw error; });
+    return messagingScriptsPromise;
+  }
 
   async function initPushNotifications() {
-    // Vérifie le support
-    if (!('serviceWorker' in navigator) || !('PushManager' in window)) return;
-    if (VAPID_PUBLIC_KEY.startsWith('REMPLACE')) return; // pas encore configuré
+    if (!('serviceWorker' in navigator) || !('PushManager' in window) || !('Notification' in window)) {
+      throw new Error('Les notifications push ne sont pas prises en charge par ce navigateur.');
+    }
+    if (Notification.permission !== 'granted') throw new Error('Autorise les notifications dans les réglages du navigateur.');
 
     try {
       // Enregistre le service worker
-      const reg = await navigator.serviceWorker.register('/BloxNews-FR/firebase-messaging-sw.js', { scope: '/BloxNews-FR/' });
+      const basePath = appBasePath();
+      const reg = await navigator.serviceWorker.register(`${basePath}firebase-messaging-sw.js`, { scope: basePath });
 
-      // Charge Firebase Messaging (doit déjà être chargé sur la page)
-      const messaging = window.firebaseMessaging || (typeof firebase !== 'undefined' && firebase.apps.length ? firebase.messaging() : null);
-      if (!messaging) return;
-
-      // Vérifie si la permission est déjà accordée
-      if (Notification.permission === 'denied') return;
-
-      // Demande la permission uniquement si pas encore décidée
-      if (Notification.permission === 'default') {
-        // On attend une interaction utilisateur pour demander (UX)
-        const alreadyAsked = localStorage.getItem('bloxsite_push_asked');
-        if (alreadyAsked) return;
-      }
+      const messaging = window.firebaseMessaging || await loadFirebaseMessaging();
+      window.firebaseMessaging = messaging;
 
       // Récupère le token FCM
       const token = await messaging.getToken({ vapidKey: VAPID_PUBLIC_KEY, serviceWorkerRegistration: reg });
-      if (!token) return;
+      if (!token) throw new Error('Firebase n’a pas fourni de jeton pour cet appareil.');
 
-      // Sauvegarde le token (le Worker Cloudflare pourra l'utiliser pour envoyer des push)
-      const stored = localStorage.getItem(FCM_STORAGE_KEY);
-      if (stored !== token) {
-        localStorage.setItem(FCM_STORAGE_KEY, token);
-        // Envoie le token au Worker pour qu'il le stocke dans Firebase
-        fetch('https://blox-update-relay.c9yz5m8pw6.workers.dev', {
+      // Réenregistre le jeton à chaque activation : cela répare aussi un ancien
+      // jeton resté uniquement dans le stockage local après une erreur réseau.
+      localStorage.setItem(FCM_STORAGE_KEY, token);
+      const registerResponse = await fetch('https://blox-update-relay.c9yz5m8pw6.workers.dev', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ action: 'registerPushToken', token })
-        }).catch(() => {});
+      });
+      const registerResult = await registerResponse.json().catch(() => ({}));
+      if (!registerResponse.ok || !registerResult.ok) throw new Error(registerResult.error || 'Le serveur n’a pas enregistré cet appareil.');
+      localStorage.setItem(FCM_REGISTERED_KEY, '1');
+      document.querySelector('.site-notification .site-notif-push-btn')?.remove();
+
+      if (!foregroundMessageBound && typeof messaging.onMessage === 'function') {
+        messaging.onMessage(payload => {
+          const data = payload?.data || payload?.notification || {};
+          if (Notification.permission === 'granted' && data.title) {
+            const notice = new Notification(data.title, {
+              body: data.body || 'Une nouveauté est disponible.',
+              icon: data.icon || '/BloxNews-FR/icons/icon-192x192.png',
+              data: { url: data.url || '/BloxNews-FR/index.html' }
+            });
+            notice.onclick = () => { window.focus(); location.href = notice.data.url; notice.close(); };
+          }
+        });
+        foregroundMessageBound = true;
       }
+      return true;
     } catch (err) {
-      console.warn('[PWA] Push init failed:', err.message);
+      console.error('[PWA] Push init failed:', err.message);
+      throw err;
     }
   }
 
   // Action discrète pour activer les notifications push
   function injectPushToggle(widget) {
-    if (!('Notification' in window) || Notification.permission === 'granted') return;
+    if (!('Notification' in window)) return;
+    if (Notification.permission === 'granted' && localStorage.getItem(FCM_REGISTERED_KEY) === '1') return;
     const panel = widget.querySelector('.site-notification__panel');
     if (!panel || panel.querySelector('.site-notif-push-btn')) return;
     const btn = document.createElement('button');
@@ -223,13 +274,19 @@
     btn.type = 'button';
     btn.innerHTML = '<span class="material-symbols-outlined" aria-hidden="true">notifications_active</span><span>Recevoir les alertes</span><span class="site-notif-push-btn__arrow" aria-hidden="true">→</span>';
     btn.addEventListener('click', async () => {
-      localStorage.setItem('bloxsite_push_asked', '1');
-      const perm = await Notification.requestPermission();
-      if (perm === 'granted') {
+      btn.disabled = true;
+      const label = btn.querySelector('span:nth-child(2)');
+      const originalLabel = label?.textContent || 'Recevoir les alertes';
+      try {
+        const perm = Notification.permission === 'default' ? await Notification.requestPermission() : Notification.permission;
+        if (perm !== 'granted') throw new Error('Autorisation refusée. Modifie-la dans les réglages du navigateur.');
+        await initPushNotifications();
         btn.remove();
-        initPushNotifications();
-      } else if (perm === 'denied') {
-        btn.remove();
+      } catch (error) {
+        if (label) label.textContent = error.message || 'Activation impossible';
+        btn.disabled = false;
+        btn.setAttribute('aria-label', error.message || 'Réessayer d’activer les alertes');
+        setTimeout(() => { if (label?.isConnected) label.textContent = originalLabel; }, 5000);
       }
     });
     panel.querySelector('.site-notification__list').before(btn);
@@ -242,7 +299,13 @@
     setTimeout(() => {
       const widget = document.querySelector('.site-notification');
       if (widget) injectPushToggle(widget);
-      if ('Notification' in window && Notification.permission === 'granted') initPushNotifications();
+      if ('Notification' in window && Notification.permission === 'granted') {
+        initPushNotifications().catch(error => {
+          console.warn('[PWA] Push re-registration failed:', error.message);
+          localStorage.removeItem(FCM_REGISTERED_KEY);
+          if (widget) injectPushToggle(widget);
+        });
+      }
     }, 500);
   });
 })();

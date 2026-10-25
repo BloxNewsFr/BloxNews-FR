@@ -14599,6 +14599,10 @@
     ═══════════════════════════════════════════════════════════ -->
     <style>
         .card-comment-write { flex-wrap: wrap; }
+        #cat-actus .actus-cc-write .card-comment-input-wrap { position: relative; align-self: stretch; min-width: 0; }
+        #cat-actus .actus-cc-write .card-comment-submit { position: absolute !important; right: 8px !important; bottom: 8px !important; margin: 0 !important; z-index: 2; }
+        #cat-actus .actus-cc-write .cc-attach-btn { position: absolute !important; left: 10px !important; bottom: 8px !important; z-index: 2; }
+        #cat-actus .actus-cc-write .card-comment-input { display: block; box-sizing: border-box; width: 100%; padding-left: 14px !important; padding-bottom: 46px !important; }
         .cc-attach-btn {
             position: absolute; left: 10px; bottom: 10px; width: 30px; height: 30px;
             border: 1px solid rgba(45,42,38,.14); background: #fff; color: #6e665e;
@@ -14613,6 +14617,8 @@
             transform: translateY(-1px); box-shadow: 0 3px 9px rgba(120,20,20,.12);
         }
         .cc-attach-btn:focus-visible { outline: 3px solid rgba(201,23,30,.24); outline-offset: 2px; }
+        html[data-theme="dark"] #cat-actus .actus-cc-write .cc-attach-btn { color: #e8eaf6; background: rgba(36,38,55,.96); border-color: rgba(255,255,255,.14); }
+        html[data-theme="dark"] #cat-actus .actus-cc-write .cc-attach-btn:hover { color: #ff8585; background: rgba(75,37,50,.96); border-color: rgba(255,100,120,.42); }
         .cc-preview { flex: 1 1 100%; order: -1; display: flex; flex-wrap: wrap; gap: 8px; width: 100%; }
         .cc-preview__item { position: relative; width: 62px; height: 62px; border-radius: 10px; overflow: hidden; border: 1px solid rgba(128,128,128,.25); }
         .cc-preview__item img { width: 100%; height: 100%; object-fit: cover; display: block; }
@@ -14646,6 +14652,14 @@
         .cc-lightbox__prev { left: 18px; }
         .cc-lightbox__next { right: 18px; }
         .cc-lightbox__count { position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%); color: rgba(255,255,255,.55); font-size: 12px; letter-spacing: .5px; }
+        @media(max-width:600px) {
+            #cat-actus .card-comments-body.is-open { padding-inline: 12px; }
+            #cat-actus .actus-cc-write { align-items: flex-start; gap: 8px; padding: 12px; }
+            #cat-actus .actus-cc-write .card-comment-avatar-wrap { padding-top: 5px; }
+            #cat-actus .actus-cc-write .card-comment-input-wrap { flex-basis: calc(100% - 44px); }
+            #cat-actus .actus-cc-write .card-comment-input { min-height: 96px; }
+            #cat-actus .actus-cc-write .card-comment-submit { padding: 6px 13px; font-size: 11px; }
+        }
     </style>
 
     <!-- Lightbox commentaires -->
