@@ -122,9 +122,12 @@ html:not([data-theme="dark"]) .site-notification__trigger { color:#25263a; }
     padding:7px 11px; border:1px solid rgba(255,218,0,.18); border-radius:10px;
     color:rgba(255,255,255,.76); background:rgba(255,218,0,.045);
     font:600 11px/1.2 Inter,sans-serif; cursor:pointer; text-align:left;
+    box-sizing:border-box; flex:0 0 auto; align-self:stretch; min-width:0;
     transition:background .16s ease,border-color .16s ease,color .16s ease;
 }
 .site-notif-push-btn:hover { color:#fff; background:rgba(255,218,0,.1); border-color:rgba(255,218,0,.32); }
 .site-notif-push-btn .material-symbols-outlined { color:#e8c92b; font-size:17px; line-height:1; }
+.site-header__icons .site-notif-push-btn .material-symbols-outlined { display:block!important; width:auto!important; height:auto!important; padding:0!important; margin:0!important; font-size:17px!important; line-height:1!important; transform:none!important; flex:0 0 auto; }
+.site-header__icons .site-notification__panel .site-notif-push-btn { text-align:left; white-space:normal; }
 .site-notif-push-btn__arrow { margin-left:auto; color:rgba(255,255,255,.42); font-size:15px; transition:transform .16s ease; }
 .site-notif-push-btn:hover .site-notif-push-btn__arrow { transform:translateX(2px); color:rgba(255,255,255,.8); }
