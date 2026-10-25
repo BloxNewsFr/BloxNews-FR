@@ -239,6 +239,7 @@
     <link rel="stylesheet" href="../shared/bulletin-lightbox.css">
     <link rel="stylesheet" href="../astuces/astuces.css">
     <link rel="stylesheet" href="../shared/bulletin-engagement.css">
+    <link rel="stylesheet" href="../shared/site-experience.css">
     <link rel="stylesheet" href="../shared/profile-preferences.css">${extraCss}
 </head>
 <body class="theme-${opts.theme || 'default'}${themeClass ? '' : ''}">
@@ -878,7 +879,8 @@ ${body}
         for (const path of [
             _sharedBase() + 'bulletin-lightbox.css',
             rootBase + 'astuces/astuces.css',
-            _sharedBase() + 'bulletin-engagement.css'
+            _sharedBase() + 'bulletin-engagement.css',
+            _sharedBase() + 'site-experience.css'
         ]) {
             try {
                 const res = await fetch(path);
@@ -917,6 +919,7 @@ ${body}
             .replace(/<link rel="stylesheet" href="\.\.\/shared\/bulletin-lightbox\.css">\s*/g, '')
             .replace(/<link rel="stylesheet" href="\.\.\/astuces\/astuces\.css">\s*/g, '')
             .replace(/<link rel="stylesheet" href="\.\.\/shared\/bulletin-engagement\.css">\s*/g, '')
+            .replace(/<link rel="stylesheet" href="\.\.\/shared\/site-experience\.css">\s*/g, '')
             .replace(/(<meta charset="utf-8">)/, `$1\n    <base href="${_previewBaseHref()}">`)
             .replace('</head>', `    <style>\n${inlineCss}\n    </style>\n</head>`);
 
